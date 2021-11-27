@@ -1,0 +1,33 @@
+{
+  "name": "마이삼각형",
+  "value": 100,
+  "children": [
+    {
+      "name": "나",
+      "value": 25,
+      "children": [
+        {"name": "지(재미)", "value": 20},
+        {"name": "덕(마음)", "value": 5},
+        {"name": "체(건강)", "value": 15}
+      ]
+    },
+    {
+      "name": "관계",
+      "value": 25,
+      "children": [
+        {"name": "감사 마음", "value": 5},
+        {"name": "감정 객관화", "value": 5},
+        {"name": "관계 중심력", "value": 15}
+      ]
+    },
+    {
+      "name": "일",
+      "value": 25,
+      "children": [
+        {"name": "생업", "value": 5},
+        {"name": "본업", "value": 5},
+        {"name": "돈관리", "value": 15}
+      ]
+    }
+  ]
+}

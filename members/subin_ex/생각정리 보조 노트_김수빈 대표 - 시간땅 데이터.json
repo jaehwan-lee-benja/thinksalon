@@ -1,0 +1,30 @@
+{
+  "name": "나", 
+  "children": [ 
+    {
+      "name": "지",
+      "value": 11,
+      "value2": 100
+    }
+  ],
+  "": {
+    "name": "지형",
+    "value": 56,
+    "value2": 100
+  },
+  "관계": {
+    "name": "약속",
+    "value": 7,
+    "value2": 100
+  },
+  "일": {
+    "name": "생업",
+    "value": 42,
+    "value2": 100
+  },
+  "기타": {
+    "name": "보조",
+    "value": 6,
+    "value2": 100
+  }
+}

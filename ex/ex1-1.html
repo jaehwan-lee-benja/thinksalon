@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang='ko'>
+  <head>
+    <meta charset="utf-8">
+    <title>jQuery</title>
+    <script src="//code.jQuery.com/jquery-3.3.1.min.js">
+    </script>
+    <script>
+      $(document).ready(function(){
+        var hClass = $('h1').attr('class');
+        $('span').text(hClass);
+      });
+    </script>
+  </head>
+  <body>
+    <h1 class="hello">Lorem ipsum dolor.</h1>
+    <p>h1 class value is : <span></span></p>
+  </body>
+</html>
