@@ -71,6 +71,19 @@
     <div id="my_dataviz"></div>
 
     <script>
+      function b64DecodeUnicode(str) {
+        // Going backwards: from bytestream, to percent-encoding, to original string.
+        return decodeURIComponent(atob(str).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+    }
+
+    var param = window.location.search.substr(1)
+      console.log(param)
+      var jsonString = b64DecodeUnicode(param)
+      console.log(jsonString)
+      var data = JSON.parse(jsonString)
+      console.log(data)
 
     // set the dimensions and margins of the graph
     var margin = {top: 10, right: 0, bottom: 30, left: 0},
@@ -90,7 +103,7 @@
     var tool = d3.select("body").append("div").attr("class", "toolTip");
 
     // read json data
-    d3.json("mydata.json", function(data) {
+    //d3.json("mydata.json", function(data) {
 
       // Give the data to this cluster layout:
       var root = d3.hierarchy(data).sum(function(d){ return d.value}) // Here the size of each leave is given in the 'value' field in input data
@@ -165,7 +178,8 @@
         .append("text")
           .attr("x", function(d){ return d.x0+10})    // +10 to adjust position (more right)
           .attr("y", function(d){ return d.y0+20})    // +20 to adjust position (lower)
-          .text(function(d){ return d.data.name})
+          .text(function(d){ 
+            if (d.data.value > 0 ) return d.data.name})
           .attr("font-size", "12px")
           .attr("fill", "white")
 
@@ -180,6 +194,7 @@
           //.text(function(d){ return d.data.value2 })
           //.attr("font-size", "10px")
           //.attr("fill", "white")
+      
 
       // Add title for the 3 groups
       svg
@@ -189,7 +204,16 @@
         .append("text")
           .attr("x", function(d){ return d.x0})
           .attr("y", function(d){ return d.y0+21})
-          .text(function(d){ return d.data.name })
+          .text(function(d){ 
+            console.log(d);
+            var children = d.data.children
+            console.log(children);
+            var mapValue = children.map(e => e.value)
+            console.log(mapValue);
+            var sum = mapValue.reduce( (x,y) => x+y); // array
+            console.log(sum);
+            if( sum > 0) return d.data.name 
+          })
           .attr("font-size", "12px")
           .attr("fill",  function(d){ return color(d.data.name)} )
 
@@ -211,7 +235,7 @@
         .attr("font-size", "12px")
         .attr("fill",  "#6b705c" )
 
-    })
+    //})
     </script>
 
     <script> 

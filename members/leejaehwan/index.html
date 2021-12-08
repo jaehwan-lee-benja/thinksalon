@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>TimeBalance</title>
+    <style type="text/css">
+      @import url('//fonts.googleapis.com/css?family=Lato:400,400italic,700,700italic');
+
+      .center {
+        background-color: #fffcf2;
+        text-align: center;
+      }
+
+      .test {
+        padding: 10px;
+        margin-top: 10px;
+      }
+
+      .toolTip {
+        position: absolute;
+        display: none;
+        width: auto;
+        height: auto;
+        background: none repeat scroll 0 0 #fffcf2;
+        border: 0 none;
+        border-radius: 2px 2px 2px 2px;
+        box-shadow: 0px 0px 0px #888888;
+        color: black;
+        font: 10px sans-serif;
+        padding: 5px;
+        text-align: center;
+      }
+
+      .d3-tip {
+                background: rgba(0, 0, 0, 0.8);
+                border-radius: 2px;
+                color: #fff;
+                font-weight: bold;
+                line-height: 1;
+                padding: 12px;
+      }
+    </style>
+
+  </head>
+
+      <!-- Load d3.js -->
+      <script src="https://d3js.org/d3.v4.js"></script>
+      <script src="https://d3js.org/topojson.v1.min.js"></script>
+
+  <body class="center">
+    <!-- <div>
+    <h1 style="color:#6b705c;">생각트리맵</h1>
+      <p style="color:#6b705c;"><b>생각트리맵</b>은 내 머릿속의 생각의 비중을 시각화해주는 도구입니다.
+        <ol>
+          <li>면적 크기: 머릿속 비중</li>
+          <li>색깔 진하기: 이번달 핵심 포인트</li>
+        </ol>
+      </p>
+    </div> -->
+
+    <div class="test">
+      <h1 style="font-size:20px; color:#6b705c;">TimeBalance</h1>
+        <p style="font-size:12px; color:#6b705c;" ><b>TimeBalance</b>은 나의 일주일 시간의 양과 우선순위를 시각화해주는 도구입니다.
+        </p>
+    </div>
+
+
+
+
+    <!-- Create a div where the graph will take place -->
+    <div id="my_dataviz"></div>
+
+    <script>
+
+    // set the dimensions and margins of the graph
+    var margin = {top: 10, right: 0, bottom: 30, left: 0},
+      width = 500 - margin.left - margin.right,
+      height = 500 - margin.top - margin.bottom;
+
+    // append the svg object to the body of the page
+    var svg = d3.select("#my_dataviz")
+    .append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+      .attr("transform",
+            "translate(" + margin.left + "," + margin.top + ")");
+
+    // mouse hovering effect
+    var tool = d3.select("body").append("div").attr("class", "toolTip");
+
+    // read json data
+    d3.json("mydata.json", function(data) {
+
+      // Give the data to this cluster layout:
+      var root = d3.hierarchy(data).sum(function(d){ return d.value}) // Here the size of each leave is given in the 'value' field in input data
+
+      // Then d3.treemap computes the position of each element of the hierarchy
+      d3.treemap()
+        .size([width, height])
+        .paddingTop(30)
+        .paddingRight(5)
+        .paddingInner(1.5)      // Padding between each rectangle
+        //.paddingOuter(6)
+        //.padding(20)
+        (root)
+
+      // prepare a color scale
+      var color = d3.scaleOrdinal()
+        .domain(["boss1", "boss2", "boss3", "boss4", "boss5"])
+        .range([ "#6d597a", "#52796f", "#ad6a6c", "#3d5a80", "#8a817c"])
+
+      // And a opacity scale
+      var opacity = d3.scaleLinear()
+        .domain([0, 100])
+        .range([.5,1])
+
+      // use this information to add rectangles:
+      svg
+        .selectAll("rect")
+        .data(root.leaves())
+        .enter()
+        .append("rect")
+          .attr('x', function (d) { return d.x0; })
+          .attr('y', function (d) { return d.y0; })
+          .attr('width', function (d) { return d.x1 - d.x0; })
+          .attr('height', function (d) { return d.y1 - d.y0; })
+          .style("fill", function(d){ return color(d.parent.data.name)} )
+          .style("opacity", function(d){ return opacity(d.data.value2/1.5)})
+          .on("mousemove", function (d) {
+                tool.style("left", d3.event.pageX + 20 + "px")
+                tool.style("top", d3.event.pageY - 10 + "px")
+                tool.style("display", "inline-block");
+                tool.html(d.children ? null : d.data.name + ' [우선순위 ' + d.data.value2 + ']');
+                //tool.style("opacity", function(d){ return opacity(d.data.value2)})
+                //tool.html(d.children ? null : d.name + "<br>" + ' $ ' + formatMoney(Math.round(d.size * 1000)) + ' ' + roundToTwo((d.value / 16147370.2) * 100) + '%');
+          })
+          //.on("mousemove", function (d) { 
+          //    tool.style("stroke", 1)
+          //})
+          //.on("mouseout", "unHighLight")
+          .on("mouseover", function (d) {
+                    console.log("mouseover");
+                    var opacity1 = d3.select(this).style("opacity")
+                    d3.select(this).style("opacity", opacity1*1.5);
+                    //d3.select(this).style("opacity", 10);
+                    console.log(d3.select(this).style("opacity"))
+                    //d3.select(this).style("fill", "#344e41")
+                })
+          //.on("mouseout", function (d) {
+                    //d3.select(this).style("opacity", function(d){ return opacity(d.data.value2)});
+                //})
+          .on("mouseout", function (d) {
+                tool.style("display", "none");
+                d3.select(this).style("opacity", function(d){ return opacity(d.data.value2/1.5)});
+                d3.select(this).style("fill", function(d){ return color(d.parent.data.name)} )
+
+          });
+
+      // and to add the text labels
+      svg
+        .selectAll("text")
+        .data(root.leaves())
+        .enter()
+        .append("text")
+          .attr("x", function(d){ return d.x0+10})    // +10 to adjust position (more right)
+          .attr("y", function(d){ return d.y0+20})    // +20 to adjust position (lower)
+          .text(function(d){ 
+            if (d.data.value > 0 ) return d.data.name})
+          .attr("font-size", "12px")
+          .attr("fill", "white")
+
+      // and to add the text labels - value2
+      //svg
+        //.selectAll("vals")
+        //.data(root.leaves())
+        //.enter()
+        //.append("text")
+          //.attr("x", function(d){ return d.x0+10})    // +10 to adjust position (more right)
+          //.attr("y", function(d){ return d.y0+30})    // +20 to adjust position (lower)
+          //.text(function(d){ return d.data.value2 })
+          //.attr("font-size", "10px")
+          //.attr("fill", "white")
+
+      // Add title for the 3 groups
+      svg
+        .selectAll("titles")
+        .data(root.descendants().filter(function(d){return d.depth==1}))
+        .enter()
+        .append("text")
+          .attr("x", function(d){ return d.x0})
+          .attr("y", function(d){ return d.y0+21})
+          .text(function(d){ 
+            //if (d.data.children.value > 0 ) 
+            return d.data.name })
+          .attr("font-size", "12px")
+          .attr("fill",  function(d){ return color(d.data.name)} )
+
+    // Add title for the 3 groups
+    svg
+      .append("text")
+        .attr("x", 0)
+        .attr("y", 7)    // +20 to adjust position (lower)
+        .text("작성자: 이재환")
+        .attr("font-size", "12px")
+        .attr("fill",  "#6b705c" )
+
+    // Add title for the 3 groups
+    svg
+      .append("text")
+        .attr("x", 0)
+        .attr("y", 23)    // +20 to adjust position (lower)
+        .text("작성일: 2021.10.23")
+        .attr("font-size", "12px")
+        .attr("fill",  "#6b705c" )
+
+    })
+    </script>
+
+    <script> 
+      function btn(){ 
+        alert('Done'); 
+        } 
+    </script>
+
+    <div margin-top: 100px;>
+      <button style="background-color:#b3afad; border-color:#b3afad; color:white;" onclick="javascript:btn()">이미지 저장</button>
+      <button style="background-color:#b3afad; border-color:#b3afad; color:white;" onClick="window.open('https://docs.google.com/spreadsheets/d/1yxiXZjCP9kTceR1pIAzG49uIQDb2g7YGxL5OikGBLeQ/edit?usp=sharing')">시간표뷰</button>
+    </div>
+
+  </body>
+</html>

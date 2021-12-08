@@ -58,13 +58,12 @@
       </p>
     </div> -->
 
+    
     <div class="test">
       <h1 style="font-size:20px; color:#6b705c;">TimeBalance</h1>
         <p style="font-size:12px; color:#6b705c;" ><b>TimeBalance</b>은 나의 일주일 시간의 양과 우선순위를 시각화해주는 도구입니다.
-        </p>
+        </p>        
     </div>
-
-
 
 
     <!-- Create a div where the graph will take place -->
@@ -90,12 +89,10 @@
     var tool = d3.select("body").append("div").attr("class", "toolTip");
 
     // read json data
-    d3.json("생각정리 보조 노트_김수빈 대표 - 시간땅 데이터.json", function(data) {
-    
+    d3.json("mydata.json", function(data) {
+
       // Give the data to this cluster layout:
-      var root = d3.hierarchy(data).sum(function(d){ 
-        return d.value
-      }) // Here the size of each leave is given in the 'value' field in input data
+      var root = d3.hierarchy(data).sum(function(d){ return d.value}) // Here the size of each leave is given in the 'value' field in input data
 
       // Then d3.treemap computes the position of each element of the hierarchy
       d3.treemap()
@@ -168,19 +165,7 @@
           .attr("x", function(d){ return d.x0+10})    // +10 to adjust position (more right)
           .attr("y", function(d){ return d.y0+20})    // +20 to adjust position (lower)
           .text(function(d){ 
-            if (d.data.value > 0 ) return d.data.name
-          })
-          
-          //.text(function (d,i) {
-          //  var res = '';
-          //  if (i > 1) {
-          //    res = d.data.name;
-          //  } else {
-          //    res = d.data.name === d.data[i - 1].name ? null : d.data[i].data.name;
-          //  }
-          //  return res;
-          //  }) 
-
+            if (d.data.value > 0 ) return d.data.name})
           .attr("font-size", "12px")
           .attr("fill", "white")
 
@@ -199,38 +184,17 @@
       // Add title for the 3 groups
       svg
         .selectAll("titles")
-        .data(root.descendants().filter(function(d){
-          console.log(d);
-          var e = d.children?.every(function(c){
-            return c.value == 0
-          })
-          return d.depth==1 && !e
-        }))
+        .data(root.descendants().filter(function(d){return d.depth==1}))
         .enter()
         .append("text")
           .attr("x", function(d){ return d.x0})
           .attr("y", function(d){ return d.y0+21})
-          .text(function(d){ return d.data.name })
+          .text(function(d){ 
+            //if (d.data.children.value > 0 ) 
+            return d.data.name })
           .attr("font-size", "12px")
           .attr("fill",  function(d){ return color(d.data.name)} )
 
-    // Add title for the 3 groups
-    svg
-      .append("text")
-        .attr("x", 0)
-        .attr("y", 7)    // +20 to adjust position (lower)
-        .text("작성자: 김수빈")
-        .attr("font-size", "12px")
-        .attr("fill",  "#6b705c" )
-
-    // Add title for the 3 groups
-    svg
-      .append("text")
-        .attr("x", 0)
-        .attr("y", 23)    // +20 to adjust position (lower)
-        .text("작성일: 2021.11.15")
-        .attr("font-size", "12px")
-        .attr("fill",  "#6b705c" )
 
     })
     </script>
@@ -243,7 +207,7 @@
 
     <div margin-top: 100px;>
       <button style="background-color:#b3afad; border-color:#b3afad; color:white;" onclick="javascript:btn()">이미지 저장</button>
-      <button style="background-color:#b3afad; border-color:#b3afad; color:white;" onClick="window.open('https://docs.google.com/spreadsheets/d/1CywfGSTeqaPi7a4KbXTzH7bD5g6qTM0AtHda7e0zllE/edit?usp=sharing')">시간표뷰</button>
+      <button style="background-color:#b3afad; border-color:#b3afad; color:white;" onClick="window.open('https://docs.google.com/spreadsheets/d/1yxiXZjCP9kTceR1pIAzG49uIQDb2g7YGxL5OikGBLeQ/edit?usp=sharing')">시간표뷰</button>
     </div>
 
   </body>
