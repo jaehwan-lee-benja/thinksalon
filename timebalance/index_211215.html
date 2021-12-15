@@ -58,7 +58,6 @@
       </p>
     </div> -->
 
-    <!-- CSS로 적어보기 -->
     <div class="test">
       <h1 style="font-size:20px; color:#6b705c;">TimeBalance</h1>
         <p style="font-size:12px; color:#6b705c;" ><b>TimeBalance</b>은 나의 일주일 시간의 양과 우선순위를 시각화해주는 도구입니다.
@@ -75,26 +74,30 @@
     <div id="my_dataviz"></div>
 
     <script>
-      //Google sheets에서 incoding decoding하기
-
       function b64DecodeUnicode(str) {
         // Going backwards: from bytestream, to percent-encoding, to original string.
         return decodeURIComponent(atob(str).split('').map(function(c) {
             return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
         }).join(''));
-      }
+    }
 
-      var param = window.location.search.substr(1)
-      var jsonString = b64DecodeUnicode(param)
-      var data = JSON.parse(jsonString)
+    var param = window.location.search.substr(1)
+    console.log(param)
+    var jsonString = b64DecodeUnicode(param)
+    console.log(jsonString)
+    var data = JSON.parse(jsonString)
+    console.log("data");
+    console.log(data);
 
-      //json에서 작성자, 작성일 parsing하기
-      var author = data.author;
-      var createdDate = data.createdDate;
+    // debuging data..
+    var author = data.author;
+    var createdDate = data.createdDate;
+    console.log("author, createdDate");
+    console.log(author, createdDate);
 
-      // dom을 사용해 데이터 쓰기
-      document.getElementById('author').innerHTML = author;
-      document.getElementById('createdDate').innerHTML = createdDate;
+    // dom을 사용해 데이터 쓰기.
+    document.getElementById('author').innerHTML = author;
+    document.getElementById('createdDate').innerHTML = createdDate;
 
     // set the dimensions and margins of the graph
     var margin = {top: 10, right: 0, bottom: 30, left: 0},
