@@ -59,16 +59,36 @@
     </div> -->
 
     
-    <div class="test">
-      <h1 style="font-size:20px; color:#6b705c;">TimeBalance</h1>
-        <p style="font-size:12px; color:#6b705c;" ><b>TimeBalance</b>은 나의 일주일 시간의 양과 우선순위를 시각화해주는 도구입니다.
+    <div class="test" >
+      <h1 style="font-size:1.2em; color:#6b705c;">TimeBalance</h1>
+        <p style="font-size:0.8em; color:#6b705c;" ><b>TimeBalance</b>은 나의 일주일 시간의 양과 우선순위를 시각화해주는 도구입니다.
         </p>        
     </div>
+
+    <div id=”info” style="color: #6b705c; font: 0.5em;" >
+      <b>작성자</b> 
+      이재환<br>
+      <b>작성일</b> 2021.12.15
+    </div>
+
+    <script>
+    <script src="http://localhost:8080/timebalance/members/leejaehwan_info%20test/myinfo.json" type="text/javascript"></script>
+
+    let mydata = JSON.parse(data);
+
+    </script>
+    
+    <script>
+    const obj = JSON.parse(json)
+    console.log(obj.count);
+
+    </script>
+
 
 
     <!-- Create a div where the graph will take place -->
     <div id="my_dataviz"></div>
-
+    
     <script>
 
     // set the dimensions and margins of the graph
@@ -139,11 +159,9 @@
           //})
           //.on("mouseout", "unHighLight")
           .on("mouseover", function (d) {
-                    console.log("mouseover");
                     var opacity1 = d3.select(this).style("opacity")
                     d3.select(this).style("opacity", opacity1*1.5);
                     //d3.select(this).style("opacity", 10);
-                    console.log(d3.select(this).style("opacity"))
                     //d3.select(this).style("fill", "#344e41")
                 })
           //.on("mouseout", function (d) {
