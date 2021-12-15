@@ -64,7 +64,10 @@
         </p>
     </div>
 
-
+    <div>
+      <p>작성자 : <span id="author"></span></p>
+      <p>작성일 : <span id="createdDate"></span></p>
+    </div>
 
 
     <!-- Create a div where the graph will take place -->
@@ -79,11 +82,22 @@
     }
 
     var param = window.location.search.substr(1)
-      console.log(param)
-      var jsonString = b64DecodeUnicode(param)
-      console.log(jsonString)
-      var data = JSON.parse(jsonString)
-      console.log(data)
+    console.log(param)
+    var jsonString = b64DecodeUnicode(param)
+    console.log(jsonString)
+    var data = JSON.parse(jsonString)
+    console.log("data");
+    console.log(data);
+
+    // debuging data..
+    var author = data.author;
+    var createdDate = data.createdDate;
+    console.log("author, createdDate");
+    console.log(author, createdDate);
+
+    // dom을 사용해 데이터 쓰기.
+    document.getElementById('author').innerHTML = author;
+    document.getElementById('createdDate').innerHTML = createdDate;
 
     // set the dimensions and margins of the graph
     var margin = {top: 10, right: 0, bottom: 30, left: 0},
@@ -216,24 +230,6 @@
           })
           .attr("font-size", "12px")
           .attr("fill",  function(d){ return color(d.data.name)} )
-
-    // Add title for the 3 groups
-    svg
-      .append("text")
-        .attr("x", 0)
-        .attr("y", 7)    // +20 to adjust position (lower)
-        .text("작성자: 이재환")
-        .attr("font-size", "12px")
-        .attr("fill",  "#6b705c" )
-
-    // Add title for the 3 groups
-    svg
-      .append("text")
-        .attr("x", 0)
-        .attr("y", 23)    // +20 to adjust position (lower)
-        .text("작성일: 2021.10.23")
-        .attr("font-size", "12px")
-        .attr("fill",  "#6b705c" )
 
     //})
     </script>
