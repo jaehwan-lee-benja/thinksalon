@@ -32,31 +32,22 @@
       }
 
       .d3-tip {
-                background: rgba(0, 0, 0, 0.8);
-                border-radius: 2px;
-                color: #fff;
-                font-weight: bold;
-                line-height: 1;
-                padding: 12px;
+        background: rgba(0, 0, 0, 0.8);
+        border-radius: 2px;
+        color: #fff;
+        font-weight: bold;
+        line-height: 1;
+        padding: 12px;
       }
     </style>
 
   </head>
 
-      <!-- Load d3.js -->
-      <script src="https://d3js.org/d3.v4.js"></script>
-      <script src="https://d3js.org/topojson.v1.min.js"></script>
+  <!-- Load d3.js -->
+  <script src="https://d3js.org/d3.v4.js"></script>
+  <script src="https://d3js.org/topojson.v1.min.js"></script>
 
   <body class="center">
-    <!-- <div>
-    <h1 style="color:#6b705c;">생각트리맵</h1>
-      <p style="color:#6b705c;"><b>생각트리맵</b>은 내 머릿속의 생각의 비중을 시각화해주는 도구입니다.
-        <ol>
-          <li>면적 크기: 머릿속 비중</li>
-          <li>색깔 진하기: 이번달 핵심 포인트</li>
-        </ol>
-      </p>
-    </div> -->
 
     <!-- CSS로 적어보기 -->
     <div class="test">
@@ -111,10 +102,9 @@
             "translate(" + margin.left + "," + margin.top + ")");
 
     // mouse hovering effect
-    var tool = d3.select("body").append("div").attr("class", "toolTip");
-
-    // read json data
-    //d3.json("mydata.json", function(data) {
+    var tool = d3.select("body")
+    .append("div")
+      .attr("class", "toolTip");
 
       // Give the data to this cluster layout:
       var root = d3.hierarchy(data).sum(function(d){ return d.value}) // Here the size of each leave is given in the 'value' field in input data
@@ -156,24 +146,13 @@
                 tool.style("top", d3.event.pageY - 10 + "px")
                 tool.style("display", "inline-block");
                 tool.html(d.children ? null : d.data.name + ' [우선순위 ' + d.data.value2 + ']');
-                //tool.style("opacity", function(d){ return opacity(d.data.value2)})
-                //tool.html(d.children ? null : d.name + "<br>" + ' $ ' + formatMoney(Math.round(d.size * 1000)) + ' ' + roundToTwo((d.value / 16147370.2) * 100) + '%');
-          })
-          //.on("mousemove", function (d) { 
-          //    tool.style("stroke", 1)
-          //})
-          //.on("mouseout", "unHighLight")
+              })
           .on("mouseover", function (d) {
                     console.log("mouseover");
                     var opacity1 = d3.select(this).style("opacity")
                     d3.select(this).style("opacity", opacity1*1.5);
-                    //d3.select(this).style("opacity", 10);
                     console.log(d3.select(this).style("opacity"))
-                    //d3.select(this).style("fill", "#344e41")
                 })
-          //.on("mouseout", function (d) {
-                    //d3.select(this).style("opacity", function(d){ return opacity(d.data.value2)});
-                //})
           .on("mouseout", function (d) {
                 tool.style("display", "none");
                 d3.select(this).style("opacity", function(d){ return opacity(d.data.value2/1.5)});
@@ -227,11 +206,9 @@
           })
           .attr("font-size", "12px")
           .attr("fill",  function(d){ return color(d.data.name)} )
-
-    //})
     </script>
 
-    <script> 
+    <script>
       function btn(){ 
         alert('Done'); 
         } 
