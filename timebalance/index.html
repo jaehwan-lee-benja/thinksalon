@@ -8,12 +8,13 @@
 
       .center {
         background-color: #fffcf2;
-        text-align: center;
+        text-align: left;
+        margin-left: 30px;
       }
 
       .text {
         font: 12px sans-serif;
-        text-align: left;
+        color: #6b705c;
       }
 
       .test {
@@ -32,7 +33,7 @@
         box-shadow: 0px 0px 0px #888888;
         color: black;
         font: 10px sans-serif;
-        padding: 5px;
+        padding: 1px;
         text-align: center;
       }
 
@@ -52,15 +53,13 @@
   <body class="center">
 
     <!-- CSS로 적어보기 - sync test 03 -->
-    <div class="test">
-      <h1 style="font-size:20px; color:#6b705c;">TimeBalance</h1>
-        <p style="font-size:12px; color:#6b705c;" ><b>TimeBalance</b>은 나의 일주일 시간의 양과 우선순위를 시각화해주는 도구입니다.
+    <div class="text">
+      <h1 style="font-size:20px;">TimeBalance</h1>
+        <p><b>TimeBalance</b>은 나의 일주일 시간의 양과 우선순위를 시각화해주는 도구입니다.</p>
+        <p>
+          작성자 : <span id="author"></span></br>
+          작성일 : <span id="createdDate"></span>
         </p>
-    </div>
-
-    <div class='text'>
-      <p>작성자 : <span id="author"></span></p>
-      <p>작성일 : <span id="createdDate"></span></p>
     </div>
 
 
@@ -90,7 +89,7 @@
       document.getElementById('createdDate').innerHTML = createdDate;
 
     // set the dimensions and margins of the graph
-    var margin = {top: 10, right: 0, bottom: 30, left: 0},
+    var margin = {top: 0, right: 0, bottom: 30, left: 0},
       width = 500 - margin.left - margin.right,
       height = 500 - margin.top - margin.bottom;
 
