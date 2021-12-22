@@ -30,7 +30,7 @@
         </div>
         <div class="button">
             <form class="formInline">
-                <input type="button" value="셋트 편집" onClick="location.href='http://localhost:8080/thinksalon/thinkpaper/index_edit.html?'">
+                <input type="button" value="셋트 편집" onClick="location.href='https://jaehwan-lee-benja.github.io/thinksalon/thinkpaper/index_edit.html?'">
             </form>
             <form class="formInline">
                 <input type="submit" value="셋트 리스트 보기">
@@ -110,10 +110,24 @@
                     selectorBody.style.backgroundColor = '#1E1E1E';
                     selectorBody.style.color = 'white';
                     this.value = '다크모드 끄기';
+
+                    var alist = document.querySelectorAll('a');
+                    var i = 0;
+                    while(i < alist.length) {
+                        alist[i].style.color = 'powderblue';
+                        i = i + 1;
+                    }
                 } else {
                     selectorBody.style.backgroundColor = 'white';
                     selectorBody.style.color = 'black';
                     this.value = '다크모드 켜기';
+
+                    var alist = document.querySelectorAll('a');
+                    var i = 0;
+                    while(i < alist.length) {
+                        alist[i].style.color = 'blue';
+                        i = i + 1;
+                    }
                 }
             ">
         </div>
