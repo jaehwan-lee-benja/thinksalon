@@ -1,0 +1,81 @@
+#gridBody{
+    display: grid;
+    grid-template-rows: 3rem "height: auto;" "height: auto;" 1fr 3rem;
+    margin: 2rem;
+}
+#gridIndex{
+    display: grid;
+    grid-template-columns: 15rem 1fr 20rem;
+    border-bottom: 1px solid gray;
+    padding-bottom: 0.5rem;
+}
+#gridMain{
+    display: grid;
+    grid-template-columns: 30rem 1fr;
+    padding-bottom: 1rem;
+}
+#gridMainContents{
+    display: grid;
+    grid-template-rows: "height: auto;" 1fr;
+    padding: 0.5rem 0.5rem 0.5rem 0;
+    margin-bottom: 0.5rem;
+}
+#gridPageInfo{
+    font-size: 0.5rem;
+    display: grid;
+    grid-template-columns: 1fr 10rem 10rem;
+    border-top: 1px solid gray;
+    padding-top: 0.5rem;
+}
+.pageInfoBrand{  
+    text-align: right;
+    font-size: 0.8rem;
+}
+#imageMain{
+    width: 100%
+}
+.button{
+    text-align: right;
+}
+.formInline{
+    display: inline;
+}
+h3 {
+    font-size: 1rem;
+    margin-bottom: 0;
+}
+textarea {
+    width: 100%;
+    height: 12rem;
+}
+@media(max-width:800px){
+    #gridIndex{
+        display: block;
+        border-bottom: 1px solid gray;
+        padding-bottom: 0.5rem;
+    }
+    #gridMain{
+        display: block;
+        padding-bottom: 1rem;
+    }
+    #gridPageInfo{
+        font-size: 0.5rem;
+        display: block;
+        border-top: 1px solid gray;
+        padding-top: 0.5rem;
+    }
+    #imageMain{
+        max-width: 29rem;
+    }
+    .pageInfoBrand{  
+        text-align: left;
+        font-size: 0.8rem;
+        padding-top: 0.5rem;    
+    }
+    .gridIndex{
+        padding-bottom: 0.5rem;
+    }
+    .button{
+        text-align: left;
+    }
+}
