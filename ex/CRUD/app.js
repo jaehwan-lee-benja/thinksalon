@@ -20,13 +20,16 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 
+const dbRef = app.database().ref();
+const usersRef = dbRef.child('users');
+
 const userListUI = document.getElementById("userList");
 usersRef.on("child_added", snap => {
     let user = snap.val();
     let $li = document.createElement("li");
     $li.innerHTML = user.name;
     $li.setAttribute("child-key", snap.key);
-    $li.addEventListener("click", userClicked)
+    $li.addEventListener("click", userClicked) 
     userListUI.append($li);
 });
 
