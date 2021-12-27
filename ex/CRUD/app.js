@@ -4,6 +4,13 @@ import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
+//import { initializeApp } from 'firebase/app';
+//import { getFirestore, collection, getDocs } from 'firebase/firestore/lite';
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-lite.js";
+
+// Follow this pattern to import other Firebase services
+// import { } from 'firebase/<service>';
+
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -20,9 +27,19 @@ measurementId: "G-YE9WY5Z6ZS"
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 
-firebase.initializeApp(firebaseConfig);
+//firebase.initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-const dbRef = firebase.database().ref();
+// Get a list of cities from your database
+async function getCities(db) {
+  const citiesCol = collection(db, 'cities');
+  const citySnapshot = await getDocs(citiesCol);
+  const cityList = citySnapshot.docs.map(doc => doc.data());
+  return cityList;
+}
+
+//막히는 부분
+//const dbRef = firebase.database().ref();
 const usersRef = dbRef.child('users');
 
 const userListUI = document.getElementById("userList");
