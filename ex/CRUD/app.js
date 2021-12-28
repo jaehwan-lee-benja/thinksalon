@@ -26,8 +26,22 @@ measurementId: "G-YE9WY5Z6ZS"
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
+console.log('test01');
+console.log(app);
+console.log('test01.1');
 
-//firebase.initializeApp(firebaseConfig);
+//막히는 부분
+document.write('firebaseConfig');
+
+firebase.initializeApp(firebaseConfig);
+
+var consoleTest = firebase.initializeApp(firebaseConfig);
+console.log('test02');
+consoleTest;
+document.write(consoleTest);
+document.write('test03');
+console.log('test04');
+console.log(consoleTest);
 const db = getFirestore(app);
 
 // Get a list of cities from your database
@@ -41,6 +55,8 @@ async function getCities(db) {
 //막히는 부분
 //const dbRef = firebase.database().ref();
 const usersRef = dbRef.child('users');
+console.log('test05');
+console.log(usersRef);
 
 const userListUI = document.getElementById("userList");
 usersRef.on("child_added", snap => {
