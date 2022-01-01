@@ -20,11 +20,10 @@ usersRef.on("child_added", snap => {
 
     let user = snap.val();
 
-    let $li = document.createElement("li");
-    $li.innerHTML = user.name;
-    $li.setAttribute("child-key", snap.key);
-    $li.addEventListener("click", userClicked) 
-    userListUI.append($li);
+    let $span = document.createElement("span");
+    $span.innerHTML = user.name;
+    $span.setAttribute("child-key", snap.key);
+    userListUI.append($span);
 
 });
 
