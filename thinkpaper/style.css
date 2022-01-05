@@ -19,6 +19,7 @@
     grid-template-rows: "height: auto;" 1fr;
     padding: 0.5rem 0.5rem 0.5rem 0;
     margin-bottom: 0.5rem;
+    align-content: right;
 }
 #gridPageInfo{
     font-size: 0.5rem;
@@ -50,19 +51,117 @@ textarea {
 }
 
 /*CRUD Practice*/
-
-#userList {
-    margin-top:1rem;
+   
+   /*---------------------------*/
+   /* Read Users */
+   /*---------------------------*/
+   #user-list {
+    margin:0;
     padding:0;
-    width:200px;
+    width:180px;
+    float:left;
+    margin:10px;
     border:1px solid #000000;
-    width: 100%;
-    height: 12rem;
    }
    
-#userList span {
+   #user-list h2 {
+    padding:10px;
+    margin:0;
     color:rgb(0, 0, 0);
    }
+   
+   #user-list li {
+    padding:5px 10px;
+    border-top:1px solid #4fc3fc;
+    cursor: pointer;
+    color:rgb(0, 0, 0);
+    font-style: italic;
+    list-style: none 
+   }
+   
+   #user-list li:hover {
+    background: #bcbcbc;
+   }
+   
+   #user-detail {
+    float:left;
+    width:200px;
+    margin:10px;
+    margin-left:0;
+    padding:10px;
+    border:1px solid #bcbcbc;
+   }
+   
+   
+   
+   /* Add User Module */
+   #add-user-module {
+       width:30px;
+       margin-bottom: 1px;
+       margin-left: 10px;
+       margin-top:10px;
+   }
+   
+   #add-user-module #open-add-user-form-btn {
+       background: #000000;
+       font-size: 1.5em;
+       color: rgb(255, 255, 255);
+       padding-bottom: 5px;
+   }
+   
+   #add-user-module form {
+       position: absolute;
+       padding: 10px;
+       width: 150px;
+       background-color: #ffffff;
+       border: 1px solid #999;
+       display: none;
+   }
+   
+   #add-user-module form input {
+       width: 97%;
+       margin: 2px 0;
+   }
+   
+   #add-user-module form button {
+       background: #54bb7d;
+       font-size: 1em;
+       padding: 0px 10px;
+       color: rgb(255, 255, 255);
+       margin-top: 10px;
+   }
+   
+   
+   #add-user-module:hover form {
+       display: block;
+   }
+   
+   
+   /*Edit*/
+   #edit-user-module {
+       display: none;
+       position: absolute;
+       background-color: #ffffff;
+       border: 1px solid #999;
+       top:200px;
+       left: 160px;
+       padding: 10px;
+       width: 150px;
+   }
+   
+   #user-list li:hover~#edit-user-module {
+       display: none;
+   }
+   
+   
+   #edit-user-module form button {
+       background: #54bb7d;
+       font-size: 1em;
+       padding: 0px 10px;
+       color: rgb(255, 255, 255);
+       margin-top: 10px;
+   }
+   
 
 @media(max-width:800px){
     #gridIndex{

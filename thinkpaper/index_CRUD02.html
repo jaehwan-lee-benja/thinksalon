@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -8,43 +7,50 @@
     <title>ThinkPaper</title>
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body id="gridBody">
     <div>
         <h1>씽크페이퍼 - 큰 그림 정리</h1>
     </div>
     <div style="margin-bottom: 0.5rem;">
         <span>
-            작성자: <input type="text">
+            작성자: 이재환
         </span>
     </div>
     <div id="gridIndex">
         <div class="gridIndex">
             <!-- <h2>개요</h2> -->
             <span>
-                주제: <input type="text">
+            주제: 2022년 목표
             </span>
         </div>
         <div class="gridIndex">
             <span>
-                작성: <input type="date">
-                <div id="userList"></div>
+            <!-- 리스트 -->
+            리스트:<br>
+            <ul id="user-list"></ul>
             </span>
         </div>
-        <div class="button">
-            <form class="formInline">
-                <input type="button" value="셋트 저장"
-                    onClick="location.href='https://jaehwan-lee-benja.github.io/thinksalon/thinkpaper/index_view.html?'">
-            </form>
-            <form class="formInline">
-                <input type="submit" value="셋트 리스트 보기">
-            </form>
-            <form class="formInline">
-                <input type="submit" value="신규 셋트 만들기">
-            </form>
+        <div>
+            <!-- add user module -->
+            <section id="add-user-module" >
+                <button id="open-add-user-form-btn">+</button>
+                <form>
+                    <h2>새로 작성하기</h2>
+                    작성일:
+                    <input type='text' data-key='name' class='user-input'><br>
+                    방향:
+                    <input type='text' data-key='age' class='user-input'><br>
+                    네비:
+                    <input type='text' data-key='email' class='user-input'><br>
+                    액션:
+                    <input type='text' data-key='action' class='user-input'><br>
+                    <button type='button' id="add-user-btn">add user</button>
+                </form>
+
+            </section>
         </div>
     </div>
-
+    
     <div id="gridMain">
         <div style="padding: 0.5rem 1rem 0 0;">
             <div>
@@ -57,14 +63,42 @@
         </div>
         <div>
             <div id="gridMainContents">
+
+                <!-- edit user module -->
+                <section id="edit-user-module">
+                    <form>
+                        <h2>수정하기</h2>
+                        <input type="hidden" class="edit-userid">
+                        작성일:
+                        <input type='text' data-key='name' class='edit-user-input'><br>
+                        방향:
+                        <input type='text' data-key='age' class='edit-user-input'><br>
+                        네비:
+                        <input type='text' data-key='email' class='edit-user-input'><br>
+                        액션:
+                        <input type='text' data-key='action' class='edit-user-input'><br>
+                        <button type='button' id="edit-user-btn">save</button>
+                    </form>
+                </section>
+                
                 <div>
                     <h2>1. 방향성</h2>
                     <h3>내가 왜 이 길을 가고자 하는가, 본질적으로 느끼고 싶은 의미(가치)는 무엇인가?</h3>
                 </div>
                 <div>
-                    <div id="userDetail">
-                        <!-- <p >Name :<strong class="detailName"></strong></p> -->
-                    </div>
+                    <div id="user-detail"></div>
+
+                    <form>
+                        <p><textarea placeholder="텍스트 입력"></textarea></p>
+                        <div class="button">
+                            <form class="formInline">
+                                <input type="submit" value="저장">
+                            </form>
+                            <form class="formInline">
+                                <input type="submit" value="리스트 보기">
+                            </form>
+                        </div>
+                    </form>
                 </div>
             </div>
             <div id="gridMainContents">
@@ -107,14 +141,13 @@
             </div>
         </div>
     </div>
-
+    
     <!--하단 정보-->
     <div id="gridPageInfo">
         <div>
             <span>
                 이재환의 저작물인 이 저작물은(는) 크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 2.0 대한민국 라이선스에 따라 이용할 수 있습니다. <br>
-                This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
-                License.
+                This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
                 <a href="http://creativecommons.org/licenses/by-nc-sa/2.0/kr/">더 알아보기(More information)</a><br>
             </span>
         </div>

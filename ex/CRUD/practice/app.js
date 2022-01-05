@@ -14,6 +14,7 @@ firebase.initializeApp(config);
 const dbRef = firebase.database().ref();
 
 const usersRef = dbRef.child('users');
+
 const userListUI = document.getElementById("userList");
 
 usersRef.on("child_added", snap => {

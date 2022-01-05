@@ -39,17 +39,15 @@ function readUserData() {
 
 		snap.forEach(childSnap => {
 
-			let key = childSnap.key;
-            console.log('key=',key);
-			let	value = childSnap.val();
-            console.log('value=',value);
+			let key = childSnap.key,
+				value = childSnap.val()
   			
 			let $li = document.createElement("li");
 
 			// edit icon
 			let editIconUI = document.createElement("span");
 			editIconUI.class = "edit-user";
-			editIconUI.innerHTML = " ✎";
+			editIconUI.innerHTML = " ✎ ";
 			editIconUI.setAttribute("userid", key);
 			editIconUI.addEventListener("click", editButtonClicked)
 
@@ -60,7 +58,7 @@ function readUserData() {
 			deleteIconUI.setAttribute("userid", key);
 			deleteIconUI.addEventListener("click", deleteButtonClicked)
 			
-			$li.innerHTML = value.age;
+			$li.innerHTML = value.name;
 			$li.append(editIconUI);
 			$li.append(deleteIconUI);
 
@@ -91,7 +89,7 @@ function userClicked(e) {
 
 			snap.forEach(childSnap => {
 				var $p = document.createElement("p");
-				$p.innerHTML = " 내가 왜 이 길을 가고자 하는가, 본질적으로 느끼고 싶은 의미(가치)는 무엇인가? " + childSnap.key  + " - " +  childSnap.val();
+				$p.innerHTML = childSnap.key  + " - " +  childSnap.val();
 				userDetailUI.append($p);
 			})
 
