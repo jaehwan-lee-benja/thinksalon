@@ -12,9 +12,8 @@
         <h1>씽크페이퍼 - 큰 그림 정리</h1>
     </div>
     <div style="margin-bottom: 0.5rem;">
-        <span>
-            작성자: 이재환
-        </span>
+        이름: <input type="text" id="userName" value="testUser"/>
+        <input onClick="readData()" type="button" value="조회">
     </div>
     <div id="gridIndex">
         <div class="gridIndex">
@@ -24,31 +23,10 @@
             </span>
         </div>
         <div class="gridIndex">
-            <span>
-            <!-- 리스트 -->
-            리스트:<br>
-            <ul id="user-list"></ul>
-            </span>
+            날짜: <input type="text" id="date" />
         </div>
-        <div>
-            <!-- add user module -->
-            <section id="add-user-module" >
-                <button id="open-add-user-form-btn">+</button>
-                <form>
-                    <h2>새로 작성하기</h2>
-                    작성일:
-                    <input type='text' data-key='name' class='user-input'><br>
-                    방향:
-                    <input type='text' data-key='age' class='user-input'><br>
-                    네비:
-                    <input type='text' data-key='email' class='user-input'><br>
-                    액션:
-                    <input type='text' data-key='action' class='user-input'><br>
-                    <button type='button' id="add-user-btn">add user</button>
-                </form>
 
-            </section>
-        </div>
+        
     </div>
     
     <div id="gridMain">
@@ -63,42 +41,14 @@
         </div>
         <div>
             <div id="gridMainContents">
-
                 <!-- edit user module -->
-                <section id="edit-user-module">
-                    <form>
-                        <h2>수정하기</h2>
-                        <input type="hidden" class="edit-userid">
-                        작성일:
-                        <input type='text' data-key='name' class='edit-user-input'><br>
-                        방향:
-                        <input type='text' data-key='age' class='edit-user-input'><br>
-                        네비:
-                        <input type='text' data-key='email' class='edit-user-input'><br>
-                        액션:
-                        <input type='text' data-key='action' class='edit-user-input'><br>
-                        <button type='button' id="edit-user-btn">save</button>
-                    </form>
-                </section>
                 
                 <div>
                     <h2>1. 방향성</h2>
                     <h3>내가 왜 이 길을 가고자 하는가, 본질적으로 느끼고 싶은 의미(가치)는 무엇인가?</h3>
                 </div>
                 <div>
-                    <div id="user-detail"></div>
-
-                    <form>
-                        <p><textarea placeholder="텍스트 입력"></textarea></p>
-                        <div class="button">
-                            <form class="formInline">
-                                <input type="submit" value="저장">
-                            </form>
-                            <form class="formInline">
-                                <input type="submit" value="리스트 보기">
-                            </form>
-                        </div>
-                    </form>
+                        <p><textarea id="direction" placeholder="텍스트 입력"></textarea></p>
                 </div>
             </div>
             <div id="gridMainContents">
@@ -107,17 +57,7 @@
                     <h3>내가 단계적으로 지향하는 도달 지점은 어디인가?</h3>
                 </div>
                 <div>
-                    <form>
-                        <p><textarea placeholder="텍스트 입력"></textarea></p>
-                        <div class="button">
-                            <form class="formInline">
-                                <input type="submit" value="저장">
-                            </form>
-                            <form class="formInline">
-                                <input type="submit" value="리스트 보기">
-                            </form>
-                        </div>
-                    </form>
+                    <p><textarea id="navi" placeholder="텍스트 입력"></textarea></p>
                 </div>
             </div>
             <div id="gridMainContents">
@@ -126,19 +66,17 @@
                     <h3>어떤 루틴 시스템(행동 또는 시간의 반복)을 지향하는가?</h3>
                 </div>
                 <div>
-                    <form>
-                        <p><textarea placeholder="텍스트 입력"></textarea></p>
-                        <div class="button">
-                            <form class="formInline">
-                                <input type="submit" value="저장">
-                            </form>
-                            <form class="formInline">
-                                <input type="submit" value="리스트 보기">
-                            </form>
-                        </div>
-                    </form>
+                    <p><textarea id="action" placeholder="텍스트 입력"></textarea></p>
                 </div>
             </div>
+
+            <div id="gridMainContents">
+                <div class="button">
+                    <input onClick="onNew()" type="button" value="신규">
+                    <input onClick="onUpdate()" type="button" value="수정">
+                </div>
+            </div>
+
         </div>
     </div>
     
