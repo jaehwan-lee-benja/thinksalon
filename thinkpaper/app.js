@@ -17,8 +17,6 @@ firebase.initializeApp(config);
 
 // Firebase Database Reference and the child
 const db = firebase.database()
-const usersRef = db.ref("users")
-
 
 let data = {}
 
@@ -33,6 +31,7 @@ function readData() {
 		});
 		// html에 넣기.
 		console.log(data);
+		document.getElementById('title').value = data.title;
 		document.getElementById('date').value = data.date;
 		document.getElementById('direction').innerHTML = data.direction;
 		document.getElementById('navi').innerHTML = data['navi'];	// 이렇게 해도 됨.
@@ -43,12 +42,13 @@ function readData() {
 // 버튼 클릭 시 데이터를 수정하기. *주의 신규입력 아님.
 function onUpdate() {
 	let updatedData = {}
-	updatedData['date'] = document.getElementById('date').value
-	updatedData['direction'] = document.getElementById('direction').value
-	updatedData['navi'] = document.getElementById('navi').value
-	updatedData['action'] = document.getElementById('action').value
+	updatedData['title'] = document.getElementById('title').value;
+	updatedData['date'] = document.getElementById('date').value;
+	updatedData['direction'] = document.getElementById('direction').value;
+	updatedData['navi'] = document.getElementById('navi').value;
+	updatedData['action'] = document.getElementById('action').value;
 
-	const userName = document.getElementById('userName').value
+	const userName = document.getElementById('userName').value;
 	const userRef = db.ref("users/" + userName)
 	userRef.update(updatedData);
 	alert("saved.");
@@ -58,6 +58,7 @@ function onUpdate() {
 // 신규 입력. test라는 이름으로, data를 그대로 입력.
 function onNew() {
 	let newData = {}
+	newData['title'] = document.getElementById('title').value
 	newData['date'] = document.getElementById('date').value
 	newData['direction'] = document.getElementById('direction').value
 	newData['navi'] = document.getElementById('navi').value
