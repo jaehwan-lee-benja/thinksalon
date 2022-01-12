@@ -8,72 +8,111 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body id="gridBody">
-    <div>
-        <h1>씽크페이퍼 - 큰 그림 정리</h1>
-    </div>
-    <div style="margin-bottom: 0.5rem;">
-        이름: <input type="text" id="userName" value="testUser"/>
-        <input onClick="readData()" type="button" value="조회">
-    </div>
-    <div id="gridIndex">
-        <div class="gridIndex">
-            주제: <input type="text" id="title" />
-        </div>
-        <div class="gridIndex">
-            날짜: <input type="text" id="date" />
-        </div>
-
-        
+    <div id="serviceTitle">
+        <h1>씽크페이퍼</h1>
     </div>
     
     <div id="gridMain">
-        <div style="padding: 0.5rem 1rem 0 0;">
+        <div id="gridIndex">
             <div>
-                <h2>큰 그림 보기</h2>
-                <h3>한발자국 떨어져서 목적, 흐름, 현재를 조망하기</h3>
+                <!--
+                <div>
+                    <h2>큰 그림 보기</h2>
+                    <h3>한발자국 떨어져서 목적, 흐름, 현재를 조망하기</h3>
+                </div>
+                -->
+                <div>
+                    <img id="imageMain" src="images/img_main.png">
+                </div>
             </div>
-            <div style="margin-top: 0.5rem;">
-                <img id="imageMain" src="images/img_main.png">
+            <div>
+                <table>
+                    <tr>
+                      <td>이름</td>
+                      <td><input class="indexTextbox" type="text" id="userName"/></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <input onClick="readData()" type="button" value="조회">
+                            <input onClick="readDataList()" type="button" value="리스트 보기">
+                        </td>
+                    </tr>
+                  </table>
+                  <table>
+                    <tr>
+                        <td>주제</td>
+                        <td><input class="indexTextbox" type="text" id="title"/></td>
+                    </tr>
+                    <tr>
+                        <td>날짜</td>
+                        <td><input class="indexTextbox" type="date" id="date"/></td>
+                      </tr>
+                  </table>
+
             </div>
         </div>
+        <div id="gridMainFrame">
+            <div id="contentsSave">
+                <input onClick="onNew()" type="button" value="신규">
+                <input onClick="onUpdate()" type="button" value="저장">
+            </div>
         <div>
-            <div id="gridMainContents">
-                <!-- edit user module -->
-                
+            <div id="gridMainSubFrame">
                 <div>
-                    <h2>1. 방향성</h2>
-                    <h3>내가 왜 이 길을 가고자 하는가, 본질적으로 느끼고 싶은 의미(가치)는 무엇인가?</h3>
+                    <div id="gridMainContents">
+                        <!-- edit user module -->
+                        
+                        <div>
+                            <h2>1. 방향성</h2>
+                            <h3>내가 왜 이 길을 가고자 하는가, 본질적으로 느끼고 싶은 의미(가치)는 무엇인가?</h3>
+                        </div>
+                        <div style="background-color: antiquewhite;">
+                                <p><textarea id="direction" placeholder="텍스트 입력"></textarea></p>
+                        </div>
+                    </div>
+                    <div id="gridMainContents">
+                        <div>
+                            <h2>2. 네비(지도)</h2>
+                            <h3>내가 나가가고자 하는 도달 지점과 길은 어디인가?</h3>
+                        </div>
+                        <div style="background-color: antiquewhite;" id="gridNavi">
+                            <div>
+                                <h4>현재위치(A)</h4>
+                                <p><textarea id="naviA" placeholder="텍스트 입력"></textarea></p>
+                            </div>
+                            <div>
+                                <h4>목표지점(B)</h4>
+                                <p><textarea id="naviB" placeholder="텍스트 입력"></textarea></p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div>
-                        <p><textarea id="direction" placeholder="텍스트 입력"></textarea></p>
-                </div>
-            </div>
-            <div id="gridMainContents">
-                <div>
-                    <h2>2. 네비게이션</h2>
-                    <h3>내가 나가가고자 하는 도달 지점과 길은 어디인가?</h3>
-                </div>
-                <div>
-                    <p><textarea id="navi" placeholder="텍스트 입력"></textarea></p>
-                </div>
-            </div>
-            <div id="gridMainContents">
-                <div>
-                    <h2>3. 액션플랜</h2>
-                    <h3>어떤 루틴(행동 또는 시간의 반복)으로 나아가는가?</h3>
-                </div>
-                <div>
-                    <p><textarea id="action" placeholder="텍스트 입력"></textarea></p>
-                </div>
-            </div>
+                    <div id="gridMainContents">
+                        <div>
+                            <h2>3. 액션플랜</h2>
+                            <h3>어떤 루틴(행동 또는 시간의 반복)으로 나아가는가?</h3>
+                        </div>
 
-            <div id="gridMainContents">
-                <div class="button">
-                    <input onClick="onNew()" type="button" value="신규">
-                    <input onClick="onUpdate()" type="button" value="수정">
+                        <div style="background-color: antiquewhite;">
+                            <div id="gridAction">
+                                <textarea id="actionMemo" placeholder="텍스트 입력"></textarea>
+                                <div id="myDIV" class="header">
+                                    <input class="todoInput" type="text" id="myInput" placeholder="액션적기">
+                                    <span onclick="newElement()" class="addBtn">추가</span>
+                                  </div>
+                                  
+                                  <ul id="myUL">
+                                      <li id="action">sample</li>
+                                  </ul>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
             </div>
-
+        </div>
         </div>
     </div>
     
@@ -81,36 +120,42 @@
     <div id="gridPageInfo">
         <div>
             <span>
-                이재환의 저작물인 이 저작물은(는) 크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 2.0 대한민국 라이선스에 따라 이용할 수 있습니다. <br>
-                This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
+                This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.<br>
                 <a href="http://creativecommons.org/licenses/by-nc-sa/2.0/kr/">더 알아보기(More information)</a><br>
             </span>
         </div>
         <div class="button">
             <input id="darkMode" type="button" value="다크모드 켜기" onclick="
                 var selectorBody = document.querySelector('body')
+                var selectorGridIndex =  document.getElementById('gridIndex')
                 if(this.value === '다크모드 켜기') {
                     selectorBody.style.backgroundColor = '#1E1E1E';
                     selectorBody.style.color = 'white';
                     this.value = '다크모드 끄기';
-
+                
                     var alist = document.querySelectorAll('a');
                     var i = 0;
                     while(i < alist.length) {
                         alist[i].style.color = 'powderblue';
                         i = i + 1;
                     }
+                
+                    selectorGridIndex.style.backgroundColor = '#333333';
+                
                 } else {
                     selectorBody.style.backgroundColor = 'white';
                     selectorBody.style.color = 'black';
                     this.value = '다크모드 켜기';
-
+                
                     var alist = document.querySelectorAll('a');
                     var i = 0;
                     while(i < alist.length) {
                         alist[i].style.color = 'blue';
                         i = i + 1;
                     }
+                
+                    selectorGridIndex.style.backgroundColor = 'rgb(230, 230, 230)';
+                
                 }
             ">
         </div>

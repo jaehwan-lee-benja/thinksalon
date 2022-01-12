@@ -17,6 +17,7 @@ firebase.initializeApp(config);
 
 // Firebase Database Reference and the child
 const db = firebase.database()
+const usersRef = db.ref("users")
 
 let data = {}
 
@@ -34,8 +35,10 @@ function readData() {
 		document.getElementById('title').value = data.title;
 		document.getElementById('date').value = data.date;
 		document.getElementById('direction').innerHTML = data.direction;
-		document.getElementById('navi').innerHTML = data['navi'];	// 이렇게 해도 됨.
+		document.getElementById('naviA').innerHTML = data['naviA'];	// 이렇게 해도 됨.
+		document.getElementById('naviB').innerHTML = data['naviB'];
 		document.getElementById('action').innerHTML = data.action;
+		document.getElementById('actionMemo').innerHTML = data.actionMemo;
 	});
 };
 
@@ -45,8 +48,11 @@ function onUpdate() {
 	updatedData['title'] = document.getElementById('title').value;
 	updatedData['date'] = document.getElementById('date').value;
 	updatedData['direction'] = document.getElementById('direction').value;
-	updatedData['navi'] = document.getElementById('navi').value;
+	updatedData['naviA'] = document.getElementById('naviA').value;
+	updatedData['naviB'] = document.getElementById('naviB').value;
 	updatedData['action'] = document.getElementById('action').value;
+	updatedData['actionMemo'] = document.getElementById('actionMemo').value;
+
 
 	const userName = document.getElementById('userName').value;
 	const userRef = db.ref("users/" + userName)
@@ -61,10 +67,90 @@ function onNew() {
 	newData['title'] = document.getElementById('title').value
 	newData['date'] = document.getElementById('date').value
 	newData['direction'] = document.getElementById('direction').value
-	newData['navi'] = document.getElementById('navi').value
+	newData['naviA'] = document.getElementById('naviA').value
+	newData['naviB'] = document.getElementById('naviB').value
 	newData['action'] = document.getElementById('action').value
+	newData['actionMemo'] = document.getElementById('actionMemo').value
 
 	let userName = document.getElementById('userName').value
 	usersRef.child(userName)
 		.set(newData);
+}
+
+//주제리스트 만들기
+function readDataList() {
+	const userName = document.getElementById('userName').value
+	const userRef = db.ref("users/" + userName)
+	userRef.on("value", snap => {
+		snap.forEach(childSnap => {
+			let key = childSnap.key;
+			let value = childSnap.val();
+			data[key] = value;
+		});
+		// html에 넣기.
+		document.getElementById('title').value = data['title'];
+		console.log(data['title']);
+	});
+};
+
+//다크모드
+function darkmode() {
+	
+}
+
+//to do list
+// Create a "close" button and append it to each list item
+var myNodelist = document.getElementsByTagName("LI");
+var i;
+for (i = 0; i < myNodelist.length; i++) {
+  var span = document.createElement("SPAN");
+  var txt = document.createTextNode("\u00D7");
+  span.className = "close";
+  span.appendChild(txt);
+  myNodelist[i].appendChild(span);
+}
+
+// Click on a close button to hide the current list item
+var close = document.getElementsByClassName("close");
+var i;
+for (i = 0; i < close.length; i++) {
+  close[i].onclick = function() {
+    var div = this.parentElement;
+    div.style.display = "none";
+  }
+}
+
+// Add a "checked" symbol when clicking on a list item
+var list = document.querySelector('ul');
+list.addEventListener('click', function(ev) {
+  if (ev.target.tagName === 'LI') {
+    ev.target.classList.toggle('checked');
+  }
+}, false);
+
+// Create a new list item when clicking on the "Add" button
+function newElement() {
+  var li = document.createElement("li");
+  var inputValue = document.getElementById("myInput").value;
+  var t = document.createTextNode(inputValue);
+  li.appendChild(t);
+  if (inputValue === '') {
+    alert("You must write something!");
+  } else {
+    document.getElementById("myUL").appendChild(li);
+  }
+  document.getElementById("myInput").value = "";
+
+  var span = document.createElement("SPAN");
+  var txt = document.createTextNode("\u00D7");
+  span.className = "close";
+  span.appendChild(txt);
+  li.appendChild(span);
+
+  for (i = 0; i < close.length; i++) {
+    close[i].onclick = function() {
+      var div = this.parentElement;
+      div.style.display = "none";
+    }
+  }
 }

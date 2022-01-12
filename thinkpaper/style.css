@@ -1,33 +1,93 @@
+h1{
+    font-size: 1.5rem;
+}
+
+h2{
+    font-size: 1.2rem;
+}
+
+h3 {
+    font-size: 0.9rem;
+    font-weight: normal;
+}
+
+h4 {
+    font-size: 0.8rem;
+}
+
+textarea {
+    width: 100%;
+    min-height: 10rem;
+}
+
 #gridBody{
     display: grid;
-    grid-template-rows: 3rem "height: auto;" "height: auto;" 1fr 3rem;
+    grid-template-rows: "height: auto;" 1fr 3rem;
     margin: 2rem;
+    grid-gap: 0.2rem;
 }
 #gridIndex{
     display: grid;
-    grid-template-columns: 15rem 1fr 20rem;
-    border-bottom: 1px solid gray;
+    grid-template-rows: 10rem 1fr;
+    background-color: rgb(230, 230, 230);
+    padding: 1rem;
+    grid-gap: 0.2rem;
+}
+#gridMainFrame{
+    display: grid;
+    grid-template-rows: "height: auto;" 1fr;
+    margin-left: 2rem;
+    grid-gap: 0.2rem;
+}
+#contentsSave{
+    border-bottom: 1px solid rgb(200, 200, 200);
     padding-bottom: 0.5rem;
+    text-align: right;
+}
+#gridMainSubFrame{
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    grid-gap: 1rem;
 }
 #gridMain{
     display: grid;
-    grid-template-columns: 30rem 1fr;
+    grid-template-columns: 15rem 1fr;
     padding-bottom: 1rem;
+    grid-gap: 0.2rem;
 }
 #gridMainContents{
     display: grid;
-    grid-template-rows: "height: auto;" 1fr;
-    padding: 0.5rem 0.5rem 0.5rem 0;
+    grid-template-rows: auto 1fr;
     margin-bottom: 0.5rem;
-    align-content: right;
+    grid-gap: 0.2rem;
 }
+
+#gridNavi{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 0.7rem;
+}
+
+#gridAction{
+    display: grid;
+    grid-template-rows: 10rem 1fr;
+    grid-gap: 0.7rem;
+}
+
 #gridPageInfo{
     font-size: 0.5rem;
     display: grid;
     grid-template-columns: 1fr 10rem 10rem;
-    border-top: 1px solid gray;
+    border-top: 1px solid rgb(200, 200, 200);
     padding-top: 0.5rem;
+    grid-gap: 0.2rem;
 }
+
+#serviceTitle{
+    border-bottom: 1px solid rgb(200, 200, 200);
+    margin-bottom: 1rem;
+}
+
 .pageInfoBrand{  
     text-align: right;
     font-size: 0.8rem;
@@ -41,137 +101,146 @@
 .formInline{
     display: inline;
 }
-h3 {
-    font-size: 1rem;
-    margin-bottom: 0;
-}
-textarea {
-    width: 100%;
-    height: 12rem;
+
+.indexTextbox{
+    width: 9.5rem;
 }
 
-/*CRUD Practice*/
-   
-   /*---------------------------*/
-   /* Read Users */
-   /*---------------------------*/
-   #user-list {
-    margin:0;
-    padding:0;
-    width:180px;
-    float:left;
-    margin:10px;
-    border:1px solid #000000;
-   }
-   
-   #user-list h2 {
-    padding:10px;
-    margin:0;
-    color:rgb(0, 0, 0);
-   }
-   
-   #user-list li {
-    padding:5px 10px;
-    border-top:1px solid #4fc3fc;
+
+
+/*to do list
+https://www.w3schools.com/howto/howto_js_todolist.asp
+*/
+
+/* Include the padding and border in an element's total width and height */
+* {
+    box-sizing: border-box;
+  }
+  
+  /* Remove margins and padding from the list */
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+  }
+  
+  /* Style the list items */
+  ul li {
     cursor: pointer;
-    color:rgb(0, 0, 0);
-    font-style: italic;
-    list-style: none 
-   }
-   
-   #user-list li:hover {
-    background: #bcbcbc;
-   }
-   
-   #user-detail {
-    float:left;
-    width:200px;
-    margin:10px;
-    margin-left:0;
-    padding:10px;
-    border:1px solid #bcbcbc;
-   }
-   
-   
-   
-   /* Add User Module */
-   #add-user-module {
-       width:30px;
-       margin-bottom: 1px;
-       margin-left: 10px;
-       margin-top:10px;
-   }
-   
-   #add-user-module #open-add-user-form-btn {
-       background: #000000;
-       font-size: 1.5em;
-       color: rgb(255, 255, 255);
-       padding-bottom: 5px;
-   }
-   
-   #add-user-module form {
-       position: absolute;
-       padding: 10px;
-       width: 150px;
-       background-color: #ffffff;
-       border: 1px solid #999;
-       display: none;
-   }
-   
-   #add-user-module form input {
-       width: 97%;
-       margin: 2px 0;
-   }
-   
-   #add-user-module form button {
-       background: #54bb7d;
-       font-size: 1em;
-       padding: 0px 10px;
-       color: rgb(255, 255, 255);
-       margin-top: 10px;
-   }
-   
-   
-   #add-user-module:hover form {
-       display: block;
-   }
-   
-   
-   /*Edit*/
-   #edit-user-module {
-       display: none;
-       position: absolute;
-       background-color: #ffffff;
-       border: 1px solid #999;
-       top:200px;
-       left: 160px;
-       padding: 10px;
-       width: 150px;
-   }
-   
-   #user-list li:hover~#edit-user-module {
-       display: none;
-   }
-   
-   
-   #edit-user-module form button {
-       background: #54bb7d;
-       font-size: 1em;
-       padding: 0px 10px;
-       color: rgb(255, 255, 255);
-       margin-top: 10px;
-   }
+    position: relative;
+    padding: 12px 8px 12px 40px;
+    background: #eee;
+    transition: 0.2s;
+  
+    /* make the list items unselectable */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  
+  /* Set all odd list items to a different color (zebra-stripes) */
+  ul li:nth-child(odd) {
+    background: #f9f9f9;
+  }
+  
+  /* Darker background-color on hover */
+  ul li:hover {
+    background: #ddd;
+  }
+  
+  /* When clicked on, add a background color and strike out text */
+  ul li.checked {
+    background: #888;
+    color: #fff;
+    text-decoration: line-through;
+  }
+  
+  /* Add a "checked" mark when clicked on */
+  ul li.checked::before {
+    content: '';
+    position: absolute;
+    border-color: #fff;
+    border-style: solid;
+    border-width: 0 2px 2px 0;
+    top: 10px;
+    left: 16px;
+    transform: rotate(45deg);
+    height: 15px;
+    width: 7px;
+  }
+  
+  /* Style the close button */
+  .close {
+    position: absolute;
+    right: 0;
+    top: 0;
+    padding: 12px 16px 12px 16px;
+  }
+  
+  .close:hover {
+    background-color: #f44336;
+    color: white;
+  }
+  
+  /* Style the header */
+  .header {
+    background-color: #888;
+    color: white;
+    padding: 10px;
+  }
+  
+  /* Clear floats after the header */
+  .header:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+  
+  /* Style the input */
+  .todoInput {
+    margin: 0;
+    border: none;
+    border-radius: 0;
+    width: 75%;
+    padding: 10px;
+    float: left;
+  }
+  
+  /* Style the "Add" button */
+  .addBtn {
+    padding: 10px;
+    width: 25%;
+    background: #d9d9d9;
+    color: #555;
+    float: left;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.3s;
+    border-radius: 0;
+  }
+  
+  .addBtn:hover {
+    background-color: #bbb;
+  }
+
+
+
    
 
 @media(max-width:800px){
     #gridIndex{
         display: block;
-        border-bottom: 1px solid gray;
-        padding-bottom: 0.5rem;
+        margin-bottom: 1rem;
     }
     #gridMain{
         display: block;
         padding-bottom: 1rem;
+    }
+    #gridMainFrame{
+        display: grid;
+        grid-template-rows: "height: auto;" 1fr;
+        margin-left: 0rem;
     }
     #gridPageInfo{
         font-size: 0.5rem;
@@ -180,7 +249,7 @@ textarea {
         padding-top: 0.5rem;
     }
     #imageMain{
-        max-width: 29rem;
+        max-width: 15rem;
     }
     .pageInfoBrand{  
         text-align: left;
@@ -190,7 +259,20 @@ textarea {
     .gridIndex{
         padding-bottom: 0.5rem;
     }
+    #gridMainSubFrame{
+        display: block;
+    }
     .button{
         text-align: left;
+    }
+    #gridMainContents{
+        display: grid;
+        grid-template-rows: 7rem auto;
+        padding: 0.5rem 0.5rem 0.5rem 0;
+        margin-bottom: 0.5rem;
+    }
+
+    #gridNavi{
+        display: block;   
     }
 }
