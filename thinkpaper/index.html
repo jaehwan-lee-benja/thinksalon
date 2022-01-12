@@ -29,24 +29,14 @@
                 <table>
                     <tr>
                       <td>이름</td>
-                      <td><input class="indexTextbox" type="text" id="userName"/></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td>
-                            <input onClick="readData()" type="button" value="조회">
-                            <input onClick="readDataList()" type="button" value="리스트 보기">
-                        </td>
-                    </tr>
-                  </table>
-                  <table>
-                    <tr>
-                        <td>주제</td>
-                        <td><input class="indexTextbox" type="text" id="title"/></td>
+                      <td>
+                        <input class="indexTextbox" type="text" id="userName"/>
+                        <input onClick="readData()" type="button" value="조회">
+                    </td>
                     </tr>
                     <tr>
                         <td>날짜</td>
-                        <td><input class="indexTextbox" type="date" id="date"/></td>
+                        <td><input class="indexTextbox" type="text" id="date"/></td>
                       </tr>
                   </table>
 
@@ -67,8 +57,8 @@
                             <h2>1. 방향성</h2>
                             <h3>내가 왜 이 길을 가고자 하는가, 본질적으로 느끼고 싶은 의미(가치)는 무엇인가?</h3>
                         </div>
-                        <div style="background-color: antiquewhite;">
-                                <p><textarea id="direction" placeholder="텍스트 입력"></textarea></p>
+                        <div>
+                                <textarea id="direction" placeholder="텍스트 입력"></textarea>
                         </div>
                     </div>
                     <div id="gridMainContents">
@@ -76,14 +66,14 @@
                             <h2>2. 네비(지도)</h2>
                             <h3>내가 나가가고자 하는 도달 지점과 길은 어디인가?</h3>
                         </div>
-                        <div style="background-color: antiquewhite;" id="gridNavi">
+                        <div id="gridNavi">
                             <div>
                                 <h4>현재위치(A)</h4>
-                                <p><textarea id="naviA" placeholder="텍스트 입력"></textarea></p>
+                                <textarea id="naviA" placeholder="텍스트 입력"></textarea>
                             </div>
                             <div>
                                 <h4>목표지점(B)</h4>
-                                <p><textarea id="naviB" placeholder="텍스트 입력"></textarea></p>
+                                <textarea id="naviB" placeholder="텍스트 입력"></textarea>
                             </div>
                         </div>
                     </div>
@@ -95,17 +85,9 @@
                             <h3>어떤 루틴(행동 또는 시간의 반복)으로 나아가는가?</h3>
                         </div>
 
-                        <div style="background-color: antiquewhite;">
-                            <div id="gridAction">
-                                <textarea id="actionMemo" placeholder="텍스트 입력"></textarea>
-                                <div id="myDIV" class="header">
-                                    <input class="todoInput" type="text" id="myInput" placeholder="액션적기">
-                                    <span onclick="newElement()" class="addBtn">추가</span>
-                                  </div>
-                                  
-                                  <ul id="myUL">
-                                      <li id="action">sample</li>
-                                  </ul>
+                        <div>
+                            <div>
+                                <textarea id="action" placeholder="텍스트 입력"></textarea>
                             </div>
                         </div>
 
@@ -125,39 +107,7 @@
             </span>
         </div>
         <div class="button">
-            <input id="darkMode" type="button" value="다크모드 켜기" onclick="
-                var selectorBody = document.querySelector('body')
-                var selectorGridIndex =  document.getElementById('gridIndex')
-                if(this.value === '다크모드 켜기') {
-                    selectorBody.style.backgroundColor = '#1E1E1E';
-                    selectorBody.style.color = 'white';
-                    this.value = '다크모드 끄기';
-                
-                    var alist = document.querySelectorAll('a');
-                    var i = 0;
-                    while(i < alist.length) {
-                        alist[i].style.color = 'powderblue';
-                        i = i + 1;
-                    }
-                
-                    selectorGridIndex.style.backgroundColor = '#333333';
-                
-                } else {
-                    selectorBody.style.backgroundColor = 'white';
-                    selectorBody.style.color = 'black';
-                    this.value = '다크모드 켜기';
-                
-                    var alist = document.querySelectorAll('a');
-                    var i = 0;
-                    while(i < alist.length) {
-                        alist[i].style.color = 'blue';
-                        i = i + 1;
-                    }
-                
-                    selectorGridIndex.style.backgroundColor = 'rgb(230, 230, 230)';
-                
-                }
-            ">
+            <input id="darkMode" type="button" value="다크모드 켜기" onclick="darkmode()">
         </div>
         <div class="pageInfoBrand">
             <a href="http://thinksalon.net">thinksalon.net | 생각살롱</a>

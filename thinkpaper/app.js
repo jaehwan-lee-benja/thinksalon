@@ -24,34 +24,33 @@ let data = {}
 function readData() {
 	const userName = document.getElementById('userName').value
 	const userRef = db.ref("users/" + userName)
+	//const userRef = db.ref("Test/" + "이영수")
+
 	userRef.on("value", snap => {
 		snap.forEach(childSnap => {
+			console.log("childSnap=", childSnap.val());
 			let key = childSnap.key;
 			let value = childSnap.val();
 			data[key] = value;
 		});
 		// html에 넣기.
 		console.log(data);
-		document.getElementById('title').value = data.title;
 		document.getElementById('date').value = data.date;
 		document.getElementById('direction').innerHTML = data.direction;
 		document.getElementById('naviA').innerHTML = data['naviA'];	// 이렇게 해도 됨.
 		document.getElementById('naviB').innerHTML = data['naviB'];
 		document.getElementById('action').innerHTML = data.action;
-		document.getElementById('actionMemo').innerHTML = data.actionMemo;
 	});
 };
 
 // 버튼 클릭 시 데이터를 수정하기. *주의 신규입력 아님.
 function onUpdate() {
 	let updatedData = {}
-	updatedData['title'] = document.getElementById('title').value;
 	updatedData['date'] = document.getElementById('date').value;
 	updatedData['direction'] = document.getElementById('direction').value;
 	updatedData['naviA'] = document.getElementById('naviA').value;
 	updatedData['naviB'] = document.getElementById('naviB').value;
 	updatedData['action'] = document.getElementById('action').value;
-	updatedData['actionMemo'] = document.getElementById('actionMemo').value;
 
 
 	const userName = document.getElementById('userName').value;
@@ -64,38 +63,51 @@ function onUpdate() {
 // 신규 입력. test라는 이름으로, data를 그대로 입력.
 function onNew() {
 	let newData = {}
-	newData['title'] = document.getElementById('title').value
 	newData['date'] = document.getElementById('date').value
 	newData['direction'] = document.getElementById('direction').value
 	newData['naviA'] = document.getElementById('naviA').value
 	newData['naviB'] = document.getElementById('naviB').value
 	newData['action'] = document.getElementById('action').value
-	newData['actionMemo'] = document.getElementById('actionMemo').value
 
 	let userName = document.getElementById('userName').value
 	usersRef.child(userName)
 		.set(newData);
 }
 
-//주제리스트 만들기
-function readDataList() {
-	const userName = document.getElementById('userName').value
-	const userRef = db.ref("users/" + userName)
-	userRef.on("value", snap => {
-		snap.forEach(childSnap => {
-			let key = childSnap.key;
-			let value = childSnap.val();
-			data[key] = value;
-		});
-		// html에 넣기.
-		document.getElementById('title').value = data['title'];
-		console.log(data['title']);
-	});
-};
-
 //다크모드
 function darkmode() {
+	var selectorBody = document.querySelector('body')
+	var selectorDarkMode =  document.getElementById('darkMode')
+	var selectorGridIndex =  document.getElementById('gridIndex')
+	if(selectorDarkMode.value === '다크모드 켜기') {
+		selectorBody.style.backgroundColor = '#1E1E1E';
+		selectorBody.style.color = 'white';
+		selectorDarkMode.value = '다크모드 끄기';
 	
+		var alist = document.querySelectorAll('a');
+		var i = 0;
+		while(i < alist.length) {
+			alist[i].style.color = 'powderblue';
+			i = i + 1;
+		}
+	
+		selectorGridIndex.style.backgroundColor = '#333333';
+	
+	} else {
+		selectorBody.style.backgroundColor = 'white';
+		selectorBody.style.color = 'black';
+		selectorDarkMode.value = '다크모드 켜기';
+	
+		var alist = document.querySelectorAll('a');
+		var i = 0;
+		while(i < alist.length) {
+			alist[i].style.color = 'blue';
+			i = i + 1;
+		}
+	
+		selectorGridIndex.style.backgroundColor = 'rgb(230, 230, 230)';
+	
+	}
 }
 
 //to do list
