@@ -24,23 +24,47 @@ let data = {}
 function readData() {
 	const userName = document.getElementById('userName').value
 	const userRef = db.ref("users/" + userName)
-	//const userRef = db.ref("Test/" + "이영수")
+	const userRef2 = db.ref("Test/이영수")
 
 	userRef.on("value", snap => {
 		snap.forEach(childSnap => {
-			console.log("childSnap=", childSnap.val());
+			//console.log("childSnap=", childSnap.val());
 			let key = childSnap.key;
 			let value = childSnap.val();
 			data[key] = value;
+			//console.log('01=',data[key]);
 		});
 		// html에 넣기.
-		console.log(data);
+		//console.log(data);
 		document.getElementById('date').value = data.date;
 		document.getElementById('direction').innerHTML = data.direction;
 		document.getElementById('naviA').innerHTML = data['naviA'];	// 이렇게 해도 됨.
 		document.getElementById('naviB').innerHTML = data['naviB'];
 		document.getElementById('action').innerHTML = data.action;
 	});
+
+	//firebase.database().ref("Test/이영수").on()
+	userRef2.on("value", snap => {
+		snap.forEach(childSnap2 => {
+			//console.log("childSnap2=", childSnap2.val());
+			let key2 = childSnap2.key2;
+			let value2 = childSnap2.val();
+			data[key2] = value2;
+			//console.log('02=',value2);
+			var array1 = value2;
+			//console.log('02.1=',array1);
+			console.log('02.2=',array1['날짜']);
+		});
+		// html에 넣기.
+		//document.getElementById('date').value = array1['날짜'];
+		//console.log('03=',document.write.array1['날짜'])
+		document.getElementById('direction').innerHTML = data.direction;
+		//console.log('04=',document.getElementById('direction').innerHTML)
+		document.getElementById('naviA').innerHTML = data['naviA'];	// 이렇게 해도 됨.
+		document.getElementById('naviB').innerHTML = data['naviB'];
+		document.getElementById('action').innerHTML = data.action;
+	});
+
 };
 
 // 버튼 클릭 시 데이터를 수정하기. *주의 신규입력 아님.
@@ -76,7 +100,7 @@ function onNew() {
 
 // 신규 버튼과 수정 저장 관계 - CRUD 참고해보기 / 삭제도 필요
 var selectorOnNew = document.getElementById('onNew')
-console.log('1=', selectorOnNew.value);
+//console.log('1=', selectorOnNew.value);
 
 //다크모드
 function darkmode() {
