@@ -30,7 +30,7 @@ textarea {
 #gridIndex{
     display: grid;
     grid-template-rows: 10rem 1fr;
-    background-color: rgb(230, 230, 230);
+    background-color: rgb(240, 240, 240);
     padding: 1rem;
     grid-gap: 0.2rem;
 }
@@ -41,14 +41,9 @@ textarea {
     grid-gap: 0.2rem;
 }
 #contentsSave{
-    border-bottom: 1px solid rgb(200, 200, 200);
-    padding-bottom: 0.5rem;
+    background-color: rgb(240, 240, 240);
+    padding: 0.5rem;
     text-align: right;
-}
-#gridMainSubFrame{
-    display: grid;
-    grid-template-columns: 4fr 3fr;
-    grid-gap: 1rem;
 }
 #gridMain{
     display: grid;
