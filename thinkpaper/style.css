@@ -37,7 +37,7 @@ textarea {
 #gridMainFrame{
     display: grid;
     grid-template-rows: "height: auto;" 1fr;
-    margin-left: 2rem;
+    margin-left: 1rem;
     grid-gap: 0.2rem;
 }
 #contentsSave{

@@ -23,67 +23,47 @@ let data = {}
 
 function readData() {
 	const userName = document.getElementById('userName').value
-	//const userRef = db.ref("users/" + userName)
-	const userRef = db.ref("Test/" + userName +"/")
+	const userRef = db.ref("users/" + userName)
+	const userRef2 = db.ref("Test/이영수")
 
-	//firebase.database().ref("users/" + userName).on()
 	userRef.on("value", snap => {
 		snap.forEach(childSnap => {
 			//console.log("childSnap=", childSnap.val());
 			let key = childSnap.key;
 			let value = childSnap.val();
 			data[key] = value;
-			//document.getElementById('dateIndex').value = data[0,'date'];
-			//document.getElementById('dateIndex3').value = data.length;
+			//console.log('01=',data[key]);
 		});
 		// html에 넣기.
-		console.log(data[0].date.length)
-		var i = 0;
-		var dateArray = [];
-		while(i < data[0].date.length - 1) {
-			dateArray.push(data[i].date);
-			document.getElementById('date').value = data[i].date;
-			document.getElementById('direction').innerHTML = data[i].direction;
-			document.getElementById('naviA').innerHTML = data[i].naviA;
-			document.getElementById('naviB').innerHTML = data[i]['naviB']; // 이렇게 해도 됨.
-			document.getElementById('action').innerHTML = data[i].action;
-			//console.log(data[i].date);
-			i = i + 1;
-		};
-		console.log('dateArray=', dateArray);
-		document.getElementById('dateArray').innerHTML = dateArray;
-
-		var i = 0;
-		while(i < dateArray.length) {
-			document.getElementById('dateList').innerHTML = dateArray[i];
-			i = i + 1;
-		}
-
+		//console.log(data);
+		document.getElementById('date').value = data.date;
+		document.getElementById('direction').innerHTML = data.direction;
+		document.getElementById('naviA').innerHTML = data['naviA'];	// 이렇게 해도 됨.
+		document.getElementById('naviB').innerHTML = data['naviB'];
+		document.getElementById('action').innerHTML = data.action;
 	});
 
-//	userRef2.on("value", snap => {
-//		snap.forEach(childSnap2 => {
-//			//console.log("childSnap2=", childSnap2.val());
-//			let key2 = childSnap2.key2;
-//			let value2 = childSnap2.val();
-//			data[key2] = value2;
-//			//console.log('02=',value2);
-//			var array2 = value2;
-//			//console.log('02.1=',array1);
-//			console.log('02.2=',array2['date']);
-//			//console.log('02.3=',data[key2])
-//			document.getElementById('dateIndex').value = array2['date'];
-//			document.getElementById('dateIndex3').value = array2[1];
-//		});
-//		// html에 넣기.
-//		document.getElementById('date').value = data.date;
-//		//console.log('03=',document.getElementById('date').value)
-//		document.getElementById('direction').innerHTML = data.direction;
-//		//console.log('04=',document.getElementById('direction').innerHTML)
-//		document.getElementById('naviA').innerHTML = data['naviA'];	// 이렇게 해도 됨.
-//		document.getElementById('naviB').innerHTML = data['naviB'];
-//		document.getElementById('action').innerHTML = data.action;
-//	});
+	//firebase.database().ref("Test/이영수").on()
+	userRef2.on("value", snap => {
+		snap.forEach(childSnap2 => {
+			//console.log("childSnap2=", childSnap2.val());
+			let key2 = childSnap2.key2;
+			let value2 = childSnap2.val();
+			data[key2] = value2;
+			//console.log('02=',value2);
+			var array1 = value2;
+			//console.log('02.1=',array1);
+			console.log('02.2=',array1['날짜']);
+		});
+		// html에 넣기.
+		document.getElementById('date').value = data.date;
+		console.log('03=',document.getElementById('date').value)
+		document.getElementById('direction').innerHTML = data.direction;
+		//console.log('04=',document.getElementById('direction').innerHTML)
+		document.getElementById('naviA').innerHTML = data['naviA'];	// 이렇게 해도 됨.
+		document.getElementById('naviB').innerHTML = data['naviB'];
+		document.getElementById('action').innerHTML = data.action;
+	});
 
 };
 
