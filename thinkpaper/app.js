@@ -36,55 +36,105 @@ function readData() {
 			//document.getElementById('dateIndex').value = data[0,'date'];
 			//document.getElementById('dateIndex3').value = data.length;
 		});
+
 		// html에 넣기.
-		console.log(data[0].date.length)
-		var i = 0;
+
+		//console.log('data[0].date.length', data[0].date.length)
+
 		var dateArray = [];
-		while(i < data[0].date.length - 1) {
+
+		// dateArray에 date 넣기
+		for(i=0; i < data[0].date.length - 1; i++) {
 			dateArray.push(data[i].date);
-			document.getElementById('date').value = data[i].date;
+			//document.getElementById('date').value = data[i].date;
+
+			//[todo]날짜 value에 배열의 마지막 날짜로 선택하도록하기
+			//[todo]마지막 일자 선택해서 불러오는 방식 생각하기
 			document.getElementById('direction').innerHTML = data[i].direction;
 			document.getElementById('naviA').innerHTML = data[i].naviA;
 			document.getElementById('naviB').innerHTML = data[i]['naviB']; // 이렇게 해도 됨.
 			document.getElementById('action').innerHTML = data[i].action;
-			//console.log(data[i].date);
-			i = i + 1;
-		};
-		console.log('dateArray=', dateArray);
-		document.getElementById('dateArray').innerHTML = dateArray;
 
-		var i = 0;
-		while(i < dateArray.length) {
-			document.getElementById('dateList').innerHTML = dateArray[i];
-			i = i + 1;
+			//console.log(data[i].date);
+		};
+
+		//console.log('dateArray=', dateArray);
+		//document.getElementById('dateArray').innerHTML = dateArray[2];
+		//console.log('dateArray.length=', dateArray.length);
+
+	//	li불러오기 시도
+	//	var j = 0;
+	//	while(j < 3) {
+	//		document.getElementById('dateList').innerHTML = 
+	//		'<li>' + dateArray[j]; + '</li><br>';
+	//		j = j + 1;
+	//	}
+
+	// selectbox 불러오기 시도
+	//	for(var j = 0; j < dateArray.length; j++) {
+	//		document.getElementById('dateSelect').innerHTML = 
+	//		'<option>' + data[j].date; + '</option><br>'
+	//		console.log('data[j].date=', data[j].date)
+	//	}
+
+	//  Array에서 select 목록 만들기
+	//	참고 링크: https://www.youtube.com/watch?v=HMehtL39VUQ
+
+	var dateArrayList = document.getElementById("dateSelectBox"),
+						dateArray;
+		
+		for(var j = 0; j < dateArray.length; j++) {
+			var option = document.createElement("OPTION"),
+				txt = document.createTextNode(dateArray[j]);
+			option.appendChild(txt);
+			option.setAttribute("value", dateArray[j]);
+			dateArrayList.insertBefore(option,dateArrayList.lastChild);
 		}
 
+		
 	});
 
-//	userRef2.on("value", snap => {
-//		snap.forEach(childSnap2 => {
-//			//console.log("childSnap2=", childSnap2.val());
-//			let key2 = childSnap2.key2;
-//			let value2 = childSnap2.val();
-//			data[key2] = value2;
-//			//console.log('02=',value2);
-//			var array2 = value2;
-//			//console.log('02.1=',array1);
-//			console.log('02.2=',array2['date']);
-//			//console.log('02.3=',data[key2])
-//			document.getElementById('dateIndex').value = array2['date'];
-//			document.getElementById('dateIndex3').value = array2[1];
-//		});
-//		// html에 넣기.
-//		document.getElementById('date').value = data.date;
-//		//console.log('03=',document.getElementById('date').value)
-//		document.getElementById('direction').innerHTML = data.direction;
-//		//console.log('04=',document.getElementById('direction').innerHTML)
-//		document.getElementById('naviA').innerHTML = data['naviA'];	// 이렇게 해도 됨.
-//		document.getElementById('naviB').innerHTML = data['naviB'];
-//		document.getElementById('action').innerHTML = data.action;
-//	});
+};
 
+// 선택한 날짜에 맞춰서 내용 집어넣기
+
+function selectDate() {
+
+	//날짜 선택하기
+	var selectedDateValue = document.getElementById("dateSelectBox").value;
+			console.log('selectedDateValue=', selectedDateValue);
+	
+	//선택된 날짜에 맞춰서 값 Select하기
+
+	//readDate()의 앞부분 작업 진행하기 = snap하기 
+	//질문: *readDate를 처음했기때문에 지워도 진행이 되는것?
+//	const userName = document.getElementById('userName').value
+//	const userRef = db.ref("Test/" + userName +"/")
+
+//	userRef.on("value", snap => {
+//		snap.forEach(childSnap => {
+//			//console.log("childSnap=", childSnap.val());
+//			let key = childSnap.key;
+//			let value = childSnap.val();
+//			data[key] = value;
+			//document.getElementById('dateIndex').value = data[0,'date'];
+			//document.getElementById('dateIndex3').value = data.length;
+//		});
+
+		for(k=0; k < data[0].date.length - 1; k++) {
+
+			if (data[k].date === selectedDateValue) {
+				//document.getElementById('date').value = data[k].date;
+				document.getElementById('direction').innerHTML = data[k].direction;
+				document.getElementById('naviA').innerHTML = data[k].naviA;
+				document.getElementById('naviB').innerHTML = data[k]['naviB']; // 이렇게 해도 됨.
+				document.getElementById('action').innerHTML = data[k].action;
+			} else {
+				
+			}
+		};
+
+//	});
 };
 
 // 버튼 클릭 시 데이터를 수정하기. *주의 신규입력 아님.

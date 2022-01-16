@@ -30,27 +30,35 @@
                     <tr>
                       <td>이름</td>
                       <td>
-                        <input class="indexTextbox" type="text" id="userName"/>
+                        <input class="indexTextbox" type="text" id="userName" value="김영희"></input>
                         <input onClick="readData()" type="button" value="조회">
                     </td>
                     </tr>
-                    <tr>
+                    <!-- <tr>
                         <td>날짜</td>
                         <td><input class="indexTextbox" type="text" id="date"/></td>
-                    </tr>
+                    </tr> -->
                     <tr>
-                        <td>조회</td>
+                        <td>날짜</td>
                         <td>
-                            <select name="dateList">
-                                <option value="">날짜 선택하기</option>
-                                <option id="dateList"></option>
+                            <!-- selectBox -->
+
+                            <select name="dateSelect" id="dateSelectBox" onchange="selectDate();">
+                                <option value="default">default</option>
                             </select>
+
+                            <script>
+
+                            //  selectBox에서 value 값 읽기
+                            //    function getSelectValue() {
+                            //    var selectValue = document.getElementById("dateSelect").value;
+                            //        console.log('selectValue=', selectValue);
+                            //    }
+
+                            </script>
                         </td>
                     </tr>
                   </table>
-
-                  <!--Index study-->
-                  <textarea id="dateArray" placeholder="텍스트 입력"></textarea>
             </div>
         </div>
         <div id="gridMainFrame">
