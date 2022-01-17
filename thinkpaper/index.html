@@ -30,21 +30,21 @@
                     <tr>
                       <td>이름</td>
                       <td>
-                        <input class="indexTextbox" type="text" id="userName" value="김영희"></input>
+                        <input class="indexTextbox" type="text" id="userName" value=""></input>
                         <input onClick="readData()" type="button" value="조회">
                     </td>
                     </tr>
-                    <!-- <tr>
-                        <td>날짜</td>
-                        <td><input class="indexTextbox" type="text" id="date"/></td>
-                    </tr> -->
                     <tr>
                         <td>날짜</td>
+                        <td><input class="indexTextbox" type="text" id="date"/></td>
+                    </tr>
+                    <tr>
+                        <td></td>
                         <td>
                             <!-- selectBox -->
 
                             <select name="dateSelect" id="dateSelectBox" onchange="selectDate();">
-                                <option value="default">default</option>
+                                <option id="latestDate">날짜 불러오기</option>
                             </select>
 
                             <script>
@@ -63,8 +63,8 @@
         </div>
         <div id="gridMainFrame">
             <div id="contentsSave">
-                <input id="onNew" onClick="onNew()" type="button" value="신규">
-                <input onClick="onUpdate()" type="button" value="저장">
+                <input id="onNew" onClick="onNewSave()" type="button" value="새로저장하기">
+                <input onClick="onUpdate()" type="button" value="수정저장하기">
             </div>
             <div>
                     <div id="gridMainContents">

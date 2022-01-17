@@ -42,56 +42,119 @@ function readData() {
 
 	if(Boolean(userName)) {	
 
+		//data Array로 묶기, [질문, 공부] let과 var의 차이에 대해서 이해 필요
+		//let data = {}
+
+		//1차 배열인 경우: const userRef = db.ref("users/" + userName)
+		//2차 배열인 경우: 아래와 같이 씀
 		const userRef = db.ref("Test/" + userName + "/")
+
+		//date {}에 Key와 Value값 [질문] 배열로 묶기(?)
 		
 		//on()에 대한 이해: https://kdinner.tistory.com/72
-		//on은 Read에 대한 메소드 
+		//on은 Read에 대한 메소드, 
+		//on study
 		userRef.on('value', (snapshot) => {
 
-			//[질문] data 묶기, {}, [] 같은가? value 값만 가져오기
+			//value 값만 가져오기
 			var data = Object.values(snapshot.val());
+			//console.log('data=', data)
 			//console.log('data[].key=', data[0].date)
 
-			//Keys 값만 가져오기
+			//value 값만 가져오기
 			var onKeys = Object.keys(snapshot.val());
 			//console.log('onKeys=', onKeys)
 
-			console.log('data2=', data)
+			// dateArray에 date 넣기 - 방법B
 
-			// html에 최근 값 적기
-			document.getElementById('latestDate').innerHTML = '날짜 불러오기';
-			console.log('latestDate=', data[onKeys.length-1].date);
-			document.getElementById('date').value = data[onKeys.length-1].date;
-			document.getElementById('direction').innerHTML = data[onKeys.length-1].direction;
-			document.getElementById('naviA').innerHTML = data[onKeys.length-1].naviA;
-			document.getElementById('naviB').innerHTML = data[onKeys.length-1]['naviB']; // 이렇게 해도 됨.
-			document.getElementById('action').innerHTML = data[onKeys.length-1].action;	
+			var dateArrayB = [];
 
-			// dateArray에 date 넣기
-			var dateArray = [];
-
-			console.log('onKeys.length=', onKeys.length)
-
-			for(k=0; k < onKeys.length; k++) {
-
-				dateArray.push(data[k].date);
-
+			for(k=0; k < data[0].date.length-1; k++) {
+			dateArrayB.push(data[k].date);
 			};
 
-			console.log('dateArray=', dateArray)
+			console.log('dateArrayB=', dateArrayB)
+
+			var dateLength = dateArrayB.length
+
+			document.getElementById('latestDate').innerHTML = '최근 날짜: ' + data[dateLength-1].date;
+			console.log('latestDate=', data[dateLength-1].date)
+			document.getElementById('direction').innerHTML = data[dateLength-1].direction;
+			document.getElementById('naviA').innerHTML = data[dateLength-1].naviA;
+			document.getElementById('naviB').innerHTML = data[dateLength-1]['naviB']; // 이렇게 해도 됨.
+			document.getElementById('action').innerHTML = data[dateLength-1].action;	
+
 			//  Array에서 select 목록 만들기 - 참고 링크: https://www.youtube.com/watch?v=HMehtL39VUQ
 			var dateArrayList = document.getElementById("dateSelectBox"),
-								dateArray;
+								dateArrayB;
 				
-			for(var j = 0; j < dateArray.length; j++) {
+			for(var j = 0; j < dateLength; j++) {
 				var option = document.createElement("OPTION"),
-					txt = document.createTextNode(dateArray[j]);
+					txt = document.createTextNode(dateArrayB[j]);
 				option.appendChild(txt);
-				option.setAttribute("value", dateArray[j]);
+				option.setAttribute("value", dateArrayB[j]);
 				dateArrayList.insertBefore(option,dateArrayList.lastChild);
 			}
 
 		});
+
+	//on()스터디로 주석처리
+	//------------------------------------------
+	//	userRef.on("value", snap => {
+	//	snap.forEach(childSnap => {
+	//		let key = childSnap.key;
+	//		//push로 onNew가 되는 경우, key가 문자로 되고, date[key]가 작동하지 않게된다.
+	//		let value = childSnap.val();
+	//		data[key] = value;
+			//console.log('data[key]=', data[key])
+					
+			//push로 onNew가 되는 경우, index의 번호로 찾을 수 있지 않을까?
+			//let index = childSnap.index;
+			//data[index] = value;
+			
+			//[todo]userName이 데이터베이스에 없는 경우, 알림뜨게하기
+			
+	//		});
+
+			// dateArray에 date 넣기 - 방법A
+	//		var dateArray = [];
+
+	//		for(i=0; i < data[0].date.length-1; i++) {
+	//		dateArray.push(data[i].date);
+	//		};
+
+	//		console.log('dateArray=', dateArray)
+						
+			// html에 넣기.	
+			// 날짜 value에 배열의 마지막 날짜로 선택하도록하기
+	//		document.getElementById('latestDate').innerHTML = '최근 날짜: ' + data[dateArray.length-1].date;
+	//		console.log('latestDate=', data[dateArray.length-1].date)
+	//		document.getElementById('direction').innerHTML = data[dateArray.length-1].direction;
+	//		document.getElementById('naviA').innerHTML = data[dateArray.length-1].naviA;
+	//		document.getElementById('naviB').innerHTML = data[dateArray.length-1]['naviB']; // 이렇게 해도 됨.
+	//		document.getElementById('action').innerHTML = data[dateArray.length-1].action;	
+
+			//  Array에서 select 목록 만들기 - 참고 링크: https://www.youtube.com/watch?v=HMehtL39VUQ
+	//		var dateArrayList = document.getElementById("dateSelectBox"),
+	//							dateArray;
+				
+	//		for(var j = 0; j < dateArray.length; j++) {
+	//			var option = document.createElement("OPTION"),
+	//				txt = document.createTextNode(dateArray[j]);
+	//			option.appendChild(txt);
+	//			option.setAttribute("value", dateArray[j]);
+	//			dateArrayList.insertBefore(option,dateArrayList.lastChild);
+	//		}
+
+			// [질문] selectbox 불러오기 시도
+			//	for(var j = 0; j < dateArray.length; j++) {
+			//		document.getElementById('dateSelect').innerHTML = 
+			//		'<option>' + data[j].date; + '</option><br>'
+			//		console.log('data[j].date=', data[j].date)
+			//	}
+			
+	//	});
+	//------------------------------------------
 
 			//userName프로세스가 잘 작동했음을 확인하는 표식
 			var readDateWorked = "Y";
@@ -112,20 +175,27 @@ function selectDate() {
 	//날짜 선택하기
 	var selectedDateValue = document.getElementById("dateSelectBox").value;
 	console.log('selectedDateValue=', selectedDateValue);
+	
+	//선택된 날짜에 맞춰서 값 Select하기
+
+	//readDate()의 앞부분 작업 진행하기 = snap하기 
+	//질문: *readDate를 처음했기때문에 지워도 진행이 되는것?
+	let data = {}
 
 	const userName = document.getElementById('userName').value
 	const userRef = db.ref("Test/" + userName + "/")
-		
-	userRef.on('value', (snapshot) => {
 
-		var data = Object.values(snapshot.val());
-		var onKeys = Object.keys(snapshot.val());
+	userRef.on("value", snap => {
+		snap.forEach(childSnap => {
+			let key = childSnap.key;
+			let value = childSnap.val();
+			data[key] = value;
+		});
 
-		//선택된 날짜에 맞춰서 값 Select하기
-		for(i=0; i < onKeys.length; i++) {
+		for(i=0; i < data[0].date.length - 1; i++) {
 
 			if (data[i].date === selectedDateValue) {
-				document.getElementById('date').value = data[i].date;
+				//document.getElementById('date').value = data[i].date;
 				document.getElementById('direction').innerHTML = data[i].direction;
 				document.getElementById('naviA').innerHTML = data[i].naviA;
 				document.getElementById('naviB').innerHTML = data[i]['naviB']; // 이렇게 해도 됨.
@@ -134,65 +204,25 @@ function selectDate() {
 				
 			}
 		};
+
 	});
-}	
-
-	//[질문] data를 {}로 묶는 것과 []로 묶는 것의 차이
-	//새로 적용한 것은 []로 묶이게된다.
-	//var data = Object.values(snapshot.val());
-
-// let data{}를 var data = Object.values(snapshot.val()); 로 변경
-//-----여기부터-----
-//	let data = {}
-
-//	const userName = document.getElementById('userName').value
-//	const userRef = db.ref("Test/" + userName + "/")
-
-//	userRef.on("value", snap => {
-//		snap.forEach(childSnap => {
-//			let key = childSnap.key;
-//			let value = childSnap.val();
-//			data[key] = value;
-//		});
-//
-
-//		console.log('data=', data)
-
-//		for(i=0; i < data[0].date.length - 1; i++) {
-
-//			if (data[i].date === selectedDateValue) {
-				//document.getElementById('date').value = data[i].date;
-//				document.getElementById('direction').innerHTML = data[i].direction;
-//				document.getElementById('naviA').innerHTML = data[i].naviA;
-//				document.getElementById('naviB').innerHTML = data[i]['naviB']; // 이렇게 해도 됨.
-//				document.getElementById('action').innerHTML = data[i].action;
-//			} else {
-				
-//			}
-//		};
-
-//	});
-//};
-//	-----여기까지----
-
+};
 
 // 버튼 클릭 시 데이터를 수정하기. *주의 신규입력 아님.
-// function onUpdate() {
-//	let updatedData = {}
-//	updatedData['date'] = document.getElementById('date').value;
-//	updatedData['direction'] = document.getElementById('direction').value;
-//	updatedData['naviA'] = document.getElementById('naviA').value;
-//	updatedData['naviB'] = document.getElementById('naviB').value;
-//	updatedData['action'] = document.getElementById('action').value;
+function onUpdate() {
+	let updatedData = {}
+	updatedData['date'] = document.getElementById('date').value;
+	updatedData['direction'] = document.getElementById('direction').value;
+	updatedData['naviA'] = document.getElementById('naviA').value;
+	updatedData['naviB'] = document.getElementById('naviB').value;
+	updatedData['action'] = document.getElementById('action').value;
 
-//	const userName = document.getElementById('userName').value;
+	const userName = document.getElementById('userName').value;
 
-//	var onKeys = Object.keys(snapshot.val());
-	
-	//기존에 있던 원소의 갯수 새기
-//	for(i=0; i < onKeys.length; i++) {
-//		console.log(data[i].length);
-//	};
+	//기존에 있던 원소의 갯수 새기 [이음새 - 220117]
+	for(i=0; i < data[0].length-1; i++) {
+		console.log(data[i].length);
+	};
 
 	//for(j=0; j < 2; j++) {
 	//	const usersRefParent = db.ref("Test/" + userName + "/" + j)
@@ -203,28 +233,11 @@ function selectDate() {
 		//console.log(usersRefParent.updatedDataArray.update(updatedData))
 	//}
 	
-//	alert("saved.");
-//	//location.reload();
-//};
-
-function onUpdate() {
-	let updatedData = {}
-	updatedData['date'] = document.getElementById('date').value;
-	updatedData['direction'] = document.getElementById('direction').value;
-	updatedData['naviA'] = document.getElementById('naviA').value;
-	updatedData['naviB'] = document.getElementById('naviB').value;
-	updatedData['action'] = document.getElementById('action').value;
-
-
-	const userName = document.getElementById('userName').value;
-
-	//[Todo] 고민할것 참고: https://kdinner.tistory.com/72
-	const userRef = db.ref("Test/"+ userName + '/' +  + '/')
-
-	userRef.update(updatedData);
 	alert("saved.");
-
+	//location.reload();
 };
+
+// 신규 입력. test라는 이름으로, data를 그대로 입력.
 
 function onNewSave() {
 
@@ -235,13 +248,13 @@ function onNewSave() {
 	newData['naviB'] = document.getElementById('naviB').value
 	newData['action'] = document.getElementById('action').value
 
-	const usersRef = db.ref("Test")
+	const usersRefParent = db.ref("Test")
+	//console.log(usersRefParent)
 
 	let userName = document.getElementById('userName').value
-	usersRef.child(userName)
-		//parent를 만들지 못하다가 push의 솔루션을 찾게됨
-		.push(newData);
-		//.set(newData);
+	usersRefParent.child(userName)
+		.set(newData);
+		//.set("/" + newData);
 }
 
 // 신규 버튼과 수정 저장 관계 - CRUD 참고해보기 / 삭제도 필요
