@@ -1,5 +1,10 @@
+body{
+    font-size: 0.8rem;
+}
+
 h1{
     font-size: 1.5rem;
+    margin: 0;
 }
 
 h2{
@@ -21,23 +26,41 @@ textarea {
     min-height: 5rem;
 }
 
+#date {
+    width: 10rem;
+}
+
 #gridBody{
     display: grid;
-    grid-template-rows: "height: auto;" 1fr 3rem;
+    grid-template-rows: "height: auto;" "height: auto;" 1fr 3rem;
     margin: 2rem;
     grid-gap: 0.2rem;
 }
-#gridIndex{
+
+#gridMain{
     display: grid;
-    grid-template-rows: 10rem 1fr;
+    grid-template-columns: 17rem 1fr;
+    padding-bottom: 1rem;
+    grid-gap: 0.2rem;
+}
+
+#gridIndex{
     background-color: rgb(240, 240, 240);
     padding: 1rem;
     grid-gap: 0.2rem;
 }
+
+#infoTable{
+    margin: 1rem 0;
+    padding: 0.5rem 0;
+    border-top: 1px solid rgb(200, 200, 200);
+    border-bottom: 1px solid rgb(200, 200, 200);
+}
+
 #gridMainFrame{
     display: grid;
     grid-template-rows: "height: auto;" 1fr;
-    margin-left: 1rem;
+    margin-left: 0.5rem;
     grid-gap: 0.2rem;
 }
 #contentsSave{
@@ -45,12 +68,7 @@ textarea {
     padding: 0.5rem;
     text-align: right;
 }
-#gridMain{
-    display: grid;
-    grid-template-columns: 15rem 1fr;
-    padding-bottom: 1rem;
-    grid-gap: 0.2rem;
-}
+
 #gridMainContents{
     display: grid;
     grid-template-rows: auto 1fr;
@@ -73,9 +91,15 @@ textarea {
     grid-gap: 0.2rem;
 }
 
-#serviceTitle{
+#welcomeArea{
+    padding: 0.5rem 0;
+    margin: 0.5rem 0;
+    border-top: 1px solid rgb(200, 200, 200);
     border-bottom: 1px solid rgb(200, 200, 200);
-    margin-bottom: 1rem;
+}
+
+#welcomeArea div div div{
+    display: inline;
 }
 
 .pageInfoBrand{  
@@ -83,7 +107,7 @@ textarea {
     font-size: 0.8rem;
 }
 #imageMain{
-    width: 100%
+    width: 100%;
 }
 .button{
     text-align: right;
@@ -105,7 +129,7 @@ https://www.w3schools.com/howto/howto_js_todolist.asp
 
    
 
-@media(max-width:800px){
+@media(max-width:600px){
     #gridIndex{
         display: block;
         margin-bottom: 1rem;
@@ -151,5 +175,11 @@ https://www.w3schools.com/howto/howto_js_todolist.asp
 
     #gridNavi{
         display: block;   
+    }
+
+    #contentsSave{
+        background-color: rgb(240, 240, 240);
+        padding: 0.5rem;
+        text-align: center;
     }
 }

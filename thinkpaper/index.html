@@ -8,63 +8,91 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body id="gridBody">
-    <div id="serviceTitle">
+    <div>
         <h1>씽크페이퍼</h1>
+    </div>
+
+    <div id="welcomeArea">
+
+        <div>
+            [씽크페이퍼에 오신 것을 환영합니다. 아래 선택지 중 선택바랍니다.]
+        </div>
+        <div>
+            <div>
+                <input type='radio'
+                name='welcome' 
+                value='welcome_new' 
+                onclick='welcome(event)'/>첫방문인 경우
+                <div id="welcomeNewDiv">
+                    ==> 이름/닉네임:
+                    <input class="indexTextbox" type="text" value=""></input>
+                    <input type="button" value="시작하기"></input>
+                </div>
+            </div>
+            <div>
+                <input type='radio' 
+                name='welcome' 
+                value='welcome_basic' 
+                onclick='welcome(event)'
+                checked/>재방문인 경우
+                <div id="welcomeBasicDiv">
+                    ==> 이름/닉네임:
+                    <input class="indexTextbox" type="text" id="userName" value=""></input>
+                    <input onClick="readData()" type="button" value="조회하기"></input>
+                </div>
+            </div>
+        </div>
+
     </div>
     
     <div id="gridMain">
         <div id="gridIndex">
+            <!--
             <div>
-                <!--
-                <div>
-                    <h2>큰 그림 보기</h2>
-                    <h3>한발자국 떨어져서 목적, 흐름, 현재를 조망하기</h3>
-                </div>
-                -->
-                <div>
-                    <img id="imageMain" src="images/img_main.png">
-                </div>
+                <h2>큰 그림 보기</h2>
+                <h3>한발자국 떨어져서 목적, 흐름, 현재를 조망하기</h3>
             </div>
+            -->
             <div>
+                <img id="imageMain" src="images/img_main.png">
+            </div>
+            <div id ="infoTable">
                 <table>
                     <tr>
-                      <td>이름</td>
-                      <td>
-                        <input class="indexTextbox" type="text" id="userName" value=""></input>
-                        <input onClick="readData()" type="button" value="조회">
-                    </td>
-                    </tr>
-                    <tr>
-                        <td>날짜</td>
-                        <td><input class="indexTextbox" type="text" id="date"/></td>
-                    </tr>
-                    <tr>
-                        <td></td>
+                        <td>[이름/닉네임]</td>
                         <td>
-                            <!-- selectBox -->
-
-                            <select name="dateSelect" id="dateSelectBox" onchange="selectDate();">
-                                <option id="latestDate">날짜 불러오기</option>
-                            </select>
-
-                            <script>
-
-                            //  selectBox에서 value 값 읽기
-                            //    function getSelectValue() {
-                            //    var selectValue = document.getElementById("dateSelect").value;
-                            //        console.log('selectValue=', selectValue);
-                            //    }
-
-                            </script>
+                            <span type="text" id="userNameChecked"></span>
                         </td>
                     </tr>
-                  </table>
+                    <tr>
+                        <td>[작성일]</td>
+                        <td>                        
+                            <span type="text" id="dateChecked"></span>
+                    </tr>
+                </table>
             </div>
+            <div id="historyDiv">
+                <span>히스토리 검색하기<br> </span>
+                <select style="width: 100%; color:gray; font-size: 0.8rem;" name="dateSelect" id="dateSelectBox" onchange="selectDate();">
+                    <option>클릭하여 선택</option>
+                </select>
+            </div>
+
+            
         </div>
         <div id="gridMainFrame">
             <div id="contentsSave">
-                <input id="onNew" onClick="onNewSave()" type="button" value="새로저장하기">
-                <input onClick="onUpdate()" type="button" value="수정저장하기">
+                <div id="new_menuDiv">
+                    <input id="onNew" onClick="onNewSave()" type="button" value="저장하기">
+                </div>
+                    <!--
+                        날짜기준으로 업데이트가 지속적으로 되는 경우, 수정저장하기의 기능이 필요하지 않음
+                        <input onClick="onUpdate()" type="button" value="수정저장하기">
+                    -->
+                <div id="basic_menuDiv">
+                    <input id="" onClick="" type="button" value="편집하기">
+                    <input id="" onClick="" type="button" value="새로작성하기">
+                </div>
             </div>
             <div>
                     <div id="gridMainContents">
