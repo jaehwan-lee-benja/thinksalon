@@ -30,7 +30,7 @@ function welcome(event) {
 
 	let welcomeValue = event.target.value;
 
-	if(welcomeValue === 'welcome_new') {
+	if (welcomeValue === 'welcome_new') {
 		document.getElementById('divWelcomeNew').style.display = 'initial';
 		document.getElementById('divWelcomeBasic').style.display = 'none';
 	} else {
@@ -40,7 +40,7 @@ function welcome(event) {
 
 	let welcomeChecked = document.querySelector('input[name="welcome"]').checked;
 
-	if(welcomeChecked === true) {
+	if (welcomeChecked === true) {
 		let checkedValue = document.querySelector('input[name="welcome"]:checked').value;
 	} else {
 		let checkedValue = document.querySelector('input[name="welcome"]:checked').value;
@@ -48,20 +48,38 @@ function welcome(event) {
 
 }
 
+function loadData() {
+	//index.html에서 userName의 value값을 불러옴
+}
+
+loadData();
+let data = {}
+console.log('data@loadData=', data);
+
 function readData() {
 
-	//index.html에서 userName의 value값을 불러옴
 	const userName = document.getElementById('userName').value
 
-	if(Boolean(userName)) {
+	if (userName) {
 
 		//파이어베이스 데이터베이스에서 유저의 키값과 벨류값을 on하기
 		//on은 Read에 대한 메소드
-	//on()에 대한 이해: https://kdinner.tistory.com/72
+		//on()에 대한 이해: https://kdinner.tistory.com/72
 
 		const userRef = db.ref("Test/" + userName + "/")
 
 		userRef.on('value', (snapshot) => {
+
+			//console.log('snapshot=', snapshot)
+
+			snapshot.forEach(childSnap => {
+				let value = childSnap.val();
+				value['id'] = childSnap.key
+				//	{"id": key}
+				data[value.date] = value
+			});
+
+			//console.log('data=', JSON.stringify(data))
 
 			//[질문] onValue 묶기, {}, [] 같은가? value 값만 가져오기?
 			let onValue = Object.values(snapshot.val());
@@ -73,42 +91,43 @@ function readData() {
 			//Array에서 select 목록 만들기 - 참고 링크: https://www.youtube.com/watch?v=HMehtL39VUQ
 			let dateArrayList = document.getElementById("SelectboxDate");
 
-				// dateArray에 date 넣기
-				let dateArray = [];
+			// dateArray에 date 넣기
+			console.log('data@readData=', data);
+			let dateArray = Object.keys(data);
+			//console.log("dateArray=", dateArray);
 
-				//date값만배열에넣기
-				//console.log('onKeys.length=', onKeys.length)
-				for(k=0; k < onKeys.length; k++) {
-					dateArray.push(onValue[k].date);
-				};
-				console.log('dateArray=',dateArray)
+			//date값만배열에넣기
+			//console.log('onKeys.length=', onKeys.length)
+			for (k = 0; k < dateArray.length; k++) {
+				//dateArray.push(onValue[k].date);
+			};
+			console.log('dateArray=', dateArray)
 
-				//SelectboxDate 초기화하기 - 참고 링크: https://stackoverflow.com/questions/42365845/how-to-refresh-select-box-without-reloading-the-whole-form-in-js
-				for(i = dateArrayList.options.length - 1 ; i >= 0 ; i--) {
-					dateArrayList.remove(i + 1);
-				}
+			//SelectboxDate 초기화하기 - 참고 링크: https://stackoverflow.com/questions/42365845/how-to-refresh-select-box-without-reloading-the-whole-form-in-js
+			for (i = dateArrayList.options.length - 1; i >= 0; i--) {
+				dateArrayList.remove(i + 1);
+			}
 
-			for(let j = 0; j < dateArray.length; j++) {
+			for (let j = 0; j < dateArray.length; j++) {
 				let option = document.createElement("OPTION"),
 					txt = document.createTextNode(dateArray[j]);
 				option.appendChild(txt);
 				option.setAttribute("value", dateArray[j]);
-				dateArrayList.insertBefore(option,dateArrayList.lastChild);
+				dateArrayList.insertBefore(option, dateArrayList.lastChild);
 			}
 
 			// html에 최근 값 적기
-			// document.getElementById('option[0]').innerHTML = '이전 날짜 불러오기';
 
 			//조회버튼 누를시 최근 일자로 검색되도록하기
-			console.log('최근저장된일자=', onValue[onKeys.length-1].date);
+			let latestDay = dateArray[dateArray.length - 1]
+			console.log('최근저장된일자=', latestDay);
 			document.getElementById('userNameChecked').innerHTML = userName;
-			document.getElementById('dateChecked').innerHTML = onValue[onKeys.length-1].date;
+			document.getElementById('dateChecked').innerHTML = latestDay;
 			//document.getElementById('date').value = onValue[onKeys.length-1].date;
-			document.getElementById('direction').innerHTML = onValue[onKeys.length-1].direction;
-			document.getElementById('naviA').innerHTML = onValue[onKeys.length-1].naviA;
-			document.getElementById('naviB').innerHTML = onValue[onKeys.length-1]['naviB']; // 이렇게 해도 됨.
-			document.getElementById('action').innerHTML = onValue[onKeys.length-1].action;
-
+			document.getElementById('direction').innerHTML = data[latestDay].direction;
+			document.getElementById('naviA').innerHTML = data[latestDay].naviA;
+			document.getElementById('naviB').innerHTML = data[latestDay]['naviB']; // 이렇게 해도 됨.
+			document.getElementById('action').innerHTML = data[latestDay].action;
 
 		});
 
@@ -119,18 +138,18 @@ function readData() {
 
 		//userName프로세스가 잘 작동했음을 확인하는 표식
 		var readDataWorked = "good";
-		console.log('readDateWorked1=' , readDataWorked)
+		console.log('readDateWorked1=', readDataWorked)
 
 	} else {
 
 		alert('[이름]을 입력해주시기 바랍니다.');
 
 		var readDataWorked = "empthy";
-		console.log('readDataWorked2=' , readDataWorked)
+		console.log('readDataWorked2=', readDataWorked)
 
 	}
 
-	console.log('readDataWorked3=' , readDataWorked)
+	console.log('readDataWorked3=', readDataWorked)
 
 	//mode_reading 실행
 	function mode_reading() {
@@ -168,33 +187,13 @@ function selectDate() {
 	let selectedDateValue = document.getElementById("SelectboxDate").value;
 	console.log('selectedDateValue=', selectedDateValue);
 
-	const userName = document.getElementById('userName').value
-	const userRef = db.ref("Test/" + userName + "/")
+	document.getElementById('dateChecked').innerHTML = data[selectedDateValue].date;
+	document.getElementById('direction').value = data[selectedDateValue].direction;
+	document.getElementById('naviA').value = data[selectedDateValue].naviA;
+	document.getElementById('naviB').value = data[selectedDateValue]['naviB']; // 이렇게 해도 됨.
+	document.getElementById('action').value = data[selectedDateValue].action;
 
-	userRef.on('value', (snapshot) => {
-
-		let onValue = Object.values(snapshot.val());
-		let onKeys = Object.keys(snapshot.val());
-
-		//선택된 날짜에 맞춰서 값 Select하기
-		for(i=0; i < onKeys.length; i++) {
-
-			if (onValue[i].date === selectedDateValue) {
-
-				document.getElementById('dateChecked').innerHTML = onValue[i].date;
-				document.getElementById('direction').innerHTML = onValue[i].direction;
-				document.getElementById('naviA').innerHTML = onValue[i].naviA;
-				document.getElementById('naviB').innerHTML = onValue[i]['naviB']; // 이렇게 해도 됨.
-				document.getElementById('action').innerHTML = onValue[i].action;
-
-			} else {
-
-			}
-		};
-	});
 }
-
-
 
 // let data{}를 let onValue = Object.values(snapshot.val()); 로 변경
 //[질문] data를 {}로 묶는 것과 []로 묶는 것의 차이
@@ -220,7 +219,7 @@ function selectDate() {
 //		for(i=0; i < data[0].date.length - 1; i++) {
 
 //			if (data[i].date === selectedDateValue) {
-				//document.getElementById('date').value = data[i].date;
+//document.getElementById('date').value = data[i].date;
 //				document.getElementById('direction').innerHTML = data[i].direction;
 //				document.getElementById('naviA').innerHTML = data[i].naviA;
 //				document.getElementById('naviB').innerHTML = data[i]['naviB']; // 이렇게 해도 됨.
@@ -248,19 +247,19 @@ function selectDate() {
 
 //	let onKeys = Object.keys(snapshot.val());
 
-	//기존에 있던 원소의 갯수 새기
+//기존에 있던 원소의 갯수 새기
 //	for(i=0; i < onKeys.length; i++) {
 //		console.log(data[i].length);
 //	};
 
-	//for(j=0; j < 2; j++) {
-	//	const usersRefParent = db.ref("Test/" + userName + "/" + j)
-	//	let updatedDataArray = []
-		//const userRef = db.ref("users/" + userName)
-	//	usersRefParent.update(updatedData);
-	//	console.log(usersRefParent.update(updatedData))
-		//console.log(usersRefParent.updatedDataArray.update(updatedData))
-	//}
+//for(j=0; j < 2; j++) {
+//	const usersRefParent = db.ref("Test/" + userName + "/" + j)
+//	let updatedDataArray = []
+//const userRef = db.ref("users/" + userName)
+//	usersRefParent.update(updatedData);
+//	console.log(usersRefParent.update(updatedData))
+//console.log(usersRefParent.updatedDataArray.update(updatedData))
+//}
 
 //	alert("saved.");
 //	//location.reload();
@@ -296,7 +295,7 @@ function onUpdate() {
 	let updatedData = {}
 
 	let today = new Date();
-	console.log('today=',today);
+	console.log('today=', today);
 	let todayValue = today.toLocaleString()
 	console.log('todayValue=', todayValue);
 
@@ -310,7 +309,7 @@ function onUpdate() {
 	const userName = document.getElementById('userName').value;
 
 	//[Todo] 고민할것 참고: https://kdinner.tistory.com/72
-	const userRef = db.ref("Test/"+ userName + '/' +  + '/')
+	const userRef = db.ref("Test/" + userName + '/' + + '/')
 
 	userRef.update(updatedData);
 
@@ -350,7 +349,7 @@ function onNewSave() {
 	let newData = {}
 
 	let today = new Date();
-	console.log('today=',today);
+	console.log('today=', today);
 	let todayValue = today.toLocaleString()
 	console.log('todayValue=', todayValue);
 
@@ -367,7 +366,7 @@ function onNewSave() {
 	usersRef.child(userName)
 		//parent를 만들지 못하다가 push의 솔루션을 찾게됨
 		.push(newData);
-		//.set(newData);
+	//.set(newData);
 
 	//mode_reading 실행
 	function mode_reading() {
@@ -494,17 +493,17 @@ function onNewSave() {
 //다크모드
 function darkmode() {
 	let selectorBody = document.querySelector('body')
-	let selectorDarkMode =  document.getElementById('darkMode')
-	let selectorGridIndex =  document.getElementById('gridIndex')
+	let selectorDarkMode = document.getElementById('darkMode')
+	let selectorGridIndex = document.getElementById('gridIndex')
 	let selectordivContentsControl = document.getElementById('divContentsControl')
-	if(selectorDarkMode.value === '다크모드 켜기') {
+	if (selectorDarkMode.value === '다크모드 켜기') {
 		selectorBody.style.backgroundColor = '#1E1E1E';
 		selectorBody.style.color = 'white';
 		selectorDarkMode.value = '다크모드 끄기';
 
 		let alist = document.querySelectorAll('a');
 		let i = 0;
-		while(i < alist.length) {
+		while (i < alist.length) {
 			alist[i].style.color = 'powderblue';
 			i = i + 1;
 		}
@@ -519,7 +518,7 @@ function darkmode() {
 
 		let alist = document.querySelectorAll('a');
 		let i = 0;
-		while(i < alist.length) {
+		while (i < alist.length) {
 			alist[i].style.color = 'blue';
 			i = i + 1;
 		}
