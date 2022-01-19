@@ -78,6 +78,15 @@ function pageModeHandler(pageModeOption) {
 		document.getElementById('naviB').readOnly = false;
 		document.getElementById('action').readOnly = false;
 
+		//div조절
+		document.getElementById('divNew_menu').style.display = 'initial';
+		document.getElementById('divPageMode_btn').style.display = 'none';
+		document.getElementById('divRemove_btn').style.display = 'initial';
+
+		//font-color = '블루계열'
+		document.getElementById('gridMainFrame').style.color = '#9CC0E7';
+		document.getElementById('divPageMode').style.color = '#FFFFFF';
+
 	} else {
 
 		//pageMode = 'reading'
@@ -92,8 +101,11 @@ function pageModeHandler(pageModeOption) {
 
 		//div조절
 		document.getElementById('divNew_menu').style.display = 'none';
-		document.getElementById('divEditMode_btn').style.display = 'initial';
+		document.getElementById('divPageMode_btn').style.display = 'initial';
 
+		//font-color = '회색계열'
+		document.getElementById('gridMainFrame').style.color = '#62615F';
+		document.getElementById('divPageMode').style.color = '#62615F';
 	}
 
 	console.log('pageMode = ', pageMode)
