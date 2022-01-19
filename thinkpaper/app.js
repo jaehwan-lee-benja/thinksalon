@@ -25,6 +25,7 @@ document.getElementById('divHistory').style.display = 'none';
 document.getElementById('divNew_menu').style.display = 'none';
 document.getElementById('divEditMode_btn').style.display = 'none';
 
+
 // 첫방문자 또는 재방문자 구분하기
 function welcome(event) {
 
@@ -70,7 +71,7 @@ function pageModeHandler(pageModeOption) {
 
 		//pageMode = 'editing'
 		document.getElementById('divContentsControl').style.backgroundColor = '#9CC0E7';
-		document.getElementById('divPageMode').innerHTML = '[편집모드]';
+		document.getElementById('divPageMode').innerHTML = '*편집모드';
 
 		//readOnly = '해제'
 		document.getElementById('direction').readOnly = false;
@@ -78,20 +79,26 @@ function pageModeHandler(pageModeOption) {
 		document.getElementById('naviB').readOnly = false;
 		document.getElementById('action').readOnly = false;
 
-		//div조절
+		// div조절
+		// 저장하기 버튼
 		document.getElementById('divNew_menu').style.display = 'initial';
+		// 편집하기 버튼
 		document.getElementById('divPageMode_btn').style.display = 'none';
+		// 편집취소하기 버튼
+		document.getElementById('divEditCancel_btn').style.display = 'initial';
+		// 삭제하기 버튼
 		document.getElementById('divRemove_btn').style.display = 'initial';
+
 
 		//font-color = '블루계열'
 		document.getElementById('gridMainFrame').style.color = '#9CC0E7';
-		document.getElementById('divPageMode').style.color = '#FFFFFF';
+		document.getElementById('divContentsControl').style.color = '#FFFFFF';
 
 	} else {
 
 		//pageMode = 'reading'
 		document.getElementById('divContentsControl').style.backgroundColor = '#EEEEEE';
-		document.getElementById('divPageMode').innerHTML = '[읽기모드]';
+		document.getElementById('divPageMode').innerHTML = '*읽기모드';
 
 		//readOnly = '작동'
 		document.getElementById('direction').readOnly = true;
@@ -100,12 +107,21 @@ function pageModeHandler(pageModeOption) {
 		document.getElementById('action').readOnly = true;
 
 		//div조절
+		// 저장하기 버튼
 		document.getElementById('divNew_menu').style.display = 'none';
+		// 편집하기 버튼
 		document.getElementById('divPageMode_btn').style.display = 'initial';
+		// 편집취소하기 버튼
+		document.getElementById('divEditCancel_btn').style.display = 'none';
+		// 삭제하기 버튼
+		document.getElementById('divRemove_btn').style.display = 'initial';
+
+		// 조회하기를 눌렀을시 사라지는 div
+		//document.getElementById('divNew_menu').style.display = 'none';
 
 		//font-color = '회색계열'
 		document.getElementById('gridMainFrame').style.color = '#62615F';
-		document.getElementById('divPageMode').style.color = '#62615F';
+		document.getElementById('divContentsControl').style.color = '#62615F';
 	}
 
 	console.log('pageMode = ', pageMode)
@@ -201,17 +217,16 @@ function readData() {
 
 		});	
 
-		// 조회하기를 눌렀을시 등장하는 div
+		// 조회하기로 검색이 되었을 시 눌렀을시 등장하는 div
 		document.getElementById('divHistory').style.display = 'initial';
 		document.getElementById('divBasic_menu').style.display = 'initial';
 		document.getElementById('divEditMode_btn').style.display = 'initial';
 
-		// 조회하기를 눌렀을시 사라지는 div
-		document.getElementById('divNew_menu').style.display = 'none';
-
 		// readData 프로세스가 잘 작동했음을 확인하는 표식
 		var readDataWorked = "good";
 		console.log('readDateWorked?userName = ', readDataWorked)
+
+		pageModeHandler('reading');
 
 	} else {
 
@@ -223,7 +238,6 @@ function readData() {
 
 	}
 
-	pageModeHandler('reading');
 };
 
 // 선택한 날짜에 맞춰서 내용 집어넣기
