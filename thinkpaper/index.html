@@ -8,51 +8,48 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body id="gridBody">
+
     <div>
         <h1>Thinkpaper</h1>
     </div>
 
-    <div id="welcomeArea">
+    <div id="divWelcome">
         <div>
-            <div>
+            <div style="display: inline;">
                 <input type='radio'
-                name='welcome' 
-                value='welcome_new' 
-                onclick='welcome(event)'/>첫방문인 경우(클릭)
-                <div id="welcomeNewDiv">
-                    => 이름/닉네임(입력):
-                    <input class="indexTextbox" type="text" value=""></input>
-                    <input type="button" value="시작하기"></input>
-                </div>
+                    name='welcome' 
+                    value='welcome_new' 
+                    onclick='welcome(event)'/>첫방문인 경우(클릭)
             </div>
-            <div>
-                <input type='radio' 
-                name='welcome' 
-                value='welcome_basic' 
-                onclick='welcome(event)'
-                checked/>재방문인 경우(클릭)
-                <div id="welcomeBasicDiv">
-                    => 이름/닉네임(입력):
-                    <input class="indexTextbox" type="text" id="userName" value=""></input>
-                    <input onClick="readData()" type="button" value="조회하기"></input>
-                </div>
+            <div id="divWelcomeNew" style="display: inline;">
+                => 이름/닉네임(입력):
+                <input class="indexTextbox" type="text" value=""></input>
+                <input type="button" value="시작하기"></input>
             </div>
         </div>
-
+        <div>
+            <div style="display: inline;">
+                <input type='radio' 
+                    name='welcome' 
+                    value='welcome_basic' 
+                    onclick='welcome(event)'
+                    checked/>재방문인 경우(클릭)
+            </div>
+            <div id="divWelcomeBasic" style="display: inline;">
+                => 이름/닉네임(입력):
+                <input class="indexTextbox" type="text" id="userName"></input>
+                <input onClick="readData()" type="button" value="조회하기"></input>
+            </div>
+        </div>
     </div>
+    
     
     <div id="gridMain">
         <div id="gridIndex">
-            <!--
-            <div>
-                <h2>큰 그림 보기</h2>
-                <h3>한발자국 떨어져서 목적, 흐름, 현재를 조망하기</h3>
-            </div>
-            -->
             <div>
                 <img id="imageMain" src="images/img_main.png">
             </div>
-            <div id ="infoTable">
+            <div id ="divInfoTable">
                 <table>
                     <tr>
                         <td>[이름/닉네임]</td>
@@ -67,84 +64,130 @@
                     </tr>
                 </table>
             </div>
-            <div id="historyDiv">
+            <div id="divHistory">
                 <span>히스토리 검색하기<br> </span>
-                <select style="width: 100%; color:gray; font-size: 0.8rem;" name="dateSelect" id="dateSelectBox" onchange="selectDate();">
+                <select 
+                    style="width: 100%; color:gray; font-size: 0.8rem;" 
+                    name="dateSelect" 
+                    id="SelectboxDate" 
+                    onchange="selectDate();">
                     <option>클릭하여 선택</option>
                 </select>
             </div>
 
-            
+            <!-- <div>
+                 CRUD
+                    add user module
+                <section id="add-user-module" >
+                    <button id="open-add-user-form-btn">+</button>
+                    <form>
+                        <h2>Add User</h2>
+                        name:<br>
+                        <input type='text' data-key='name' class='user-input'><br>
+                        age:<br>
+                        <input type='text' data-key='age' class='user-input'><br>
+                        email:<br>
+                        <input type='text' data-key='email' class='user-input'><br>
+                        <button type='button' id="add-user-btn">add user</button>
+                    </form>
+                </section>
+
+                edit user module
+                <section id="edit-user-module">
+                    <form>
+                        <h2>Edit user</h2>
+                        <input type="hidden" class="edit-userid">
+                        name:<br>
+                        <input type='text' data-key='name' class='edit-user-input'><br>
+                        age:<br>
+                        <input type='text' data-key='age' class='edit-user-input'><br>
+                        email:<br>
+                        <input type='text' data-key='email' class='edit-user-input'><br>
+                        <button type='button' id="edit-user-btn">save</button>
+                    </form>
+                </section>
+
+
+                show user module
+                <ul id="user-list"></ul>
+                <div id="user-detail"></div>
+            </div> -->
+
         </div>
         <div id="gridMainFrame">
-            <div id="contentsControl">
+            <div id="divContentsControl">
                 <div class="left">
-                    <div id="mode_read" style="display: inline;">
-                        [읽기모드]
-                    </div>
-                    <div id="mode_edit" style="display: inline;">
-                        <span style="color: #9CC0E7;">[편집모드]</span>
+                    <div id="divPageMode" style="display: inline;">
                     </div>
                 </div>
                 <div class="right">
-                    <div id="new_menuDiv" style="display: inline;">
-                        <input id="onNew" onClick="onNewSave()" type="button" value="저장하기">
+                    <div id="divNew_menu" style="display: inline;">
+                        <input id="onNew" 
+                            onClick="onNewSave()" 
+                            type="button" 
+                            value="저장하기">
                     </div>
                         <!--
                             날짜기준으로 업데이트가 지속적으로 되는 경우, 수정저장하기의 기능이 필요하지 않음
                             <input onClick="onUpdate()" type="button" value="수정저장하기">
                         -->
-                    <div id="basic_menuDiv" style="display: inline;">
-                        <div id="editMode_btnDiv" style="display: inline;">
-                            <input onClick="editMode()" type="button" value="편집하기">
+                    <div id="divBasic_menu" style="display: inline;">
+                        <div id="divEditMode_btn" style="display: inline;">
+                            <input id="editMode_btn" 
+                                onClick="mode_editing()" 
+                                type="button" 
+                                value="편집하기">
+                            <input id="" 
+                                onClick="onRemove()" 
+                                type="button" 
+                                value="삭제하기">
                         </div>
-                        <div id="newMode_btnDiv" style="display: inline;">
-                            <input id="" onClick="" type="button" value="신규작성하기">
+                        <div id="divNewMode_btn" style="display: inline;">
+                            <input id="" 
+                                onClick="" 
+                                type="button" 
+                                value="신규작성하기">
                         </div>
                     </div>
                 </div>
             </div>
             <div>
-                    <div id="gridMainContents">
-                        <!-- edit user module -->
-                        
+                <div id="gridMainContents">
+                    <div>
+                        <h2>1. 방향성</h2>
+                        <h3>내가 왜 이 길을 가고자 하는가, 본질적으로 느끼고 싶은 의미(가치)는 무엇인가?</h3>
+                    </div>
+                    <div>
+                        <textarea id="direction" placeholder="예)건강한 삶 살기" readonly></textarea>
+                    </div>
+                </div>
+                <div id="gridMainContents">
+                    <div>
+                        <h2>2. 네비(지도)</h2>
+                        <h3>내가 나가가고자 하는 도달 지점과 길은 어디인가?</h3>
+                    </div>
+                    <div id="gridNavi">
                         <div>
-                            <h2>1. 방향성</h2>
-                            <h3>내가 왜 이 길을 가고자 하는가, 본질적으로 느끼고 싶은 의미(가치)는 무엇인가?</h3>
+                            <h4>현재위치(A)</h4>
+                            <textarea id="naviA" placeholder="예)불규칙한 식습관" readonly></textarea>
                         </div>
                         <div>
-                                <textarea id="direction" placeholder="예)건강한 삶 살기" readonly></textarea>
+                            <h4>목표지점(B)</h4>
+                            <textarea id="naviB" placeholder="예)규칙적인 식습관" readonly></textarea>
                         </div>
                     </div>
-                    <div id="gridMainContents">
+                </div>
+                <div id="gridMainContents">
+                    <div>
+                        <h2>3. 액션플랜</h2>
+                        <h3>어떤 루틴(행동 또는 시간의 반복)으로 나아가는가?</h3>
+                    </div>
+                    <div>
                         <div>
-                            <h2>2. 네비(지도)</h2>
-                            <h3>내가 나가가고자 하는 도달 지점과 길은 어디인가?</h3>
-                        </div>
-                        <div id="gridNavi">
-                            <div>
-                                <h4>현재위치(A)</h4>
-                                <textarea id="naviA" placeholder="예)불규칙한 식습관" readonly></textarea>
-                            </div>
-                            <div>
-                                <h4>목표지점(B)</h4>
-                                <textarea id="naviB" placeholder="예)규칙적인 식습관" readonly></textarea>
-                            </div>
+                            <textarea id="action" placeholder="예)식습관 일기 쓰기" readonly></textarea>
                         </div>
                     </div>
-                    <div id="gridMainContents">
-                        <div>
-                            <h2>3. 액션플랜</h2>
-                            <h3>어떤 루틴(행동 또는 시간의 반복)으로 나아가는가?</h3>
-                        </div>
-
-                        <div>
-                            <div>
-                                <textarea id="action" placeholder="예)식습관 일기 쓰기" readonly></textarea>
-                            </div>
-                        </div>
-
-                    </div>
+                </div>
             </div>
         </div>
     </div>

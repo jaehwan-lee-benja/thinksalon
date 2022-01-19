@@ -63,7 +63,7 @@ textarea:read-only {
     grid-gap: 0.2rem;
 }
 
-#infoTable{
+#divInfoTable{
     margin: 1rem 0;
     padding: 0.5rem 0;
     border-top: 0.2px solid rgb(200, 200, 200);
@@ -76,7 +76,7 @@ textarea:read-only {
     margin-left: 0.5rem;
     grid-gap: 0.2rem;
 }
-#contentsControl{
+#divContentsControl{
     display: grid;
     grid-template-columns: 1fr 2fr;
     background-color: #EEEEEE;
@@ -84,7 +84,7 @@ textarea:read-only {
     align-items: center;
 }
 
-#contentsControl .right{
+#divContentsControl .right{
     text-align: right;
 }
 
@@ -110,15 +110,11 @@ textarea:read-only {
     grid-gap: 0.2rem;
 }
 
-#welcomeArea{
+#divWelcome{
     padding: 0.5rem 0;
     margin: 0.5rem 0;
     border-top: 1px solid rgb(200, 200, 200);
     border-bottom: 1px solid rgb(200, 200, 200);
-}
-
-#welcomeArea div div div{
-    display: inline;
 }
 
 .pageInfoBrand{  
@@ -196,7 +192,7 @@ https://www.w3schools.com/howto/howto_js_todolist.asp
         display: block;   
     }
 
-    #contentsControl{
+    #divContentsControl{
         background-color: rgb(240, 240, 240);
         padding: 0.5rem;
         text-align: center;

@@ -63,8 +63,8 @@ function readData() {
 
 		userRef.on('value', (snapshot) => {
 
-			//[질문] onValue 묶기, {}, [] 같은가? value 값만 가져오기?
-			let onValue = Object.values(snapshot.val());
+			//[질문] data 묶기, {}, [] 같은가? value 값만 가져오기?
+			let data = Object.values(snapshot.val());
 
 			//Keys 값만 가져오기
 			let onKeys = Object.keys(snapshot.val());
@@ -79,7 +79,7 @@ function readData() {
 				//date값만배열에넣기
 				//console.log('onKeys.length=', onKeys.length)
 				for(k=0; k < onKeys.length; k++) {
-					dateArray.push(onValue[k].date);
+					dateArray.push(data[k].date);
 				};
 				console.log('dateArray=',dateArray)
 
@@ -100,14 +100,14 @@ function readData() {
 			// document.getElementById('option[0]').innerHTML = '이전 날짜 불러오기';
 
 			//조회버튼 누를시 최근 일자로 검색되도록하기
-			console.log('최근저장된일자=', onValue[onKeys.length-1].date);
+			console.log('최근저장된일자=', data[onKeys.length-1].date);
 			document.getElementById('userNameChecked').innerHTML = userName;
-			document.getElementById('dateChecked').innerHTML = onValue[onKeys.length-1].date;
-			//document.getElementById('date').value = onValue[onKeys.length-1].date;
-			document.getElementById('direction').innerHTML = onValue[onKeys.length-1].direction;
-			document.getElementById('naviA').innerHTML = onValue[onKeys.length-1].naviA;
-			document.getElementById('naviB').innerHTML = onValue[onKeys.length-1]['naviB']; // 이렇게 해도 됨.
-			document.getElementById('action').innerHTML = onValue[onKeys.length-1].action;
+			document.getElementById('dateChecked').innerHTML = data[onKeys.length-1].date;
+			//document.getElementById('date').value = data[onKeys.length-1].date;
+			document.getElementById('direction').innerHTML = data[onKeys.length-1].direction;
+			document.getElementById('naviA').innerHTML = data[onKeys.length-1].naviA;
+			document.getElementById('naviB').innerHTML = data[onKeys.length-1]['naviB']; // 이렇게 해도 됨.
+			document.getElementById('action').innerHTML = data[onKeys.length-1].action;
 
 
 		});
@@ -173,19 +173,19 @@ function selectDate() {
 
 	userRef.on('value', (snapshot) => {
 
-		let onValue = Object.values(snapshot.val());
+		let data = Object.values(snapshot.val());
 		let onKeys = Object.keys(snapshot.val());
 
 		//선택된 날짜에 맞춰서 값 Select하기
 		for(i=0; i < onKeys.length; i++) {
 
-			if (onValue[i].date === selectedDateValue) {
+			if (data[i].date === selectedDateValue) {
 
-				document.getElementById('dateChecked').innerHTML = onValue[i].date;
-				document.getElementById('direction').innerHTML = onValue[i].direction;
-				document.getElementById('naviA').innerHTML = onValue[i].naviA;
-				document.getElementById('naviB').innerHTML = onValue[i]['naviB']; // 이렇게 해도 됨.
-				document.getElementById('action').innerHTML = onValue[i].action;
+				document.getElementById('dateChecked').innerHTML = data[i].date;
+				document.getElementById('direction').innerHTML = data[i].direction;
+				document.getElementById('naviA').innerHTML = data[i].naviA;
+				document.getElementById('naviB').innerHTML = data[i]['naviB']; // 이렇게 해도 됨.
+				document.getElementById('action').innerHTML = data[i].action;
 
 			} else {
 
@@ -196,10 +196,10 @@ function selectDate() {
 
 
 
-// let data{}를 let onValue = Object.values(snapshot.val()); 로 변경
+// let data{}를 let data = Object.values(snapshot.val()); 로 변경
 //[질문] data를 {}로 묶는 것과 []로 묶는 것의 차이
 //새로 적용한 것은 []로 묶이게된다.
-//let onValue = Object.values(snapshot.val());
+//let data = Object.values(snapshot.val());
 // 어떤 차이가 있을지를 스터디해보기
 //-----여기부터-----
 //	let data = {}
@@ -415,20 +415,20 @@ function onNewSave() {
 // 		//on은 Read에 대한 메소드
 // 	//	userRef.on('value', (snapshot) => {
 
-// 	//		onValueSet = {}
+// 	//		dataSet = {}
 
 // 			//[질문] data 묶기, {}, [] 같은가? value 값만 가져오기
-// 	//		let onValue = Object.values(snapshot.val());
-// 			//console.log('onValue[].key=', onValue[0].date)
+// 	//		let data = Object.values(snapshot.val());
+// 			//console.log('data[].key=', data[0].date)
 
 // 			//Keys 값만 가져오기
 // 	//		let onKeys = Object.keys(snapshot.val());
 // 			//console.log('onKeys=', onKeys)
 
-// 	//		onValueSet[onKeys] = onValue
+// 	//		dataSet[onKeys] = data
 // 	//	});
 
-// 		//console.log('onValueSet=', onValueSet);
+// 		//console.log('dataSet=', dataSet);
 
 // 	//	let userName2 = document.getElementById('userName').value
 // 	//	let removeArr = usersRef.child(userName2).child()
