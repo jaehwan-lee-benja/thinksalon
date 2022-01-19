@@ -1,5 +1,7 @@
 body{
     font-size: 0.8rem;
+    background-color: #FCFCFC;
+    color: #62615F;
 }
 
 h1{
@@ -24,6 +26,17 @@ h4 {
 textarea {
     width: 100%;
     min-height: 5rem;
+    border: 0.2px solid #9CC0E7;
+    background-color: rgba(255,255,255);
+    font-size: 0.8rem;
+    padding: 0.5rem;
+    box-sizing: border-box;
+}
+
+textarea:read-only {
+    outline: none !important;
+    background-color: rgba(255,255,255,0.8);
+    border: 0.2px solid rgb(200, 200, 200);
 }
 
 #date {
@@ -45,7 +58,7 @@ textarea {
 }
 
 #gridIndex{
-    background-color: rgb(240, 240, 240);
+    background-color: #EEEEEE;
     padding: 1rem;
     grid-gap: 0.2rem;
 }
@@ -53,8 +66,8 @@ textarea {
 #infoTable{
     margin: 1rem 0;
     padding: 0.5rem 0;
-    border-top: 1px solid rgb(200, 200, 200);
-    border-bottom: 1px solid rgb(200, 200, 200);
+    border-top: 0.2px solid rgb(200, 200, 200);
+    border-bottom: 0.2px solid rgb(200, 200, 200);
 }
 
 #gridMainFrame{
@@ -63,9 +76,15 @@ textarea {
     margin-left: 0.5rem;
     grid-gap: 0.2rem;
 }
-#contentsSave{
-    background-color: rgb(240, 240, 240);
+#contentsControl{
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    background-color: #EEEEEE;
     padding: 0.5rem;
+    align-items: center;
+}
+
+#contentsControl .right{
     text-align: right;
 }
 
@@ -79,7 +98,7 @@ textarea {
 #gridNavi{
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-gap: 0.7rem;
+    grid-gap: 0.5rem;
 }
 
 #gridPageInfo{
@@ -177,7 +196,7 @@ https://www.w3schools.com/howto/howto_js_todolist.asp
         display: block;   
     }
 
-    #contentsSave{
+    #contentsControl{
         background-color: rgb(240, 240, 240);
         padding: 0.5rem;
         text-align: center;

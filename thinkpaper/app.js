@@ -25,7 +25,10 @@ const usersRef = db.ref("Test")
 
 document.getElementById('welcomeNewDiv').style.display = 'none';
 document.getElementById('historyDiv').style.display = 'none';
-document.getElementById('contentsSave').style.display = 'none';
+document.getElementById('mode_read').style.display = 'initail';
+document.getElementById('mode_edit').style.display = 'none';
+document.getElementById('new_menuDiv').style.display = 'none';
+document.getElementById('editMode_btnDiv').style.display = 'none';
 
 //let welcomeChecked = document.querySelector('input[name="welcome"]').checked;
 //console.log('welcomeChecked1=', welcomeChecked)
@@ -121,11 +124,12 @@ function readData() {
 			document.getElementById('naviB').innerHTML = data[onKeys.length-1]['naviB']; // 이렇게 해도 됨.
 			document.getElementById('action').innerHTML = data[onKeys.length-1].action;	
 
+
 		});
 
-		document.getElementById('historyDiv').style.display = 'initial';
-		document.getElementById('contentsSave').style.display = 'initial';
+		document.getElementById('historyDiv').style.display = 'initial';		
 		document.getElementById('basic_menuDiv').style.display = 'initial';
+		document.getElementById('editMode_btnDiv').style.display = 'initial';
 		document.getElementById('new_menuDiv').style.display = 'none';
 
 		//userName프로세스가 잘 작동했음을 확인하는 표식
@@ -251,6 +255,20 @@ function selectDate() {
 //	//location.reload();
 //};
 
+function editMode() {
+	//readOnly해제
+	document.getElementById('direction').readOnly = false;
+	document.getElementById('naviA').readOnly = false;
+	document.getElementById('naviB').readOnly = false;
+	document.getElementById('action').readOnly = false;
+
+	document.getElementById('mode_read').style.display = 'none';
+	document.getElementById('mode_edit').style.display = 'initial';
+	document.getElementById('new_menuDiv').style.display = 'initial';
+	document.getElementById('editMode_btnDiv').style.display = 'none';
+
+}
+
 function onUpdate() {
 	let updatedData = {}
 
@@ -314,7 +332,7 @@ function darkmode() {
 	let selectorBody = document.querySelector('body')
 	let selectorDarkMode =  document.getElementById('darkMode')
 	let selectorGridIndex =  document.getElementById('gridIndex')
-	let selectorContentsSave = document.getElementById('contentsSave')
+	let selectorcontentsControl = document.getElementById('contentsControl')
 	if(selectorDarkMode.value === '다크모드 켜기') {
 		selectorBody.style.backgroundColor = '#1E1E1E';
 		selectorBody.style.color = 'white';
@@ -328,7 +346,7 @@ function darkmode() {
 		}
 	
 		selectorGridIndex.style.backgroundColor = '#333333';
-		selectorContentsSave.style.backgroundColor = '#333333';
+		selectorcontentsControl.style.backgroundColor = '#333333';
 	
 	} else {
 		selectorBody.style.backgroundColor = 'white';
@@ -343,7 +361,7 @@ function darkmode() {
 		}
 	
 		selectorGridIndex.style.backgroundColor = 'rgb(240, 240, 240)';
-		selectorContentsSave.style.backgroundColor = 'rgb(240, 240, 240)';
+		selectorcontentsControl.style.backgroundColor = 'rgb(240, 240, 240)';
 	
 	}
 }
