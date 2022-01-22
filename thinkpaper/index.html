@@ -4,13 +4,14 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ThinkPaper</title>
+    <title>Thinkpaper</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body id="gridBody">
 
     <div>
         <h1>Thinkpaper</h1>
+        <span>내 자신과의 소통, 생각을 기록하는 곳</span>
     </div>
 
     <div id="divWelcome">
@@ -121,19 +122,14 @@
                     </div>
                 </div>
                 <div class="right">
-                    <div id="divNew_menu" style="display: inline;">
-                        <input id="onNew" 
-                            onClick="onNewSave()" 
-                            type="button" 
-                            value="저장하기">
-                    </div>
+                    
                         <!--
                             날짜기준으로 업데이트가 지속적으로 되는 경우, 수정저장하기의 기능이 필요하지 않음
                             <input onClick="onUpdate()" type="button" value="수정저장하기">
                         -->
                     <div id="divBasic_menu" style="display: inline;">
                         <div id="divEditMode_btn" style="display: inline;">
-                            <div id="divPageMode_btn" style="display: inline;">
+                            <div id="divEdit_btn" style="display: inline;">
                                 <input id="editMode_btn" 
                                 onClick="mode_editing()" 
                                 type="button" 
@@ -145,6 +141,12 @@
                                 type="button" 
                                 value="편집취소하기">
                             </div>
+                            <div id="divUpdateSave_btn" style="display: inline;">
+                                <input id="updateSave_btn" 
+                                onClick="onUpdate()" 
+                                type="button" 
+                                value="수정본 저장하기">
+                            </div>
                             <div id="divRemove_btn" style="display: inline;">
                                 <input id="remove_btn" 
                                 onClick="onRemove()" 
@@ -153,11 +155,17 @@
                                 <span>|</span>
                             </div>
                         </div>
+                        <div id="divNewSave_btn" style="display: inline;">
+                            <input id="onNew" 
+                                onClick="onNewSave()" 
+                                type="button" 
+                                value="신규저장하기">
+                        </div>
                         <div id="divNewMode_btn" style="display: inline;">
                             <input id="" 
                                 onClick="" 
                                 type="button" 
-                                value="신규작성하기">
+                                value="빈페이지 작성하기">
                         </div>
                     </div>
                 </div>

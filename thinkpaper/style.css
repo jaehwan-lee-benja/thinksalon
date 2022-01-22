@@ -27,16 +27,20 @@ textarea {
     width: 100%;
     min-height: 5rem;
     border: 0.2px solid #9CC0E7;
-    background-color: rgba(255,255,255);
+    background-color: #FCFCFC;
     font-size: 0.8rem;
     padding: 0.5rem;
     box-sizing: border-box;
+    resize: vertical; /* 상하만 가능 */
 }
 
 textarea:read-only {
     outline: none !important;
-    background-color: rgba(255,255,255,0.8);
-    border: 0.2px solid rgb(200, 200, 200);
+    background-color: #FCFCFC;
+    border-top: 0.2px solid rgb(200, 200, 200);
+    border-left: 0px;
+    border-right: 0px;
+    border-bottom: 0px;
 }
 
 #date {
@@ -193,8 +197,10 @@ https://www.w3schools.com/howto/howto_js_todolist.asp
     }
 
     #divContentsControl{
+        display: block;
         background-color: rgb(240, 240, 240);
         padding: 0.5rem;
         text-align: center;
     }
+    
 }

@@ -16,16 +16,15 @@ let config = {
 firebase.initializeApp(config);
 
 const db = firebase.database()
-// firebase/database의 'users' [질문,공부] ID? key값?을 참조하기 - Array에 대한 더 명확한 공부 필요
 const usersRef = db.ref("users")
 
 // 보이지않아도 되는 div숨기기
 document.getElementById('divWelcomeNew').style.display = 'none';
 document.getElementById('divHistory').style.display = 'none';
-document.getElementById('divNew_menu').style.display = 'none';
+document.getElementById('divNewSave_btn').style.display = 'none';
 document.getElementById('divEditMode_btn').style.display = 'none';
-
-
+document.getElementById('divUpdateSave_btn').style.display = 'none';
+   
 // 첫방문자 또는 재방문자 구분하기
 function welcome(event) {
 
@@ -39,7 +38,7 @@ function welcome(event) {
 		document.getElementById('divWelcomeBasic').style.display = 'initial';
 	};
 
-	// 첫방문자 또는 재방문자인것에 따라서 보여지는 요소가 달라질 수 있음을 생각하고 만든 코드(작성중)
+	// // 첫방문자 또는 재방문자인것에 따라서 보여지는 요소가 달라질 수 있음을 생각하고 만든 코드(작성중)
 	// let welcomeChecked = document.querySelector('input[name="welcome"]').checked;
 
 	// if (welcomeChecked === true) {
@@ -81,11 +80,13 @@ function pageModeHandler(pageModeOption) {
 
 		// div조절
 		// 저장하기 버튼
-		document.getElementById('divNew_menu').style.display = 'initial';
+		document.getElementById('divNewSave_btn').style.display = 'initial';
 		// 편집하기 버튼
-		document.getElementById('divPageMode_btn').style.display = 'none';
+		document.getElementById('divEdit_btn').style.display = 'none';
 		// 편집취소하기 버튼
 		document.getElementById('divEditCancel_btn').style.display = 'initial';
+		// 수정본 저장하기 버튼
+		document.getElementById('divUpdateSave_btn').style.display = 'initial';
 		// 삭제하기 버튼
 		document.getElementById('divRemove_btn').style.display = 'initial';
 
@@ -108,16 +109,18 @@ function pageModeHandler(pageModeOption) {
 
 		//div조절
 		// 저장하기 버튼
-		document.getElementById('divNew_menu').style.display = 'none';
+		document.getElementById('divNewSave_btn').style.display = 'none';
 		// 편집하기 버튼
-		document.getElementById('divPageMode_btn').style.display = 'initial';
+		document.getElementById('divEdit_btn').style.display = 'initial';
 		// 편집취소하기 버튼
 		document.getElementById('divEditCancel_btn').style.display = 'none';
+		// 수정본 저장하기 버튼
+		document.getElementById('divUpdateSave_btn').style.display = 'none';
 		// 삭제하기 버튼
 		document.getElementById('divRemove_btn').style.display = 'initial';
 
 		// 조회하기를 눌렀을시 사라지는 div
-		//document.getElementById('divNew_menu').style.display = 'none';
+		//document.getElementById('divNewSave_btn').style.display = 'none';
 
 		//font-color = '회색계열'
 		document.getElementById('gridMainFrame').style.color = '#62615F';
@@ -128,7 +131,20 @@ function pageModeHandler(pageModeOption) {
 
 }
 
+// --------------------------
+// timeStamp
+// --------------------------
 
+// [질문] 아래의 내용을 넣으면, todayValue가 이 함수 안에 갖히게되어 쓰이지 않는 단점이 있음
+// 이때 var을 써서 진행할 것인가? 아니면 더 좋은 방법이 있을까?
+// function timeStamp() {
+
+// 	let today = new Date();
+// 	console.log('today=', today);
+// 	let todayValue = today.toLocaleString()
+// 	console.log('todayValue=', todayValue);
+	
+// }
 
 // --------------------------
 // readData
@@ -156,9 +172,9 @@ function readData() {
 				value['id'] = childSnap.key
 
 				// 말로 풀어보면,
-				// value라는 객체에 id라는 key의 value은 childSnap.key와 같다. 
+				// value라는 객체에 id라는 key의 value는 childSnap.key와 같다. 
 				// let "object=value" = { "key=id" : "value=childSnap.key" } 
-				// let value = {"id": "childSnap.key"
+				// let value = {"id": "childSnap.key"}
 
 				// *여기서 뒷쪽의 childSnap.key의 key는 
 				// '-Mtbm7fZoiwTIOKLTUJ0'와 비슷한 형태로 
@@ -258,6 +274,10 @@ function selectDate() {
 
 }
 
+// --------------------------
+// 편집모드 설정하기
+// --------------------------
+
 function mode_editing() {
 	
 	pageModeHandler('editing');
@@ -271,28 +291,123 @@ function mode_editing() {
 function onUpdate() {
 	let updatedData = {}
 
-	let today = new Date();
-	console.log('today=', today);
-	let todayValue = today.toLocaleString()
-	console.log('todayValue=', todayValue);
+	let dateCheckedValue = document.getElementById("dateChecked").innerHTML;
 
-	updatedData['date'] = todayValue;
+	console.log('dateCheckedValue = ', dateCheckedValue)
+
+	updatedData['date'] = dateCheckedValue;
 	updatedData['direction'] = document.getElementById('direction').value;
 	updatedData['naviA'] = document.getElementById('naviA').value;
 	updatedData['naviB'] = document.getElementById('naviB').value;
 	updatedData['action'] = document.getElementById('action').value;
 
-
 	const userName = document.getElementById('userName').value;
 
+	//console.log("data@onUpdate = ", data)
+
+	let userId = data[dateCheckedValue].id
+
 	//[Todo] 고민할것 참고: https://kdinner.tistory.com/72
-	const userRef = db.ref("users/" + userName + '/' + + '/')
+	const userRef = db.ref("users/" + userName + '/' + userId + '/')
 
 	userRef.update(updatedData);
 
 	pageModeHandler('reading');
 
 	alert("저장되었습니다.");
+
+};
+
+function onRemove() {
+	let removeData = {}
+
+	let dateCheckedValue = document.getElementById("dateChecked").innerHTML;
+
+	console.log('dateCheckedValue = ', dateCheckedValue)
+
+	removeData['date'] = dateCheckedValue;
+	removeData['direction'] = document.getElementById('direction').value;
+	removeData['naviA'] = document.getElementById('naviA').value;
+	removeData['naviB'] = document.getElementById('naviB').value;
+	removeData['action'] = document.getElementById('action').value;
+
+	const userName = document.getElementById('userName').value;
+
+	//console.log("data@onUpdate = ", data)
+
+	let userId = data[dateCheckedValue].id
+
+	//[Todo] 고민할것 참고: https://kdinner.tistory.com/72
+	const userRef = db.ref("users/" + userName + '/' + userId + '/')
+
+	console.log('userRef@delete = ', userRef)
+	
+
+	pageModeHandler('reading');
+
+	//삭제재확인
+	if (confirm("정말 삭제하시겠습니까?")){
+		userRef.remove();
+
+		alert("삭제되었습니다.");
+
+		//location.reload(true);
+		
+		// if (userName) {
+	
+		// 	const userRef = db.ref("users/" + userName + "/")
+	
+		// 	userRef.on('value', (snapshot) => {
+	
+		// 		snapshot.forEach(childSnap => {
+	
+		// 			let value = childSnap.val();	
+		// 			value['id'] = childSnap.key
+		// 			data[value.date] = value
+	
+		// 		});
+	
+		// 		console.log('data@afterdeleteData = ', data);
+			
+		// 		// dateList 에 date 넣기
+		// 		let dateList = Object.keys(data);
+		// 		console.log("dateList = ", dateList);	
+	
+		// 		// Array에서 selectBox 목록 만들기 - 참고 링크: https://www.youtube.com/watch?v=HMehtL39VUQ
+		// 		let dateSelectbox = document.getElementById("SelectboxDate");
+	
+		// 		// SelectboxDate 초기화하기 - 참고 링크: https://stackoverflow.com/questions/42365845/how-to-refresh-select-box-without-reloading-the-whole-form-in-js
+		// 		for (let i = dateSelectbox.options.length - 1; i >= 0; i--) {
+		// 			dateSelectbox.remove(i + 1);
+		// 		}
+	
+		// 		// seletBox에 <option> 만들어서, date값 넣기
+		// 		for (let i = 0; i < dateList.length; i++) {
+		// 			let option = document.createElement("OPTION"),
+		// 				txt = document.createTextNode(dateList[i]);
+		// 			option.appendChild(txt);
+		// 			option.setAttribute("value", dateList[i]);
+		// 			dateSelectbox.insertBefore(option, dateSelectbox.lastChild);
+		// 		}
+	
+		// 		// 조회버튼 누를시 최근 일자로 검색되도록하기
+		// 		let latestDay = dateList[dateList.length - 2]
+		// 		console.log('최근저장된일자=', latestDay);
+	
+		// 		// key=latestDay의 value를 html에 표출하기
+		// 		// @infoTable
+		// 		document.getElementById('userNameChecked').innerHTML = userName;
+		// 		document.getElementById('dateChecked').innerHTML = latestDay;
+		// 		// @mainPage
+		// 		document.getElementById('direction').innerHTML = data[latestDay].direction;
+		// 		console.log('direction = ', data[latestDay].direction)
+		// 		document.getElementById('naviA').innerHTML = data[latestDay].naviA;
+		// 		document.getElementById('naviB').innerHTML = data[latestDay]['naviB']; // 이렇게 해도 됨.
+		// 		document.getElementById('action').innerHTML = data[latestDay].action;
+	
+		// 	});	
+		// }
+	} 
 
 };
 
@@ -326,95 +441,7 @@ function onNewSave() {
 
 }
 
-// function onRemove() {
 
-// 	//index.html에서 userName의 value값을 불러옴
-// 	//[질문] index.html이 로딩될 때,
-// 	const userName = document.getElementById('userName').value
-
-// 	if(Boolean(userName)) {
-
-// 		const userRef = db.ref("users/" + userName + "/")
-
-// 		//on()에 대한 이해: https://kdinner.tistory.com/72
-// 		//on은 Read에 대한 메소드
-// 	//	userRef.on('value', (snapshot) => {
-
-// 	//		onValueSet = {}
-
-// 			//[질문] data 묶기, {}, [] 같은가? value 값만 가져오기
-// 	//		let onValue = Object.values(snapshot.val());
-// 			//console.log('onValue[].key=', onValue[0].date)
-
-// 			//Keys 값만 가져오기
-// 	//		let onKeys = Object.keys(snapshot.val());
-// 			//console.log('onKeys=', onKeys)
-
-// 	//		onValueSet[onKeys] = onValue
-// 	//	});
-
-// 		//console.log('onValueSet=', onValueSet);
-
-// 	//	let userName2 = document.getElementById('userName').value
-// 	//	let removeArr = usersRef.child(userName2).child()
-// 	//	console.log('removeArr=', removeArr)
-// 		//removeArr.remove();
-
-// 	//
-// 		//날짜 선택하기
-// 		let selectedDateValue = document.getElementById("SelectboxDate").value;
-
-// 			data = {}
-
-// 			userRef.on("value", snap => {
-// 				snap.forEach(childSnap => {
-// 				let key = childSnap.key;
-// 				let value = childSnap.val();
-// 				data[key] = value;
-// 			});
-// 			console.log('data=', data)
-
-// 			//선택된 날짜에 맞춰서 값 Select하기
-// 			// for(i=0; i < onKeys.length; i++) {
-
-// 			//	if (data[i].date === selectedDateValue) {
-
-// 			//		data[i]
-
-// 			//		console.log('data[i]=', data[i])
-
-// 			//		data[i].remove()
-
-// 			//	} else {
-
-// 			//	}
-
-// 			//	if (category.parent.children[i].date === selectedDateValue) {
-
-// 			//		console.log('catagory.parent=',catagory.parent)
-
-// 					//console.log('data[i]=', data[i])
-
-// 					//data[i].remove()
-
-// 			//	} else {
-
-// 			//	}
-// 			//};
-
-// 		});
-
-// 	};
-
-// 	alert("삭제되었습니다.");
-
-// 	readData();
-
-// };
-
-// 신규 버튼과 수정 저장 관계 - CRUD 참고해보기 / 삭제도 필요
-// let selectorOnNew = document.getElementById('onNew')
-//console.log('1=', selectorOnNew.value);
 
 //다크모드
 function darkmode() {
