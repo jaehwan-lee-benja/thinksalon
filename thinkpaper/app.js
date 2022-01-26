@@ -49,13 +49,13 @@ function welcome(event) {
 
 }
 
-//더블클릭시 편집모드로 설정되기
+//[향후 개선하기] 더블클릭시 편집모드로 설정되기
 //[버그] direction에 있는 textarea만 선택이 되고 있음
-const card = document.querySelector('textarea');
+// const card = document.querySelector('textarea');
 
-card.addEventListener('dblclick', function (e) {
-	mode_editing();
-});
+// card.addEventListener('dblclick', function (e) {
+// 	mode_editing();
+// });
 
 //teaxarea 자동크기
 //출처: https://stackoverflow.com/questions/454202/creating-a-textarea-with-auto-resize
