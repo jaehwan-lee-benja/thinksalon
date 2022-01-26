@@ -1,7 +1,7 @@
 body{
     font-size: 0.8rem;
-    background-color: #FCFCFC;
-    color: #62615F;
+    background-color: #FAFAFA;
+    color: #424242;
 }
 
 h1{
@@ -24,23 +24,46 @@ h4 {
 }
 
 textarea {
+    outline: none !important; 
     width: 100%;
     min-height: 5rem;
-    border: 0.2px solid #9CC0E7;
-    background-color: #FCFCFC;
+    border: 0px;
+    background-color: #FFFFFF;
     font-size: 0.8rem;
     padding: 0.5rem;
     box-sizing: border-box;
     resize: vertical; /* 상하만 가능 */
+    border-radius: 2px;
+    box-shadow: 
+    0 1px 3px rgba(0,0,0,0.12), 
+    0 1px 2px rgba(0,0,0,0.24);
+    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+
+    resize: none;
+    -webkit-appearance: textfield;
+    -moz-appearance: textfield;
+    appearance: textfield;
 }
 
-textarea:read-only {
-    outline: none !important;
-    background-color: #FCFCFC;
-    border-top: 0.2px solid rgb(200, 200, 200);
-    border-left: 0px;
-    border-right: 0px;
-    border-bottom: 0px;
+textarea:hover {
+    box-shadow: 
+        0 10px 20px rgba(0,0,0,0.19), 
+        0 6px 6px rgba(0,0,0,0.23);
+  }
+
+input[type="button"] {
+        border: 0.2px solid rgb(200, 200, 200);
+        color: #424242;
+        background-color: inherit;
+        padding: 3px 5px;
+        cursor: pointer;
+        display: inline-block;
+      }
+
+/* On mouse-over */
+input:hover {
+    background: #9CC0E7;
+    color: #FFF;
 }
 
 #date {
@@ -62,7 +85,7 @@ textarea:read-only {
 }
 
 #gridIndex{
-    background-color: #EEEEEE;
+    background-color: #EEE;
     padding: 1rem;
     grid-gap: 0.2rem;
 }
@@ -75,21 +98,23 @@ textarea:read-only {
 }
 
 #gridMainFrame{
-    display: grid;
-    grid-template-rows: "height: auto;" 1fr;
     margin-left: 0.5rem;
     grid-gap: 0.2rem;
 }
+
 #divContentsControl{
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    background-color: #EEEEEE;
     padding: 0.5rem;
     align-items: center;
+    margin-bottom: 0.5rem;
 }
 
 #divContentsControl .right{
     text-align: right;
+}
+
+#divPage{
+    background-color: #FFF;
+    padding: 1rem
 }
 
 #gridMainContents{
@@ -128,6 +153,13 @@ textarea:read-only {
 #imageMain{
     width: 100%;
 }
+
+#imageMain:hover{
+    box-shadow: 
+        0 10px 20px rgba(0,0,0,0.19), 
+        0 6px 6px rgba(0,0,0,0.23);
+}
+
 .button{
     text-align: right;
 }
@@ -138,7 +170,6 @@ textarea:read-only {
 .indexTextbox{
     width: 6rem;
 }
-
 
 
 /*to do list
@@ -158,8 +189,6 @@ https://www.w3schools.com/howto/howto_js_todolist.asp
         padding-bottom: 1rem;
     }
     #gridMainFrame{
-        display: grid;
-        grid-template-rows: "height: auto;" 1fr;
         margin-left: 0rem;
     }
     #gridPageInfo{
@@ -197,7 +226,6 @@ https://www.w3schools.com/howto/howto_js_todolist.asp
     }
 
     #divContentsControl{
-        display: block;
         background-color: rgb(240, 240, 240);
         padding: 0.5rem;
         text-align: center;

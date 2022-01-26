@@ -22,7 +22,7 @@ const usersRef = db.ref("users")
 document.getElementById('divWelcomeNew').style.display = 'none';
 document.getElementById('divHistory').style.display = 'none';
 document.getElementById('divNewSave_btn').style.display = 'none';
-document.getElementById('divEditMode_btn').style.display = 'none';
+document.getElementById('divPageEdit_menu').style.display = 'none';
 document.getElementById('divUpdateSave_btn').style.display = 'none';
    
 // 첫방문자 또는 재방문자 구분하기
@@ -49,6 +49,27 @@ function welcome(event) {
 
 }
 
+//더블클릭시 편집모드로 설정되기
+//[버그] direction에 있는 textarea만 선택이 되고 있음
+const card = document.querySelector('textarea');
+
+card.addEventListener('dblclick', function (e) {
+	mode_editing();
+});
+
+//teaxarea 자동크기
+//출처: https://stackoverflow.com/questions/454202/creating-a-textarea-with-auto-resize
+const tx = document.getElementsByTagName("textarea");
+for (let i = 0; i < tx.length; i++) {
+  tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
+  tx[i].addEventListener("input", OnInput, false);
+}
+
+function OnInput() {
+  this.style.height = "auto";
+  this.style.height = (this.scrollHeight) + "px";
+}
+
 // --------------------------
 // data Object 만들기
 // --------------------------
@@ -69,8 +90,8 @@ function pageModeHandler(pageModeOption) {
 	if (pageMode === 'editing') {
 
 		//pageMode = 'editing'
-		document.getElementById('divContentsControl').style.backgroundColor = '#9CC0E7';
-		document.getElementById('divPageMode').innerHTML = '*편집모드';
+		//document.getElementById('divContentsControl').style.backgroundColor = '#9CC0E7';
+		document.getElementById('divPageMode').innerHTML = '편집모드';
 
 		//readOnly = '해제'
 		document.getElementById('direction').readOnly = false;
@@ -93,13 +114,13 @@ function pageModeHandler(pageModeOption) {
 
 		//font-color = '블루계열'
 		document.getElementById('gridMainFrame').style.color = '#9CC0E7';
-		document.getElementById('divContentsControl').style.color = '#FFFFFF';
+		document.getElementById('divContentsControl').style.color = '#9CC0E7';
 
 	} else {
 
 		//pageMode = 'reading'
-		document.getElementById('divContentsControl').style.backgroundColor = '#EEEEEE';
-		document.getElementById('divPageMode').innerHTML = '*읽기모드';
+		//document.getElementById('divContentsControl').style.backgroundColor = '#EEEEEE';
+		document.getElementById('divPageMode').innerHTML = '읽기모드';
 
 		//readOnly = '작동'
 		document.getElementById('direction').readOnly = true;
@@ -123,8 +144,8 @@ function pageModeHandler(pageModeOption) {
 		//document.getElementById('divNewSave_btn').style.display = 'none';
 
 		//font-color = '회색계열'
-		document.getElementById('gridMainFrame').style.color = '#62615F';
-		document.getElementById('divContentsControl').style.color = '#62615F';
+		document.getElementById('gridMainFrame').style.color = '#424242';
+		document.getElementById('divContentsControl').style.color = '#424242';
 	}
 
 	console.log('pageMode = ', pageMode)
@@ -169,12 +190,12 @@ function readData() {
 				let value = childSnap.val();
 				//console.log('value = childSnap.val(); = ', value)
 
-				value['id'] = childSnap.key
+				value['pageId'] = childSnap.key
 
 				// 말로 풀어보면,
-				// value라는 객체에 id라는 key의 value는 childSnap.key와 같다. 
-				// let "object=value" = { "key=id" : "value=childSnap.key" } 
-				// let value = {"id": "childSnap.key"}
+				// value라는 객체에 pageId라는 key의 value는 childSnap.key와 같다. 
+				// let "object=value" = { "key=pageId" : "value=childSnap.key" } 
+				// let value = {"pageId": "childSnap.key"}
 
 				// *여기서 뒷쪽의 childSnap.key의 key는 
 				// '-Mtbm7fZoiwTIOKLTUJ0'와 비슷한 형태로 
@@ -235,8 +256,8 @@ function readData() {
 
 		// 조회하기로 검색이 되었을 시 눌렀을시 등장하는 div
 		document.getElementById('divHistory').style.display = 'initial';
-		document.getElementById('divBasic_menu').style.display = 'initial';
-		document.getElementById('divEditMode_btn').style.display = 'initial';
+		//[삭제예정] document.getElementById('divBasic_menu').style.display = 'initial';
+		document.getElementById('divPageEdit_menu').style.display = 'initial';
 
 		// readData 프로세스가 잘 작동했음을 확인하는 표식
 		var readDataWorked = "good";
@@ -275,12 +296,59 @@ function selectDate() {
 }
 
 // --------------------------
+// 새페이퍼 만들기
+// --------------------------
+
+function newPaperCreate() {
+	
+	let today = new Date();
+	console.log('today=', today);
+	let todayValue = today.toLocaleString()
+	console.log('todayValue=', todayValue);
+
+	document.getElementById('dateChecked').innerHTML = todayValue;
+	document.getElementById('direction').value = '';
+	document.getElementById('naviA').value = '';
+	document.getElementById('naviB').value = '';
+	document.getElementById('action').value = '';
+
+	document.getElementById('divHistory').style.display = 'initial';
+	//[삭제예정] document.getElementById('divBasic_menu').style.display = 'initial';
+	document.getElementById('divPageEdit_menu').style.display = 'initial';
+
+	pageModeHandler('editing');
+
+	document.getElementById('divUpdateSave_btn').style.display = 'none';
+	document.getElementById('divRemove_btn').style.display = 'none';
+
+
+}
+
+// --------------------------
 // 편집모드 설정하기
 // --------------------------
 
 function mode_editing() {
 	
+	document.getElementById('divHistory').style.display = 'initial';
+	//[삭제예정] document.getElementById('divBasic_menu').style.display = 'initial';
+	document.getElementById('divPageEdit_menu').style.display = 'initial';
+
 	pageModeHandler('editing');
+
+}
+
+// --------------------------
+// 편집모드 취소하기
+// --------------------------
+
+function editingCancel() {
+	
+	//document.getElementById('divHistory').style.display = 'initial';
+	//document.getElementById('divBasic_menu').style.display = 'initial';
+	//document.getElementById('divPageEdit_menu').style.display = 'initial';
+
+	pageModeHandler('reading');
 
 }
 
@@ -305,10 +373,10 @@ function onUpdate() {
 
 	//console.log("data@onUpdate = ", data)
 
-	let userId = data[dateCheckedValue].id
+	let userPageId = data[dateCheckedValue].pageId
 
 	//[Todo] 고민할것 참고: https://kdinner.tistory.com/72
-	const userRef = db.ref("users/" + userName + '/' + userId + '/')
+	const userRef = db.ref("users/" + userName + '/' + userPageId + '/')
 
 	userRef.update(updatedData);
 
@@ -335,10 +403,10 @@ function onRemove() {
 
 	//console.log("data@onUpdate = ", data)
 
-	let userId = data[dateCheckedValue].id
+	let userPageId = data[dateCheckedValue].pageId
 
 	//[Todo] 고민할것 참고: https://kdinner.tistory.com/72
-	const userRef = db.ref("users/" + userName + '/' + userId + '/')
+	const userRef = db.ref("users/" + userName + '/' + userPageId + '/')
 
 	console.log('userRef@delete = ', userRef)
 	
@@ -351,62 +419,6 @@ function onRemove() {
 
 		alert("삭제되었습니다.");
 
-		//location.reload(true);
-		
-		// if (userName) {
-	
-		// 	const userRef = db.ref("users/" + userName + "/")
-	
-		// 	userRef.on('value', (snapshot) => {
-	
-		// 		snapshot.forEach(childSnap => {
-	
-		// 			let value = childSnap.val();	
-		// 			value['id'] = childSnap.key
-		// 			data[value.date] = value
-	
-		// 		});
-	
-		// 		console.log('data@afterdeleteData = ', data);
-			
-		// 		// dateList 에 date 넣기
-		// 		let dateList = Object.keys(data);
-		// 		console.log("dateList = ", dateList);	
-	
-		// 		// Array에서 selectBox 목록 만들기 - 참고 링크: https://www.youtube.com/watch?v=HMehtL39VUQ
-		// 		let dateSelectbox = document.getElementById("SelectboxDate");
-	
-		// 		// SelectboxDate 초기화하기 - 참고 링크: https://stackoverflow.com/questions/42365845/how-to-refresh-select-box-without-reloading-the-whole-form-in-js
-		// 		for (let i = dateSelectbox.options.length - 1; i >= 0; i--) {
-		// 			dateSelectbox.remove(i + 1);
-		// 		}
-	
-		// 		// seletBox에 <option> 만들어서, date값 넣기
-		// 		for (let i = 0; i < dateList.length; i++) {
-		// 			let option = document.createElement("OPTION"),
-		// 				txt = document.createTextNode(dateList[i]);
-		// 			option.appendChild(txt);
-		// 			option.setAttribute("value", dateList[i]);
-		// 			dateSelectbox.insertBefore(option, dateSelectbox.lastChild);
-		// 		}
-	
-		// 		// 조회버튼 누를시 최근 일자로 검색되도록하기
-		// 		let latestDay = dateList[dateList.length - 2]
-		// 		console.log('최근저장된일자=', latestDay);
-	
-		// 		// key=latestDay의 value를 html에 표출하기
-		// 		// @infoTable
-		// 		document.getElementById('userNameChecked').innerHTML = userName;
-		// 		document.getElementById('dateChecked').innerHTML = latestDay;
-		// 		// @mainPage
-		// 		document.getElementById('direction').innerHTML = data[latestDay].direction;
-		// 		console.log('direction = ', data[latestDay].direction)
-		// 		document.getElementById('naviA').innerHTML = data[latestDay].naviA;
-		// 		document.getElementById('naviB').innerHTML = data[latestDay]['naviB']; // 이렇게 해도 됨.
-		// 		document.getElementById('action').innerHTML = data[latestDay].action;
-	
-		// 	});	
-		// }
 	} 
 
 };

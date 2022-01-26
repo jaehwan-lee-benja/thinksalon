@@ -53,20 +53,23 @@
             <div id ="divInfoTable">
                 <table>
                     <tr>
-                        <td>- 이름/닉네임</td>
+                        <td>이름</td>
                         <td>
                             <span type="text" id="userNameChecked"></span>
                         </td>
                     </tr>
-                    <tr>
-                        <td>- 작성일</td>
-                        <td>                        
-                            <span type="text" id="dateChecked"></span>
-                    </tr>
+    
                 </table>
+                <div id="divNewMode_btn" style="display: inline;">
+                    <input id="newPaperCreate" 
+                        onClick="newPaperCreate()" 
+                        type="button" 
+                        value="빈페이퍼 작성하기"
+                        style="margin: 10px 0px;">
+                </div>
             </div>
             <div id="divHistory">
-                <span>- 히스토리 검색하기<br> </span>
+                <span>불러오기 검색하기<br> </span>
                 <select 
                     style="width: 100%; color:gray; font-size: 0.8rem;" 
                     name="dateSelect" 
@@ -76,101 +79,81 @@
                 </select>
             </div>
 
-            <!-- <div>
-                 CRUD
-                    add user module
-                <section id="add-user-module" >
-                    <button id="open-add-user-form-btn">+</button>
-                    <form>
-                        <h2>Add User</h2>
-                        name:<br>
-                        <input type='text' data-key='name' class='user-input'><br>
-                        age:<br>
-                        <input type='text' data-key='age' class='user-input'><br>
-                        email:<br>
-                        <input type='text' data-key='email' class='user-input'><br>
-                        <button type='button' id="add-user-btn">add user</button>
-                    </form>
-                </section>
-
-                edit user module
-                <section id="edit-user-module">
-                    <form>
-                        <h2>Edit user</h2>
-                        <input type="hidden" class="edit-userid">
-                        name:<br>
-                        <input type='text' data-key='name' class='edit-user-input'><br>
-                        age:<br>
-                        <input type='text' data-key='age' class='edit-user-input'><br>
-                        email:<br>
-                        <input type='text' data-key='email' class='edit-user-input'><br>
-                        <button type='button' id="edit-user-btn">save</button>
-                    </form>
-                </section>
-
-
-                show user module
-                <ul id="user-list"></ul>
-                <div id="user-detail"></div>
-            </div> -->
-
         </div>
         <div id="gridMainFrame">
             <div id="divContentsControl">
-                <div class="left">
-                    <div id="divPageMode" style="display: inline;">
-                    </div>
-                </div>
-                <div class="right">
-                    
-                        <!--
-                            날짜기준으로 업데이트가 지속적으로 되는 경우, 수정저장하기의 기능이 필요하지 않음
-                            <input onClick="onUpdate()" type="button" value="수정저장하기">
-                        -->
-                    <div id="divBasic_menu" style="display: inline;">
-                        <div id="divEditMode_btn" style="display: inline;">
-                            <div id="divEdit_btn" style="display: inline;">
-                                <input id="editMode_btn" 
-                                onClick="mode_editing()" 
-                                type="button" 
-                                value="편집하기">
-                            </div>
-                            <div id="divEditCancel_btn" style="display: inline;">
-                                <input id="editCancel_btn" 
-                                onClick="editingCancel()" 
-                                type="button" 
-                                value="편집취소하기">
-                            </div>
-                            <div id="divUpdateSave_btn" style="display: inline;">
-                                <input id="updateSave_btn" 
-                                onClick="onUpdate()" 
-                                type="button" 
-                                value="수정본 저장하기">
-                            </div>
-                            <div id="divRemove_btn" style="display: inline;">
-                                <input id="remove_btn" 
-                                onClick="onRemove()" 
-                                type="button" 
-                                value="삭제하기">
-                                <span>|</span>
-                            </div>
-                        </div>
-                        <div id="divNewSave_btn" style="display: inline;">
-                            <input id="onNew" 
-                                onClick="onNewSave()" 
-                                type="button" 
-                                value="신규저장하기">
-                        </div>
-                        <div id="divNewMode_btn" style="display: inline;">
-                            <input id="" 
-                                onClick="" 
-                                type="button" 
-                                value="빈페이지 작성하기">
-                        </div>
-                    </div>
+
+                <div>
+                    <table>
+                        <tr>
+                            <td>
+                                작성일
+                            </td>
+                            <td>
+                                :
+                            </td>
+                            <td>
+                                <span type="text" id="dateChecked"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                페이퍼 모드
+                            </td>
+                            <td>
+                                :
+                            </td>
+                            <td>
+                                <div id="divPageMode" style="display: inline;">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                페이퍼 수정
+                            </td>
+                            <td>
+                                :
+                            </td>
+                            <td>
+                                <div id="divPageEdit_menu" style="display: inline;">
+                                    <div id="divEdit_btn" style="display: inline;">
+                                        <input id="editMode_btn" 
+                                        onClick="mode_editing()" 
+                                        type="button" 
+                                        value="편집하기">
+                                    </div>
+                                    <div id="divEditCancel_btn" style="display: inline;">
+                                        <input id="editCancel_btn" 
+                                        onClick="editingCancel()" 
+                                        type="button" 
+                                        value="편집취소하기">
+                                    </div>
+                                    <div id="divUpdateSave_btn" style="display: inline;">
+                                        <input id="updateSave_btn" 
+                                        onClick="onUpdate()" 
+                                        type="button" 
+                                        value="저장하기">
+                                    </div>
+                                    <div id="divNewSave_btn" style="display: inline;">
+                                        <input id="onNew" 
+                                            onClick="onNewSave()" 
+                                            type="button" 
+                                            value="새이름으로 저장하기">
+                                    </div>
+                                    <div id="divRemove_btn" style="display: inline;">
+                                        <input id="remove_btn" 
+                                        onClick="onRemove()" 
+                                        type="button" 
+                                        value="삭제하기">
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
                 </div>
             </div>
-            <div>
+            <div id="divPage">
                 <div id="gridMainContents">
                     <div>
                         <h2>[D] 방향성</h2>
