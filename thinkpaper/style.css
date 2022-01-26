@@ -1,6 +1,6 @@
 body{
     font-size: 0.8rem;
-    background-color: #FAFAFA;
+    background-color: #f9f9f9;
     color: #424242;
 }
 
@@ -11,6 +11,7 @@ h1{
 
 h2{
     font-size: 1.2rem;
+    margin-top: 0;
 }
 
 h3 {
@@ -112,15 +113,20 @@ input:hover {
     text-align: right;
 }
 
-#divPage{
+#divPaper{
     background-color: #FFF;
-    padding: 1rem
+    padding: 1rem;
+    border-radius: 2px;
+    box-shadow: 
+    0 1px 3px rgba(0,0,0,0.12), 
+    0 1px 2px rgba(0,0,0,0.24);
+    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
 }
 
 #gridMainContents{
     display: grid;
     grid-template-rows: auto 1fr;
-    margin-bottom: 0.5rem;
+    margin-bottom: 3rem;
     grid-gap: 0.2rem;
 }
 
@@ -218,7 +224,7 @@ https://www.w3schools.com/howto/howto_js_todolist.asp
         display: grid;
         grid-template-rows: 7rem auto;
         padding: 0.5rem 0.5rem 0.5rem 0;
-        margin-bottom: 0.5rem;
+        margin-bottom: 3rem;
     }
 
     #gridNavi{
@@ -226,7 +232,6 @@ https://www.w3schools.com/howto/howto_js_todolist.asp
     }
 
     #divContentsControl{
-        background-color: rgb(240, 240, 240);
         padding: 0.5rem;
         text-align: center;
     }

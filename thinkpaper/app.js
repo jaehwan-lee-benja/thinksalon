@@ -24,6 +24,7 @@ document.getElementById('divHistory').style.display = 'none';
 document.getElementById('divNewSave_btn').style.display = 'none';
 document.getElementById('divPageEdit_menu').style.display = 'none';
 document.getElementById('divUpdateSave_btn').style.display = 'none';
+document.getElementById('divNewPaperCreate_btn').style.display = 'none';
    
 // 첫방문자 또는 재방문자 구분하기
 function welcome(event) {
@@ -49,7 +50,7 @@ function welcome(event) {
 
 }
 
-//[향후 개선하기] 더블클릭시 편집모드로 설정되기
+//[향후 개선하기] 더블클릭시 작성모드로 설정되기
 //[버그] direction에 있는 textarea만 선택이 되고 있음
 // const card = document.querySelector('textarea');
 
@@ -91,7 +92,7 @@ function pageModeHandler(pageModeOption) {
 
 		//pageMode = 'editing'
 		//document.getElementById('divContentsControl').style.backgroundColor = '#9CC0E7';
-		document.getElementById('divPageMode').innerHTML = '편집모드';
+		document.getElementById('divPaperMode').innerHTML = '작성모드';
 
 		//readOnly = '해제'
 		document.getElementById('direction').readOnly = false;
@@ -102,15 +103,16 @@ function pageModeHandler(pageModeOption) {
 		// div조절
 		// 저장하기 버튼
 		document.getElementById('divNewSave_btn').style.display = 'initial';
-		// 편집하기 버튼
+		// 작성하기 버튼
 		document.getElementById('divEdit_btn').style.display = 'none';
-		// 편집취소하기 버튼
+		// 작성취소하기 버튼
 		document.getElementById('divEditCancel_btn').style.display = 'initial';
 		// 수정본 저장하기 버튼
 		document.getElementById('divUpdateSave_btn').style.display = 'initial';
 		// 삭제하기 버튼
 		document.getElementById('divRemove_btn').style.display = 'initial';
-
+		document.getElementById('divNewPaperCreate_btn').style.display = 'none';
+		
 
 		//font-color = '블루계열'
 		document.getElementById('gridMainFrame').style.color = '#9CC0E7';
@@ -120,7 +122,7 @@ function pageModeHandler(pageModeOption) {
 
 		//pageMode = 'reading'
 		//document.getElementById('divContentsControl').style.backgroundColor = '#EEEEEE';
-		document.getElementById('divPageMode').innerHTML = '읽기모드';
+		document.getElementById('divPaperMode').innerHTML = '읽기모드';
 
 		//readOnly = '작동'
 		document.getElementById('direction').readOnly = true;
@@ -131,14 +133,15 @@ function pageModeHandler(pageModeOption) {
 		//div조절
 		// 저장하기 버튼
 		document.getElementById('divNewSave_btn').style.display = 'none';
-		// 편집하기 버튼
+		// 작성하기 버튼
 		document.getElementById('divEdit_btn').style.display = 'initial';
-		// 편집취소하기 버튼
+		// 작성취소하기 버튼
 		document.getElementById('divEditCancel_btn').style.display = 'none';
 		// 수정본 저장하기 버튼
 		document.getElementById('divUpdateSave_btn').style.display = 'none';
 		// 삭제하기 버튼
 		document.getElementById('divRemove_btn').style.display = 'initial';
+		document.getElementById('divNewPaperCreate_btn').style.display = 'initial';
 
 		// 조회하기를 눌렀을시 사라지는 div
 		//document.getElementById('divNewSave_btn').style.display = 'none';
@@ -166,6 +169,41 @@ function pageModeHandler(pageModeOption) {
 // 	console.log('todayValue=', todayValue);
 	
 // }
+
+// --------------------------
+// 첫방문 - 시작하기
+// --------------------------
+
+function newUserPaper() {
+
+	const userName_new = document.getElementById('userName_new').value
+
+	if (userName_new) {
+
+		document.getElementById('userNameChecked').innerHTML = userName_new
+
+		document.getElementById('divHistory').style.display = 'initial';
+		document.getElementById('divPageEdit_menu').style.display = 'initial';
+		// 저장하기 버튼
+		document.getElementById('divNewSave_btn').style.display = 'none';
+		// 작성하기 버튼
+		document.getElementById('divEdit_btn').style.display = 'none';
+		// 작성취소하기 버튼
+		document.getElementById('divEditCancel_btn').style.display = 'none';
+		// 수정본 저장하기 버튼
+		document.getElementById('divUpdateSave_btn').style.display = 'none';
+		// 삭제하기 버튼
+		document.getElementById('divRemove_btn').style.display = 'none';
+		document.getElementById('divNewPaperCreate_btn').style.display = 'initial';
+
+
+	} else {
+
+		alert('[이름]을 입력해주시기 바랍니다.');
+
+	}
+
+}
 
 // --------------------------
 // readData
@@ -256,8 +294,10 @@ function readData() {
 
 		// 조회하기로 검색이 되었을 시 눌렀을시 등장하는 div
 		document.getElementById('divHistory').style.display = 'initial';
-		//[삭제예정] document.getElementById('divBasic_menu').style.display = 'initial';
+		//[삭제예정]document.getElementById('divBasic_menu').style.display = 'initial';
 		document.getElementById('divPageEdit_menu').style.display = 'initial';
+		document.getElementById('divNewPaperCreate_btn').style.display = 'initial';
+
 
 		// readData 프로세스가 잘 작동했음을 확인하는 표식
 		var readDataWorked = "good";
@@ -325,7 +365,7 @@ function newPaperCreate() {
 }
 
 // --------------------------
-// 편집모드 설정하기
+// 작성모드 설정하기
 // --------------------------
 
 function mode_editing() {
@@ -339,7 +379,7 @@ function mode_editing() {
 }
 
 // --------------------------
-// 편집모드 취소하기
+// 작성모드 취소하기
 // --------------------------
 
 function editingCancel() {
@@ -415,6 +455,7 @@ function onRemove() {
 
 	//삭제재확인
 	if (confirm("정말 삭제하시겠습니까?")){
+		
 		userRef.remove();
 
 		alert("삭제되었습니다.");

@@ -24,8 +24,8 @@
             </div>
             <div id="divWelcomeNew" style="display: inline;">
                 => 이름/닉네임(입력):
-                <input class="indexTextbox" type="text" value=""></input>
-                <input type="button" value="시작하기"></input>
+                <input class="indexTextbox" type="text" id="userName_new" value=""></input>
+                <input onClick="newUserPaper()" type="button" value="시작하기"></input>
             </div>
         </div>
         <div>
@@ -54,20 +54,15 @@
                 <table>
                     <tr>
                         <td>이름</td>
+                        <td>:</td>
                         <td>
                             <span type="text" id="userNameChecked"></span>
                         </td>
                     </tr>
     
                 </table>
-                <div id="divNewMode_btn" style="display: inline;">
-                    <input id="newPaperCreate" 
-                        onClick="newPaperCreate()" 
-                        type="button" 
-                        value="빈페이퍼 작성하기"
-                        style="margin: 10px 0px;">
-                </div>
             </div>
+            
             <div id="divHistory">
                 <span>불러오기 검색하기<br> </span>
                 <select 
@@ -104,13 +99,13 @@
                                 :
                             </td>
                             <td>
-                                <div id="divPageMode" style="display: inline;">
+                                <div id="divPaperMode" style="display: inline;">
                                 </div>
                             </td>
                         </tr>
                         <tr>
                             <td>
-                                페이퍼 수정
+                                페이퍼 관리
                             </td>
                             <td>
                                 :
@@ -121,13 +116,13 @@
                                         <input id="editMode_btn" 
                                         onClick="mode_editing()" 
                                         type="button" 
-                                        value="편집하기">
+                                        value="수정하기">
                                     </div>
                                     <div id="divEditCancel_btn" style="display: inline;">
                                         <input id="editCancel_btn" 
                                         onClick="editingCancel()" 
                                         type="button" 
-                                        value="편집취소하기">
+                                        value="수정 취소하기">
                                     </div>
                                     <div id="divUpdateSave_btn" style="display: inline;">
                                         <input id="updateSave_btn" 
@@ -147,13 +142,20 @@
                                         type="button" 
                                         value="삭제하기">
                                     </div>
+                                    <div id="divNewPaperCreate_btn" style="display: inline;">
+                                        <input id="newPaperCreate_btn" 
+                                            onClick="newPaperCreate()" 
+                                            type="button" 
+                                            value="새 페이퍼 작성하기"
+                                            style="margin-left: 0.7rem;">
+                                    </div>
                                 </div>
                             </td>
                         </tr>
                     </table>
                 </div>
             </div>
-            <div id="divPage">
+            <div id="divPaper">
                 <div id="gridMainContents">
                     <div>
                         <h2>[D] 방향성</h2>
@@ -215,6 +217,7 @@
 
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
 <script type="text/javascript" src="app.js"></script>
 
 </html>
