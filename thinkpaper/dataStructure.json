@@ -1,0 +1,61 @@
+{
+    "member": {
+        "id": "",
+        "name": "",
+        "email": "",
+        "phone": "",
+        "signedinDate": "",
+        "visitCounts": "",
+        "visitRate": ""
+    },
+    "action": {
+        "id": "",
+        "createdDate": "",
+        "editedDate": "",
+        "contents": {}
+    },
+    "bigPicture": {
+        "direction": {
+            "id": "",
+            "createdDate": "",
+            "editedDate": "",
+            "contents": {}
+        },
+        "navi": {
+            "id": "",
+            "createdDate": "",
+            "editedDate": "",
+            "contents": {},
+            "scale": "",
+            "area": "",
+            "subArea": ""
+        },
+        "actionPlan": {
+            "id": "",
+            "createdDate": "",
+            "editedDate": "",
+            "contents": {},
+            "term": ""
+        }
+    },
+    "cycle": {
+        "timeMap": {
+            "id": "",
+            "createdDate": "",
+            "editedDate": "",
+            "contents": {}
+        },
+        "timeToThink": {
+            "id": "",
+            "createdDate": "",
+            "editedDate": "",
+            "contents": {}
+        }
+    },
+    "contentsFormat": {
+        "id": "",
+        "createdDate": "",
+        "editedDate": "",
+        "contents": {}
+    }
+}
