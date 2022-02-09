@@ -28,7 +28,13 @@
             "contents": {},
             "scale": "",
             "area": "",
-            "subArea": ""
+            "subArea": "",
+
+            "area2": {
+                "title": "",
+                "subTitle": ""
+            }
+
         },
         "actionPlan": {
             "id": "",
@@ -39,23 +45,23 @@
         }
     },
     "cycle": {
-        "timeMap": {
+        "time": {
             "id": "",
             "createdDate": "",
             "editedDate": "",
             "contents": {}
         },
-        "timeToThink": {
+        "money": {
+            "id": "",
+            "createdDate": "",
+            "editedDate": "",
+            "contents": {}
+        },
+        "routine": {
             "id": "",
             "createdDate": "",
             "editedDate": "",
             "contents": {}
         }
-    },
-    "contentsFormat": {
-        "id": "",
-        "createdDate": "",
-        "editedDate": "",
-        "contents": {}
     }
 }
