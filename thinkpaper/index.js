@@ -1,19 +1,56 @@
 
-// !IMPORTANT: REPLACE WITH YOUR OWN CONFIG OBJECT BELOW
+// 220211 주석처리 - fireBase.js 이전에 썼던 코드
+	// !IMPORTANT: REPLACE WITH YOUR OWN CONFIG OBJECT BELOW
 
-// Initialize Firebase
-let config = {
-	apiKey: "AIzaSyBmGlVK1P-fTw_RvFaA9tV1pEv8-Rk_-z4",
-	authDomain: "thinksalon-2021.firebaseapp.com",
-	databaseURL: "https://thinksalon-2021-default-rtdb.firebaseio.com",
-	projectId: "thinksalon-2021",
-	storageBucket: "thinksalon-2021.appspot.com",
-	messagingSenderId: "892004428811",
-	appId: "1:892004428811:web:805e7e85048e791af6eb0e",
-	measurementId: "G-YE9WY5Z6ZS"
-};
+	// Initialize Firebase
+	// let config = {
+	// 	apiKey: "AIzaSyBmGlVK1P-fTw_RvFaA9tV1pEv8-Rk_-z4",
+	// 	authDomain: "thinksalon-2021.firebaseapp.com",
+	// 	databaseURL: "https://thinksalon-2021-default-rtdb.firebaseio.com",
+	// 	projectId: "thinksalon-2021",
+	// 	storageBucket: "thinksalon-2021.appspot.com",
+	// 	messagingSenderId: "892004428811",
+	// 	appId: "1:892004428811:web:805e7e85048e791af6eb0e",
+	// 	measurementId: "G-YE9WY5Z6ZS"
+	// };
 
-firebase.initializeApp(config);
+	// firebase.initializeApp(config);
+
+
+// 로그인, 로그아웃에 따른 메인화면 불러오기 기능
+
+var mainApp = {};
+
+(function(){
+    var firebase = app_fireBase;
+    var uid = null;
+    firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+            // User is signed in.
+            uid = user.uid;
+
+            var user = firebase.auth().currentUser;
+
+            if(user !=null) {
+
+                var email_id = user.email;
+                document.getElementById("user_para").innerHTML = "환영합니다. " + email_id + " 님";            
+            }
+            
+        }else{
+            // redirect to login page.
+            uid = null;
+            window.location.replace("login.html")
+            //window.location
+        }
+    });
+
+    function logOut(){
+        firebase.auth().signOut();
+    }
+
+    mainApp.logOut = logOut;
+})()
 
 const db = firebase.database()
 const usersRef = db.ref("users")

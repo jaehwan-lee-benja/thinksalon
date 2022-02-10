@@ -1,3 +1,6 @@
+//220211 - login 예제 연습시 작성했던 파일
+//참고링크: https://www.youtube.com/watch?v=CvkCjfHts9A&list=PLxCXGTk-TOK9NieH8hhON952KPmIfNSqk&index=16
+
 var mainApp = {};
 
 (function(){
