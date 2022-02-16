@@ -1,14 +1,21 @@
-// 로그인 되었을 때, 아래의 스크립트 진행되기
 
-const db = firebase.database()
-const usersRef = db.ref("users")
+// 220211 주석처리 - fireBase.js 이전에 썼던 코드
+	// !IMPORTANT: REPLACE WITH YOUR OWN CONFIG OBJECT BELOW
 
-// 보이지않아도 되는 div숨기기
-document.getElementById('divHistory').style.display = 'none';
-document.getElementById('divNewSave_btn').style.display = 'none';
-document.getElementById('divPageEdit_menu').style.display = 'none';
-document.getElementById('divUpdateSave_btn').style.display = 'none';
-document.getElementById('divNewPaperCreate_btn').style.display = 'none';
+	// Initialize Firebase
+	// let config = {
+	// 	apiKey: "AIzaSyBmGlVK1P-fTw_RvFaA9tV1pEv8-Rk_-z4",
+	// 	authDomain: "thinksalon-2021.firebaseapp.com",
+	// 	databaseURL: "https://thinksalon-2021-default-rtdb.firebaseio.com",
+	// 	projectId: "thinksalon-2021",
+	// 	storageBucket: "thinksalon-2021.appspot.com",
+	// 	messagingSenderId: "892004428811",
+	// 	appId: "1:892004428811:web:805e7e85048e791af6eb0e",
+	// 	measurementId: "G-YE9WY5Z6ZS"
+	// };
+
+	// firebase.initializeApp(config);
+
 
 // 로그인, 로그아웃에 따른 메인화면 불러오기 기능
 	// 220216 - 참고 레퍼런스: https://www.youtube.com/watch?v=CvkCjfHts9A&list=PLxCXGTk-TOK9NieH8hhON952KPmIfNSqk&index=17
@@ -17,7 +24,6 @@ var mainApp = {};
 
 //220216 질문
 (function(){
-	
     var firebase = app_fireBase;
     var uid = null;
     firebase.auth().onAuthStateChanged(function(user) {
@@ -25,26 +31,29 @@ var mainApp = {};
             // User is signed in.
             uid = user.uid;
 
-			// User 이메일 보여주기
             var user = firebase.auth().currentUser;
 
             if(user !=null) {
 
-                var userEmail2 = user.email;
-                document.getElementById("user_para").innerHTML = userEmail2 + " 님"
+                var email_id = user.email;
+                document.getElementById("user_para").innerHTML = email_id + " 님"
 
-				// 사용자 이름 뜨게하기
-						
-				var userId = userEmail2.substring(0, userEmail2.indexOf('@'));
-				console.log(userId)
+				console.log("uid", uid)
+				console.log("uid.userName", uid.userName)
+				// console.log("uid[userName]", uid[userName])
+				// console.log("uid[userName]", uid[userName])
 
-				//220216 - 여기부터 다시 시작하기 .on ..snapshot 이것이 들어가야할것만같다..
-				const userRef = db.ref("users/" + userId + "/" + "userName")
 
-				console.log(userRef)
+				// document.getElementById("userName1").innerHTML = uid[userName] + " 님"
 
-				//아래 내용을 userId의 오브젝트 내에서 userName을 찾는 방식으로 확인이 되어야한다.
-				document.getElementById('userNameChecked').innerHTML = userId
+				
+				// 회원 정보 나열을 위한 서술(이름, 이메일 등)
+				// document.getElementById("email_id").innerHTML = email_id
+				
+				//만약, 사용자 아이디가 검색이 된다면,
+				
+				//divCreateName을 none으로 하고,
+				//그것이 아니라면, divCreateName을 보여주어라
 
             }
             
@@ -62,11 +71,17 @@ var mainApp = {};
     mainApp.logOut = logOut;
 })()
 
+// 로그인 되었을 때, 아래의 스크립트 진행되기
 
+const db = firebase.database()
+const usersRef = db.ref("users")
 
-
-
-
+// 보이지않아도 되는 div숨기기
+document.getElementById('divHistory').style.display = 'none';
+document.getElementById('divNewSave_btn').style.display = 'none';
+document.getElementById('divPageEdit_menu').style.display = 'none';
+document.getElementById('divUpdateSave_btn').style.display = 'none';
+document.getElementById('divNewPaperCreate_btn').style.display = 'none';
    
 // 첫방문자 또는 재방문자 구분하기
 function welcome(event) {
@@ -213,6 +228,55 @@ function pageModeHandler(pageModeOption) {
 // }
 
 // --------------------------
+// loadData
+// --------------------------
+
+function loadData() {
+	var firebase = app_fireBase;
+    var uid = null;
+    firebase.auth().onAuthStateChanged(function(user) {
+		// User is signed in.
+		uid = user.uid;
+		console.log("uid@loadData = ", uid)
+				
+		const userRef = db.ref("users/" + uid + "/")
+
+		userRef.on('value', (snapshot) => {
+
+			snapshot.forEach(childSnap => {
+
+				let value = childSnap.val();
+				//console.log('value = childSnap.val(); = ', value)
+
+				value['pageId'] = childSnap.key
+
+				// 말로 풀어보면,
+				// value라는 객체에 pageId라는 key의 value는 childSnap.key와 같다. 
+				// let "object=value" = { "key=pageId" : "value=childSnap.key" } 
+				// let value = {"pageId": "childSnap.key"}
+
+				// *여기서 뒷쪽의 childSnap.key의 key는 
+				// '-Mtbm7fZoiwTIOKLTUJ0'와 비슷한 형태로 
+				// firebase/realtimedatabase 객체의 key값이다.
+
+				// object와 key, value의 이해
+				// object는 {"key1": "value1", "key2": "value2" }와 같은 형태로 생겼다.
+				// object["key1"] = "value1" 과 같이 표현할 수 있다.
+
+				data[value.date] = value
+
+			});
+
+		// data = {}에 데이터가 담겼는지 확인하기
+		console.log('data@loadData = ', data);
+
+		});
+	});
+}
+
+loadData();
+
+// --------------------------
 // 첫방문 - 시작하기
 // --------------------------
 
@@ -254,6 +318,7 @@ function createUserName() {
 	}
 
 }
+
 
 // 220216까지 readData function 
 // // --------------------------

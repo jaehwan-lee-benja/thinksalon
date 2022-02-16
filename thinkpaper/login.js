@@ -1,13 +1,54 @@
 (function(){
+
+    const db = firebase.database()
+
     // Initialize the FirebaseUI Widget using Firebase.
     var ui = new firebaseui.auth.AuthUI(firebase.auth());
     var uiConfig = {
         callbacks: {
           signInSuccessWithAuthResult: function(authResult, redirectUrl) {
+            console.log(authResult.user);
+            console.log(authResult.credential);
+            console.log(authResult.additionalUserInfo);
+            // {user: Zr, credential: ze, operationType: 'signIn', additionalUserInfo: Dt}
+            console.log(JSON.stringify(authResult.additionalUserInfo.profile));
+            console.log(authResult.additionalUserInfo.profile.email);
+
+            //Dt {isNewUser: false, providerId: 'google.com', profile: {…}}
             // User successfully signed in.
             // Return type determines whether we continue the redirect automatically
             // or whether we leave that to developer to handle.
-            return true;
+            
+            // Add this user to Firebase Database
+            var databaseRef = db.ref()
+        
+            var userProfile = authResult.additionalUserInfo.profile
+            var userEmail = userProfile.email
+            var userName = userProfile.name
+            var userId = userEmail.substring(0, userEmail.indexOf('@'));
+            console.log(userId)
+
+            //var isNewUser = authResult.additionalUserInfo.isNewUser
+
+            //console.log("isNewUser = ", isNewUser)
+            //if (isNewUser) { console.log(isNewUser) } else { console.log(isNewUser)  }
+
+            // Create User data
+            var userData = {
+              email : userEmail,
+              userName : userName,
+              lastLogin : Date.now()
+            }
+        
+            // Push to Firebase Database
+            databaseRef.child('users/' + userId)
+            .set(userData , (e) => {
+              window.location.replace("index.html")
+            })
+
+            console.log("userData = ", userData)
+
+            return false;
           },
           uiShown: function() {
             // The widget is rendered.

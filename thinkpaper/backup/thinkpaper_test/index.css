@@ -1,0 +1,258 @@
+body{
+    font-size: 0.8rem;
+    background-color: #f9f9f9;
+    color: #424242;
+}
+
+h1{
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+h2{
+    font-size: 1.2rem;
+    margin-top: 0;
+}
+
+h3 {
+    font-size: 0.9rem;
+    font-weight: normal;
+}
+
+h4 {
+    font-size: 0.8rem;
+    margin: 0rem;
+}
+
+textarea {
+    outline: none !important; 
+    width: 100%;
+    min-height: 5rem;
+    border: 0px;
+    background-color: #FFFFFF;
+    font-size: 0.8rem;
+    padding: 0.5rem;
+    box-sizing: border-box;
+    resize: vertical; /* 상하만 가능 */
+    border-radius: 2px;
+    box-shadow: 
+    0 1px 3px rgba(0,0,0,0.12), 
+    0 1px 2px rgba(0,0,0,0.24);
+    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+
+    resize: none;
+    -webkit-appearance: textfield;
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+textarea:hover {
+    box-shadow: 
+        0 10px 20px rgba(0,0,0,0.19), 
+        0 6px 6px rgba(0,0,0,0.23);
+  }
+
+input[type="button"] {
+        border: 0.2px solid rgb(200, 200, 200);
+        color: #424242;
+        background-color: inherit;
+        padding: 3px 5px;
+        cursor: pointer;
+        display: inline-block;
+      }
+
+/* On mouse-over */
+input:hover {
+    background: #9CC0E7;
+    color: #FFF;
+}
+
+#gridWelcome{
+    display: grid;
+    margin-top: 0.5rem;
+    grid-template-columns: 1fr 5rem;
+    grid-gap: 0.2rem;
+}
+
+#divLogOutBtn{
+    text-align: right;
+}
+
+#date {
+    width: 10rem;
+}
+
+#divTop{
+    padding: 0.5rem 0;
+    margin: 0.5rem 0;
+    border-bottom: 1px solid rgb(200, 200, 200);
+}
+
+#gridBody{
+    display: grid;
+    grid-template-rows: "height: auto;" 1fr 3rem;
+    margin: 2rem;
+    grid-gap: 0.2rem;
+}
+
+#gridMain{
+    display: grid;
+    grid-template-columns: 12rem 1fr;
+    padding-bottom: 1rem;
+    grid-gap: 0.2rem;
+}
+
+#divIndex{
+    background-color: #EEE;
+    padding: 1rem;
+}
+
+#divInfoTable{
+    margin: 1rem 0;
+    padding: 0.5rem;
+    border: 0.2px solid rgb(200, 200, 200);
+}
+
+#gridMainFrame{
+    margin-left: 0.5rem;
+    grid-gap: 0.2rem;
+}
+
+#divContentsControl{
+    padding: 0.5rem;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+#divContentsControl .right{
+    text-align: right;
+}
+
+#divPaper{
+    background-color: #FFF;
+    padding: 1rem;
+    border-radius: 2px;
+    box-shadow: 
+    0 1px 3px rgba(0,0,0,0.12), 
+    0 1px 2px rgba(0,0,0,0.24);
+    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+}
+
+#gridMainContents{
+    display: grid;
+    grid-template-rows: auto 1fr;
+    margin-bottom: 3rem;
+    grid-gap: 0.2rem;
+}
+
+#gridNavi{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 0.5rem;
+}
+
+#gridPageInfo{
+    font-size: 0.5rem;
+    display: grid;
+    grid-template-columns: 1fr 10rem 10rem;
+    border-top: 1px solid rgb(200, 200, 200);
+    padding-top: 0.5rem;
+    grid-gap: 0.2rem;
+}
+
+#divCreateName{
+    padding: 0.5rem;
+    margin: 0.5rem 0;
+    border: 1px solid rgb(200, 200, 200);
+}
+
+.pageInfoBrand{  
+    text-align: right;
+    font-size: 0.8rem;
+}
+
+#imageMain{
+    width: 100%;
+}
+
+#imageMain:hover{
+    box-shadow: 
+        0 10px 20px rgba(0,0,0,0.19), 
+        0 6px 6px rgba(0,0,0,0.23);
+}
+
+.button{
+    text-align: right;
+}
+.formInline{
+    display: inline;
+}
+
+.indexTextbox{
+    width: 6rem;
+}
+
+#divLogin{
+    margin: 5rem;
+    text-align: center;
+}
+
+/*to do list
+https://www.w3schools.com/howto/howto_js_todolist.asp
+*/
+
+
+   
+
+@media(max-width:600px){
+    #divIndex{
+        margin-bottom: 1rem;
+    }
+    #gridMain{
+        display: block;
+        padding-bottom: 1rem;
+    }
+    #gridMainFrame{
+        margin-left: 0rem;
+    }
+    #gridPageInfo{
+        font-size: 0.5rem;
+        display: block;
+        border-top: 1px solid gray;
+        padding-top: 0.5rem;
+    }
+    #imageMain{
+        max-width: 15rem;
+    }
+    .pageInfoBrand{  
+        text-align: left;
+        font-size: 0.8rem;
+        padding-top: 0.5rem;    
+    }
+    #gridMainSubFrame{
+        display: block;
+    }
+    .button{
+        text-align: left;
+    }
+    #gridMainContents{
+        display: grid;
+        grid-template-rows: 7rem auto;
+        padding: 0.5rem 0.5rem 0.5rem 0;
+        margin-bottom: 3rem;
+    }
+
+    #gridNavi{
+        display: block;   
+    }
+
+    #divContentsControl{
+        padding: 0.5rem;
+    }
+
+    #divLogin{
+        margin-top: 5rem;
+        text-align: center;
+    }
+    
+}
