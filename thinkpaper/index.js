@@ -1,5 +1,6 @@
 // 로그인 되었을 때, 아래의 스크립트 진행되기
 
+const auth = firebase.auth()
 const db = firebase.database()
 const usersRef = db.ref("users")
 
@@ -15,36 +16,62 @@ document.getElementById('divNewPaperCreate_btn').style.display = 'none';
 
 var mainApp = {};
 
+// --------------------------
+// data Object 만들기
+// --------------------------
+
+let data = {};
+
 //220216 질문
 (function(){
 	
-    var firebase = app_fireBase;
+    var firebase = appFireBase;
     var uid = null;
-    firebase.auth().onAuthStateChanged(function(user) {
+    auth.onAuthStateChanged(function(user) {
         if (user) {
             // User is signed in.
             uid = user.uid;
+			console.log("uid = ", uid)
 
 			// User 이메일 보여주기
-            var user = firebase.auth().currentUser;
+            var user = auth.currentUser;
+			console.log("user = ", user)
 
             if(user !=null) {
-
-                var userEmail2 = user.email;
-                document.getElementById("user_para").innerHTML = userEmail2 + " 님"
-
+                
+				// ----------------
 				// 사용자 이름 뜨게하기
+				// ----------------
+
+				// var currentUserEmail = user.email;
+				// console.log("userEmail = ", currentUserEmail)		
+
+				// var currentUserId = currentUserEmail.substring(0, currentUserEmail.indexOf('@'));
+				// console.log("currentUserId = ", currentUserId)
+
+				const userRef = db.ref("users/" + uid)
+				console.log("userRef", userRef)
+
+				userRef.on('value', (snapshot) => {
+
+					snapshot.forEach(childSnap => {
+		
+						let key = childSnap.key;
+						//console.log('(key = childSnap.key;)', key)
+						let value = childSnap.val();
+						//console.log('(value = childSnap.val();) = ', value)
+						data[key] = value;			
 						
-				var userId = userEmail2.substring(0, userEmail2.indexOf('@'));
-				console.log(userId)
+					});
 
-				//220216 - 여기부터 다시 시작하기 .on ..snapshot 이것이 들어가야할것만같다..
-				const userRef = db.ref("users/" + userId + "/" + "userName")
+					console.log("data = ", data)
 
-				console.log(userRef)
+					console.log("data.userName", data.userName)
 
-				//아래 내용을 userId의 오브젝트 내에서 userName을 찾는 방식으로 확인이 되어야한다.
-				document.getElementById('userNameChecked').innerHTML = userId
+					document.getElementById("userNameChecked").innerHTML = data.userName + " 대표"
+
+				});
+
 
             }
             
@@ -62,35 +89,31 @@ var mainApp = {};
     mainApp.logOut = logOut;
 })()
 
+console.log("data@background = ", data)
 
+// // 첫방문자 또는 재방문자 구분하기
+// function welcome(event) {
 
+// 	let welcomeValue = event.target.value;
 
+// 	if (welcomeValue === 'welcome_new') {
+// 		document.getElementById('divWelcomeNew').style.display = 'initial';
+// 		document.getElementById('divWelcomeBasic').style.display = 'none';
+// 	} else {
+// 		document.getElementById('divWelcomeNew').style.display = 'none';
+// 		document.getElementById('divWelcomeBasic').style.display = 'initial';
+// 	};
 
+// 	// // 첫방문자 또는 재방문자인것에 따라서 보여지는 요소가 달라질 수 있음을 생각하고 만든 코드(작성중)
+// 	// let welcomeChecked = document.querySelector('input[name="welcome"]').checked;
 
-   
-// 첫방문자 또는 재방문자 구분하기
-function welcome(event) {
+// 	// if (welcomeChecked === true) {
+// 	// 	let checkedValue = document.querySelector('input[name="welcome"]:checked').value;
+// 	// } else {
+// 	// 	let checkedValue = document.querySelector('input[name="welcome"]:checked').value;
+// 	// }
 
-	let welcomeValue = event.target.value;
-
-	if (welcomeValue === 'welcome_new') {
-		document.getElementById('divWelcomeNew').style.display = 'initial';
-		document.getElementById('divWelcomeBasic').style.display = 'none';
-	} else {
-		document.getElementById('divWelcomeNew').style.display = 'none';
-		document.getElementById('divWelcomeBasic').style.display = 'initial';
-	};
-
-	// // 첫방문자 또는 재방문자인것에 따라서 보여지는 요소가 달라질 수 있음을 생각하고 만든 코드(작성중)
-	// let welcomeChecked = document.querySelector('input[name="welcome"]').checked;
-
-	// if (welcomeChecked === true) {
-	// 	let checkedValue = document.querySelector('input[name="welcome"]:checked').value;
-	// } else {
-	// 	let checkedValue = document.querySelector('input[name="welcome"]:checked').value;
-	// }
-
-}
+// }
 
 //[향후 개선하기] 더블클릭시 작성모드로 설정되기
 //[버그] direction에 있는 textarea만 선택이 되고 있음
@@ -113,14 +136,7 @@ function OnInput() {
   this.style.height = (this.scrollHeight) + "px";
 }
 
-// --------------------------
-// data Object 만들기
-// --------------------------
 
-let data = {}
-
-// data = {}에 데이터가 담겼는지 확인하기
-// console.log('data@loadData=', data);
 
 // --------------------------
 // pageModeHandler = reading or editing
@@ -216,44 +232,44 @@ function pageModeHandler(pageModeOption) {
 // 첫방문 - 시작하기
 // --------------------------
 
-function createUserName() {
+// function createUserName() {
 
-	const userName_new = document.getElementById('userName_new').value
+// 	const userName_new = document.getElementById('userName_new').value
 
-	if (userName_new) {
+// 	if (userName_new) {
 
-		document.getElementById('userNameChecked').innerHTML = userName_new
-		document.getElementById('userNameChecked').value = userName_new
+// 		document.getElementById('userNameChecked').innerHTML = userName_new
+// 		document.getElementById('userNameChecked').value = userName_new
 
-		document.getElementById('divHistory').style.display = 'initial';
-		document.getElementById('divPageEdit_menu').style.display = 'initial';
-		// 저장하기 버튼
-		document.getElementById('divNewSave_btn').style.display = 'none';
-		// 작성하기 버튼
-		document.getElementById('divEdit_btn').style.display = 'none';
-		// 작성취소하기 버튼
-		document.getElementById('divEditCancel_btn').style.display = 'none';
-		// 수정본 저장하기 버튼
-		document.getElementById('divUpdateSave_btn').style.display = 'none';
-		// 삭제하기 버튼
-		document.getElementById('divRemove_btn').style.display = 'none';
-		document.getElementById('divNewPaperCreate_btn').style.display = 'initial';
+// 		document.getElementById('divHistory').style.display = 'initial';
+// 		document.getElementById('divPageEdit_menu').style.display = 'initial';
+// 		// 저장하기 버튼
+// 		document.getElementById('divNewSave_btn').style.display = 'none';
+// 		// 작성하기 버튼
+// 		document.getElementById('divEdit_btn').style.display = 'none';
+// 		// 작성취소하기 버튼
+// 		document.getElementById('divEditCancel_btn').style.display = 'none';
+// 		// 수정본 저장하기 버튼
+// 		document.getElementById('divUpdateSave_btn').style.display = 'none';
+// 		// 삭제하기 버튼
+// 		document.getElementById('divRemove_btn').style.display = 'none';
+// 		document.getElementById('divNewPaperCreate_btn').style.display = 'initial';
 
 
 
-		setTimeout(function() {
-			readData();
-			document.getElementById('divCreateName').style.display = 'none';
+// 		setTimeout(function() {
+// 			readData();
+// 			document.getElementById('divCreateName').style.display = 'none';
 
-		  }, 500);
+// 		  }, 500);
 
-	} else {
+// 	} else {
 
-		alert('[이름]을 입력해주시기 바랍니다.')
+// 		alert('[이름]을 입력해주시기 바랍니다.')
 
-	}
+// 	}
 
-}
+// }
 
 // 220216까지 readData function 
 // // --------------------------
@@ -370,6 +386,8 @@ function createUserName() {
 
 function readData() {
 
+	console.log("---readData Start---")
+	console.log(uid)
 	const userName = document.getElementById('userNameChecked').value
 	console.log("userNameChecked", userName);
 

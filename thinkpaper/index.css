@@ -119,7 +119,7 @@ input:hover {
 }
 
 #divContentsControl{
-    padding: 0.5rem;
+    padding: 0.5rem 0;
     align-items: center;
     margin-bottom: 0.5rem;
 }
@@ -247,7 +247,7 @@ https://www.w3schools.com/howto/howto_js_todolist.asp
     }
 
     #divContentsControl{
-        padding: 0.5rem;
+        padding: 0.5rem 0;
     }
 
     #divLogin{

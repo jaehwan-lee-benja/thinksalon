@@ -1,5 +1,6 @@
 (function(){
 
+    const auth = firebase.auth()
     const db = firebase.database()
 
     // Initialize the FirebaseUI Widget using Firebase.
@@ -7,6 +8,9 @@
     var uiConfig = {
         callbacks: {
           signInSuccessWithAuthResult: function(authResult, redirectUrl) {
+            // Declare user variable
+            var user = auth.currentUser
+
             console.log(authResult.user);
             console.log(authResult.credential);
             console.log(authResult.additionalUserInfo);
@@ -19,36 +23,47 @@
             // Return type determines whether we continue the redirect automatically
             // or whether we leave that to developer to handle.
             
-            // Add this user to Firebase Database
             var databaseRef = db.ref()
-        
             var userProfile = authResult.additionalUserInfo.profile
             var userEmail = userProfile.email
             var userName = userProfile.name
-            var userId = userEmail.substring(0, userEmail.indexOf('@'));
-            console.log(userId)
+            //var userId = userEmail.substring(0, userEmail.indexOf('@'));
 
-            //var isNewUser = authResult.additionalUserInfo.isNewUser
+            var isNewUser = authResult.additionalUserInfo.isNewUser
+            console.log("isNewUser = ", isNewUser)
 
             //console.log("isNewUser = ", isNewUser)
-            //if (isNewUser) { console.log(isNewUser) } else { console.log(isNewUser)  }
+            if (isNewUser) { console.log("O") 
+          
+              // Add this user to Firebase Database
 
-            // Create User data
-            var userData = {
-              email : userEmail,
-              userName : userName,
-              lastLogin : Date.now()
-            }
+              //console.log(userId)
+
+              // Create User data
+              var userData = {
+                uid : user.uid,
+                email : userEmail,
+                userName : userName,
+                lastLogin : Date.now()
+              }
+          
+              // Push to Firebase Database
+              databaseRef.child('users/' + user.uid)
+              .set(userData , (e) => {
+                window.location.replace("index.html")
+              })
+
+              console.log("userData = ", userData)
+
+              return false;
+
+          } else { console.log("X") 
         
-            // Push to Firebase Database
-            databaseRef.child('users/' + userId)
-            .set(userData , (e) => {
-              window.location.replace("index.html")
-            })
+            return true;
 
-            console.log("userData = ", userData)
+          }
 
-            return false;
+            
           },
           uiShown: function() {
             // The widget is rendered.
@@ -65,7 +80,7 @@
         //   firebase.auth.FacebookAuthProvider.PROVIDER_ID,
         //   firebase.auth.TwitterAuthProvider.PROVIDER_ID,
         //   firebase.auth.GithubAuthProvider.PROVIDER_ID,
-          firebase.auth.EmailAuthProvider.PROVIDER_ID,
+        //   firebase.auth.EmailAuthProvider.PROVIDER_ID,
         //   firebase.auth.PhoneAuthProvider.PROVIDER_ID
         ],
         // Terms of service url.
