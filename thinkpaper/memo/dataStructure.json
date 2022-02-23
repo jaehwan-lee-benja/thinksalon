@@ -8,59 +8,63 @@
         "visitCounts": "",
         "visitRate": ""
     },
-    "action": {
-        "id": "",
-        "createdDate": "",
-        "editedDate": "",
-        "contents": {}
-    },
-    "bigPicture": {
-        "id": "",
-        "createdDate": "",
-        "editedDate": "",
-        "contents": {
-            "direction": {
+    "growth": {},
+    "organizing": {
+        "action": {
+            "id": "",
+            "createdDate": "",
+            "editedDate": "",
+            "contents": {}
+        },
+        "bigPicture": {
+            "id": "",
+            "createdDate": "",
+            "editedDate": "",
+            "contents": {
+                "direction": {
+                    "id": "",
+                    "createdDate": "",
+                    "editedDate": "",
+                    "contents": {}
+                },
+                "navi": {
+                    "id": "",
+                    "createdDate": "",
+                    "editedDate": "",
+                    "contents": {},
+                    "scale": "",
+                    "area": "",
+                    "subArea": ""
+                },
+                "actionPlan": {
+                    "id": "",
+                    "createdDate": "",
+                    "editedDate": "",
+                    "contents": {},
+                    "term": ""
+                }
+            }
+        },
+        "cycle": {
+            "time": {
                 "id": "",
                 "createdDate": "",
                 "editedDate": "",
                 "contents": {}
             },
-            "navi": {
+            "money": {
                 "id": "",
                 "createdDate": "",
                 "editedDate": "",
-                "contents": {},
-                "scale": "",
-                "area": "",
-                "subArea": ""
+                "contents": {}
             },
-            "actionPlan": {
+            "routine": {
                 "id": "",
                 "createdDate": "",
                 "editedDate": "",
-                "contents": {},
-                "term": ""
+                "contents": {}
             }
         }
     },
-    "cycle": {
-        "time": {
-            "id": "",
-            "createdDate": "",
-            "editedDate": "",
-            "contents": {}
-        },
-        "money": {
-            "id": "",
-            "createdDate": "",
-            "editedDate": "",
-            "contents": {}
-        },
-        "routine": {
-            "id": "",
-            "createdDate": "",
-            "editedDate": "",
-            "contents": {}
-        }
-    }
+    "disucussing": {}
 }

@@ -25,24 +25,6 @@
             </div>
         </div>
 
-        <!-- <div id="divCreateName">
-            <p>✨ 환영합니다. <span id="user_para"></span> ✨ 사용자 등록을 위해, '이름'을 작성해주시기 바랍니다.</p>
-            <div>
-                <div id="divWelcomeNew">
-                    - 이름:
-                    <input class="indexTextbox" type="text" id="userName_new" value=""></input>
-                    <input onClick="createUserName()" type="button" value="입력하기"></input>
-                </div>
-            </div>
-            <div>
-                <div id="divWelcomeBasic" style="display: inline;">
-                    (TEST 재방문인 경우 - 이름):
-                    <input class="indexTextbox" type="text" id="userName"></input>
-                    <input onClick="readData()" type="button" value="조회하기"></input>
-                </div>
-            </div>
-        </div> -->
-
     </div>
     
     <div id="gridMain">
@@ -110,56 +92,50 @@
                                 </div>
                             </td>
                         </tr>
-                        <tr>
-                            <td>
-                                페이퍼 관리
-                            </td>
-                            <td>
-                                :
-                            </td>
-                            <td>
-                                <div id="divPageEdit_menu" style="display: inline;">
-                                    <div id="divEdit_btn" style="display: inline;">
-                                        <input id="editMode_btn" 
-                                        onClick="mode_editing()" 
-                                        type="button" 
-                                        value="수정하기">
-                                    </div>
-                                    <div id="divEditCancel_btn" style="display: inline;">
-                                        <input id="editCancel_btn" 
-                                        onClick="editingCancel()" 
-                                        type="button" 
-                                        value="수정 취소하기">
-                                    </div>
-                                    <div id="divUpdateSave_btn" style="display: inline;">
-                                        <input id="updateSave_btn" 
-                                        onClick="onUpdate()" 
-                                        type="button" 
-                                        value="저장하기">
-                                    </div>
-                                    <div id="divNewSave_btn" style="display: inline;">
-                                        <input id="onNew" 
-                                            onClick="onNewSave()" 
-                                            type="button" 
-                                            value="새 페이퍼로 저장하기">
-                                    </div>
-                                    <div id="divRemove_btn" style="display: inline;">
-                                        <input id="remove_btn" 
-                                        onClick="onRemove()" 
-                                        type="button" 
-                                        value="삭제하기">
-                                    </div>
-                                    <div id="divNewPaperCreate_btn" style="display: inline;">
-                                        <input id="newPaperCreate_btn" 
-                                            onClick="newPaperCreate()" 
-                                            type="button" 
-                                            value="새 페이퍼 작성하기"
-                                            style="margin-left: 0.7rem;">
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
+                        
                     </table>
+                </div>
+                <div>
+                    <p>페이퍼 관리</p>
+                    <div id="divPageEdit_menu" style="display: inline;">
+                        <div id="divEdit_btn" style="display: inline;">
+                            <input id="editMode_btn" 
+                            onClick="mode_editing()" 
+                            type="button" 
+                            value="수정하기">
+                        </div>
+                        <div id="divEditCancel_btn" style="display: inline;">
+                            <input id="editCancel_btn" 
+                            onClick="editingCancel()" 
+                            type="button" 
+                            value="수정 취소하기">
+                        </div>
+                        <div id="divUpdateSave_btn" style="display: inline;">
+                            <input id="updateSave_btn" 
+                            onClick="onUpdate()" 
+                            type="button" 
+                            value="저장하기">
+                        </div>
+                        <div id="divNewSave_btn" style="display: inline;">
+                            <input id="onNew" 
+                                onClick="onNewSave()" 
+                                type="button" 
+                                value="새 페이퍼로 저장하기">
+                        </div>
+                        <div id="divRemove_btn" style="display: inline;">
+                            <input id="remove_btn" 
+                            onClick="onRemove()" 
+                            type="button" 
+                            value="삭제하기">
+                        </div>
+                        <div id="divNewPaperCreate_btn" style="display: inline;">
+                            <input id="newPaperCreate_btn" 
+                                onClick="newPaperCreate()" 
+                                type="button" 
+                                value="새 페이퍼 작성하기"
+                                style="margin-left: 0.7rem;">
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -196,7 +172,7 @@
                     </div>
                     <div>
                         <div>
-                            <textarea id="action" placeholder="예)식습관 일기 쓰기" readonly></textarea>
+                            <textarea id="actionPlan" placeholder="예)식습관 일기 쓰기" readonly></textarea>
                         </div>
                     </div>
                 </div>

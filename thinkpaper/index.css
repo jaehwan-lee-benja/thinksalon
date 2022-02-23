@@ -80,20 +80,23 @@ input:hover {
 
 #date {
     width: 10rem;
-}
 
-#divTop{
-    padding-bottom: 1rem;
-    margin: 1rem 0 2rem 0;
-    border-bottom: 1px solid rgb(200, 200, 200);
 }
 
 #gridBody{
     display: grid;
     grid-template-rows: "height: auto;" 1fr 3rem;
-    margin: 4rem;
+    margin: 3rem;
     grid-gap: 0.2rem;
 }
+
+#divTop{
+    padding-bottom: 1rem;
+    margin: 0 0 2rem 0;
+    border-bottom: 1px solid rgb(200, 200, 200);
+}
+
+
 
 #gridMain{
     display: grid;
@@ -109,7 +112,6 @@ input:hover {
 }
 
 #gridMainFrame{
-    margin-left: 0.5rem;
     grid-gap: 0.2rem;
 }
 
@@ -206,7 +208,7 @@ https://www.w3schools.com/howto/howto_js_todolist.asp
     #gridBody{
         display: grid;
         grid-template-rows: "height: auto;" 1fr 3rem;
-        margin: 4rem 2rem;
+        margin: 3rem;
         grid-gap: 0.2rem;
     }
     #divIndex{
