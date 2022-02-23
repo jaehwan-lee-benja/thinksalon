@@ -76,6 +76,7 @@ let data = {};
 					//사용자 이름 웹에 띄우기
 					console.log("data.userName", data.userName)
 					document.getElementById("userNameChecked").innerHTML = data.userName + " 대표"
+					document.getElementById("emailChecked").innerHTML = "(" + data.email + ")"
 				
 					//	----------------
 					//	bigPictureData Object 만들기
@@ -437,19 +438,27 @@ function onUpdate() {
 
 	console.log('dateCheckedValue = ', dateCheckedValue)
 
-	updatedData['date'] = dateCheckedValue;
+	let today = new Date();
+	console.log('today=', today);
+	let todayValue = today.toLocaleString()
+	console.log('todayValue=', todayValue);
+
+	updatedData['editedDate'] = todayValue;
 	updatedData.contents['direction'] = document.getElementById('direction').value;
 	updatedData.contents['naviA'] = document.getElementById('naviA').value;
 	updatedData.contents['naviB'] = document.getElementById('naviB').value;
 	updatedData.contents['actionPlan'] = document.getElementById('actionPlan').value;
 
+	console.log("updatedData = ", updatedData)
 
 	let userUid = data.uid
 	let bigPictureUid = bigPictureData[dateCheckedValue].uid
 
 	const userRef = db.ref("users/" + userUid + '/organizing/bigPicture/' + bigPictureUid + '/')
 
-	userRef.update(updatedData);
+	userRef.update(updatedData, (e) => {
+		console.log('update completed = ',e);
+	});
 
 	pageModeHandler('reading');
 
