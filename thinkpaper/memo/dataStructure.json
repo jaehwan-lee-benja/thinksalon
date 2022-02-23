@@ -1,7 +1,7 @@
 {
     "memberInfo": {
-        "id": "",
-        "name": "",
+        "uid": "user.uid",
+        "userName": "userName",
         "email": "",
         "phone": "",
         "signedinDate": "",

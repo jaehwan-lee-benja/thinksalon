@@ -44,7 +44,64 @@
                 uid : user.uid,
                 email : userEmail,
                 userName : userName,
-                lastLogin : Date.now()
+                lastLogin : Date.now(),
+                data: {
+                  action: {
+                    id: "",
+                    createdDate: "",
+                    editedDate: "",
+                    contents: {}
+                },
+                bigPicture: {
+                    id: "",
+                    createdDate: "",
+                    editedDate: "",
+                    contents: {
+                        direction: {
+                            id: "",
+                            createdDate: "",
+                            editedDate: "",
+                            contents: {}
+                        },
+                        navi: {
+                            id: "",
+                            createdDate: "",
+                            editedDate: "",
+                            contents: {},
+                            scale: "",
+                            area: "",
+                            subArea: ""
+                        },
+                        actionPlan: {
+                            id: "",
+                            createdDate: "",
+                            editedDate: "",
+                            contents: {},
+                            term: ""
+                        }
+                    }
+                },
+                cycle: {
+                    time: {
+                        id: "",
+                        createdDate: "",
+                        editedDate: "",
+                        contents: {}
+                    },
+                    money: {
+                        id: "",
+                        createdDate: "",
+                        editedDate: "",
+                        contents: {}
+                    },
+                    routine: {
+                        id: "",
+                        createdDate: "",
+                        editedDate: "",
+                        contents: {}
+                    }
+                }
+                }
               }
           
               // Push to Firebase Database
