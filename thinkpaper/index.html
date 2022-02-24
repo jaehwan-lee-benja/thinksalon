@@ -17,8 +17,7 @@
         <div id="gridWelcome">
             <div>
                     <p>
-                        [생각 설계자]
-                        <span type="text" id="userNameChecked"></span>
+                        <span type="text" id="userNameChecked">로딩중...</span>
                         <span type="text" id="emailChecked"></span>
                     </p>
 
@@ -60,22 +59,13 @@
             <div id="divImageMain">
                 <img id="imageMain" src="images/img_main.png">
             </div>
-            <div id="divHistory">
-                <span>불러오기 검색하기<br> </span>
-                <select 
-                    style="width: 100%; color:gray; font-size: 0.8rem;" 
-                    name="dateSelect" 
-                    id="SelectboxDate" 
-                    onchange="selectDate();">
-                    <option>클릭하여 선택</option>
-                </select>
-            </div>
             <div id="divContentsControl">
                 <div>
+                    <p>[페이퍼 정보]</p>
                     <table>
                         <tr>
                             <td>
-                                작성일
+                                최종 편집일
                             </td>
                             <td>
                                 :
@@ -92,7 +82,7 @@
                                 :
                             </td>
                             <td>
-                                <div id="divPaperMode" style="display: inline;">
+                                <div id="divPaperMode">
                                 </div>
                             </td>
                         </tr>
@@ -100,47 +90,56 @@
                     </table>
                 </div>
                 <div>
-                    <p>페이퍼 관리</p>
-                    <div id="divPageEdit_menu" style="display: inline;">
-                        <div id="divEdit_btn" style="display: inline;">
+                    <p>[페이퍼 관리]</p>
+                    <div id="divPageEdit_menu">
+                        <div id="divEdit_btn">
                             <input id="editMode_btn" 
                             onClick="mode_editing()" 
                             type="button" 
                             value="수정하기">
                         </div>
-                        <div id="divEditCancel_btn" style="display: inline;">
+                        <div id="divEditCancel_btn">
                             <input id="editCancel_btn" 
                             onClick="editingCancel()" 
                             type="button" 
                             value="수정 취소하기">
                         </div>
-                        <div id="divUpdateSave_btn" style="display: inline;">
+                        <div id="divUpdateSave_btn">
                             <input id="updateSave_btn" 
                             onClick="onUpdate()" 
                             type="button" 
                             value="저장하기">
                         </div>
-                        <div id="divNewSave_btn" style="display: inline;">
+                        <div id="divNewSave_btn">
                             <input id="onNew" 
                                 onClick="onNewSave()" 
                                 type="button" 
                                 value="새 페이퍼로 저장하기">
                         </div>
-                        <div id="divRemove_btn" style="display: inline;">
+                        <div id="divRemove_btn">
                             <input id="remove_btn" 
                             onClick="onRemove()" 
                             type="button" 
                             value="삭제하기">
                         </div>
-                        <div id="divNewPaperCreate_btn" style="display: inline;">
+                        <div id="divNewPaperCreate_btn">
                             <input id="newPaperCreate_btn" 
                                 onClick="newPaperCreate()" 
                                 type="button" 
-                                value="새 페이퍼 작성하기"
-                                style="margin-left: 0.7rem;">
+                                value="새 페이퍼 작성하기">
                         </div>
                     </div>
                 </div>
+            </div>
+            <div id="divHistory">
+                <span>[불러오기 검색하기]<br></span>
+                <select 
+                    style="width: 100%; font-size: 0.8rem;" 
+                    name="dateSelect" 
+                    id="SelectboxDate" 
+                    onchange="selectDate();">
+                    <option>클릭하여 선택</option>
+                </select>
             </div>
         </div>
         <div id="gridMainFrame">    

@@ -75,7 +75,7 @@ let data = {};
 
 					//사용자 이름 웹에 띄우기
 					console.log("data.userName", data.userName)
-					document.getElementById("userNameChecked").innerHTML = data.userName + " 대표"
+					document.getElementById("userNameChecked").innerHTML = "생각 설계자: " + data.userName + " 대표"
 					document.getElementById("emailChecked").innerHTML = "(" + data.email + ")"
 				
 					//	----------------

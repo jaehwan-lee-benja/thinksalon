@@ -31,6 +31,7 @@ textarea {
     border: 0.2px solid rgb(200, 200, 200);
     background-color: #FFFFFF;
     font-size: 0.8rem;
+    color: #424242;
     padding: 0.5rem;
     box-sizing: border-box;
     resize: vertical; /* 상하만 가능 */
@@ -58,7 +59,8 @@ input[type="button"] {
         background-color: inherit;
         padding: 3px 5px;
         cursor: pointer;
-        display: inline-block;
+        width: 100%;
+        /* display: inline-block; */
       }
 
 /* On mouse-over */
@@ -100,7 +102,7 @@ input:hover {
 
 #gridMain{
     display: grid;
-    grid-template-columns: 15rem 1fr;
+    grid-template-columns: 14rem 1fr;
     padding-bottom: 1rem;
     grid-gap: 0.2rem;
 }
@@ -147,7 +149,7 @@ input:hover {
 
 #gridNavi{
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
     grid-gap: 0.5rem;
 }
 
@@ -183,9 +185,6 @@ input:hover {
 
 .button{
     text-align: right;
-}
-.formInline{
-    display: inline;
 }
 
 .indexTextbox{
