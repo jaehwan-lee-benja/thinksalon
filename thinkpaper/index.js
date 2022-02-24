@@ -12,45 +12,32 @@ const usersRef = db.ref("users")
 document.getElementById('divNewPaperCreate_btn').style.display = 'none';
 
 // 로그인, 로그아웃에 따른 메인화면 불러오기 기능
-	// 220216 - 참고 레퍼런스: https://www.youtube.com/watch?v=CvkCjfHts9A&list=PLxCXGTk-TOK9NieH8hhON952KPmIfNSqk&index=17
 
 var mainApp = {};
-
-// --------------------------
-// data Object 만들기
-// --------------------------
-
 let data = {};
 
 // --------------------------
 // login out 하기
 // --------------------------
-//220216 질문
-(function(){
-	
-    var firebase = appFireBase;
-    var uid = null;
-    auth.onAuthStateChanged(function(user) {
-        if (user) {
-            // User is signed in.
-            uid = user.uid;
+(function () {
+
+	var firebase = appFireBase;
+	var uid = null;
+	auth.onAuthStateChanged(function (user) {
+		if (user) {
+			// User is signed in.
+			uid = user.uid;
 			console.log("uid = ", uid)
 
 			// User 이메일 보여주기
-            var user = auth.currentUser;
+			var user = auth.currentUser;
 			console.log("user = ", user)
 
-            if(user !=null) {
-                
+			if (user != null) {
+
 				//	----------------
 				//	사용자 이름 뜨게하기
 				//	----------------
-
-				// var currentUserEmail = user.email;
-				// console.log("userEmail = ", currentUserEmail)		
-
-				// var currentUserId = currentUserEmail.substring(0, currentUserEmail.indexOf('@'));
-				// console.log("currentUserId = ", currentUserId)
 
 				const userRef = db.ref("users/" + uid)
 				console.log("userRef", userRef)
@@ -62,13 +49,13 @@ let data = {};
 					//	----------------
 
 					snapshot.forEach(childSnap => {
-		
+
 						let key = childSnap.key;
 						//console.log('(key = childSnap.key;)', key)
 						let value = childSnap.val();
 						//console.log('(value = childSnap.val();) = ', value)
 						value['uid'] = childSnap.key;
-						
+
 						data[key] = value;
 
 					});
@@ -77,7 +64,7 @@ let data = {};
 					console.log("data.userName", data.userName)
 					document.getElementById("userNameChecked").innerHTML = "생각 설계자: " + data.userName + " 대표"
 					document.getElementById("emailChecked").innerHTML = "(" + data.email + ")"
-				
+
 					//	----------------
 					//	bigPictureData Object 만들기
 					//	----------------
@@ -87,15 +74,6 @@ let data = {};
 					console.log("bigPictureData1 = ", bigPictureData);
 
 					bigPictureRef.on('value', (snapshot) => {
-
-						// snapshot.forEach(childSnap => {
-						// 	let bigPictureKey = childSnap.key;
-						// 	let value = childSnap.val();
-						// 	value['uid'] = childSnap.key;
-
-						// 	bigPictureData[bigPictureKey] = value;
-
-						// });
 
 						snapshot.forEach(childSnap => {
 							let value = childSnap.val();
@@ -110,9 +88,6 @@ let data = {};
 
 					let bigPictureDateList = Object.keys(bigPictureData);
 					console.log("bigPictureDateList = ", bigPictureDateList);
-
-					//let bigPictureDateList = bigPictureContents.keys(editedDate);
-					//console.log("bigPictureDateList = ", bigPictureDateList);	
 
 					// Array에서 selectBox 목록 만들기 - 참고 링크: https://www.youtube.com/watch?v=HMehtL39VUQ
 					let dateSelectbox = document.getElementById("SelectboxDate");
@@ -137,32 +112,30 @@ let data = {};
 
 					// key=latestDate의 value를 html에 표출하기
 					let bigPictureContents = bigPictureData[lastestDate].contents
-					// @infoTable
 					// document.getElementById('userNameChecked').innerHTML = userName;
 					document.getElementById('dateChecked').innerHTML = lastestDate;
-					// @mainPage
 					document.getElementById('direction').innerHTML = bigPictureContents.direction;
 					document.getElementById('naviA').innerHTML = bigPictureContents.naviA;
 					document.getElementById('naviB').innerHTML = bigPictureContents.naviB; // 이렇게 해도 됨.
 					document.getElementById('actionPlan').innerHTML = bigPictureContents.actionPlan;
 
 				});
-            }
-            
+			}
+
 			pageModeHandler('reading');
 
-        }else{
-            // redirect to login page.
-            uid = null;
-            window.location.replace("login.html")
-        }
-    });
+		} else {
+			// redirect to login page.
+			uid = null;
+			window.location.replace("login.html")
+		}
+	});
 
-    function logOut(){
-        firebase.auth().signOut();
-    }
+	function logOut() {
+		firebase.auth().signOut();
+	}
 
-    mainApp.logOut = logOut;
+	mainApp.logOut = logOut;
 })()
 
 console.log("data@background = ", data)
@@ -180,13 +153,13 @@ console.log("data@background = ", data)
 //출처: https://stackoverflow.com/questions/454202/creating-a-textarea-with-auto-resize
 const tx = document.getElementsByTagName("textarea");
 for (let i = 0; i < tx.length; i++) {
-  tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
-  tx[i].addEventListener("input", OnInput, false);
+	tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
+	tx[i].addEventListener("input", OnInput, false);
 }
 
 function OnInput() {
-  this.style.height = "auto";
-  this.style.height = (this.scrollHeight) + "px";
+	this.style.height = "auto";
+	this.style.height = (this.scrollHeight) + "px";
 }
 
 
@@ -223,7 +196,7 @@ function pageModeHandler(pageModeOption) {
 		// 삭제하기 버튼
 		document.getElementById('divRemove_btn').style.display = 'initial';
 		document.getElementById('divNewPaperCreate_btn').style.display = 'none';
-		
+
 
 		//font-color = '블루계열'
 		document.getElementById('gridMainFrame').style.color = '#9CC0E7';
@@ -278,77 +251,8 @@ function pageModeHandler(pageModeOption) {
 // 	console.log('today=', today);
 // 	let todayValue = today.toLocaleString()
 // 	console.log('todayValue=', todayValue);
-	
+
 // }
-
-function readData() {
-// CRUD 공부: https://kdinner.tistory.com/72
-		
-	console.log("---readData Start---")
-	console.log("currentData = ", data)
-	let organizing = {};
-	console.log("organizing = ", data.organizing)
-	console.log("bigPicture = ", data.organizing.bigPicture)
-	console.log("data.organizing.bigPicture.contents.direction = ", data.organizing.bigPicture.contents.direction)
-
-	userRef.on('value', (snapshot) => {
-
-
-		// data = {}에 데이터가 담겼는지 확인하기
-		console.log('data@readData = ', data);
-		console.log("check point")
-	
-		// bigPictureDateList 에 date 넣기
-		let bigPictureDateList = Object.keys(data);
-		console.log("bigPictureDateList = ", bigPictureDateList);	
-
-		// Array에서 selectBox 목록 만들기 - 참고 링크: https://www.youtube.com/watch?v=HMehtL39VUQ
-		let dateSelectbox = document.getElementById("SelectboxDate");
-
-		// SelectboxDate 초기화하기 - 참고 링크: https://stackoverflow.com/questions/42365845/how-to-refresh-select-box-without-reloading-the-whole-form-in-js
-		for (let i = dateSelectbox.options.length - 1; i >= 0; i--) {
-			dateSelectbox.remove(i + 1);
-		}
-
-		// seletBox에 <option> 만들어서, date값 넣기
-		for (let i = 0; i < bigPictureDateList.length; i++) {
-			let option = document.createElement("OPTION"),
-				txt = document.createTextNode(bigPictureDateList[i]);
-			option.appendChild(txt);
-			option.setAttribute("value", bigPictureDateList[i]);
-			dateSelectbox.insertBefore(option, dateSelectbox.lastChild);
-		}
-
-		// 조회버튼 누를시 최근 일자로 검색되도록하기
-		let latestDay = bigPictureDateList[bigPictureDateList.length - 1]
-		console.log('최근저장된일자=', latestDay);
-
-		// key=latestDay의 value를 html에 표출하기
-		// @infoTable
-		// document.getElementById('userNameChecked').innerHTML = userName;
-		document.getElementById('dateChecked').innerHTML = latestDay;
-		// @mainPage
-		document.getElementById('direction').innerHTML = data[latestDay].direction;
-		document.getElementById('naviA').innerHTML = data[latestDay].naviA;
-		document.getElementById('naviB').innerHTML = data[latestDay]['naviB']; // 이렇게 해도 됨.
-		document.getElementById('actionPlan').innerHTML = data[latestDay].actionPlan;
-
-	});
-
-		// 조회하기로 검색이 되었을 시 눌렀을시 등장하는 div
-		document.getElementById('divHistory').style.display = 'initial';
-		//[삭제예정]document.getElementById('divBasic_menu').style.display = 'initial';
-		document.getElementById('divPageEdit_menu').style.display = 'initial';
-		document.getElementById('divNewPaperCreate_btn').style.display = 'initial';
-
-
-		// readData 프로세스가 잘 작동했음을 확인하는 표식
-		var readDataWorked = "good";
-		console.log('readDateWorked?userName = ', readDataWorked)
-
-		pageModeHandler('reading');
-
-};
 
 // 선택한 날짜에 맞춰서 내용 집어넣기
 
@@ -373,7 +277,7 @@ function selectDate() {
 // --------------------------
 
 function newPaperCreate() {
-	
+
 	let today = new Date();
 	console.log('today=', today);
 	let todayValue = today.toLocaleString()
@@ -386,7 +290,6 @@ function newPaperCreate() {
 	document.getElementById('actionPlan').value = '';
 
 	document.getElementById('divHistory').style.display = 'initial';
-	//[삭제예정] document.getElementById('divBasic_menu').style.display = 'initial';
 	document.getElementById('divPageEdit_menu').style.display = 'initial';
 
 	pageModeHandler('editing');
@@ -402,9 +305,8 @@ function newPaperCreate() {
 // --------------------------
 
 function mode_editing() {
-	
+
 	document.getElementById('divHistory').style.display = 'initial';
-	//[삭제예정] document.getElementById('divBasic_menu').style.display = 'initial';
 	document.getElementById('divPageEdit_menu').style.display = 'initial';
 
 	pageModeHandler('editing');
@@ -416,7 +318,7 @@ function mode_editing() {
 // --------------------------
 
 function editingCancel() {
-	
+
 	//document.getElementById('divHistory').style.display = 'initial';
 	//document.getElementById('divBasic_menu').style.display = 'initial';
 	//document.getElementById('divPageEdit_menu').style.display = 'initial';
@@ -457,7 +359,7 @@ function onUpdate() {
 	const userRef = db.ref("users/" + userUid + '/organizing/bigPicture/' + bigPictureUid + '/')
 
 	userRef.update(updatedData, (e) => {
-		console.log('update completed = ',e);
+		console.log('update completed = ', e);
 	});
 
 	pageModeHandler('reading');
@@ -484,25 +386,25 @@ function onRemove() {
 	let userUid = data.uid
 	let bigPictureUid = bigPictureData[dateCheckedValue].uid
 
-	const userRef = db.ref("users/" + userUid + '/organizing/bigPicture/' + bigPictureUid + '/')	
+	const userRef = db.ref("users/" + userUid + '/organizing/bigPicture/' + bigPictureUid + '/')
 
 	pageModeHandler('reading');
 
 	//삭제재확인
-	if (confirm("정말 삭제하시겠습니까?")){
-		
+	if (confirm("정말 삭제하시겠습니까?")) {
+
 		userRef.remove();
 
 		alert("삭제되었습니다.");
 
-	} 
+	}
 
 };
 
 function onNewSave() {
 
 	let newBigPicture = {
-		contents: { }
+		contents: {}
 	}
 
 	let today = new Date();
@@ -523,11 +425,9 @@ function onNewSave() {
 	let userUid = data.uid
 
 	usersRef.child(userUid + "/organizing/bigPicture/")
-	//parent를 만들지 못하다가 push의 솔루션을 찾게됨
-	.push(newBigPicture);
-	//.set(newBigPicture);
+		.push(newBigPicture);
 
-	//pageModeHandler('reading');
+	pageModeHandler('reading');
 
 	alert("저장되었습니다.");
 
@@ -573,7 +473,3 @@ function darkmode() {
 
 	}
 }
-
-// [to do] memo
-// tectbox를 읽기용으로 바꾸기
-// actionPlan을 to do list로 만들기

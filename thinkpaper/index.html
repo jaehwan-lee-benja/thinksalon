@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,6 +8,7 @@
     <title>Thinkpaper</title>
     <link rel="stylesheet" href="index.css">
 </head>
+
 <body id="gridBody">
 
     <div id="divTop">
@@ -16,42 +18,21 @@
         </div>
         <div id="gridWelcome">
             <div>
-                    <p>
-                        <span type="text" id="userNameChecked">로딩중...</span>
-                        <span type="text" id="emailChecked"></span>
-                    </p>
+                <p>
+                    <span type="text" id="userNameChecked">로딩중...</span>
+                    <span type="text" id="emailChecked"></span>
+                </p>
 
             </div>
             <div id="divLogOutBtn">
-                <!-- <input onClick="location.href='login.html'" type="button" value="로그인"></input> -->
                 <input onClick="mainApp.logOut()" type="button" value="로그아웃"></input>
             </div>
         </div>
 
     </div>
-    
+
     <div id="gridMain">
         <div id="divIndex">
-                <!-- 220216 주석처리 - 회원 정보 관리 입력을 위한 공간, 당장 필요하지 않음
-                <div id ="divInfoTable">
-                    <table>
-                    <tr>
-                        <td>이름</td>
-                        <td>:</td>
-                        <td>
-                            <span type="text" id="userNameChecked"></span>
-                        </td>
-                    </tr> 
-                    <tr>
-                        <td>이메일</td>
-                        <td>:</td>
-                        <td>
-                            <span type="text" id="email_id"></span>
-                        </td>
-                    </tr>
-                    </table>
-                </div>
-                 -->
             <div>
                 <h4>Big-picture</h4>
                 <p>큰 그림 보기(Big-picture)는 성장의 맥락을 한눈에 정리하기위한 도구입니다.</p>
@@ -86,114 +67,92 @@
                                 </div>
                             </td>
                         </tr>
-                        
+
                     </table>
                 </div>
                 <div>
                     <p>[페이퍼 관리]</p>
                     <div id="divPageEdit_menu">
                         <div id="divEdit_btn">
-                            <input id="editMode_btn" 
-                            onClick="mode_editing()" 
-                            type="button" 
-                            value="수정하기">
+                            <input id="editMode_btn" onClick="mode_editing()" type="button" value="수정하기">
                         </div>
                         <div id="divEditCancel_btn">
-                            <input id="editCancel_btn" 
-                            onClick="editingCancel()" 
-                            type="button" 
-                            value="수정 취소하기">
+                            <input id="editCancel_btn" onClick="editingCancel()" type="button" value="수정 취소하기">
                         </div>
                         <div id="divUpdateSave_btn">
-                            <input id="updateSave_btn" 
-                            onClick="onUpdate()" 
-                            type="button" 
-                            value="저장하기">
+                            <input id="updateSave_btn" onClick="onUpdate()" type="button" value="저장하기">
                         </div>
                         <div id="divNewSave_btn">
-                            <input id="onNew" 
-                                onClick="onNewSave()" 
-                                type="button" 
-                                value="새 페이퍼로 저장하기">
+                            <input id="onNew" onClick="onNewSave()" type="button" value="새 페이퍼로 저장하기">
                         </div>
                         <div id="divRemove_btn">
-                            <input id="remove_btn" 
-                            onClick="onRemove()" 
-                            type="button" 
-                            value="삭제하기">
+                            <input id="remove_btn" onClick="onRemove()" type="button" value="삭제하기">
                         </div>
                         <div id="divNewPaperCreate_btn">
-                            <input id="newPaperCreate_btn" 
-                                onClick="newPaperCreate()" 
-                                type="button" 
-                                value="새 페이퍼 작성하기">
+                            <input id="newPaperCreate_btn" onClick="newPaperCreate()" type="button" value="새 페이퍼 작성하기">
                         </div>
                     </div>
                 </div>
             </div>
             <div id="divHistory">
                 <span>[불러오기 검색하기]<br></span>
-                <select 
-                    style="width: 100%; font-size: 0.8rem;" 
-                    name="dateSelect" 
-                    id="SelectboxDate" 
+                <select style="width: 100%; font-size: 0.8rem;" name="dateSelect" id="SelectboxDate"
                     onchange="selectDate();">
                     <option>클릭하여 선택</option>
                 </select>
             </div>
         </div>
-        <div id="gridMainFrame">    
-                <div id="gridMainContents">
+        <div id="gridMainFrame">
+            <div id="gridMainContents">
+                <div>
+                    <h2>[D] 방향성</h2>
+                    <h3>내가 왜 이 길을 가고자 하는가, 본질적으로 느끼고 싶은 의미(가치)는 무엇인가?</h3>
+                </div>
+                <div>
+                    <textarea id="direction" placeholder="예)건강한 삶 살기" readonly></textarea>
+                </div>
+            </div>
+            <div id="gridMainContents">
+                <div>
+                    <h2>[N] 네비(지도)</h2>
+                    <h3>내가 나가가고자 하는 도달 지점과 길은 어디인가?</h3>
+                </div>
+                <div id="gridNavi">
                     <div>
-                        <h2>[D] 방향성</h2>
-                        <h3>내가 왜 이 길을 가고자 하는가, 본질적으로 느끼고 싶은 의미(가치)는 무엇인가?</h3>
+                        <h4>현재위치(A)</h4>
+                        <textarea id="naviA" placeholder="예)불규칙한 식습관" readonly></textarea>
                     </div>
                     <div>
-                        <textarea id="direction" placeholder="예)건강한 삶 살기" readonly></textarea>
+                        <h4>목표지점(B)</h4>
+                        <textarea id="naviB" placeholder="예)규칙적인 식습관" readonly></textarea>
                     </div>
                 </div>
-                <div id="gridMainContents">
+            </div>
+            <div id="gridMainContents">
+                <div>
+                    <h2>[A] 액션플랜</h2>
+                    <h3>어떤 루틴(행동 또는 시간의 반복)으로 나아가는가?</h3>
+                </div>
+                <div>
                     <div>
-                        <h2>[N] 네비(지도)</h2>
-                        <h3>내가 나가가고자 하는 도달 지점과 길은 어디인가?</h3>
-                    </div>
-                    <div id="gridNavi">
-                        <div>
-                            <h4>현재위치(A)</h4>
-                            <textarea id="naviA" placeholder="예)불규칙한 식습관" readonly></textarea>
-                        </div>
-                        <div>
-                            <h4>목표지점(B)</h4>
-                            <textarea id="naviB" placeholder="예)규칙적인 식습관" readonly></textarea>
-                        </div>
+                        <textarea id="actionPlan" placeholder="예)식습관 일기 쓰기" readonly></textarea>
                     </div>
                 </div>
-                <div id="gridMainContents">
-                    <div>
-                        <h2>[A] 액션플랜</h2>
-                        <h3>어떤 루틴(행동 또는 시간의 반복)으로 나아가는가?</h3>
-                    </div>
-                    <div>
-                        <div>
-                            <textarea id="actionPlan" placeholder="예)식습관 일기 쓰기" readonly></textarea>
-                        </div>
-                    </div>
-                </div>
+            </div>
         </div>
     </div>
-    
+
     <!--하단 정보-->
     <div id="gridWebInfo">
         <div>
             <span>
-                This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
+                This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+                License.
                 <a href="http://creativecommons.org/licenses/by-nc-sa/2.0/kr/">더 알아보기(More information)</a><br>
             </span>
         </div>
         <div class="button">
-            <!--다크모드
-                <input id="darkMode" type="button" value="다크모드 켜기" onclick="darkmode()">
-            -->
+            <!-- <input id="darkMode" type="button" value="다크모드 켜기" onclick="darkmode()"> -->
         </div>
         <div class="pageInfoBrand">
             <a href="http://thinksalon.net">thinksalon.net | 생각살롱</a>
