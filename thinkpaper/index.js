@@ -5,7 +5,6 @@ const db = firebase.database()
 const usersRef = db.ref("users")
 
 // 보이지않아도 되는 div숨기기
-//document.getElementById('divHistory').style.display = 'none';
 //document.getElementById('divNewSave_btn').style.display = 'none';
 //document.getElementById('divPageEdit_menu').style.display = 'none';
 //document.getElementById('divUpdateSave_btn').style.display = 'none';
@@ -13,11 +12,13 @@ document.getElementById('divNewPaperCreate_btn').style.display = 'none';
 
 // 로그인, 로그아웃에 따른 메인화면 불러오기 기능
 
+// [질문] mainApp의 역할, 로그아웃 버튼에 mainApp.logOut()이 아닌 logOut()을 하면 안되는지?
+// 참고 링크: https://www.youtube.com/watch?v=CvkCjfHts9A&list=PLxCXGTk-TOK9NieH8hhON952KPmIfNSqk&index=15
 var mainApp = {};
 let data = {};
 
 // --------------------------
-// login out 하기
+// login in/out 하기
 // --------------------------
 (function () {
 
@@ -27,11 +28,9 @@ let data = {};
 		if (user) {
 			// User is signed in.
 			uid = user.uid;
-			console.log("uid = ", uid)
 
 			// User 이메일 보여주기
 			var user = auth.currentUser;
-			console.log("user = ", user)
 
 			if (user != null) {
 
@@ -45,15 +44,13 @@ let data = {};
 				userRef.on('value', (snapshot) => {
 
 					//	----------------
-					//	data Object 만들기
+					//	data Object 채우기
 					//	----------------
 
 					snapshot.forEach(childSnap => {
 
 						let key = childSnap.key;
-						//console.log('(key = childSnap.key;)', key)
 						let value = childSnap.val();
-						//console.log('(value = childSnap.val();) = ', value)
 						value['uid'] = childSnap.key;
 
 						data[key] = value;
@@ -61,21 +58,18 @@ let data = {};
 					});
 
 					//사용자 이름 웹에 띄우기
-					console.log("data.userName", data.userName)
-					document.getElementById("userNameChecked").innerHTML = "생각 설계자: " + data.userName + " 대표"
+					document.getElementById("nameChecked").innerHTML = "생각 설계자: " + data.name + " 대표"
 					document.getElementById("emailChecked").innerHTML = "(" + data.email + ")"
 
-					//	----------------
-					//	bigPictureData Object 만들기
-					//	----------------
-					const bigPictureRef = db.ref("users/" + uid + "/organizing/bigPicture")
+					//bigPictureData Object 만들기
+					const bigPictureRef = db.ref("users/" + uid + "/bigPicture")
 
-					bigPictureData = {}
-					console.log("bigPictureData1 = ", bigPictureData);
+					var bigPictureData = {}
 
 					bigPictureRef.on('value', (snapshot) => {
 
 						snapshot.forEach(childSnap => {
+
 							let value = childSnap.val();
 							value['uid'] = childSnap.key;
 
@@ -83,7 +77,8 @@ let data = {};
 
 						});
 
-						console.log("bigPictureData2 = ", bigPictureData);
+						console.log("bigPictureData@reading = ", bigPictureData);
+
 					});
 
 					let bigPictureDateList = Object.keys(bigPictureData);
@@ -114,6 +109,7 @@ let data = {};
 					let bigPictureContents = bigPictureData[lastestDate].contents
 					// document.getElementById('userNameChecked').innerHTML = userName;
 					document.getElementById('dateChecked').innerHTML = lastestDate;
+					document.getElementById('paperTitle').innerHTML = bigPictureContents.paperTitle;
 					document.getElementById('direction').innerHTML = bigPictureContents.direction;
 					document.getElementById('naviA').innerHTML = bigPictureContents.naviA;
 					document.getElementById('naviB').innerHTML = bigPictureContents.naviB; // 이렇게 해도 됨.
@@ -125,6 +121,7 @@ let data = {};
 			pageModeHandler('reading');
 
 		} else {
+			
 			// redirect to login page.
 			uid = null;
 			window.location.replace("login.html")
@@ -136,9 +133,11 @@ let data = {};
 	}
 
 	mainApp.logOut = logOut;
+	
 })()
 
 console.log("data@background = ", data)
+console.log("bigPictureData@back = ", bigPictureData);
 
 
 //[향후 개선하기] 더블클릭시 작성모드로 설정되기
@@ -179,6 +178,7 @@ function pageModeHandler(pageModeOption) {
 		document.getElementById('divPaperMode').innerHTML = '작성모드';
 
 		//readOnly = '해제'
+		document.getElementById('paperTitle').readOnly = false;
 		document.getElementById('direction').readOnly = false;
 		document.getElementById('naviA').readOnly = false;
 		document.getElementById('naviB').readOnly = false;
@@ -209,6 +209,7 @@ function pageModeHandler(pageModeOption) {
 		document.getElementById('divPaperMode').innerHTML = '읽기모드';
 
 		//readOnly = '작동'
+		document.getElementById('paperTitle').readOnly = true;
 		document.getElementById('direction').readOnly = true;
 		document.getElementById('naviA').readOnly = true;
 		document.getElementById('naviB').readOnly = true;
@@ -284,6 +285,7 @@ function newPaperCreate() {
 	console.log('todayValue=', todayValue);
 
 	document.getElementById('dateChecked').innerHTML = todayValue;
+	document.getElementById('paperTitle').value = '';
 	document.getElementById('direction').value = '';
 	document.getElementById('naviA').value = '';
 	document.getElementById('naviB').value = '';
@@ -356,7 +358,7 @@ function onUpdate() {
 	let userUid = data.uid
 	let bigPictureUid = bigPictureData[dateCheckedValue].uid
 
-	const userRef = db.ref("users/" + userUid + '/organizing/bigPicture/' + bigPictureUid + '/')
+	const userRef = db.ref("users/" + userUid + '/bigPicture/' + bigPictureUid + '/')
 
 	userRef.update(updatedData, (e) => {
 		console.log('update completed = ', e);
@@ -373,6 +375,8 @@ function onRemove() {
 		contents: {}
 	}
 
+	console.log("bigPictureData@onRemove = ", bigPictureData)
+
 	let dateCheckedValue = document.getElementById("dateChecked").innerHTML;
 
 	console.log('dateCheckedValue = ', dateCheckedValue)
@@ -386,7 +390,7 @@ function onRemove() {
 	let userUid = data.uid
 	let bigPictureUid = bigPictureData[dateCheckedValue].uid
 
-	const userRef = db.ref("users/" + userUid + '/organizing/bigPicture/' + bigPictureUid + '/')
+	const userRef = db.ref("users/" + userUid + '/bigPicture/' + bigPictureUid + '/')
 
 	pageModeHandler('reading');
 
@@ -414,6 +418,7 @@ function onNewSave() {
 
 	newBigPicture['createdDate'] = todayValue;
 	newBigPicture['editedDate'] = todayValue;
+	newBigPicture.contents['paperTitle'] = document.getElementById('paperTitle').value
 	newBigPicture.contents['direction'] = document.getElementById('direction').value
 	newBigPicture.contents['naviA'] = document.getElementById('naviA').value
 	newBigPicture.contents['naviB'] = document.getElementById('naviB').value
@@ -424,7 +429,7 @@ function onNewSave() {
 	const usersRef = db.ref("users")
 	let userUid = data.uid
 
-	usersRef.child(userUid + "/organizing/bigPicture/")
+	usersRef.child(userUid + "/bigPicture/")
 		.push(newBigPicture);
 
 	pageModeHandler('reading');

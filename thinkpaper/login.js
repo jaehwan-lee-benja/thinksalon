@@ -30,7 +30,7 @@
           var userData = {
             uid: user.uid,
             email: userEmail,
-            userName: userName,
+            name: userName,
             lastLogin: Date.now()
           }
 
