@@ -27,7 +27,7 @@
 
           // Add this user to Firebase Database
           // Create User data
-          var userData = {
+          var userInfoData = {
             uid: user.uid,
             email: userEmail,
             name: userName,
@@ -36,11 +36,11 @@
 
           // Push to Firebase Database
           databaseRef.child('users/' + user.uid)
-            .set(userData, (e) => {
+            .set(userInfoData, (e) => {
               window.location.replace("index.html")
             })
 
-          console.log("userData = ", userData)
+          console.log("userInfoData = ", userInfoData)
 
           return false;
 

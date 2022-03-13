@@ -20,12 +20,12 @@
             <div>
                 <p>
                     <span type="text" id="nameChecked">로딩중...</span>
-                    <span type="text" id="emailChecked"></span>
+                    <span type="text" id="emailChecked"></span><br>
                 </p>
 
             </div>
             <div id="divLogOutBtn">
-                <input onClick="mainApp.logOut()" type="button" value="로그아웃"></input>
+                <input onClick="logOut()" type="button" value="로그아웃"></input>
             </div>
         </div>
 
@@ -67,29 +67,18 @@
                                 </div>
                             </td>
                         </tr>
-
                     </table>
                 </div>
                 <div>
                     <p>[페이퍼 관리]</p>
                     <div id="divPageEdit_menu">
-                        <div id="divEdit_btn">
-                            <input id="editMode_btn" onClick="mode_editing()" type="button" value="수정하기">
-                        </div>
-                        <div id="divEditCancel_btn">
-                            <input id="editCancel_btn" onClick="editingCancel()" type="button" value="수정 취소하기">
-                        </div>
-                        <div id="divUpdateSave_btn">
-                            <input id="updateSave_btn" onClick="onUpdate()" type="button" value="저장하기">
-                        </div>
-                        <div id="divNewSave_btn">
-                            <input id="onNew" onClick="onNewSave()" type="button" value="새 페이퍼로 저장하기">
-                        </div>
-                        <div id="divRemove_btn">
-                            <input id="remove_btn" onClick="onRemove()" type="button" value="삭제하기">
-                        </div>
-                        <div id="divNewPaperCreate_btn">
-                            <input id="newPaperCreate_btn" onClick="newPaperCreate()" type="button" value="새 페이퍼 작성하기">
+                        <div>
+                            <input id="editPaper_btn" onClick="editPaper()" type="button" value="수정하기">
+                            <input id="cancelEditPaper_btn" onClick="cancelEditPaper()" type="button" value="수정 취소하기">
+                            <input id="saveEditedPaper_btn" onClick="saveEditedPaper()" type="button" value="저장하기">
+                            <input id="saveNewPaper_btn" onClick="saveNewPaper()" type="button" value="새 페이퍼로 저장하기">
+                            <input id="removePaper_btn" onClick="removePaper()" type="button" value="삭제하기">
+                            <input id="createNewPaper_btn" onClick="createNewPaper()" type="button" value="새 페이퍼 작성하기">
                         </div>
                     </div>
                 </div>
@@ -103,12 +92,15 @@
             </div>
         </div>
         <div id="gridMainFrame">
-            <div id="gridMainContents">
+            <div>
+                <p type="text" id="guideMessage"></p>
+            </div>
+            <div id="gridPaperTitle">
                 <div>
-                    <h3>제목</h3>
+                    <h3>페이퍼 제목</h3>
                 </div>
                 <div>
-                    <textarea id="paperTitle" placeholder="예)나답게 살기" readonly></textarea>
+                    <textarea style="display: inline;" id="paperTitle" placeholder="예)나답게 살기" readonly></textarea>
                 </div>
             </div>
             <div id="gridMainContents">

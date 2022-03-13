@@ -98,8 +98,6 @@ input:hover {
     border-bottom: 1px solid rgb(200, 200, 200);
 }
 
-
-
 #gridMain{
     display: grid;
     grid-template-columns: 14rem 1fr;
@@ -113,10 +111,6 @@ input:hover {
     border: 0.2px solid rgb(200, 200, 200);
 }
 
-#gridMainFrame{
-    grid-gap: 0.2rem;
-}
-
 #divContentsControl{
     padding: 0.5rem 0;
     align-items: center;
@@ -126,6 +120,49 @@ input:hover {
 #divContentsControl .right{
     text-align: right;
 }
+
+#gridPaperTitle{
+    display: grid;
+    grid-template-columns: 5rem 1fr;
+    padding: 1rem;
+    border-radius: 2px;
+    margin: 0 10% 0.5rem 10%;
+    grid-gap: 0.2rem;
+}
+
+#guideMessage{
+    text-align: center;
+    font-style: italic;
+}
+
+#paperTitle{
+    outline: none !important; 
+    width: 100%;
+    min-height: 2rem;
+    vertical-align: middle;
+    background-color: #f9f9f9;
+    font-size: 0.8rem;
+    color: #424242;
+    padding: 0.5rem;
+    box-sizing: border-box;
+    resize: vertical; /* 상하만 가능 */
+    border-radius: 2px;
+    /* box-shadow: 
+    0 1px 3px rgba(0,0,0,0.12), 
+    0 1px 2px rgba(0,0,0,0.24); */
+    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+
+    resize: none;
+    -webkit-appearance: textfield;
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+#paperTitle:hover {
+    box-shadow: 
+        0 10px 20px rgba(0,0,0,0.19), 
+        0 6px 6px rgba(0,0,0,0.23);
+  }
 
 #gridMainContents{
     display: grid;
@@ -218,9 +255,7 @@ https://www.w3schools.com/howto/howto_js_todolist.asp
         display: block;
         padding-bottom: 1rem;
     }
-    #gridMainFrame{
-        margin-left: 0rem;
-    }
+
     #gridWebInfo{
         font-size: 0.5rem;
         display: block;
@@ -245,6 +280,14 @@ https://www.w3schools.com/howto/howto_js_todolist.asp
     .button{
         text-align: left;
     }
+    #gridPaperTitle{
+        display: block;
+        padding: 1rem;
+        border-radius: 2px;
+        margin: 0 0 1rem 0;
+        grid-gap: 0.2rem;
+    }
+
     #gridMainContents{
         display: grid;
         grid-template-rows: auto 1fr;
