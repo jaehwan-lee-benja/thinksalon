@@ -9,24 +9,25 @@
         "visitRate": ""
     },
     "action": {
-        "id": "",
+        "actionId": "",
         "createdDate": "",
         "editedDate": "",
         "contents": {}
     },
     "bigPicture": {
-        "id": "",
+        "bpId": "",
         "createdDate": "",
         "editedDate": "",
+        "bpTitle": {},
         "contents": {
             "direction": {
-                "id": "",
+                "dirctionId": "",
                 "createdDate": "",
                 "editedDate": "",
                 "contents": {}
             },
             "navi": {
-                "id": "",
+                "naviId": "",
                 "createdDate": "",
                 "editedDate": "",
                 "contents": {},
@@ -35,30 +36,32 @@
                 "subArea": ""
             },
             "actionPlan": {
-                "id": "",
+                "apId": "",
                 "createdDate": "",
                 "editedDate": "",
                 "contents": {},
                 "term": ""
             }
-        },
-        "paperTitle": {}
+        }
     },
     "cycle": {
+        "cycleId": "",
+        "createdDate": "",
+        "editedDate": "",
         "time": {
-            "id": "",
+            "timeid": "",
             "createdDate": "",
             "editedDate": "",
             "contents": {}
         },
         "money": {
-            "id": "",
+            "monenyId": "",
             "createdDate": "",
             "editedDate": "",
             "contents": {}
         },
         "routine": {
-            "id": "",
+            "routineId": "",
             "createdDate": "",
             "editedDate": "",
             "contents": {}

@@ -2,12 +2,14 @@ const firebase = appFireBase;
 const auth = firebase.auth();
 const db = firebase.database();
 const usersRef = db.ref("users");
-const dateSelectbox = document.getElementById("SelectboxDate");
+const selectboxDate = document.getElementById("selectboxDate");
+const selectboxTitle = document.getElementById("selectboxTitle");
 
 let uid = null;
 let userInfoData = {};
 let bpData = {};
 let bpDateList = {};
+let bpTitleList = {};
 let currentBpData = {};
 
 // --------------------------
@@ -56,9 +58,12 @@ function OnInput() {
 						let bpIds = Object.keys(bigPictures)
 						bpIds.forEach( bpId => {
 							let bigPicture = bigPictures[bpId];
-							let editedDate = bigPicture.editedDate
-							bpData[editedDate] = bigPicture;
-							bpData[editedDate]["bpId"] = bpId;
+							// let editedDate = bigPicture.editedDate
+							// bpData[editedDate] = bigPicture;
+							// bpData[editedDate]["bpId"] = bpId;
+							let bpTitle = bigPicture.bpTitle
+							bpData[bpTitle] = bigPicture;
+							bpData[bpTitle]["bpId"] = bpId;
 						});
 
 					}else{
@@ -70,44 +75,92 @@ function OnInput() {
 
 				});
 
-				// createBpDateList();
-				let bpDateList = Object.keys(bpData);
+				console.log("bpData = ", bpData);
 
-				// createDateSelectBox();
-				// SelectboxDate 초기화하기
+				// // createBpDateList();
+				// let bpDateList = Object.keys(bpData);
+
+				// // createSelectBoxDate();
+				// // SelectboxDate 초기화하기
+				// // 참고 링크: https://stackoverflow.com/questions/42365845/how-to-refresh-select-box-without-reloading-the-whole-form-in-js
+				// for (let i = selectboxDate.options.length - 1; i >= 0; i--) {
+				// 	selectboxDate.remove(i + 1);
+				// };
+
+				// // seletBox에 <option> 만들어서, date값 넣기
+				// for (let i = 0; i < bpDateList.length; i++) {
+				// 	let option = document.createElement("OPTION"),
+				// 		txt = document.createTextNode(bpDateList[i]);
+				// 	option.appendChild(txt);
+				// 	option.setAttribute("value", bpDateList[i]);
+				// 	selectboxDate.insertBefore(option, selectboxDate.lastChild);
+				// };
+
+				// // bpDateList가 0인지 확인하기
+				// if(bpDateList.length > 0) {
+				// 	// selectLatestDate();
+				// 	let lastestDate = bpDateList[bpDateList.length - 1];
+
+				// 	// lastestDate로 currentBpData만들기
+				// 	for (let key in bpData) {
+				// 		if(key == lastestDate){
+				// 			let bpDataSet = bpData[key]
+				// 			for (let key in bpDataSet) {
+				// 				currentBpData[key] = bpDataSet[key];
+				// 			};
+				// 		};
+				// 	};
+				
+				// 	printbpData();
+				// 	stateHandler("readPaper");
+
+				// } else {
+				// 	stateHandler("createFirstPaper");
+				// };
+
+				// createBpTitleList();
+				
+				let bpTitleList = Object.keys(bpData);
+				console.log("bpTitleList = ", bpTitleList)
+
+				// createSelectBoxTitle();
+				// SelectboxTitle 초기화하기
 				// 참고 링크: https://stackoverflow.com/questions/42365845/how-to-refresh-select-box-without-reloading-the-whole-form-in-js
-				for (let i = dateSelectbox.options.length - 1; i >= 0; i--) {
-					dateSelectbox.remove(i + 1);
+				for (let i = selectboxTitle.options.length - 1; i >= 0; i--) {
+					selectboxTitle.remove(i + 1);
 				}
 
 				// seletBox에 <option> 만들어서, date값 넣기
-				for (let i = 0; i < bpDateList.length; i++) {
+				for (let i = 0; i < bpTitleList.length; i++) {
 					let option = document.createElement("OPTION"),
-						txt = document.createTextNode(bpDateList[i]);
+						txt = document.createTextNode(bpTitleList[i]);
 					option.appendChild(txt);
-					option.setAttribute("value", bpDateList[i]);
-					dateSelectbox.insertBefore(option, dateSelectbox.lastChild);
+					option.setAttribute("value", bpTitleList[i]);
+					selectboxTitle.insertBefore(option, selectboxTitle.lastChild);
 				};
 
 				// bpDateList가 0인지 확인하기
-				if(bpDateList.length > 0) {
+				if(bpTitleList.length > 0) {
 					// selectLatestDate();
-					let lastestDate = bpDateList[bpDateList.length - 1];
+					let lastestTitle = bpTitleList[bpTitleList.length - 1];
 
 					// lastestDate로 currentBpData만들기
 					for (let key in bpData) {
-						if(key == lastestDate){
+						if(key == lastestTitle){
 							let bpDataSet = bpData[key]
 							for (let key in bpDataSet) {
 								currentBpData[key] = bpDataSet[key];
 							};
 						};
 					};
+
 					printbpData();
 					stateHandler("readPaper");
+
 				} else {
 					stateHandler("createFirstPaper");
 				};
+				
 				printUserInfo();
 			});
 		} else {
@@ -130,7 +183,7 @@ function stateHandler(state){
 	document.getElementById("saveEditedPaper_btn").style.display = "none";
 	document.getElementById("saveNewPaper_btn").style.display = "none";
 	document.getElementById("removePaper_btn").style.display = "none";
-	document.getElementById("createNewPaper_btn").style.display = "none";
+	document.getElementById("openNewPaper_btn").style.display = "none";
 	
 	if (state == "createFirstPaper") {
 		document.getElementById("guideMessage").innerHTML = "'파란색으로 쓰여진 곳의 네모칸에 내용을 작성해보세요~!'"
@@ -138,14 +191,14 @@ function stateHandler(state){
 		//document.getElementById("saveNewPaper_btn").style.backgroundColor = "#9CC0E7";
 		pageModeHandler("editing");
 	} else {
-		if (state == "createNewPaper") {
+		if (state == "openNewPaper") {
 			document.getElementById("saveNewPaper_btn").style.display = "initial";
 			document.getElementById("cancelEditPaper_btn").style.display = "initial";
 			pageModeHandler("editing");
 		} else {
 			if (state == "readPaper") {
 				document.getElementById("editPaper_btn").style.display = "initial";
-				document.getElementById("createNewPaper_btn").style.display = "initial";
+				document.getElementById("openNewPaper_btn").style.display = "initial";
 				document.getElementById("removePaper_btn").style.display = "initial";
 				pageModeHandler("reading");
 			} else {
@@ -178,7 +231,7 @@ function printbpData(){
 	let dateChecked = currentBpData.editedDate
 
 	document.getElementById("dateChecked").innerHTML = dateChecked;
-	document.getElementById("paperTitle").innerHTML = currentBpData.contents.paperTitle;
+	document.getElementById("bpTitle").innerHTML = currentBpData.bpTitle;
 	document.getElementById("direction").innerHTML = currentBpData.contents.direction;
 	document.getElementById("naviA").innerHTML = currentBpData.contents.naviA;
 	document.getElementById("naviB").innerHTML = currentBpData.contents.naviB;
@@ -214,16 +267,16 @@ function printbpData(){
 // 	console.log("bpDateList @createBpDateList = ", bpDateList);
 // };
 
-// function createDateSelectBox(){
+// function createSelectboxDate(){
 
-// 	console.log("--start createDateSelectBox()--");
+// 	console.log("--start createSelectboxDate()--");
 
-// 	console.log("bpDateList @createDateSelectBox = ", bpDateList);
+// 	console.log("bpDateList @createSelectboxDate = ", bpDateList);
 
-// 	// SelectboxDate 초기화하기
+// 	// selectboxDate 초기화하기
 // 	// 참고 링크: https://stackoverflow.com/questions/42365845/how-to-refresh-select-box-without-reloading-the-whole-form-in-js
-// 	for (let i = dateSelectbox.options.length - 1; i >= 0; i--) {
-// 		dateSelectbox.remove(i + 1);
+// 	for (let i = selectboxDate.options.length - 1; i >= 0; i--) {
+// 		selectboxDate.remove(i + 1);
 // 	}
 
 // 	// seletBox에 <option> 만들어서, date값 넣기
@@ -232,10 +285,10 @@ function printbpData(){
 // 			txt = document.createTextNode(bpDateList[i]);
 // 		option.appendChild(txt);
 // 		option.setAttribute("value", bpDateList[i]);
-// 		dateSelectbox.insertBefore(option, dateSelectbox.lastChild);
+// 		selectboxDate.insertBefore(option, selectboxDate.lastChild);
 // 	}
 
-// 	console.log("--end createDateSelectBox()--");
+// 	console.log("--end createSelectboxDate()--");
 
 // };
 
@@ -262,15 +315,16 @@ function pageModeHandler(pageMode) {
 	if (pageMode == "editing") {
 		document.getElementById("divPaperMode").innerHTML = "작성모드";
 		document.getElementById("gridMainFrame").style.color = "#9CC0E7";
-		document.getElementById("paperTitle").readOnly = false;
+		document.getElementById("bpTitle").readOnly = false;
 		document.getElementById("direction").readOnly = false;
 		document.getElementById("naviA").readOnly = false;
 		document.getElementById("naviB").readOnly = false;
 		document.getElementById("actionPlan").readOnly = false;
+		document.getElementById("divPaperInfo").style.display = "none";
 	} else {
 		document.getElementById("divPaperMode").innerHTML = "읽기모드";
 		document.getElementById("gridMainFrame").style.color = "#424242";
-		document.getElementById("paperTitle").readOnly = true;
+		document.getElementById("bpTitle").readOnly = true;
 		document.getElementById("direction").readOnly = true;
 		document.getElementById("naviA").readOnly = true;
 		document.getElementById("naviB").readOnly = true;
@@ -281,11 +335,11 @@ function pageModeHandler(pageMode) {
 
 function selectDate() {
 
-	let selectedDateValue = document.getElementById("SelectboxDate").value;
+	let selectedDateValue = selectboxDate.value;
 	let selectedBpData = bpData[selectedDateValue];
 
 	document.getElementById("dateChecked").innerHTML = selectedBpData.editedDate;
-	document.getElementById("paperTitle").value = selectedBpData.contents.paperTitle;
+	document.getElementById("bpTitle").value = selectedBpData.bpTitle;
 	document.getElementById("direction").value = selectedBpData.contents.direction;
 	document.getElementById("naviA").value = selectedBpData.contents.naviA;
 	document.getElementById("naviB").value = selectedBpData.contents.naviB;
@@ -295,16 +349,32 @@ function selectDate() {
 
 };
 
-function createNewPaper() {
+function selectTitle() {
 
-	stateHandler("createNewPaper");
+	let selectedTitleValue = selectboxTitle.value;
+	let selectedBpData = bpData[selectedTitleValue];
+
+	document.getElementById("dateChecked").innerHTML = selectedBpData.editedDate;
+	document.getElementById("bpTitle").value = selectedBpData.bpTitle;
+	document.getElementById("direction").value = selectedBpData.contents.direction;
+	document.getElementById("naviA").value = selectedBpData.contents.naviA;
+	document.getElementById("naviB").value = selectedBpData.contents.naviB;
+	document.getElementById("actionPlan").value = selectedBpData.contents.actionPlan;
+
+	stateHandler("readPaper");
+
+};
+
+function openNewPaper() {
+
+	stateHandler("openNewPaper");
 
 	//[질문] 이부분이 반복되는데 함수로 할 수 있는 방법이 있을까?
 	let today = new Date();
 	let todayValue = today.toLocaleString();
 
 	document.getElementById("dateChecked").innerHTML = todayValue;
-	document.getElementById("paperTitle").value = "";
+	document.getElementById("bpTitle").value = "";
 	document.getElementById("direction").value = "";
 	document.getElementById("naviA").value = "";
 	document.getElementById("naviB").value = "";
@@ -323,6 +393,7 @@ function editPaper() {
 function cancelEditPaper() {
 
 	stateHandler("readPaper");
+	location.reload();
 
 };
 
@@ -336,7 +407,7 @@ function saveEditedPaper() {
 	let todayValue = today.toLocaleString()
 
 	updatedBpData["editedDate"] = todayValue;
-	updatedBpData.contents["paperTitle"] = document.getElementById("paperTitle").value;
+	updatedBpData["bpTitle"] = document.getElementById("bpTitle").value;
 	updatedBpData.contents["direction"] = document.getElementById("direction").value;
 	updatedBpData.contents["naviA"] = document.getElementById("naviA").value;
 	updatedBpData.contents["naviB"] = document.getElementById("naviB").value;
@@ -383,7 +454,7 @@ function saveNewPaper() {
 
 	newBpData["createdDate"] = todayValue;
 	newBpData["editedDate"] = todayValue;
-	newBpData.contents["paperTitle"] = document.getElementById("paperTitle").value;
+	newBpData["bpTitle"] = document.getElementById("bpTitle").value;
 	newBpData.contents["direction"] = document.getElementById("direction").value;
 	newBpData.contents["naviA"] = document.getElementById("naviA").value;
 	newBpData.contents["naviB"] = document.getElementById("naviB").value;
