@@ -24,23 +24,25 @@
                 "dirctionId": "",
                 "createdDate": "",
                 "editedDate": "",
-                "contents": {}
-            },
-            "navi": {
-                "naviId": "",
-                "createdDate": "",
-                "editedDate": "",
-                "contents": {},
-                "scale": "",
-                "area": "",
-                "subArea": ""
-            },
-            "actionPlan": {
-                "apId": "",
-                "createdDate": "",
-                "editedDate": "",
-                "contents": {},
-                "term": ""
+                "contents": {
+                    "navi": {
+                        "naviId": "",
+                        "createdDate": "",
+                        "editedDate": "",
+                        "scale": "",
+                        "area": "",
+                        "subArea": "",
+                        "contents": {
+                            "actionPlan": {
+                                "apId": "",
+                                "createdDate": "",
+                                "editedDate": "",
+                                "contents": {},
+                                "term": ""
+                            }
+                        }
+                    }
+                }
             }
         }
     },

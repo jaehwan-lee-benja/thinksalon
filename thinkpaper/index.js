@@ -77,47 +77,6 @@ function OnInput() {
 
 				console.log("bpData = ", bpData);
 
-				// // createBpDateList();
-				// let bpDateList = Object.keys(bpData);
-
-				// // createSelectBoxDate();
-				// // SelectboxDate 초기화하기
-				// // 참고 링크: https://stackoverflow.com/questions/42365845/how-to-refresh-select-box-without-reloading-the-whole-form-in-js
-				// for (let i = selectboxDate.options.length - 1; i >= 0; i--) {
-				// 	selectboxDate.remove(i + 1);
-				// };
-
-				// // seletBox에 <option> 만들어서, date값 넣기
-				// for (let i = 0; i < bpDateList.length; i++) {
-				// 	let option = document.createElement("OPTION"),
-				// 		txt = document.createTextNode(bpDateList[i]);
-				// 	option.appendChild(txt);
-				// 	option.setAttribute("value", bpDateList[i]);
-				// 	selectboxDate.insertBefore(option, selectboxDate.lastChild);
-				// };
-
-				// // bpDateList가 0인지 확인하기
-				// if(bpDateList.length > 0) {
-				// 	// selectLatestDate();
-				// 	let lastestDate = bpDateList[bpDateList.length - 1];
-
-				// 	// lastestDate로 currentBpData만들기
-				// 	for (let key in bpData) {
-				// 		if(key == lastestDate){
-				// 			let bpDataSet = bpData[key]
-				// 			for (let key in bpDataSet) {
-				// 				currentBpData[key] = bpDataSet[key];
-				// 			};
-				// 		};
-				// 	};
-				
-				// 	printbpData();
-				// 	stateHandler("readPaper");
-
-				// } else {
-				// 	stateHandler("createFirstPaper");
-				// };
-
 				// createBpTitleList();
 				
 				let bpTitleList = Object.keys(bpData);
@@ -178,7 +137,7 @@ function logOut() {
 function stateHandler(state){
 
 	//모든 버튼 가리기
-	document.getElementById("editPaper_btn").style.display = "none";
+	document.getElementById("openEditPaper_btn").style.display = "none";
 	document.getElementById("cancelEditPaper_btn").style.display = "none";
 	document.getElementById("saveEditedPaper_btn").style.display = "none";
 	document.getElementById("saveNewPaper_btn").style.display = "none";
@@ -197,7 +156,7 @@ function stateHandler(state){
 			pageModeHandler("editing");
 		} else {
 			if (state == "readPaper") {
-				document.getElementById("editPaper_btn").style.display = "initial";
+				document.getElementById("openEditPaper_btn").style.display = "initial";
 				document.getElementById("openNewPaper_btn").style.display = "initial";
 				document.getElementById("removePaper_btn").style.display = "initial";
 				pageModeHandler("reading");
@@ -308,7 +267,7 @@ function printbpData(){
 // const card = document.querySelector("textarea");
 
 // card.addEventListener("dblclick", function (e) {
-// 	editPaper();
+// 	openEditPaper();
 // });
 
 function pageModeHandler(pageMode) {
@@ -349,6 +308,24 @@ function selectDate() {
 
 };
 
+function setMainPaper() {
+	//새로 작성중인 코드(220316)
+
+	//bpRef에서 setMainPaper 키의 벨류를 설정한다.
+	let uid = userInfoData.uid;
+	let bpId = currentBpData.bpId;
+	const bpRef = db.ref("users/" + uid + "/bigPicture/" + bpId + "/");
+
+	bpRef.forEach = (snapshot => {
+
+	});
+	//currentBpData의 Id는 main으로 놓고 나머지는 null로 체크한다.
+	//팝업으로 확인도 진행한다.
+	//완료되면 리딩모드로 진행된다.
+	//처음 페이지 로드시에는 그럼 메인페이퍼 셋팅 된것으로 체크된다.
+	//페이퍼정보 화면에서도 '메인페이퍼로 설정되어있음'을 표시한다.
+};
+
 function selectTitle() {
 
 	let selectedTitleValue = selectboxTitle.value;
@@ -384,7 +361,7 @@ function openNewPaper() {
 
 };
 
-function editPaper() {
+function openEditPaper() {
 
 	stateHandler("editPaper");
 
