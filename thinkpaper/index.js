@@ -4,7 +4,9 @@ const db = firebase.database();
 const usersRef = db.ref("users");
 const selectboxDate = document.getElementById("selectboxDate");
 const selectboxTitle = document.getElementById("selectboxTitle");
+// [질문] 아래 user를 const로 해도 되는가? currentUser값이 바뀌니 let으로 해야할것 같다.
 
+let user = auth.currentUser;
 let uid = null;
 let userInfoData = {};
 let bpData = {};
@@ -39,12 +41,13 @@ function OnInput() {
 
 		if (user != null) {
 
-			let user = auth.currentUser;
+			// let user = auth.currentUser;
 			let uid = user.uid;
 			const userRef = db.ref("users/" + uid);
 
 			userRef.on("value", (snapshot) => {
-				//"value"가 무엇인지 모르겠다. 문법 요소를 찾으려고하는데, 나오지 않는다.
+				// console.log("value = ", value);
+				//[질문] "value"가 무엇인지 모르겠다. 문법 요소를 찾으려고하는데, 나오지 않는다.
 
 				snapshot.forEach(childSnap => {
 
@@ -58,9 +61,6 @@ function OnInput() {
 						let bpIds = Object.keys(bigPictures)
 						bpIds.forEach( bpId => {
 							let bigPicture = bigPictures[bpId];
-							// let editedDate = bigPicture.editedDate
-							// bpData[editedDate] = bigPicture;
-							// bpData[editedDate]["bpId"] = bpId;
 							let bpTitle = bigPicture.bpTitle
 							bpData[bpTitle] = bigPicture;
 							bpData[bpTitle]["bpId"] = bpId;
@@ -78,7 +78,6 @@ function OnInput() {
 				console.log("bpData = ", bpData);
 
 				// createBpTitleList();
-				
 				let bpTitleList = Object.keys(bpData);
 				console.log("bpTitleList = ", bpTitleList)
 
@@ -308,22 +307,56 @@ function selectDate() {
 
 };
 
-function setMainPaper() {
-	//새로 작성중인 코드(220316)
+function setMainBp() {
+	// 새로 작성중인 코드(220316)
 
-	//bpRef에서 setMainPaper 키의 벨류를 설정한다.
-	let uid = userInfoData.uid;
-	let bpId = currentBpData.bpId;
-	const bpRef = db.ref("users/" + uid + "/bigPicture/" + bpId + "/");
+	// 1. 서버로부터 bpId 읽어오기
+	// 2. bpId = currentBpId 매칭하기
+	// 3. 매칭이 되면, setMainBp = "main"으로 설정하기
+	// 4. 다른 setMainBp 중 "main"이 있던게 있다면, null로 바꾸기
+	// 5. 새로고침하기
 
-	bpRef.forEach = (snapshot => {
+	// 1. 서버로부터 bpId 읽어오기
 
+	// [질문] 아래의 let, const도 반복이 된다, 글로벌 스콥에서 작동되게 할 수 있을까?
+	let currentUid = userInfoData.uid;
+	let currentBpId = currentBpData.bpId;
+	const bpRef = db.ref("users/" + currentUid + "/bigPicture/" + currentBpId + "/");
+
+	bpRef.on("value", (snapshot) => {
+
+		snapshot.forEach(childSnap => {
+
+			let key = childSnap.key;
+			let value = childSnap.val();
+
+			if(key == "bigPicture") {
+
+				//bpData 오브젝트 만들기
+				let bigPictures = value
+				let bpIds = Object.keys(bigPictures)
+				bpIds.forEach( bpId => {
+					let bigPicture = bigPictures[bpId];
+					let bpTitle = bigPicture.bpTitle
+					bpData[bpTitle] = bigPicture;
+					bpData[bpTitle]["bpId"] = bpId;
+				});
+
+			}else{
+
+				//userInfoData 오브젝트 만들기
+				value["uid"] = childSnap.key;
+				userInfoData[key] = value;
+			};
+
+		});
 	});
-	//currentBpData의 Id는 main으로 놓고 나머지는 null로 체크한다.
-	//팝업으로 확인도 진행한다.
-	//완료되면 리딩모드로 진행된다.
-	//처음 페이지 로드시에는 그럼 메인페이퍼 셋팅 된것으로 체크된다.
-	//페이퍼정보 화면에서도 '메인페이퍼로 설정되어있음'을 표시한다.
+
+	// 팝업으로 확인도 진행한다.
+	// 완료되면 리딩모드로 진행된다.
+	// 처음 페이지 로드시에는 그럼 메인페이퍼 셋팅 된것으로 체크된다.
+	// 페이퍼정보 화면에서도 '메인페이퍼로 설정되어있음'을 표시한다.
+	// 페이퍼이름 옆에 '별표'를 붙여서 리스트 중 어떤 것이 메인인지도 볼 수 있게한다.
 };
 
 function selectTitle() {
@@ -390,9 +423,9 @@ function saveEditedPaper() {
 	updatedBpData.contents["naviB"] = document.getElementById("naviB").value;
 	updatedBpData.contents["actionPlan"] = document.getElementById("actionPlan").value;
 
-	let uid = userInfoData.uid;
-	let bpId = currentBpData.bpId;
-	const bpRef = db.ref("users/" + uid + "/bigPicture/" + bpId + "/");
+	let currentUid = userInfoData.uid;
+	let currentbpId = currentBpData.bpId;
+	const bpRef = db.ref("users/" + currentUid + "/bigPicture/" + currentbpId + "/");
 
 	bpRef.update(updatedBpData, (e) => {
 		console.log("update completed = ", e);
@@ -406,9 +439,9 @@ function saveEditedPaper() {
 
 function removePaper() {
 
-	let uid = userInfoData.uid;
-	let bpId = currentBpData.bpId;
-	const bpRef = db.ref("users/" + uid + "/bigPicture/" + bpId + "/");
+	let currentUid = userInfoData.uid;
+	let currentBpId = currentBpData.bpId;
+	const bpRef = db.ref("users/" + currentUid + "/bigPicture/" + currentBpId + "/");
 
 	if (confirm("정말 삭제하시겠습니까?")) {
 		bpRef.remove();
@@ -438,9 +471,9 @@ function saveNewPaper() {
 	newBpData.contents["actionPlan"] = document.getElementById("actionPlan").value;
 
 	const usersRef = db.ref("users");
-	let uid = userInfoData.uid;
+	let currentUid = userInfoData.uid;
 
-	usersRef.child(uid + "/bigPicture/")
+	usersRef.child(currentUid + "/bigPicture/")
 		.push(newBpData);
 
 	stateHandler("readPaper");

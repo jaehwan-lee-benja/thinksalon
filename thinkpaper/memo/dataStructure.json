@@ -18,7 +18,8 @@
         "bpId": "",
         "createdDate": "",
         "editedDate": "",
-        "bpTitle": {},
+        "bpTitle": "",
+        "setMainBp": "",
         "contents": {
             "direction": {
                 "dirctionId": "",
