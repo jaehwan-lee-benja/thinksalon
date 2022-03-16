@@ -34,93 +34,10 @@ function OnInput() {
 // start - 로그인/로그아웃, 로컬 오브젝트 생성 하기
 // 로그인 참고 링크: https://www.youtube.com/watch?v=CvkCjfHts9A&list=PLxCXGTk-TOK9NieH8hhON952KPmIfNSqk&index=15
 // --------------------------
-
 (function () {
-
 	auth.onAuthStateChanged(function (user) {
-
 		if (user != null) {
-
-			// let user = auth.currentUser;
-			let uid = user.uid;
-			const userRef = db.ref("users/" + uid);
-
-			userRef.on("value", (snapshot) => {
-				// console.log("value = ", value);
-				//[질문] "value"가 무엇인지 모르겠다. 문법 요소를 찾으려고하는데, 나오지 않는다.
-
-				snapshot.forEach(childSnap => {
-
-					let key = childSnap.key;
-					let value = childSnap.val();
-
-					if(key == "bigPicture") {
-
-						//bpData 오브젝트 만들기
-						let bigPictures = value
-						let bpIds = Object.keys(bigPictures)
-						bpIds.forEach( bpId => {
-							let bigPicture = bigPictures[bpId];
-							let bpTitle = bigPicture.bpTitle
-							bpData[bpTitle] = bigPicture;
-							bpData[bpTitle]["bpId"] = bpId;
-						});
-
-					}else{
-
-						//userInfoData 오브젝트 만들기
-						value["uid"] = childSnap.key;
-						userInfoData[key] = value;
-					};
-
-				});
-
-				console.log("bpData = ", bpData);
-
-				// createBpTitleList();
-				let bpTitleList = Object.keys(bpData);
-				console.log("bpTitleList = ", bpTitleList)
-
-				// createSelectBoxTitle();
-				// SelectboxTitle 초기화하기
-				// 참고 링크: https://stackoverflow.com/questions/42365845/how-to-refresh-select-box-without-reloading-the-whole-form-in-js
-				for (let i = selectboxTitle.options.length - 1; i >= 0; i--) {
-					selectboxTitle.remove(i + 1);
-				}
-
-				// seletBox에 <option> 만들어서, date값 넣기
-				for (let i = 0; i < bpTitleList.length; i++) {
-					let option = document.createElement("OPTION"),
-						txt = document.createTextNode(bpTitleList[i]);
-					option.appendChild(txt);
-					option.setAttribute("value", bpTitleList[i]);
-					selectboxTitle.insertBefore(option, selectboxTitle.lastChild);
-				};
-
-				// bpDateList가 0인지 확인하기
-				if(bpTitleList.length > 0) {
-					// selectLatestDate();
-					let lastestTitle = bpTitleList[bpTitleList.length - 1];
-
-					// lastestDate로 currentBpData만들기
-					for (let key in bpData) {
-						if(key == lastestTitle){
-							let bpDataSet = bpData[key]
-							for (let key in bpDataSet) {
-								currentBpData[key] = bpDataSet[key];
-							};
-						};
-					};
-
-					printbpData();
-					stateHandler("readPaper");
-
-				} else {
-					stateHandler("createFirstPaper");
-				};
-				
-				printUserInfo();
-			});
+			readUser(user);
 		} else {
 			// redirect to login page.
 			let uid = null;
@@ -129,49 +46,141 @@ function OnInput() {
 	});
 })();
 
+function readUser(user) {
+
+	// let user = auth.currentUser;
+	let uid = user.uid;
+	const userRef = db.ref("users/" + uid);
+
+	userRef.on("value", (snapshot) => {
+		// console.log("value = ", value);
+		//[질문] "value"가 무엇인지 모르겠다. 문법 요소를 찾으려고하는데, 나오지 않는다.
+
+		snapshot.forEach(childSnap => {
+
+			let key = childSnap.key;
+			let value = childSnap.val();
+
+			if(key == "bigPicture") {
+
+				//bpData 오브젝트 만들기
+				let bigPictures = value
+				let bpIds = Object.keys(bigPictures)
+				bpIds.forEach( bpId => {
+					let bigPicture = bigPictures[bpId];
+					let bpTitle = bigPicture.bpTitle
+					bpData[bpTitle] = bigPicture;
+					bpData[bpTitle]["bpId"] = bpId;
+				});
+
+			}else{
+
+				//userInfoData 오브젝트 만들기
+				value["uid"] = childSnap.key;
+				userInfoData[key] = value;
+			};
+
+		});
+
+		console.log("bpData = ", bpData);
+
+		// createBpTitleList();
+		let bpTitleList = Object.keys(bpData);
+		console.log("bpTitleList = ", bpTitleList)
+
+		// createSelectBoxTitle();
+		// SelectboxTitle 초기화하기
+		// 참고 링크: https://stackoverflow.com/questions/42365845/how-to-refresh-select-box-without-reloading-the-whole-form-in-js
+		for (let i = selectboxTitle.options.length - 1; i >= 0; i--) {
+			selectboxTitle.remove(i + 1);
+		}
+
+		// seletBox에 <option> 만들어서, date값 넣기
+		for (let i = 0; i < bpTitleList.length; i++) {
+			let option = document.createElement("OPTION"),
+				txt = document.createTextNode(bpTitleList[i]);
+			option.appendChild(txt);
+			option.setAttribute("value", bpTitleList[i]);
+			selectboxTitle.insertBefore(option, selectboxTitle.lastChild);
+		};
+
+		// bpDateList가 0인지 확인하기
+		if(bpTitleList.length > 0) {
+			// selectLatestDate();
+			let lastestTitle = bpTitleList[bpTitleList.length - 1];
+
+			// lastestDate로 currentBpData만들기
+			for (let key in bpData) {
+				if(key == lastestTitle){
+					let bpDataSet = bpData[key]
+					for (let key in bpDataSet) {
+						currentBpData[key] = bpDataSet[key];
+					};
+				};
+			};
+
+			console.log("bp data", currentBpData);
+			printbpData();
+			stateHandler("readPaper");
+
+		} else {
+			stateHandler("createFirstPaper");
+		};
+		
+		printUserInfo();
+	});
+}
+
 function logOut() {
 	firebase.auth().signOut();
 };
 
+function hide(id){
+	document.getElementById(id).style.display = "none";
+}
+
+function show(id){
+	document.getElementById(id).style.display = "initial";
+}
+
 function stateHandler(state){
 
 	//모든 버튼 가리기
-	document.getElementById("openEditPaper_btn").style.display = "none";
-	document.getElementById("cancelEditPaper_btn").style.display = "none";
-	document.getElementById("saveEditedPaper_btn").style.display = "none";
-	document.getElementById("saveNewPaper_btn").style.display = "none";
-	document.getElementById("removePaper_btn").style.display = "none";
-	document.getElementById("openNewPaper_btn").style.display = "none";
+	hide("openEditPaper_btn")
+	hide("cancelEditPaper_btn")
+	hide("saveEditedPaper_btn")
+	hide("saveNewPaper_btn")
+	hide("removePaper_btn")
+	hide("openNewPaper_btn")
 	
-	if (state == "createFirstPaper") {
-		document.getElementById("guideMessage").innerHTML = "'파란색으로 쓰여진 곳의 네모칸에 내용을 작성해보세요~!'"
-		document.getElementById("saveNewPaper_btn").style.display = "initial";
-		//document.getElementById("saveNewPaper_btn").style.backgroundColor = "#9CC0E7";
-		pageModeHandler("editing");
-	} else {
-		if (state == "openNewPaper") {
-			document.getElementById("saveNewPaper_btn").style.display = "initial";
-			document.getElementById("cancelEditPaper_btn").style.display = "initial";
+	switch(state){
+		case "createFirstPaper" :
+			document.getElementById("guideMessage").innerHTML = "'파란색으로 쓰여진 곳의 네모칸에 내용을 작성해보세요~!'"
+			show("saveNewPaper_btn")
+			//document.getElementById("saveNewPaper_btn").style.backgroundColor = "#9CC0E7";
 			pageModeHandler("editing");
-		} else {
-			if (state == "readPaper") {
-				document.getElementById("openEditPaper_btn").style.display = "initial";
-				document.getElementById("openNewPaper_btn").style.display = "initial";
-				document.getElementById("removePaper_btn").style.display = "initial";
-				pageModeHandler("reading");
-			} else {
-				if (state == "editPaper") {
-					document.getElementById("saveEditedPaper_btn").style.display = "initial";
-					document.getElementById("cancelEditPaper_btn").style.display = "initial";
-					document.getElementById("saveNewPaper_btn").style.display = "initial";
-					document.getElementById("removePaper_btn").style.display = "initial";
-					pageModeHandler("editing");
-				} else {
-					let state = null;
-				};
-			};
-		};
-	};
+			break;
+		case "openNewPaper" :
+			show("saveNewPaper_btn")
+			show("cancelEditPaper_btn")
+			pageModeHandler("editing");
+			break;
+		case "readPaper" :
+			show("openEditPaper_btn")
+			show("openNewPaper_btn")
+			show("removePaper_btn")
+			pageModeHandler("reading");
+			break;
+		case "editPaper" :
+			show("saveEditedPaper_btn")
+			show("cancelEditPaper_btn")
+			show("saveNewPaper_btn")
+			show("removePaper_btn")
+			pageModeHandler("editing");
+			break;
+		default:
+			let state = null;
+	}
 	console.log("state = ", state);
 };
 
@@ -375,15 +384,19 @@ function selectTitle() {
 
 };
 
+function now(){
+	let today = new Date();
+	let todayValue = today.toISOString();
+	return todayValue;
+}
+
 function openNewPaper() {
 
 	stateHandler("openNewPaper");
 
 	//[질문] 이부분이 반복되는데 함수로 할 수 있는 방법이 있을까?
-	let today = new Date();
-	let todayValue = today.toLocaleString();
 
-	document.getElementById("dateChecked").innerHTML = todayValue;
+	document.getElementById("dateChecked").innerHTML = now();
 	document.getElementById("bpTitle").value = "";
 	document.getElementById("direction").value = "";
 	document.getElementById("naviA").value = "";
