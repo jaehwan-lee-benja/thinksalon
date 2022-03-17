@@ -1,4 +1,7 @@
+
+
 {
+    "json memo" : "firebase의 id로 묶는 구조로 바꾸기, 로컬형 구조 그리기",
     "userInfoData": {
         "uid": "user.uid",
         "userName": "userName",
