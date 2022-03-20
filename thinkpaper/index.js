@@ -1,10 +1,8 @@
-//로컬 사용 테스트
 const firebase = appFireBase;
 const db = firebase.database();
 
 let userInfoData = {};
 let bpData = {};
-let bpTitleList = {};
 let currentBpData = {};
 
 (function () {
@@ -22,8 +20,7 @@ function logOut() {
 };
 
 function readUser(user) {
-	let uid = user.uid;
-	const userRef = db.ref("users/" + uid);
+	const userRef = db.ref("users/" + user.uid);
 	userRef.on("value", (snapshot) => {
 		snapshot.forEach(childSnap => {
 			let key = childSnap.key;
@@ -43,54 +40,70 @@ function readUser(user) {
 			};
 		});
 
-		createBpTitleList(bpData);
-		console.log("bpTitleList after createBpTitleList = ", bpTitleList);
+		let bpTitleList = createBpTitleList(bpData);
+		createSelectbox(bpTitleList);
 
-		// createSelectBoxTitle();
-		// SelectboxTitle 초기화하기
-		// 참고 링크: https://stackoverflow.com/questions/42365845/how-to-refresh-select-box-without-reloading-the-whole-form-in-js
-		for (let i = selectboxTitle.options.length - 1; i >= 0; i--) {
-			selectboxTitle.remove(i + 1);
-		}
+		let currentTitle = getCurrentTitle(bpTitleList);
+		createCurrentBpData(currentTitle);
 
-		// seletBox에 <option> 만들어서, date값 넣기
-		for (let i = 0; i < bpTitleList.length; i++) {
-			let option = document.createElement("OPTION"),
-				txt = document.createTextNode(bpTitleList[i]);
-			option.appendChild(txt);
-			option.setAttribute("value", bpTitleList[i]);
-			selectboxTitle.insertBefore(option, selectboxTitle.lastChild);
-		};
-
-		// bpDateList가 0인지 확인하기
-		if(bpTitleList.length > 0) {
-			// selectLatestDate();
-			let lastestTitle = bpTitleList[bpTitleList.length - 1];
-
-			// lastestDate로 currentBpData만들기
-			for (let key in bpData) {
-				if(key == lastestTitle){
-					let bpDataSet = bpData[key]
-					for (let key in bpDataSet) {
-						currentBpData[key] = bpDataSet[key];
-					};
-				};
-			};
-			printbpData();
-			stateHandler("readPaper");
-
-		} else {
-			stateHandler("createFirstPaper");
-		};
-		
 		printUserInfo();
 	});
 };
 
 function createBpTitleList(bpData){
 	let bpTitleList = Object.keys(bpData);
-	console.log("bpTitleList @ createBpTitleList = ", bpTitleList);
+	console.log("bpTitleList @ createSelectbox = ", bpTitleList);
 	return bpTitleList;
+};
+
+function createSelectbox(bpTitleList){
+
+	// SelectboxTitle 초기화하기
+	// 참고 링크: https://stackoverflow.com/questions/42365845/how-to-refresh-select-box-without-reloading-the-whole-form-in-js
+	for (let i = selectboxTitle.options.length - 1; i >= 0; i--) {
+		selectboxTitle.remove(i + 1);
+	}
+
+	// seletbox에 <option> 만들어서, date값 넣기
+	for (let i = 0; i < bpTitleList.length; i++) {
+		let option = document.createElement("OPTION"),
+			txt = document.createTextNode(bpTitleList[i]);
+		option.appendChild(txt);
+		option.setAttribute("value", bpTitleList[i]);
+		selectboxTitle.insertBefore(option, selectboxTitle.lastChild);
+	};
+};
+
+function getCurrentTitle(bpTitleList){
+	if(bpTitleList.length > 0) {
+			
+		let selectedTitle = document.getElementById("selectboxTitle").value;
+
+		if (selectedTitle == "클릭하여 선택"){
+			let currentTitle = bpTitleList[bpTitleList.length - 1];
+			return currentTitle;
+		} else {
+			let currentTitle = selectTitle();
+			return currentTitle;
+		};
+	} else {
+		return stateHandler("createFirstPaper");
+	};
+};
+
+function createCurrentBpData(currentTitle){
+			// lastestDate로 currentBpData만들기
+		for (let key in bpData) {
+			if(key == currentTitle){
+				let bpDataSet = bpData[key]
+				for (let key in bpDataSet) {
+					currentBpData[key] = bpDataSet[key];
+				};
+			};
+		};
+		printbpData();
+
+		return stateHandler("readPaper");
 };
 
 function stateHandler(state){
@@ -197,8 +210,9 @@ function selectTitle() {
 	document.getElementById("naviB").value = selectedBpData.contents.naviB;
 	document.getElementById("actionPlan").value = selectedBpData.contents.actionPlan;
 
+	let currentTitle = selectedBpData.bpTitle;
+	createCurrentBpData(currentTitle);
 	stateHandler("readPaper");
-
 };
 
 function openNewPaper() {
@@ -244,7 +258,7 @@ function saveEditedPaper() {
 
 	db.ref("users")
 		.child(userInfoData.uid)
-		.child(bigPicture)
+		.child("bigPicture")
 		.child(currentBpData.bpId)
 		.update(updatedBpData, (e) => {
 		console.log("update completed = ", e);
@@ -258,10 +272,12 @@ function saveEditedPaper() {
 
 function removePaper() {
 
+	//console.log("currentBpData @removePaper = ", currentBpData);
+
 	if (confirm("정말 삭제하시겠습니까?")) {
 		db.ref("users")
 			.child(userInfoData.uid)
-			.child(bigPicture)
+			.child("bigPicture")
 			.child(currentBpData.bpId)
 			.remove();
 		alert("삭제되었습니다.");
