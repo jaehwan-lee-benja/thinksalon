@@ -107,9 +107,9 @@ function createCurrentBpData(currentTitle) {
 
 function printbpData() {
 
-	let dateChecked = currentBpData.editedDate
+	let dateChecked = currentBpData.editedDate;
 
-	document.getElementById("dateChecked").innerHTML = dateChecked;
+	document.getElementById("dateChecked").innerHTML = dateChecked.slice(0, 10);
 	document.getElementById("bpTitle").innerHTML = currentBpData.bpTitle;
 	document.getElementById("direction").innerHTML = currentBpData.contents.direction;
 	document.getElementById("naviA").innerHTML = currentBpData.contents.naviA;
@@ -269,6 +269,7 @@ function cancelEditPaper() {
 
 	let currentTitle = getCurrentTitle();
 	createCurrentBpData(currentTitle);
+	highLightBorder("bpTitle", "rgb(200, 200, 200)");
 	stateHandler("readPaper");
 
 };
@@ -384,16 +385,23 @@ function saveNewPaper() {
 			.push(newBpData);
 	
 			selectSavedTitle(newBpTitle);
-			//stateHandler("readPaper");
+			stateHandler("readPaper");
+			highLightBorder("bpTitle", "rgb(200, 200, 200)");
 			alert("저장되었습니다.");
 			//location.reload();
 		} else {
+			highLightBorder("bpTitle", "red");
 			alert("중복된 페이퍼 제목이 있습니다. 페이퍼 제목을 수정해주시기 바랍니다.");
 		};
 	} else {
+		highLightBorder("bpTitle", "red");
 		alert("페이퍼 제목이 비어있습니다. 페이퍼 제목을 입력해주시기 바랍니다.");
-	}
+	};
 	
+};
+
+function highLightBorder(id, color) {
+	return document.getElementById(id).style.borderColor = color;
 };
 
 function setMainBp() {
