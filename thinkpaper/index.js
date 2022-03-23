@@ -445,14 +445,24 @@ function resizeTextarea() {
 	// 참고: https://stackoverflow.com/questions/454202/creating-a-textarea-with-auto-resize
 	const tx = document.getElementsByTagName("textarea");
 	for (let i = 0; i < tx.length; i++) {
+		//console.log("tx = ", tx);
 		tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
 		tx[i].addEventListener("input", OnInput, false);
+		tx[i].style.height = tx[i].scrollHeight + "px";
+		console.log("tx[i].scrollHeight = ", tx[i].scrollHeight);
+		//tx[i].style.height = "300px";
 	};
 	
 	function OnInput() {
 		this.style.height = "auto";
 		this.style.height = (this.scrollHeight) + "px";
 	};
+
+	// 참고: https://stackoverflow.com/questions/2803880/is-there-a-way-to-get-a-textarea-to-stretch-to-fit-its-content-without-using-php
+	// document.querySelector("textarea").style.height = document.querySelector("textarea").scrollHeight+"px";
+	// document.querySelector("textarea").style.height = "1000px";
+	// console.log(document.querySelector("textarea"));
+	console.log("textarea height check");
 };
 
 // [향후 개선하기] 더블클릭시 작성모드로 설정되기
