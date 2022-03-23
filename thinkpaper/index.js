@@ -9,6 +9,7 @@ let currentBpData = {};
 		firebase.auth().onAuthStateChanged(function (user) {
 		if (user != null) {
 			readUser(user);
+			resizeTextarea();
 		} else {
 			window.location.replace("login.html");
 		};
@@ -42,8 +43,9 @@ function readUser(user) {
 		//아래 내용을 readCurrentBpData()로 뺄 수 있는가?
 		let bpTitleList = Object.keys(bpData);
 		if(bpTitleList.length > 0) {
-			let currentTitle = getCurrentTitle(bpTitleList);
-			createCurrentBpData(currentTitle);
+			// 리로드되면, 메인BpTitle로 가도록 하기 -> reload()가 발생하는 곳 점검하기
+			let mainBpTitle = getMainBpTitle(bpTitleList);
+			createCurrentBpData(mainBpTitle);
 			createSelectbox(bpTitleList);
 			stateHandler("readPaper");
 		} else {
@@ -53,49 +55,55 @@ function readUser(user) {
 	});
 };
 
-function createSelectbox(bpTitleList) {
-
-	let selectboxTitle = document.getElementById("selectboxTitle");
-
-	// SelectboxTitle 초기화하기
-	for (let i = selectboxTitle.options.length - 1; i >= 0; i--) {
-		selectboxTitle.remove(i + 1);
-	};
-
-	// seletbox에 <option> 만들어서, Title값 넣기
+function getMainBpTitle(bpTitleList) {
 	for (let i = 0; i < bpTitleList.length; i++) {
-		let option = document.createElement("OPTION"),
-			txt = document.createTextNode(bpTitleList[i]);
-		option.appendChild(txt);
-		option.setAttribute("value", bpTitleList[i]);
-		selectboxTitle.insertBefore(option, selectboxTitle.lastChild);
-	};
-
-	// selectbox에 현재 타이틀 띄우기
-	let currentTitle = currentBpData.bpTitle;
-	for (let i = 1; i < bpTitleList.length + 1; i++) {
-		let optionTitleList = document.getElementById("selectboxTitle").options[i].value;
-		if (optionTitleList == currentTitle) {
-			document.getElementById("selectboxTitle").options[i].setAttribute('selected', true);
+		let setMainBpValue = bpData[bpTitleList[i]].setMainBp;
+		if (setMainBpValue == "main") {
+			let mainBpTitle = bpData[bpTitleList[i]].bpTitle;
+			return mainBpTitle;
 		};
 	};
 };
 
-function getCurrentTitle(bpTitleList) {
-	let selectedTitle = document.getElementById("selectboxTitle").value;
-	if (selectedTitle == "클릭하여 선택"){
-		let currentTitle = bpTitleList[bpTitleList.length-1];
-		return currentTitle;
-	} else {
-		let currentTitle = selectTitle();
-		return currentTitle;
+function createSelectbox(bpTitleList) {
+
+	let selectboxBpTitle = document.getElementById("selectboxBpTitle");
+
+	// selectboxBpTitle 초기화하기
+	for (let i = selectboxBpTitle.options.length - 1; i >= 0; i--) {
+		selectboxBpTitle.remove(i + 1);
+	};
+
+	// seletbox에 <option> 만들어서, bpTitle값 넣기
+	for (let i = 0; i < bpTitleList.length; i++) {
+		let option = document.createElement("OPTION"),
+			txt = document.createTextNode(bpTitleList[i]);
+			option.appendChild(txt);
+		if (bpData[bpTitleList[i]].setMainBp == "main") {
+			// let mainBpTitle = bpTitleList[i]+"[메인]";
+			// option.setAttribute("value", mainBpTitle);
+			// console.log("bpTitleList[메인] = ", mainBpTitle);
+		} else {
+			option.setAttribute("value", bpTitleList[i]);
+		}
+		selectboxBpTitle.insertBefore(option, selectboxBpTitle.lastChild);
+	};
+	printCurrentBpTitleOnSelectbox(bpTitleList);
+};
+
+function printCurrentBpTitleOnSelectbox(bpTitleList) {
+	let currentBpTitle = currentBpData.bpTitle;
+	for (let i = 1; i < bpTitleList.length + 1; i++) {
+		let optionBpTitleList = document.getElementById("selectboxBpTitle").options[i].value;
+		if (optionBpTitleList == currentBpTitle) {
+			document.getElementById("selectboxBpTitle").options[i].setAttribute("selected", true);
+		};
 	};
 };
 
-function createCurrentBpData(currentTitle) {
-			// lastestDate로 currentBpData만들기
+function createCurrentBpData(currentBpTitle) {
 		for (let key in bpData) {
-			if(key == currentTitle){
+			if(key == currentBpTitle){
 				let bpDataSet = bpData[key]
 				for (let key in bpDataSet) {
 					currentBpData[key] = bpDataSet[key];
@@ -107,16 +115,14 @@ function createCurrentBpData(currentTitle) {
 
 function printbpData() {
 
-	let dateChecked = currentBpData.editedDate;
-
-	document.getElementById("dateChecked").innerHTML = dateChecked.slice(0, 10);
+	document.getElementById("dateChecked").innerHTML = currentBpData.editedDate.slice(0, 10);
 	document.getElementById("bpTitle").innerHTML = currentBpData.bpTitle;
 	document.getElementById("direction").innerHTML = currentBpData.contents.direction;
 	document.getElementById("naviA").innerHTML = currentBpData.contents.naviA;
 	document.getElementById("naviB").innerHTML = currentBpData.contents.naviB;
 	document.getElementById("actionPlan").innerHTML = currentBpData.contents.actionPlan;
 
-	pageModeHandler("reading");
+	paperModeHandler("reading");
 
 };
 
@@ -136,73 +142,96 @@ function stateHandler(state) {
 	hide("saveNewPaper_btn");
 	hide("removePaper_btn");
 	hide("openNewPaper_btn");
-	
+
 	switch(state){
 		case "createFirstPaper" :
 			document.getElementById("guideMessage").innerHTML = "'파란색으로 쓰여진 곳의 네모칸에 내용을 작성해보세요~!'"
 			show("saveNewPaper_btn");
-			pageModeHandler("editing");
+			paperModeHandler("editing");
 			break;
 		case "openNewPaper" :
 			show("saveNewPaper_btn");
 			show("cancelEditPaper_btn")
-			pageModeHandler("editing");
+			paperModeHandler("editing");
 			break;
 		case "readPaper" :
 			show("openEditPaper_btn");
 			show("openNewPaper_btn");
 			show("removePaper_btn");
-			pageModeHandler("reading");
+			paperModeHandler("reading");
 			break;
 		case "editPaper" :
 			show("saveEditedPaper_btn");
 			show("cancelEditPaper_btn");
 			show("saveNewPaper_btn");
 			show("removePaper_btn");
-			pageModeHandler("editing");
+			paperModeHandler("editing");
 			break;
 		default:
 			let state = null;
 	}
 	console.log("state = ", state);
-};
 
-function printUserInfo() {
-
-	let userName = userInfoData.name;
-	let userEmail = userInfoData.email;
-	document.getElementById("nameChecked").innerHTML = "생각 설계자: " + userName + " 대표"
-	document.getElementById("emailChecked").innerHTML = "(" + userEmail + ")"
-
-};
-
-function pageModeHandler(pageMode) {
-	if (pageMode == "editing") {
-		document.getElementById("divPaperMode").innerHTML = "작성모드";
-		document.getElementById("gridMainFrame").style.color = "#9CC0E7";
-		document.getElementById("bpTitle").readOnly = false;
-		document.getElementById("direction").readOnly = false;
-		document.getElementById("naviA").readOnly = false;
-		document.getElementById("naviB").readOnly = false;
-		document.getElementById("actionPlan").readOnly = false;
-		document.getElementById("divPaperInfo").style.display = "none";
+	if (currentBpData.setMainBp == "main") {
+		hide("setMainBp_btn");
+		show("setMainBp_txt");
 	} else {
-		document.getElementById("divPaperMode").innerHTML = "읽기모드";
-		document.getElementById("gridMainFrame").style.color = "#424242";
-		document.getElementById("bpTitle").readOnly = true;
-		document.getElementById("direction").readOnly = true;
-		document.getElementById("naviA").readOnly = true;
-		document.getElementById("naviB").readOnly = true;
-		document.getElementById("actionPlan").readOnly = true;
+		show("setMainBp_btn");
+		hide("setMainBp_txt");
 	};
 };
 
-function selectTitle() {
+function printUserInfo() {
+	document.getElementById("nameChecked").innerHTML = "생각 설계자: " + userInfoData.name + " 대표"
+	document.getElementById("emailChecked").innerHTML = "(" + userInfoData.email + ")"
+};
 
-	let selectedTitleValue = document.getElementById("selectboxTitle").value;
+function paperModeHandler(paperMode) {
 
-	if (selectedTitleValue != "클릭하여 선택") {
-		let selectedBpData = bpData[selectedTitleValue];
+	function textareaReadOnly(id, check){
+		document.getElementById(id).readOnly = check;
+	};
+
+	if (paperMode == "editing") {
+		document.getElementById("divPaperMode").innerHTML = "작성모드";
+		document.getElementById("gridMainFrame").style.color = "#9CC0E7";
+		textareaReadOnly("bpTitle", false);
+		textareaReadOnly("direction", false);
+		textareaReadOnly("naviA", false);
+		textareaReadOnly("naviB", false);
+		textareaReadOnly("actionPlan", false);
+	} else {
+		document.getElementById("divPaperMode").innerHTML = "읽기모드";
+		document.getElementById("gridMainFrame").style.color = "#424242";
+		textareaReadOnly("bpTitle", true);
+		textareaReadOnly("direction", true);
+		textareaReadOnly("naviA", true);
+		textareaReadOnly("naviB", true);
+		textareaReadOnly("actionPlan", true);
+	};
+};
+
+function moduleModeHandler(id, paperMode) {
+	if (paperMode == "editing") {
+		document.getElementById("divPaperMode").innerHTML = "작성모드";
+
+		let module = document.getElementById(id).parentNode.parentNode;
+		module.style.color = "#9CC0E7";
+
+		document.getElementById(id).readOnly = false;
+	} else {
+		document.getElementById("divPaperMode").innerHTML = "읽기모드";
+		document.getElementById(parentDiv).style.color = "#424242";
+		document.getElementById(id).readOnly = true;
+	};
+};
+
+function selectBpTitle() {
+
+	let selectedBpTitleValue = document.getElementById("selectboxBpTitle").value;
+
+	if (selectedBpTitleValue != "클릭하여 선택") {
+		let selectedBpData = bpData[selectedBpTitleValue];
 
 		document.getElementById("dateChecked").innerHTML = selectedBpData.editedDate;
 		document.getElementById("bpTitle").value = selectedBpData.bpTitle;
@@ -211,15 +240,13 @@ function selectTitle() {
 		document.getElementById("naviB").value = selectedBpData.contents.naviB;
 		document.getElementById("actionPlan").value = selectedBpData.contents.actionPlan;
 	
-		let currentTitle = selectedBpData.bpTitle;
-		createCurrentBpData(currentTitle);
+		let currentBpTitle = selectedBpData.bpTitle;
+		createCurrentBpData(currentBpTitle);
 		stateHandler("readPaper");
-	} else {
-		location.reload();
 	};
 };
 
-function selectSavedTitle(bpTitle) {
+function selectSavedBpTitle(bpTitle) {
 	console.log("check!")
 	let selectedBpData = bpData[bpTitle];
 
@@ -230,17 +257,9 @@ function selectSavedTitle(bpTitle) {
 	document.getElementById("naviB").value = selectedBpData.contents.naviB;
 	document.getElementById("actionPlan").value = selectedBpData.contents.actionPlan;
 
-	// 220322 - 아래 부분 함수로 만들어서, 저장하고나서 입력된 내용으로 보이도록 하기 reload가 아닌.
-	let currentTitle = selectedBpData.bpTitle;
-	createCurrentBpData(currentTitle);
-	// selectbox에 현재 타이틀 띄우기
+	createCurrentBpData(selectedBpData.bpTitle);
 	let bpTitleList = Object.keys(bpData);
-	for (let i = 1; i < bpTitleList.length + 1; i++) {
-		let optionTitleList = document.getElementById("selectboxTitle").options[i].value;
-		if (optionTitleList == currentTitle) {
-			document.getElementById("selectboxTitle").options[i].setAttribute('selected', true);
-		};
-	};
+	printCurrentBpTitleOnSelectbox(bpTitleList);
 	stateHandler("readPaper");
 };
 
@@ -255,7 +274,7 @@ function openNewPaper() {
 	document.getElementById("naviB").value = "";
 	document.getElementById("actionPlan").value = "";
 
-	pageModeHandler("editing");
+	paperModeHandler("editing");
 
 };
 
@@ -265,10 +284,14 @@ function openEditPaper() {
 
 };
 
+function openEditModule() {
+	moduleModeHandler("direction", "editing");
+};
+
 function cancelEditPaper() {
 
-	let currentTitle = getCurrentTitle();
-	createCurrentBpData(currentTitle);
+	let currentBpTitle = currentBpData.bpTitle;
+	createCurrentBpData(currentBpTitle);
 	highLightBorder("bpTitle", "rgb(200, 200, 200)");
 	stateHandler("readPaper");
 
@@ -295,10 +318,10 @@ function saveEditedPaper() {
 		console.log("update completed = ", e);
 	});
 
+	console.log("saveEditedPapering..")
+	selectSavedBpTitle(updatedBpData.bpTitle);
 	stateHandler("readPaper");
 	alert("저장되었습니다.");
-	//selectSavedTitle();
-	location.reload();
 };
 
 function removePaper() {
@@ -317,48 +340,13 @@ function removePaper() {
 
 };
 
-// function editSameTitle(newBpTitle, sameTitle) {
-// 	if (newBpTitle == sameTitle) {
-// 		let editedNewBpTitle = newBpTitle + "*"
-// 		let sameTitle2 = getSameTitle(editedNewBpTitle);
-// 		if (sameTitle2 == undefined){
-// 			return editedNewBpTitle;
-// 		} else {
-// 			editSameTitle(editedNewBpTitle, sameTitle2);
-// 		};
-// 	} else {
-// 		return newBpTitle;
-// 	};
-// };
-
-function getSameTitle(newBpTitle) {
+function getSameBpTitle(newBpTitle) {
 	let bpTitleList = Object.keys(bpData);
-	let filterSameTitleList = (query) => {
+	let filterSameBpTitleList = (query) => {
 		return bpTitleList.find(newBpTitle => query == newBpTitle);
 	};
-	let sameTitleList = filterSameTitleList(newBpTitle);
-	return sameTitleList;
-};
-
-// function countSameTitle(bpTitle) {
-// 	let bpTitleList = Object.keys(bpData);
-// 	let filterSameTitleList = (query) => {
-// 		return bpTitleList.filter(title => bpTitle.indexOf(query) > -1);
-// 	};
-// 	let sameTitleList = filterSameTitleList(bpTitle);
-// 	let sameTitleCounts = sameTitleList.length + 1;
-// 	let updatedTitle = bpTitle + " (" + sameTitleCounts + ")";
-// 	return updatedTitle;
-// };
-
-function checkUntitle(writtenBpTitle) {
-	if (writtenBpTitle == ""){
-		let newBpTitle = "제목없음";
-		return newBpTitle;
-	} else {
-		let newBpTitle = writtenBpTitle;
-		return newBpTitle;
-	};
+	let sameBpTitleList = filterSameBpTitleList(newBpTitle);
+	return sameBpTitleList;
 };
 
 function saveNewPaper() {
@@ -369,26 +357,26 @@ function saveNewPaper() {
 
 	newBpData["editedDate"] = timeStamp();
 	newBpData["createdDate"] = timeStamp();
+	newBpData["setMainBp"] = "";
 	newBpData.contents["direction"] = document.getElementById("direction").value;
 	newBpData.contents["naviA"] = document.getElementById("naviA").value;
 	newBpData.contents["naviB"] = document.getElementById("naviB").value;
 	newBpData.contents["actionPlan"] = document.getElementById("actionPlan").value;
 
 	let newBpTitle = document.getElementById("bpTitle").value;
-	let sameTitle = getSameTitle(newBpTitle);
+	let sameBpTitle = getSameBpTitle(newBpTitle);
 	if (newBpTitle != "") {
-		if (sameTitle == undefined) {
+		if (sameBpTitle == undefined) {
 			newBpData["bpTitle"] = newBpTitle;
 			db.ref("users")
 			.child(userInfoData.uid)
 			.child("bigPicture")
 			.push(newBpData);
 	
-			selectSavedTitle(newBpTitle);
+			selectSavedBpTitle(newBpTitle);
 			stateHandler("readPaper");
 			highLightBorder("bpTitle", "rgb(200, 200, 200)");
 			alert("저장되었습니다.");
-			//location.reload();
 		} else {
 			highLightBorder("bpTitle", "red");
 			alert("중복된 페이퍼 제목이 있습니다. 페이퍼 제목을 수정해주시기 바랍니다.");
@@ -405,21 +393,46 @@ function highLightBorder(id, color) {
 };
 
 function setMainBp() {
-	// 새로 작성중인 코드(220316)
+	
+	let updatedBpData = {};
 
-	// 1. 서버로부터 bpId 읽어오기
-	// 2. bpId = currentBpId 매칭하기
-	// 3. 매칭이 되면, setMainBp = "main"으로 설정하기
-	// 4. 다른 setMainBp 중 "main"이 있던게 있다면, null로 바꾸기
-	// 5. 새로고침하기
+	updatedBpData["setMainBp"] = "main";
 
-	// 1. 서버로부터 bpId 읽어오기
+	db.ref("users")
+		.child(userInfoData.uid)
+		.child("bigPicture")
+		.child(currentBpData.bpId)
+		.update(updatedBpData, (e) => {
+		console.log("update completed = ", e);
+		});
 
-	// 팝업으로 확인도 진행한다.
-	// 완료되면 리딩모드로 진행된다.
-	// 처음 페이지 로드시에는 그럼 메인페이퍼 셋팅 된것으로 체크된다.
-	// 페이퍼정보 화면에서도 '메인페이퍼로 설정되어있음'을 표시한다.
-	// 페이퍼이름 옆에 '별표'를 붙여서 리스트 중 어떤 것이 메인인지도 볼 수 있게한다.
+	unsetMainBp();
+
+	alert("메인 페이퍼로 설정이 완료되었습니다.");
+	stateHandler("readPaper");
+	location.reload();
+
+};
+
+function unsetMainBp() {
+
+	let updatedBpData = {};
+	updatedBpData["setMainBp"] = "";
+
+	let bpTitleList = Object.keys(bpData);
+	for (let i = 0; i < bpTitleList.length; i++) {
+		let bpIds = bpData[bpTitleList[i]].bpId;
+
+		if (bpIds != currentBpData.bpId) {
+			db.ref("users")
+				.child(userInfoData.uid)
+				.child("bigPicture")
+				.child(bpIds)
+				.update(updatedBpData, (e) => {
+				console.log("update completed = ", e);
+				});
+		};
+	};
 };
 
 function timeStamp() {

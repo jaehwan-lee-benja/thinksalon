@@ -43,22 +43,16 @@
             <div id="divContentsControl">
                 <div>
                     <div style="margin: 1rem 0;">
-                        <span>[페이퍼 선택]<br></span>
-                        <select style="width: 100%; font-size: 0.8rem;" id="selectboxTitle"
-                            onchange="selectTitle();">
+                        <span>[페이퍼 불러오기]<br></span>
+                        <select style="width: 100%; font-size: 0.8rem;" id="selectboxBpTitle"
+                            onchange="selectBpTitle();">
                             <option>클릭하여 선택</option>
                         </select>
                         <div style="margin: 0.5rem 0;">
                             <input id="setMainBp_btn" onClick="setMainBp()" type="button" value="메인 페이퍼로 설정하기">
+                            <span id="setMainBp_txt">*현재 페이퍼는 '메인 페이퍼'입니다.</span>
                         </div>
                     </div>
-                    <!-- <div>
-                        <span>[날짜 검색하기]<br></span>
-                        <select style="width: 100%; font-size: 0.8rem;" id="selectboxDate"
-                            onchange="selectDate();">
-                            <option>클릭하여 선택</option>
-                        </select>
-                    </div> -->
                 </div>
                 <div style="margin: 2rem 0;">
                     <p>[페이퍼 관리]</p>
@@ -116,13 +110,16 @@
                     <textarea style="display: inline;" id="bpTitle" placeholder="예)나답게 살기" readonly></textarea>
                 </div>
             </div>
-            <div id="gridMainContents">
+            <div id="gridMainContents" class="divDriection">
                 <div>
                     <h2>[D] 방향성</h2>
                     <h3>내가 왜 이 길을 가고자 하는가, 본질적으로 느끼고 싶은 의미(가치)는 무엇인가?</h3>
                 </div>
                 <div>
                     <textarea id="direction" placeholder="예)건강한 삶 살기" readonly></textarea>
+                </div>
+                <div>
+                    <input id="openEditPaper_btn" onClick="openEditModule()" type="button" value="수정하기">
                 </div>
             </div>
             <div id="gridMainContents">
