@@ -9,7 +9,6 @@ let currentBpData = {};
 		firebase.auth().onAuthStateChanged(function (user) {
 		if (user != null) {
 			readUser(user);
-			resizeTextarea();
 		} else {
 			window.location.replace("login.html");
 		};
@@ -40,19 +39,33 @@ function readUser(user) {
 				userInfoData[key] = value;
 			};
 		});
-		//아래 내용을 readCurrentBpData()로 뺄 수 있는가?
-		let bpTitleList = Object.keys(bpData);
-		if(bpTitleList.length > 0) {
-			// 리로드되면, 메인BpTitle로 가도록 하기 -> reload()가 발생하는 곳 점검하기
-			let mainBpTitle = getMainBpTitle(bpTitleList);
-			createCurrentBpData(mainBpTitle);
-			createSelectbox(bpTitleList);
-			stateHandler("readPaper");
-		} else {
-			stateHandler("createFirstPaper");
-		};
+		readCurrentBpData();
+		// [질문] 아래 내용을 readCurrentBpData()로 뺄 수 있는가?
+		// [질문] bpTitleList를 Global에 놓아도 되는가?
+		// let bpTitleList = Object.keys(bpData);
+		// if(bpTitleList.length > 0) {
+		// 	let mainBpTitle = getMainBpTitle(bpTitleList);
+		// 	createCurrentBpData(mainBpTitle);
+		// 	createSelectbox(bpTitleList);
+		// 	stateHandler("readPaper");
+		// } else {
+		// 	stateHandler("createFirstPaper");
+		// };
 		printUserInfo();
 	});
+};
+
+function readCurrentBpData() {
+	let bpTitleList = Object.keys(bpData);
+	if(bpTitleList.length > 0) {
+		let mainBpTitle = getMainBpTitle(bpTitleList);
+		console.log("mainBpTitle = ", mainBpTitle);
+		createCurrentBpData(mainBpTitle);
+		createSelectbox(bpTitleList);
+		stateHandler("readPaper");
+	} else {
+		stateHandler("createFirstPaper");
+	};
 };
 
 function getMainBpTitle(bpTitleList) {
@@ -63,6 +76,8 @@ function getMainBpTitle(bpTitleList) {
 			return mainBpTitle;
 		};
 	};
+	let mainBpTitle = bpTitleList[0];
+	return mainBpTitle;
 };
 
 function createSelectbox(bpTitleList) {
@@ -102,19 +117,21 @@ function printCurrentBpTitleOnSelectbox(bpTitleList) {
 };
 
 function createCurrentBpData(currentBpTitle) {
-		for (let key in bpData) {
-			if(key == currentBpTitle){
-				let bpDataSet = bpData[key]
-				for (let key in bpDataSet) {
-					currentBpData[key] = bpDataSet[key];
-				};
+	console.log("check =", bpData, currentBpTitle);
+	for (let key in bpData) {
+		if(key == currentBpTitle){
+			let bpDataSet = bpData[key]
+			for (let key in bpDataSet) {
+				currentBpData[key] = bpDataSet[key];
 			};
 		};
-		printbpData();
+	};
+	printbpData();
 };
 
 function printbpData() {
 
+	console.log("currentBpData = ", currentBpData);
 	document.getElementById("dateChecked").innerHTML = currentBpData.editedDate.slice(0, 10);
 	document.getElementById("bpTitle").innerHTML = currentBpData.bpTitle;
 	document.getElementById("direction").innerHTML = currentBpData.contents.direction;
@@ -122,8 +139,8 @@ function printbpData() {
 	document.getElementById("naviB").innerHTML = currentBpData.contents.naviB;
 	document.getElementById("actionPlan").innerHTML = currentBpData.contents.actionPlan;
 
+	resizeTextarea();
 	paperModeHandler("reading");
-
 };
 
 function stateHandler(state) {
