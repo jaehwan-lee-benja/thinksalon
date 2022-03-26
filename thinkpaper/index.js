@@ -28,8 +28,9 @@ function logOut() {
 	firebase.auth().signOut();
 };
 
-function isWebReloaded() {
+// user에 대한 상태 판단
 
+function isWebReloaded() {
 	// 참고: https://stackoverflow.com/questions/5004978/check-if-page-gets-reloaded-or-refreshed-in-javascript
 	const pageAccessedByReload = (
 		(window.performance.navigation && window.performance.navigation.type === 1) ||
@@ -94,6 +95,7 @@ function requestBpData(user) {
 		} else {
 			stateHandler("createFirstPaper");
 		};
+
 	});
 };
 
@@ -121,40 +123,50 @@ function resetCurrentBpData(bpData) {
 	printCurrentBpData(resetCurrentBpData);
 };
 
-function createCurrentBpData(bpData) {
-	let isEmptyData = isEmptyBpData(bpData);
-	// bpData가 비어있는 경우 처리하기
-	if( isEmptyData == Boolean) {
-		console.log("bpData is empty");
-		currentBpData = null;
-	} else {
-		console.log("bpData is not empty");
-		for (let BpTitle in bpData) {
-			console.log("for start @ createCurrentBpData");
-			//let isWebReloaded = isWebReloaded();
-			let selectboxValue = selectorById("selectboxBpTitle").value;
-			if (selectboxValue == "클릭하여 선택") {
-				// 첫로딩시에는 mainBpData로 CurrentBpData만들기
-				console.log("reloaded @ createCurrentBpData");
-				let mainBpTitle = findMainBpTitle(bpData);
-				console.log("mainBpTitle @ createCurrentBpData = ", mainBpTitle);
-				if(BpTitle == mainBpTitle){
-					currentBpData = bpData[BpTitle];
-				};
-			} else {
-				// 첫로딩이 아닌 경우, selectboxValue로 currentBpData만들기
-				console.log("No reloaded @ createCurrentBpData");
-				let selectboxValue = selectorById("selectboxBpTitle").value;
-				console.log("selectboxValue @ createCurrentBpData = ", selectboxValue);
-				if(BpTitle == selectboxValue){
-					currentBpData = bpData[BpTitle];
-				};
-			};
-		};
-	};
-	console.log("currentBpData @ createCurrentBpData = ", currentBpData);
-	return currentBpData;
+//여기 아래부터 진행하기
+function indexBpTitle(bpData, trigger) {
+	let bpTitleList = Object.keys(bpData);
+	return currentBpTitle;
 };
+
+function createCurrentBpData(currentBpTitle){
+
+};
+
+// function createCurrentBpData(bpData) {
+// 	let isEmptyData = isEmptyBpData(bpData);
+// 	// bpData가 비어있는 경우 처리하기
+// 	if( isEmptyData == Boolean) {
+// 		console.log("bpData is empty");
+// 		currentBpData = null;
+// 	} else {
+// 		console.log("bpData is not empty");
+// 		for (let BpTitle in bpData) {
+// 			console.log("for start @ createCurrentBpData");
+// 			//let isWebReloaded = isWebReloaded();
+// 			let selectboxValue = selectorById("selectboxBpTitle").value;
+// 			if (selectboxValue == "클릭하여 선택") {
+// 				// 첫로딩시에는 mainBpData로 CurrentBpData만들기
+// 				console.log("reloaded @ createCurrentBpData");
+// 				let mainBpTitle = findMainBpTitle(bpData);
+// 				console.log("mainBpTitle @ createCurrentBpData = ", mainBpTitle);
+// 				if(BpTitle == mainBpTitle){
+// 					currentBpData = bpData[BpTitle];
+// 				};
+// 			} else {
+// 				// 첫로딩이 아닌 경우, selectboxValue로 currentBpData만들기
+// 				console.log("No reloaded @ createCurrentBpData");
+// 				let selectboxValue = selectorById("selectboxBpTitle").value;
+// 				console.log("selectboxValue @ createCurrentBpData = ", selectboxValue);
+// 				if(BpTitle == selectboxValue){
+// 					currentBpData = bpData[BpTitle];
+// 				};
+// 			};
+// 		};
+// 	};
+// 	console.log("currentBpData @ createCurrentBpData = ", currentBpData);
+// 	return currentBpData;
+// };
 
 function printCurrentBpData(currentBpData) {
 	console.log("currentBpData @ printCurrentBpData = ", currentBpData);
