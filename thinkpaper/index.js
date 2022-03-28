@@ -147,34 +147,54 @@ function isEmptyBpData(bpData) {
 // *** currentBpData 오브젝트 관리를 위한 함수 세트
 function resetCurrentBpData() {
 	let resetCurrentBpDataResult = createCurrentBpData(bpData);
+	console.log("resetCurrentBpDataResult = ", resetCurrentBpDataResult);
 	printCurrentBpData(resetCurrentBpDataResult);
+	return resetCurrentBpDataResult;
 };
 
 function createCurrentBpData(){
 	let currentBpTitle = indexBpTitle(bpData);
-	currentBpData = bpData[currentBpTitle];
-	return currentBpData;
+	console.log("currentBpTitle @ createCurrentBpData = ", currentBpTitle);
+	let createdCurrentBpData = bpData[currentBpTitle];
+	console.log("createdCurrentBpData @ createCurrentBpData = ", createdCurrentBpData);
+	return createdCurrentBpData;
 }; //checked!
 
-function printCurrentBpData(currentBpData) {
-	console.log("currentBpData @ printCurrentBpData = ", currentBpData);
-	selectorById("dateChecked").innerHTML = currentBpData.editedDate.slice(0, 10);
-	selectorById("bpTitle").innerHTML = currentBpData.bpTitle;
-	selectorById("direction").innerHTML = currentBpData.direction;
-	selectorById("naviArea").innerHTML = currentBpData.naviArea;
-	selectorById("naviB").innerHTML = currentBpData.naviB;
-	selectorById("naviA").innerHTML = currentBpData.naviA;
-	selectorById("actionPlan").innerHTML = currentBpData.actionPlan;
+function printCurrentBpData(oneBpData) {
+	console.log("oneBpData @ printCurrentBpData = ", oneBpData);
+	selectorById("dateChecked").innerHTML = oneBpData.editedDate.slice(0, 10);
+	selectorById("bpTitle").innerHTML = oneBpData.bpTitle;
+	selectorById("direction").innerHTML = oneBpData.direction;
+	selectorById("naviArea").innerHTML = oneBpData.naviArea;
+	selectorById("naviB").innerHTML = oneBpData.naviB;
+	selectorById("naviA").innerHTML = oneBpData.naviA;
+	selectorById("actionPlan").innerHTML = oneBpData.actionPlan;
+}; // checked!
+
+function inputCurrentBpData(oneBpData) {
+	oneBpData["editedDate"] = timeStamp();
+	oneBpData["bpTitle"] = selectorById("bpTitle").value.trim();
+	oneBpData["direction"] = selectorById("direction").value.trim();
+	oneBpData["naviArea"] = selectorById("naviArea").value.trim();
+	oneBpData["naviB"] = selectorById("naviB").value.trim();
+	oneBpData["naviA"] = selectorById("naviA").value.trim();
+	oneBpData["actionPlan"] = selectorById("actionPlan").value.trim();
+	return oneBpData;
 }; // checked!
 
 // *** indexing BpTitle 관리를 위한 함수 세트
 function indexBpTitle(bpData) {
+	console.log("indexBpTitle here!");
 
 	let selectboxBpTitleValue = selectorById("selectboxBpTitle").value;
+
+	console.log("selectboxBpTitleValue @ indexBpTitle = ", selectboxBpTitleValue);
+
 
 	if (selectboxBpTitleValue == "클릭하여 선택") {
 		// by reloaded or gotoMainBp_btn(=reloaded)
 		let currentBpTitle = findMainBpTitle(bpData);
+		console.log("currentBpTitle @ indexBpTitle = ", currentBpTitle);
 		return currentBpTitle;
 	} else {
 		// by selectbox
@@ -233,13 +253,17 @@ function putSelectbox(bpData, selectboxId) {
 		selectbox.insertBefore(option, selectbox.lastChild);
 	};
 	// selected 넣기
-	printCurrentBpTitleOnSelectbox(bpData);
+	printCurrentBpTitleOnSelectbox();
 }; // checked!
 
-function printCurrentBpTitleOnSelectbox(bpData) {
+// 파라미터에 currentBpData 가 들어있었음, 필요 없을것으로 보여 지웠으나, 필요할 수 있음 - 검토하기
+function printCurrentBpTitleOnSelectbox() {
 
 	let bpTitleArray = Object.keys(bpData);
+	console.log("bpData @ printCurrentBpTitleOnSelectbox = ", bpData);
+	console.log("currentBpData @ printCurrentBpTitleOnSelectbox = ", currentBpData);
 	let currentBpTitle = currentBpData.bpTitle;
+	console.log("currentBpTitle @ printCurrentBpTitleOnSelectbox = ", currentBpTitle);
 
 	if (currentBpData != null) {
 		for (let i = 1; i < bpTitleArray.length + 1; i++) {
@@ -266,21 +290,24 @@ function getBpTitleFromSelectboxBpTitle() {
 }; // checked!
 
 function openCurrentBpDataBySelectboxBpTitle() {
-	resetCurrentBpData();
-	printCurrentBpTitleOnSelectbox(bpData);
+	// saveNewPaper()이후에 resetCurrentBpData() 중 printCurrentBpData()가 먹히지 않는다.
+	let selectedCurrentBpData = resetCurrentBpData();
+	console.log("selectedCurrentBpData = ", selectedCurrentBpData);
+	printCurrentBpTitleOnSelectbox();
 }; // checked!
 
 // *** mainBpData 관리를 위한 함수 세트
 
 function findMainBpTitle(bpData) {
+	console.log("findMainBpTitle here!")
 	let bpTitleArray = Object.keys(bpData);
+	console.log("bpTitleArray @ findMainBpTitle = ", bpTitleArray);
 	for (let i = 0; i < bpTitleArray.length; i++) {
 		let mainBpValue = bpData[bpTitleArray[i]].isMainBp;
 		if (mainBpValue == "main") {
 			let mainBpTitle = bpData[bpTitleArray[i]].bpTitle;
+			console.log("mainBpTitle @ findMainBpTitle = ", mainBpTitle);
 			return mainBpTitle;
-		} else {
-			setMainBp();
 		};
 	};
 }; // checked!
@@ -290,6 +317,10 @@ function setMainBp() {
 	let updatedBpData = {};
 
 	updatedBpData["isMainBp"] = "main";
+
+	console.log("currentBpData @ setMainBp = ", currentBpData);
+
+	//console.log("currentBpData.bpId = ", currentBpData.bpId);
 
 	db.ref("users")
 		.child(userInfoData.uid)
@@ -354,22 +385,18 @@ function openNewPaper() {
 
 function saveNewPaper() {
 
-	let newBpData = {};
+	console.log("saveNewPaper start!");
 
-	newBpData["editedDate"] = timeStamp();
-	newBpData["createdDate"] = timeStamp();
-	newBpData["direction"] = selectorById("direction").value.trim();
-	newBpData["naviArea"] = selectorById("naviArea").value.trim();
-	newBpData["naviB"] = selectorById("naviB").value.trim();
-	newBpData["naviA"] = selectorById("naviA").value.trim();
-	newBpData["actionPlan"] = selectorById("actionPlan").value.trim();
-
+	let newBpData = inputCurrentBpData(currentBpData);
+	console.log("newBpData @ beginning of saveNewPaper = ", newBpData);
+	
 	let newBpTitle = selectorById("bpTitle").value.trim();
 	let sameBpTitle = getSameBpTitle(newBpTitle);
 
 	if (newBpTitle != "") {
 		if (sameBpTitle == undefined) {
 			newBpData["bpTitle"] = newBpTitle;
+			newBpData["createdDate"] = timeStamp();
 
 			let bpTitleArray = Object.keys(bpData);
 
@@ -385,13 +412,18 @@ function saveNewPaper() {
 				.child("bigPicture")
 				.push(newBpData);
 
-			const currentUser = firebase.auth().currentUser;
-			requestBpData(currentUser);
+			//currentBpData = newBpData;
+			printCurrentBpData(currentBpData);
+			printCurrentBpTitleOnSelectbox(currentBpData);
 			highLightBorder("bpTitle", "rgb(200, 200, 200)");
+			selectorById("guideMessage").style.display = "none";
 			alert("저장되었습니다.");
-			if (bpTitleArray.length == 1){
-				location.reload();
-			};
+
+			// console.log("bpTitleArray.length @ saveNewPaper = ", bpTitleArray.length);
+			// if (bpTitleArray.length == 1){
+			// 	location.reload();
+			// };
+
 		} else {
 			highLightBorder("bpTitle", "red");
 			alert("중복된 페이퍼 제목이 있습니다. 페이퍼 제목을 수정해주시기 바랍니다.");
@@ -416,22 +448,19 @@ function cancelEditPaper() {
 
 function saveEditedPaper() {
 
-	let updatedBpData = {};
+	let updatedBpData = inputCurrentBpData(currentBpData);
+	console.log("updatedBpData @ saveEditedPaper = ", updatedBpData);
+	console.log("currentBpData @ saveEditedPaper = ", currentBpData);
 
-	updatedBpData["editedDate"] = timeStamp();
-	updatedBpData["bpTitle"] = selectorById("bpTitle").value.trim();
-	updatedBpData["direction"] = selectorById("direction").value.trim();
-	updatedBpData["naviArea"] = selectorById("naviArea").value.trim();
-	updatedBpData["naviB"] = selectorById("naviB").value.trim();
-	updatedBpData["naviA"] = selectorById("naviA").value.trim();
-	updatedBpData["actionPlan"] = selectorById("actionPlan").value.trim();
+	let updatedCurrentBpTitle = selectorById("bpTitle").value.trim();
+	let sameBpTitle = getSameBpTitle(updatedCurrentBpTitle);
 
-	let updatedBpTitle = selectorById("bpTitle").value.trim();
-	let sameBpTitle = getSameBpTitle(updatedBpTitle);
-
-	if (updatedBpTitle != "") {
+	if (updatedCurrentBpTitle != "") {
 		if (sameBpTitle == undefined) {
-			updatedBpData["bpTitle"] = updatedBpTitle;
+			updatedBpData["bpTitle"] = updatedCurrentBpTitle;
+			// updatedBpData["bpId"] = currentBpData.bpId;
+			// updatedBpData["createdDate"] = currentBpData.createdDate;
+			// updatedBpData["isMainBp"] = currentBpData.isMainBp;
 			console.log("updatedBpData @ saveEditedPaper = ", updatedBpData);
 
 			db.ref("users")
@@ -442,15 +471,12 @@ function saveEditedPaper() {
 				console.log("update completed = ", e);
 				});
 
-			//여기부터 수정: currentBpTitle을 얻어오는 것부터 다시 고민해봐야겠다.
-			//꼭 서버로부터 request를 안해도 되지 않을까?
-			emptyBpData(bpData);
-			console.log("bpData @ saveEditedPaper =", bpData);
-
-			const currentUser = firebase.auth().currentUser;
-			requestBpData(currentUser);
+			//currentBpData = updatedBpData;
 			highLightBorder("bpTitle", "rgb(200, 200, 200)");
 			alert("저장되었습니다.");
+			printCurrentBpData(updatedBpData);
+			putSelectbox(bpData, "selectboxBpTitle");
+			console.log("bpData @ after saveEditedPaper = ", bpData);
 		
 			} else {
 			highLightBorder("bpTitle", "red");
