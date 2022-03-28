@@ -12,13 +12,13 @@ logIn();
 function logIn() {
 	firebase.auth().onAuthStateChanged(function (user) {
 		if (user != null) {
-			requestUserInfoData(user); //Checked!
-			requestBpData(user); // checking..
+			requestUserInfoData(user);
+			requestBpData(user);
 		} else {
 			window.location.replace("login.html");
 		};
 	});
-}; // checking..
+}; // checked!
 
 function logOut() {
 	firebase.auth().signOut();
@@ -26,15 +26,16 @@ function logOut() {
 
 // *** user에 대한 상태 판단
 function isWebReloaded() {
-	// 참고: https://stackoverflow.com/questions/5004978/check-if-page-gets-reloaded-or-refreshed-in-javascript
-	const pageAccessedByReload = (
-		(window.performance.navigation && window.performance.navigation.type === 1) ||
-		  window.performance
-			.getEntriesByType('navigation')
-			.map((nav) => nav.type)
-			.includes('reload')
-	  );
-	return pageAccessedByReload;
+	
+	// // 참고: https://stackoverflow.com/questions/5004978/check-if-page-gets-reloaded-or-refreshed-in-javascript
+	// const pageAccessedByReload = (
+	// 	(window.performance.navigation && window.performance.navigation.type === 1) ||
+	// 	  window.performance
+	// 		.getEntriesByType('navigation')
+	// 		.map((nav) => nav.type)
+	// 		.includes('reload')
+	//   );
+	// return pageAccessedByReload;
 }; // checked!
 
 	// [향후 개선하기] 더블클릭시 작성모드로 설정되기
@@ -93,6 +94,7 @@ function printUserInfo(userInfoData) {
 
 // *** bpData 오브젝트 관리를 위한 함수 세트
 function requestBpData(user) {
+
 	const userRef = db.ref("users").child(user.uid);
 	userRef.on("value", (snapshot) => {
 		snapshot.forEach(childSnap => {
@@ -110,36 +112,32 @@ function requestBpData(user) {
 			};
 		});
 
-		console.log("Check @ requestBpData");
+		let bpTitleArray = Object.keys(bpData);
 
-		let bpTitleList = Object.keys(bpData);
-
-		console.log("bpTitleList = ", bpTitleList);
-
-		if (bpTitleList.length > 0) {
-			let defaultCurrentBpData = createCurrentBpData(bpData); // checking..
-			console.log("defaultCurrentBpData = ", defaultCurrentBpData);
+		if (bpTitleArray.length > 0) {
+			let defaultCurrentBpData = createCurrentBpData(bpData);
+			console.log("defaultCurrentBpData @ end of requestBpData =", defaultCurrentBpData);
 			printCurrentBpData(defaultCurrentBpData);
 			putSelectbox(bpData, "selectboxBpTitle");
-			btnShowHideHandler("readPaper"); // checking..
+			btnShowHideHandler("readPaper");
 		} else {
-			console.log("empthy checked!");
 			printEmptyPaper();
 		}; // checked!
 	});
-}; // checking..
+}; // checked!
 
 function emptyBpData(bpData) {
-	let bpTitleList = Object.keys(bpData);
-	for (let i = 0; i < bpTitleList.length; i++) {
-	delete bpData[bpTitleList[i]];
+	let bpTitleArray = Object.keys(bpData);
+	for (let i = 0; i < bpTitleArray.length; i++) {
+	delete bpData[bpTitleArray[i]];
+	console.log("emptyBpData well done!")
 	};
 };
 
 function isEmptyBpData(bpData) {
-	let bpTitleList = Object.keys(bpData);
-	console.log("bpTitleList.length = ", bpTitleList.length);
-	if (bpTitleList.length == 0) {
+	let bpTitleArray = Object.keys(bpData);
+	console.log("bpTitleArray.length = ", bpTitleArray.length);
+	if (bpTitleArray.length == 0) {
 		return true;
 	} else {
 		return false;
@@ -147,55 +145,16 @@ function isEmptyBpData(bpData) {
 };
 
 // *** currentBpData 오브젝트 관리를 위한 함수 세트
-
-function resetCurrentBpData(bpData) {
+function resetCurrentBpData() {
 	let resetCurrentBpDataResult = createCurrentBpData(bpData);
 	printCurrentBpData(resetCurrentBpDataResult);
 };
 
-
 function createCurrentBpData(){
 	let currentBpTitle = indexBpTitle(bpData);
-	console.log("currentBpTitle @ createCurrentBpData = ", currentBpTitle);
 	currentBpData = bpData[currentBpTitle];
-	console.log("currentBpData @ createCurrentBpData = ", currentBpData);
 	return currentBpData;
-};
-
-	// function createCurrentBpData(bpData) {
-// 	let isEmptyData = isEmptyBpData(bpData);
-// 	// bpData가 비어있는 경우 처리하기
-// 	if( isEmptyData == Boolean) {
-// 		console.log("bpData is empty");
-// 		currentBpData = null;
-// 	} else {
-// 		console.log("bpData is not empty");
-// 		for (let BpTitle in bpData) {
-// 			console.log("for start @ createCurrentBpData");
-// 			//let isWebReloaded = isWebReloaded();
-// 			let selectboxValue = selectorById("selectboxBpTitle").value;
-// 			if (selectboxValue == "클릭하여 선택") {
-// 				// 첫로딩시에는 mainBpData로 CurrentBpData만들기
-// 				console.log("reloaded @ createCurrentBpData");
-// 				let mainBpTitle = findMainBpTitle(bpData);
-// 				console.log("mainBpTitle @ createCurrentBpData = ", mainBpTitle);
-// 				if(BpTitle == mainBpTitle){
-// 					currentBpData = bpData[BpTitle];
-// 				};
-// 			} else {
-// 				// 첫로딩이 아닌 경우, selectboxValue로 currentBpData만들기
-// 				console.log("No reloaded @ createCurrentBpData");
-// 				let selectboxValue = selectorById("selectboxBpTitle").value;
-// 				console.log("selectboxValue @ createCurrentBpData = ", selectboxValue);
-// 				if(BpTitle == selectboxValue){
-// 					currentBpData = bpData[BpTitle];
-// 				};
-// 			};
-// 		};
-// 	};
-// 	console.log("currentBpData @ createCurrentBpData = ", currentBpData);
-// 	return currentBpData;
-// };
+}; //checked!
 
 function printCurrentBpData(currentBpData) {
 	console.log("currentBpData @ printCurrentBpData = ", currentBpData);
@@ -206,128 +165,125 @@ function printCurrentBpData(currentBpData) {
 	selectorById("naviB").innerHTML = currentBpData.naviB;
 	selectorById("naviA").innerHTML = currentBpData.naviA;
 	selectorById("actionPlan").innerHTML = currentBpData.actionPlan;
-};
+}; // checked!
 
 // *** indexing BpTitle 관리를 위한 함수 세트
-
 function indexBpTitle(bpData) {
 
-	let isSelected = selectSelectboxBpTitle();
+	let selectboxBpTitleValue = selectorById("selectboxBpTitle").value;
 
-	if (isSelected == "selected") {
-		// by selected - selectbox
-		let currentBpTitle = selectorById("selectboxBpTitle").value;
-		return currentBpTitle;
-	} else {
-		// by reloaded or gotoMainbp_btn
+	if (selectboxBpTitleValue == "클릭하여 선택") {
+		// by reloaded or gotoMainBp_btn(=reloaded)
 		let currentBpTitle = findMainBpTitle(bpData);
 		return currentBpTitle;
+	} else {
+		// by selectbox
+		let currentBpTitle = selectorById("selectboxBpTitle").value;
+		return currentBpTitle;
 	};
-};
+
+	// [질문] eventlistener로 할 수 있는 방법은 없을까?
+	// let selectboxBpTitle = selectorById("selectboxBpTitle");
+	// let isSelectedResult = selectboxBpTitle.addEventListener("change", isSelected);
+
+	// function isSelected() {
+	// 	console.log("isSelected() checked!");
+	// 	return "selected";
+	// };
+
+	// console.log("isSelectedResult = ", isSelectedResult);
+
+	// if (isSelectedResult == "selected") {
+	// 	// by selectbox
+	// 	let currentBpTitle = selectorById("selectboxBpTitle").value;
+	// 	return currentBpTitle;
+	// } else {
+	// 	// by reloaded or gotoMainBp_btn(=reloaded)
+	// 	let currentBpTitle = findMainBpTitle(bpData);
+	// 	return currentBpTitle;
+	// };
+
+}; // checked!
 
 function getSameBpTitle(newBpTitle) {
-	let bpTitleList = Object.keys(bpData);
-	let filterSameBpTitleList = (query) => {
-		return bpTitleList.find(newBpTitle => query == newBpTitle);
+	let bpTitleArray = Object.keys(bpData);
+	let filterSamebpTitleArray = (query) => {
+		return bpTitleArray.find(newBpTitle => query == newBpTitle);
 	};
-	let sameBpTitleList = filterSameBpTitleList(newBpTitle);
-	return sameBpTitleList;
-};
+	let samebpTitleArray = filterSamebpTitleArray(newBpTitle);
+	return samebpTitleArray;
+}; // checked!
 
 // *** selectBox 관리를 위한 함수 세트
 
 function putSelectbox(bpData, selectboxId) {
 
-	let bpTitleList = Object.keys(bpData);
+	let bpTitleArray = Object.keys(bpData);
 	let selectbox = selectorById(selectboxId);
 	// selectbox 초기화하기
 	for (let i = selectbox.options.length - 1; i >= 0; i--) {
 		selectbox.remove(i + 1);
 	};
-	// <option> 만들어서, bpTitleList 넣기
-	for (let i = 0; i < bpTitleList.length; i++) {
+	// <option> 만들어서, bpTitleArray 넣기
+	for (let i = 0; i < bpTitleArray.length; i++) {
 		let option = document.createElement("OPTION");
-		let txt = document.createTextNode(bpTitleList[i]);
+		let txt = document.createTextNode(bpTitleArray[i]);
 		option.appendChild(txt);
-		option.setAttribute("value", bpTitleList[i]);
+		option.setAttribute("value", bpTitleArray[i]);
 		selectbox.insertBefore(option, selectbox.lastChild);
 	};
 	// selected 넣기
-	printCurrentBpTitleOnSelectbox(bpData, selectboxId);
-};
+	printCurrentBpTitleOnSelectbox(bpData);
+}; // checked!
 
-function printCurrentBpTitleOnSelectbox(bpData, selectboxId) {
+function printCurrentBpTitleOnSelectbox(bpData) {
 
-	let bpTitleList = Object.keys(bpData);
+	let bpTitleArray = Object.keys(bpData);
 	let currentBpTitle = currentBpData.bpTitle;
 
 	if (currentBpData != null) {
-		for (let i = 1; i < bpTitleList.length + 1; i++) {
-			if(bpTitleList.length == 0){
-				selectorById(selectboxId).options[0].setAttribute("selected", true);
+		for (let i = 1; i < bpTitleArray.length + 1; i++) {
+			if(bpTitleArray.length == 0){
+				selectorById("selectboxBpTitle").options[0].setAttribute("selected", true);
 			} else {
-				let optionList = selectorById(selectboxId).options[i].value;
+				let optionList = selectorById("selectboxBpTitle").options[i].value;
 				if (optionList == currentBpTitle) {
-					selectorById(selectboxId).options[i].setAttribute("selected", true);
+					selectorById("selectboxBpTitle").options[i].setAttribute("selected", true);
 				};
 			};
 		};
 	};
-};
+}; // checked!
 
-function selectSelectboxBpTitle() {
-
+function getBpTitleFromSelectboxBpTitle() {
 	let selectedBpTitleValue = selectorById("selectboxBpTitle").value;
-
 	if (selectedBpTitleValue == "클릭하여 선택") {
-
-		let bpTitleList = Object.keys(bpData);
-		// 정확히는 해당 시점의 currentBpTitle로 돌아가야한다.
-		selectedBpTitleValue = bpTitleList[0];
-
-		// print영역으로 아래 내용은 빼야한다.
-		// let selectedBpData = bpData[selectedBpTitleValue];
-
-		// selectorById("dateChecked").innerHTML = selectedBpData.editedDate.slice(0, 10);
-		// selectorById("bpTitle").value = selectedBpData.bpTitle;
-		// selectorById("direction").value = selectedBpData.direction;
-		// selectorById("naviArea").value = selectedBpData.naviArea;
-		// selectorById("naviB").value = selectedBpData.naviB;
-		// selectorById("naviA").value = selectedBpData.naviA;
-		// selectorById("actionPlan").value = selectedBpData.actionPlan;
-	
-		// createCurrentBpData(bpData);
-		// console.log("selectSelectboxBpTitle well done 1");
-		// btnShowHideHandler("readPaper");
-
+		let bpTitleArray = Object.keys(bpData);
+		selectedBpTitleValue = bpTitleArray[0];
 	};
-	// else {
-	// 	// let selectedBpData = bpData[selectedBpTitleValue];
-	// 	// resetCurrentBpData();
-	// 	// console.log("selectSelectboxBpTitle well done 2");
-	// 	// btnShowHideHandler("readPaper");
-	// };
-	console.log("selectSelectboxBpTitle well done! 3");
+	console.log("getBpTitleFromSelectboxBpTitle well done!");
 	return selectedBpTitleValue;
-};
+}; // checked!
 
+function openCurrentBpDataBySelectboxBpTitle() {
+	resetCurrentBpData();
+	printCurrentBpTitleOnSelectbox(bpData);
+}; // checked!
 
 // *** mainBpData 관리를 위한 함수 세트
 
 function findMainBpTitle(bpData) {
-	console.log("findMainBpTitle started");
-	let bpTitleList = Object.keys(bpData);
-	for (let i = 0; i < bpTitleList.length; i++) {
-		let mainBpValue = bpData[bpTitleList[i]].isMainBp;
+	let bpTitleArray = Object.keys(bpData);
+	for (let i = 0; i < bpTitleArray.length; i++) {
+		let mainBpValue = bpData[bpTitleArray[i]].isMainBp;
 		if (mainBpValue == "main") {
-			let mainBpTitle = bpData[bpTitleList[i]].bpTitle;
-			console.log("mainBpTitle = ", mainBpTitle);
+			let mainBpTitle = bpData[bpTitleArray[i]].bpTitle;
 			return mainBpTitle;
 		} else {
 			setMainBp();
 		};
 	};
-};
+}; // checked!
 
 function setMainBp() {
 	
@@ -345,15 +301,15 @@ function setMainBp() {
 
 	unsetMainBp();
 
-	let bpTitleList = Object.keys(bpData);
-	if(bpTitleList.length > 1){
+	let bpTitleArray = Object.keys(bpData);
+	if(bpTitleArray.length > 1){
 		alert("메인 페이퍼로 설정이 완료되었습니다.");
 	};
 
 	btnShowHideHandler("readPaper");
 	location.reload();
 
-};
+}; //checked!
 
 function unsetMainBp() {
 
@@ -361,9 +317,9 @@ function unsetMainBp() {
 	
 	updatedBpData["isMainBp"] = "";
 
-	let bpTitleList = Object.keys(bpData);
-	for (let i = 0; i < bpTitleList.length; i++) {
-		let bpIds = bpData[bpTitleList[i]].bpId;
+	let bpTitleArray = Object.keys(bpData);
+	for (let i = 0; i < bpTitleArray.length; i++) {
+		let bpIds = bpData[bpTitleArray[i]].bpId;
 
 		if (bpIds != currentBpData.bpId) {
 			db.ref("users")
@@ -375,7 +331,7 @@ function unsetMainBp() {
 				});
 		};
 	};
-};
+}; // checked!
 
 // *** CRUD 관리를 위한 함수 세트
 
@@ -389,18 +345,16 @@ function printEmptyPaper() {
 	selectorById("actionPlan").value = "";
 	selectorById("guideMessage").innerHTML = "'파란색으로 쓰여진 곳의 네모칸에 내용을 작성해보세요~!'"
 	btnShowHideHandler("createFirstPaper");
-};
+}; // checked!
 
 function openNewPaper() {
 	printEmptyPaper();
 	btnShowHideHandler("openNewPaper");
-};
+}; // checked!
 
 function saveNewPaper() {
 
-	let newBpData = {
-		contents: {}
-	};
+	let newBpData = {};
 
 	newBpData["editedDate"] = timeStamp();
 	newBpData["createdDate"] = timeStamp();
@@ -412,14 +366,15 @@ function saveNewPaper() {
 
 	let newBpTitle = selectorById("bpTitle").value.trim();
 	let sameBpTitle = getSameBpTitle(newBpTitle);
+
 	if (newBpTitle != "") {
 		if (sameBpTitle == undefined) {
 			newBpData["bpTitle"] = newBpTitle;
 
-			let bpTitleList = Object.keys(bpData);
+			let bpTitleArray = Object.keys(bpData);
 
 			// 첫 bpData인 경우, 메인페이지로 셋팅되게하기
-			if (bpTitleList.length == 0){
+			if (bpTitleArray.length == 0){
 				newBpData["isMainBp"] = "main";
 			} else {
 				newBpData["isMainBp"] = "";
@@ -429,20 +384,14 @@ function saveNewPaper() {
 				.child(userInfoData.uid)
 				.child("bigPicture")
 				.push(newBpData);
-	
 
 			const currentUser = firebase.auth().currentUser;
 			requestBpData(currentUser);
-
-			//createCurrentBpData(bpData);
-			btnShowHideHandler("readPaper");
 			highLightBorder("bpTitle", "rgb(200, 200, 200)");
 			alert("저장되었습니다.");
-
-			if (bpTitleList.length == 1){
+			if (bpTitleArray.length == 1){
 				location.reload();
 			};
-
 		} else {
 			highLightBorder("bpTitle", "red");
 			alert("중복된 페이퍼 제목이 있습니다. 페이퍼 제목을 수정해주시기 바랍니다.");
@@ -466,10 +415,8 @@ function cancelEditPaper() {
 };
 
 function saveEditedPaper() {
-	
-	let updatedBpData = {
-		contents: {}
-	};
+
+	let updatedBpData = {};
 
 	updatedBpData["editedDate"] = timeStamp();
 	updatedBpData["bpTitle"] = selectorById("bpTitle").value.trim();
@@ -479,22 +426,40 @@ function saveEditedPaper() {
 	updatedBpData["naviA"] = selectorById("naviA").value.trim();
 	updatedBpData["actionPlan"] = selectorById("actionPlan").value.trim();
 
-	emptyBpData(bpData);
+	let updatedBpTitle = selectorById("bpTitle").value.trim();
+	let sameBpTitle = getSameBpTitle(updatedBpTitle);
 
-	db.ref("users")
-		.child(userInfoData.uid)
-		.child("bigPicture")
-		.child(currentBpData.bpId)
-		.update(updatedBpData, (e) => {
-		console.log("update completed = ", e);
-		});
+	if (updatedBpTitle != "") {
+		if (sameBpTitle == undefined) {
+			updatedBpData["bpTitle"] = updatedBpTitle;
+			console.log("updatedBpData @ saveEditedPaper = ", updatedBpData);
 
-	const currentUser = firebase.auth().currentUser;
-	requestBpData(currentUser);
+			db.ref("users")
+				.child(userInfoData.uid)
+				.child("bigPicture")
+				.child(currentBpData.bpId)
+				.update(updatedBpData, (e) => {
+				console.log("update completed = ", e);
+				});
 
-	//createCurrentBpData(bpData);
-	btnShowHideHandler("readPaper");
-	alert("저장되었습니다.");
+			//여기부터 수정: currentBpTitle을 얻어오는 것부터 다시 고민해봐야겠다.
+			//꼭 서버로부터 request를 안해도 되지 않을까?
+			emptyBpData(bpData);
+			console.log("bpData @ saveEditedPaper =", bpData);
+
+			const currentUser = firebase.auth().currentUser;
+			requestBpData(currentUser);
+			highLightBorder("bpTitle", "rgb(200, 200, 200)");
+			alert("저장되었습니다.");
+		
+			} else {
+			highLightBorder("bpTitle", "red");
+			alert("중복된 페이퍼 제목이 있습니다. 페이퍼 제목을 수정해주시기 바랍니다.");
+		};
+	} else {
+		highLightBorder("bpTitle", "red");
+		alert("페이퍼 제목이 비어있습니다. 페이퍼 제목을 입력해주시기 바랍니다.");
+	};
 };
 
 function removePaper() {
@@ -575,8 +540,8 @@ function setMainBpHandler() {
 	// 	};
 	// 	hide("setMainBp_txt");
 
-	// 	let bpTitleList = Object.keys(bpData);
-	// 	if(bpTitleList.length == 1){
+	// 	let bpTitleArray = Object.keys(bpData);
+	// 	if(bpTitleArray.length == 1){
 	// 		setMainBp();
 	// 		location.reload();
 	// 	};
@@ -602,7 +567,7 @@ function resizeTextarea() {
 		this.style.height = "auto";
 		this.style.height = (this.scrollHeight) + "px";
 	};
-};
+}; // check!
 
 function darkmode() {
 	let selectorBody = document.querySelector("body")
@@ -640,21 +605,18 @@ function darkmode() {
 		selectordivContentsControl.style.backgroundColor = "rgb(240, 240, 240)";
 
 	}
-};
-
-// *** 반복되는 것 줄여쓰기위한 함수 세트
-function selectorById(id) {
-	return document.getElementById(id);
-};
+}; // 향후 적용하기
 
 // *** 기타 함수 세트
+function selectorById(id) {
+	return document.getElementById(id);
+}; // check!
+
 function timeStamp() {
 	let now = new Date();
 	let nowString = now.toISOString();
 	return nowString;
-};
-
-
+}; // check!
 
 
 
