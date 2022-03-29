@@ -26,7 +26,7 @@ function logOut() {
 
 // *** user에 대한 상태 판단
 function isWebReloaded() {
-	
+
 	// // 참고: https://stackoverflow.com/questions/5004978/check-if-page-gets-reloaded-or-refreshed-in-javascript
 	// const pageAccessedByReload = (
 	// 	(window.performance.navigation && window.performance.navigation.type === 1) ||
@@ -160,6 +160,10 @@ function createCurrentBpData(){
 	return createdCurrentBpData;
 }; //checked!
 
+// function updateCurrentBpDataAfterSave() {
+
+// }
+
 function printCurrentBpData(oneBpData) {
 	console.log("oneBpData @ printCurrentBpData = ", oneBpData);
 	selectorById("dateChecked").innerHTML = oneBpData.editedDate.slice(0, 10);
@@ -171,15 +175,15 @@ function printCurrentBpData(oneBpData) {
 	selectorById("actionPlan").innerHTML = oneBpData.actionPlan;
 }; // checked!
 
-function inputCurrentBpData(oneBpData) {
-	oneBpData["editedDate"] = timeStamp();
-	oneBpData["bpTitle"] = selectorById("bpTitle").value.trim();
-	oneBpData["direction"] = selectorById("direction").value.trim();
-	oneBpData["naviArea"] = selectorById("naviArea").value.trim();
-	oneBpData["naviB"] = selectorById("naviB").value.trim();
-	oneBpData["naviA"] = selectorById("naviA").value.trim();
-	oneBpData["actionPlan"] = selectorById("actionPlan").value.trim();
-	return oneBpData;
+function inputCurrentBpData() {
+	currentBpData["editedDate"] = timeStamp();
+	currentBpData["bpTitle"] = selectorById("bpTitle").value.trim();
+	currentBpData["direction"] = selectorById("direction").value.trim();
+	currentBpData["naviArea"] = selectorById("naviArea").value.trim();
+	currentBpData["naviB"] = selectorById("naviB").value.trim();
+	currentBpData["naviA"] = selectorById("naviA").value.trim();
+	currentBpData["actionPlan"] = selectorById("actionPlan").value.trim();
+	return currentBpData;
 }; // checked!
 
 // *** indexing BpTitle 관리를 위한 함수 세트
@@ -313,7 +317,7 @@ function findMainBpTitle(bpData) {
 }; // checked!
 
 function setMainBp() {
-	
+
 	let updatedBpData = {};
 
 	updatedBpData["isMainBp"] = "main";
@@ -345,7 +349,7 @@ function setMainBp() {
 function unsetMainBp() {
 
 	let updatedBpData = {};
-	
+
 	updatedBpData["isMainBp"] = "";
 
 	let bpTitleArray = Object.keys(bpData);
@@ -387,9 +391,9 @@ function saveNewPaper() {
 
 	console.log("saveNewPaper start!");
 
-	let newBpData = inputCurrentBpData(currentBpData);
+	let newBpData = inputCurrentBpData();
 	console.log("newBpData @ beginning of saveNewPaper = ", newBpData);
-	
+
 	let newBpTitle = selectorById("bpTitle").value.trim();
 	let sameBpTitle = getSameBpTitle(newBpTitle);
 
@@ -448,7 +452,7 @@ function cancelEditPaper() {
 
 function saveEditedPaper() {
 
-	let updatedBpData = inputCurrentBpData(currentBpData);
+	let updatedBpData = inputCurrentBpData();
 	console.log("updatedBpData @ saveEditedPaper = ", updatedBpData);
 	console.log("currentBpData @ saveEditedPaper = ", currentBpData);
 
@@ -477,7 +481,7 @@ function saveEditedPaper() {
 			printCurrentBpData(updatedBpData);
 			putSelectbox(bpData, "selectboxBpTitle");
 			console.log("bpData @ after saveEditedPaper = ", bpData);
-		
+
 			} else {
 			highLightBorder("bpTitle", "red");
 			alert("중복된 페이퍼 제목이 있습니다. 페이퍼 제목을 수정해주시기 바랍니다.");
@@ -511,11 +515,11 @@ function btnShowHideHandler(state) {
 	function hide(id) {
 		selectorById(id).style.display = "none";
 	};
-	
+
 	function show(id) {
 		selectorById(id).style.display = "initial";
 	};
-	
+
 	hide("openEditPaper_btn");
 	hide("cancelEditPaper_btn");
 	hide("saveEditedPaper_btn");
@@ -588,7 +592,7 @@ function resizeTextarea() {
 		tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
 		tx[i].addEventListener("input", OnInput, false);
 	};
-	
+
 	function OnInput() {
 		this.style.height = "auto";
 		this.style.height = (this.scrollHeight) + "px";
