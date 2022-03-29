@@ -145,12 +145,6 @@ function isEmptyBpData(bpData) {
 };
 
 // *** currentBpData 오브젝트 관리를 위한 함수 세트
-function resetCurrentBpData() {
-	let resetCurrentBpDataResult = createCurrentBpData(bpData);
-	console.log("resetCurrentBpDataResult = ", resetCurrentBpDataResult);
-	printCurrentBpData(resetCurrentBpDataResult);
-	return resetCurrentBpDataResult;
-};
 
 function createCurrentBpData(){
 	let currentBpTitle = indexBpTitle(bpData);
@@ -257,7 +251,7 @@ function putSelectbox(bpData, selectboxId) {
 		selectbox.insertBefore(option, selectbox.lastChild);
 	};
 	// selected 넣기
-	printCurrentBpTitleOnSelectbox();
+	// printCurrentBpTitleOnSelectbox();
 }; // checked!
 
 // 파라미터에 currentBpData 가 들어있었음, 필요 없을것으로 보여 지웠으나, 필요할 수 있음 - 검토하기
@@ -294,11 +288,22 @@ function getBpTitleFromSelectboxBpTitle() {
 }; // checked!
 
 function openCurrentBpDataBySelectboxBpTitle() {
-	// saveNewPaper()이후에 resetCurrentBpData() 중 printCurrentBpData()가 먹히지 않는다.
-	let selectedCurrentBpData = resetCurrentBpData();
-	console.log("selectedCurrentBpData = ", selectedCurrentBpData);
-	printCurrentBpTitleOnSelectbox();
-}; // checked!
+	function returnCurrentBpDataBySelectboxBpTitle() {
+		let bpTitleArray = Object.keys(bpData);
+		let returnCurrentBpData = {};
+		for (let i = 0; i < bpTitleArray.length; i++) {
+			let bpTitles = [];
+			bpTitles.push(bpTitleArray[i]);
+			let bpTitleValue = getBpTitleFromSelectboxBpTitle();
+			if(bpTitles == bpTitleValue){
+				returnCurrentBpData = bpData[bpTitleValue];
+			};
+		};
+		return returnCurrentBpData;
+	};
+	let currentBpDataBySelectedBpTitle = returnCurrentBpDataBySelectboxBpTitle();
+	printCurrentBpData(currentBpDataBySelectedBpTitle);
+}; // checking..
 
 // *** mainBpData 관리를 위한 함수 세트
 
@@ -418,7 +423,7 @@ function saveNewPaper() {
 
 			//currentBpData = newBpData;
 			printCurrentBpData(currentBpData);
-			printCurrentBpTitleOnSelectbox(currentBpData);
+			//printCurrentBpTitleOnSelectbox(currentBpData);
 			highLightBorder("bpTitle", "rgb(200, 200, 200)");
 			selectorById("guideMessage").style.display = "none";
 			alert("저장되었습니다.");
