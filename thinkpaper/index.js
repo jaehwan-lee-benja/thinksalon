@@ -118,24 +118,34 @@ function requestBpData(user) {
 		let bpTitleArray = Object.keys(bpData);
 
 		if (bpTitleArray.length > 0) {
-			let defaultCurrentBpData = createCurrentBpData();
-			printCurrentBpData(defaultCurrentBpData);
 			putSelectbox("selectboxBpTitle");
+			createCurrentBpData();
+			printCurrentBpData();
 			btnShowHideHandler("readPaper");
 		} else {
 			printEmptyCurrentBpData();
+			selectorById("guideMessage").innerHTML = "'파란색으로 쓰여진 곳의 네모칸에 내용을 작성해보세요~!'"
 		};
 	});
 }; // checked!
 
-function emptyBpData(bpData) {
+function emptyBpData() {
 	let bpTitleArray = Object.keys(bpData);
 	for (let i = 0; i < bpTitleArray.length; i++) {
 	delete bpData[bpTitleArray[i]];
 	};
 }; // 쓰이지 않고 있음
 
-function isEmptyBpData(bpData) {
+function emptyCurrentBpData() {
+	let bpTitleArray = Object.keys(bpData);
+	for (let i = 0; i < bpTitleArray.length; i++) {
+		if(currentBpData.bpTitle == bpData[bpTitleArray[i]].bpTitle){
+			delete bpData[bpTitleArray[i]];
+		};
+	};
+}; // 쓰이지 않고 있음
+
+function isEmptyBpData() {
 	let bpTitleArray = Object.keys(bpData);
 	if (bpTitleArray.length == 0) {
 		return true;
@@ -149,6 +159,7 @@ function isEmptyBpData(bpData) {
 // --------------------------------------------------
 function createCurrentBpData() {
 	let currentBpTitle = indexBpTitle();
+	console.log("currentBpTitle @ createCurrentBpData = ", currentBpTitle);
 	let createdCurrentBpData = bpData[currentBpTitle];
 	currentBpData = createdCurrentBpData;
 	return createdCurrentBpData;
@@ -176,6 +187,7 @@ function printCurrentBpData() {
 	selectorById("naviB").value = currentBpData.naviB;
 	selectorById("naviA").value = currentBpData.naviA;
 	selectorById("actionPlan").value = currentBpData.actionPlan;
+	printCurrentBpTitleOnSelectbox();
 }; // checked!
 
 function inputCurrentBpData() {
@@ -197,7 +209,6 @@ function printEmptyCurrentBpData() {
 	selectorById("naviB").value = "";
 	selectorById("naviA").value = "";
 	selectorById("actionPlan").value = "";
-	selectorById("guideMessage").innerHTML = "'파란색으로 쓰여진 곳의 네모칸에 내용을 작성해보세요~!'"
 	btnShowHideHandler("createFirstPaper");
 }; // checked!
 
@@ -246,7 +257,7 @@ function putSelectbox(selectboxId) {
 		let mainBpTitle = findMainBpTitle();
 		let bpTitle = bpData[bpTitleArray[i]].bpTitle;
 		if(mainBpTitle == bpTitle){
-			let mainBpTitleOptionMark = bpTitle + "★";
+			let mainBpTitleOptionMark = bpTitle + " ★";
 			let mainTxt = document.createTextNode(mainBpTitleOptionMark);
 			option.appendChild(mainTxt);
 		} else {
@@ -259,10 +270,9 @@ function putSelectbox(selectboxId) {
 }; // checked!
 
 function printCurrentBpTitleOnSelectbox() {
-	console.log("check: printCurrentBpTitleOnSelectbox");
+
 	let bpTitleArray = Object.keys(bpData);
 	let currentBpTitle = currentBpData.bpTitle;
-	console.log("currentBpTitle = ", currentBpTitle);
 
 	for (let i = 0; i <= bpTitleArray.length; i++) {
 		if(bpTitleArray.length == 0){
@@ -270,13 +280,13 @@ function printCurrentBpTitleOnSelectbox() {
 		} else {
 			let selectorOption = selectorById("selectboxBpTitle").options[i];
 			let optionValue = selectorOption.value;
-			console.log("optionValue = ", optionValue);
 			selectorOption.removeAttribute("selected");
 			if (optionValue == currentBpTitle) {
 				selectorOption.setAttribute("selected", true);
 			};
 		};
 	};
+
 }; // checked!
 
 function getBpTitleFromSelectboxBpTitle() {
@@ -300,67 +310,111 @@ function openCurrentBpDataBySelectboxBpTitle() {
 // --------------------------------------------------
 
 function findMainBpTitle() {
-
 	let bpTitleArray = Object.keys(bpData);
-
-	function createIsMainBpValueArray() {
-		let isMainBpValueArray = [];
+	let IsThereAnyMainBpResult = IsThereAnyMainBp();
+	console.log("IsThereAnyMainBpResult = ", IsThereAnyMainBpResult);
+	if (IsThereAnyMainBpResult == true){
 		for (let i = 0; i < bpTitleArray.length; i++) {
 			let isMainBpValue = bpData[bpTitleArray[i]].isMainBp;
-			isMainBpValueArray.push(isMainBpValue);
-		};
-		return isMainBpValueArray;
-	};
-
-	let isMainBpValueArray = createIsMainBpValueArray();
-	
-	if (isMainBpValueArray.length == 1){
-		// isMainBpValueArray갯수가 1개인 경우, 
-		// mainBp가 없는 경우( = 기존 mainBp가 삭제된 경우), 또는 1개만 있는 경우이다.
-		// 이때, 첫번째 bpTitle을 mainBp로 놓기
-		bpData[bpTitleArray[0]].isMainBp = "main";
-		let mainBpTitle = bpData[bpTitleArray[0]].bpTitle;
-		return mainBpTitle;
-	} else {
-		for (let i = 0; i < bpTitleArray.length; i++) {
-			let isMainBpValue2 = bpData[bpTitleArray[i]].isMainBp;
-			if (isMainBpValue2 == "main") {
-				let mainBpTitle = bpData[bpTitleArray[i]].bpTitle;
+			let mainBpTitle = bpData[bpTitleArray[i]].bpTitle;
+			if (isMainBpValue == "main") {
+				console.log("findMainBpTitle1");
+				console.log("mainBpTitle1 = ", mainBpTitle);
 				return mainBpTitle;
 			};
 		};
+	} else {
+		console.log("findMainBpTitle3");
+		setMainBp();
+		bpData[bpTitleArray[0]].isMainBp = "main";
+		let mainBpTitle = bpData[bpTitleArray[0]].bpTitle;
+		return mainBpTitle;
 	};
 }; // checked!
 
+function IsThereAnyMainBp() {
+	let isMainBpValueArray = [];
+	let bpTitleArray = Object.keys(bpData);
+	for (let i = 0; i < bpTitleArray.length; i++) {
+		let isMainBpValue = bpData[bpTitleArray[i]].isMainBp;
+		isMainBpValueArray.push(isMainBpValue);
+	};
+
+	let uniqueIsMainBpValueArray = isMainBpValueArray.filter((element, index) => {
+			return isMainBpValueArray.indexOf(element) == index;
+		});
+
+	console.log("uniqueIsMainBpValueArray = ", uniqueIsMainBpValueArray);
+	if (uniqueIsMainBpValueArray.length == 1){
+		if(uniqueIsMainBpValueArray[0] == ""){
+			return false;
+		};
+	} else {
+		return true;
+	};
+};
+
+function catchFirstBpIdByBpTitleArray() {
+	let bpTitleArray = Object.keys(bpData);
+	let firstBpId = bpData[bpTitleArray[0]].bpId;
+	return firstBpId;
+};
+
+// 정비할것
 function setMainBp() {
 
 	let updatedBpData = {};
 	updatedBpData["isMainBp"] = "main";
 
+	let thisBpIdArray = [];
+	let bpTitleArray = Object.keys(bpData);
+	let currentBpDataLength = Object.keys(currentBpData).length;
+
+	if (currentBpDataLength > 0) {
+		thisBpIdArray.push(currentBpData.bpId);
+
+		unsetMainBp();
+
+		// update currentBpData(local) 
+		currentBpData["isMainBp"] = "main";
+		console.log("bpTitleArray @ setMainBp = ", bpTitleArray);
+
+		for (let i = 0; i < bpTitleArray.length; i++) {
+			let bpTitle = bpData[bpTitleArray[i]].bpTitle;
+			if (bpTitle != currentBpData.bpTitle) {
+				bpData[bpTitleArray[i]].isMainBp = "";
+			};
+		};
+
+	} else {
+		let firstBpIdByBpTitleArray = catchFirstBpIdByBpTitleArray();
+		thisBpIdArray.push(firstBpIdByBpTitleArray);
+	};
+
+	let thisBpId = thisBpIdArray[0];
+	console.log("thisBpId @ setManBp = ", thisBpId);
+
 	db.ref("users")
 		.child(userInfoData.uid)
 		.child("bigPicture")
-		.child(currentBpData.bpId)
+		.child(thisBpId)
 		.update(updatedBpData, (e) => {
 		console.log("update completed = ", e);
 		});
-
-	unsetMainBp();
-
-	// local bpData update
-	currentBpData["isMainBp"] = "main";
-	let bpTitleArray = Object.keys(bpData);
-	for (let i = 0; i < bpTitleArray.length; i++) {
-		let bpTitle = bpData[bpTitleArray[i]].bpTitle;
-		if (bpTitle != currentBpData.bpTitle) {
-			bpData[bpTitleArray[i]].isMainBp = "";
-		};
-	};
 	
 	// alert message
-	if(bpTitleArray.length > 1){
+	// if(bpTitleArray.length > 1){
+	// 	let selectboxBpTitleValue = selectorById("selectboxBpTitle").value
+	// 	console.log("selectboxBpTitleValue @ before alert", selectboxBpTitleValue);
+	// 	if (selectboxBpTitleValue != SELECTBOX_BPTITLE_VALUE_INIT) {
+	// 		alert("메인 페이퍼로 설정이 완료되었습니다.");
+	// 	};
+	// };
+	function alertSetMainBp() {
 		alert("메인 페이퍼로 설정이 완료되었습니다.");
 	};
+	let selectorOpenMainBpBtn = selectorById("openMainBp_btn")
+	selectorOpenMainBpBtn.addEventListener("click", alertSetMainBp);
 
 	btnShowHideHandler("readPaper");
 	//location.reload();
@@ -374,11 +428,14 @@ function unsetMainBp() {
 	updatedBpData["isMainBp"] = "";
 
 	let bpTitleArray = Object.keys(bpData);
-	for (let i = 0; i < bpTitleArray.length; i++) {
-		let bpIds = bpData[bpTitleArray[i]].bpId;
-		console.log("bpIds = ", bpIds);
+	console.log("bpTitleArray @ unsetMainBp = ", bpTitleArray);
 
-		if (bpIds != currentBpData.bpId) {
+	if (bpTitleArray.length > 0){
+		for (let i = 0; i < bpTitleArray.length; i++) {
+			let bpIds = bpData[bpTitleArray[i]].bpId;
+	
+			console.log("currentBpData.bpId @ unsetMainBp = ", currentBpData.bpId);
+	
 			db.ref("users")
 				.child(userInfoData.uid)
 				.child("bigPicture")
@@ -386,6 +443,7 @@ function unsetMainBp() {
 				.update(updatedBpData, (e) => {
 				console.log("update completed = ", e);
 				});
+	
 		};
 	};
 }; // checked!
@@ -393,9 +451,8 @@ function unsetMainBp() {
 function openMainBp() {
 	let mainBpTitle = findMainBpTitle();
 	updateCurrentBpDataByBpTitle(mainBpTitle);
-	console.log("currentBpData = ", currentBpData);
 	printCurrentBpData();
-	printCurrentBpTitleOnSelectbox();
+	btnShowHideHandler("readPaper");
 }; // checked!
 
 // --------------------------------------------------
@@ -462,10 +519,12 @@ function openEditPaperByDbclick() {
 
 function cancelEditPaper() {
 	createCurrentBpData();
+	printCurrentBpData();
 	highLightBorder("bpTitle", "rgb(200, 200, 200)");
 	btnShowHideHandler("readPaper");
 }; // checked!
 
+// 정비할것
 function saveEditedPaper() {
 
 	let updatedBpData = inputCurrentBpData();
@@ -493,13 +552,23 @@ function saveEditedPaper() {
 	};
 }; // checked!
 
+// mainBp가 없어진 경우, 다른 mainBp가 생겨야한다. setMainBp 활용가능할듯?!
 function removePaper() {
-	if (confirm("정말 삭제하시겠습니까? 삭제가 완료되면, 해당 내용은 다시 복구될 수 없습니다")) {
+	if (confirm("정말 삭제하시겠습니까? 삭제가 완료되면, 해당 내용은 다시 복구될 수 없습니다.")) {
 		db.ref("users")
 			.child(userInfoData.uid)
 			.child("bigPicture")
 			.child(currentBpData.bpId)
 			.remove();
+
+		// console.log("bpData1 = ", bpData);
+		// console.log("currentBpData1 = ", currentBpData);
+		// console.log("bpData2 = ", bpData);
+		// let changedCurrentBpTitle = findMainBpTitle();
+		// updateCurrentBpDataByBpTitle(changedCurrentBpTitle);
+		// console.log("currentBpData2 = ", currentBpData);
+		//printCurrentBpData();
+		//emptyBpData();
 		alert("삭제되었습니다.");
 		location.reload();
 	};
@@ -557,20 +626,16 @@ function btnShowHideHandler(state) {
 }; // checked!
 
 function btnShowHideHandler_mainBp(state) {
+	uiHide("setMainBp_btn");
+	uiHide("openMainBp_btn");
+	uiHide("setMainBp_txt");
 	if (currentBpData.isMainBp == "main") {
-		uiHide("setMainBp_btn");
-		uiHide("openMainBp_btn");
 		uiShow("setMainBp_txt");
 	} else {
-		if(state == "createFirstPaper") {
-			console.log("btnShowHideHandler_mainBp check");
-			uiHide("openMainBp_btn");
-			uiHide("setMainBp_btn");
-		} else {
+		if(state != "createFirstPaper") {
 			uiShow("openMainBp_btn");
 			uiShow("setMainBp_btn");
 		};
-		uiHide("setMainBp_txt");
 	};
 }; // checked!
 
