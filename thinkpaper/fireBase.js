@@ -1,7 +1,7 @@
 //var appFireBase = {};
 (function(){
 
-    var fireBase = fireBase || firebase;
+    // var fireBase = fireBase || firebase;
     var hasInit = false;
     var config = {
         apiKey: "AIzaSyBmGlVK1P-fTw_RvFaA9tV1pEv8-Rk_-z4",

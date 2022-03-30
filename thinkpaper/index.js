@@ -1,14 +1,20 @@
 // const firebase = appFireBase;
-// [질문] 위 내용이 없으면 어떻게되는가? fireBase.js 연관 생각
+// firebase 자체의 버전 이슈로 있던 기능
 
 const db = firebase.database();
+const SELECTBOX_BPTITLE_VALUE_INIT = "INIT";
 let userInfoData = {};
 let bpData = {};
 let currentBpData = {};
 
-logIn();
+(function() {
+	logIn();
+	openEditPaperByDbclick();
+})();
 
+// --------------------------------------------------
 // *** logIn 관리를 위한 함수 세트
+// --------------------------------------------------
 function logIn() {
 	firebase.auth().onAuthStateChanged(function (user) {
 		if (user != null) {
@@ -24,9 +30,10 @@ function logOut() {
 	firebase.auth().signOut();
 }; // checked!
 
+// --------------------------------------------------
 // *** user에 대한 상태 판단
+// --------------------------------------------------
 function isWebReloaded() {
-
 	// // 참고: https://stackoverflow.com/questions/5004978/check-if-page-gets-reloaded-or-refreshed-in-javascript
 	// const pageAccessedByReload = (
 	// 	(window.performance.navigation && window.performance.navigation.type === 1) ||
@@ -36,15 +43,7 @@ function isWebReloaded() {
 	// 		.includes('reload')
 	//   );
 	// return pageAccessedByReload;
-}; // checked!
-
-	// [향후 개선하기] 더블클릭시 작성모드로 설정되기
-	// [버그] direction에 있는 textarea만 선택이 되고 있음
-	// const card = document.querySelector("textarea");
-
-	// card.addEventListener("dblclick", function (e) {
-	// 	openEditPaper();
-	// });
+}; // 쓰이지 않음
 
 function editModeHandler(paperMode) {
 	function textareaReadOnly(id, check){
@@ -71,7 +70,9 @@ function editModeHandler(paperMode) {
 	};
 }; // checked!
 
+// --------------------------------------------------
 // *** userInfoData 오브젝트 관리를 위한 함수 세트
+// --------------------------------------------------
 function requestUserInfoData(user) {
 	const userRef = db.ref("users").child(user.uid);
 	userRef.on("value", (snapshot) => {
@@ -92,7 +93,9 @@ function printUserInfo(userInfoData) {
 	selectorById("emailChecked").innerHTML = "(" + userEmail + ")"
 }; // checked!
 
+// --------------------------------------------------
 // *** bpData 오브젝트 관리를 위한 함수 세트
+// --------------------------------------------------
 function requestBpData(user) {
 
 	const userRef = db.ref("users").child(user.uid);
@@ -115,14 +118,13 @@ function requestBpData(user) {
 		let bpTitleArray = Object.keys(bpData);
 
 		if (bpTitleArray.length > 0) {
-			let defaultCurrentBpData = createCurrentBpData(bpData);
-			console.log("defaultCurrentBpData @ end of requestBpData =", defaultCurrentBpData);
+			let defaultCurrentBpData = createCurrentBpData();
 			printCurrentBpData(defaultCurrentBpData);
-			putSelectbox(bpData, "selectboxBpTitle");
+			putSelectbox("selectboxBpTitle");
 			btnShowHideHandler("readPaper");
 		} else {
-			printEmptyPaper();
-		}; // checked!
+			printEmptyCurrentBpData();
+		};
 	});
 }; // checked!
 
@@ -130,43 +132,50 @@ function emptyBpData(bpData) {
 	let bpTitleArray = Object.keys(bpData);
 	for (let i = 0; i < bpTitleArray.length; i++) {
 	delete bpData[bpTitleArray[i]];
-	console.log("emptyBpData well done!")
 	};
-};
+}; // 쓰이지 않고 있음
 
 function isEmptyBpData(bpData) {
 	let bpTitleArray = Object.keys(bpData);
-	console.log("bpTitleArray.length = ", bpTitleArray.length);
 	if (bpTitleArray.length == 0) {
 		return true;
 	} else {
 		return false;
 	};
-};
+}; // 쓰이지 않고 있음
 
+// --------------------------------------------------
 // *** currentBpData 오브젝트 관리를 위한 함수 세트
-
-function createCurrentBpData(){
-	let currentBpTitle = indexBpTitle(bpData);
-	console.log("currentBpTitle @ createCurrentBpData = ", currentBpTitle);
+// --------------------------------------------------
+function createCurrentBpData() {
+	let currentBpTitle = indexBpTitle();
 	let createdCurrentBpData = bpData[currentBpTitle];
-	console.log("createdCurrentBpData @ createCurrentBpData = ", createdCurrentBpData);
+	currentBpData = createdCurrentBpData;
 	return createdCurrentBpData;
-}; //checked!
+}; // checked!
 
-// function updateCurrentBpDataAfterSave() {
+function updateCurrentBpDataByBpTitle(updatedCurrentBpTitle) {
+	let bpTitleArray = Object.keys(bpData);
+	let updatedCurrentBpData = {};
+	for (let i = 0; i < bpTitleArray.length; i++) {
+		let bpTitles = [];
+		bpTitles.push(bpTitleArray[i]);
+		if(bpTitles == updatedCurrentBpTitle){
+			updatedCurrentBpData = bpData[updatedCurrentBpTitle];
+		};
+	};
+	currentBpData = updatedCurrentBpData;
+	return updatedCurrentBpData;
+}; // checked!
 
-// }
-
-function printCurrentBpData(oneBpData) {
-	console.log("oneBpData @ printCurrentBpData = ", oneBpData);
-	selectorById("dateChecked").innerHTML = oneBpData.editedDate.slice(0, 10);
-	selectorById("bpTitle").innerHTML = oneBpData.bpTitle;
-	selectorById("direction").innerHTML = oneBpData.direction;
-	selectorById("naviArea").innerHTML = oneBpData.naviArea;
-	selectorById("naviB").innerHTML = oneBpData.naviB;
-	selectorById("naviA").innerHTML = oneBpData.naviA;
-	selectorById("actionPlan").innerHTML = oneBpData.actionPlan;
+function printCurrentBpData() {
+	selectorById("dateChecked").innerHTML = currentBpData.editedDate.slice(0, 10);
+	selectorById("bpTitle").value = currentBpData.bpTitle;
+	selectorById("direction").value = currentBpData.direction;
+	selectorById("naviArea").value = currentBpData.naviArea;
+	selectorById("naviB").value = currentBpData.naviB;
+	selectorById("naviA").value = currentBpData.naviA;
+	selectorById("actionPlan").value = currentBpData.actionPlan;
 }; // checked!
 
 function inputCurrentBpData() {
@@ -180,47 +189,34 @@ function inputCurrentBpData() {
 	return currentBpData;
 }; // checked!
 
+function printEmptyCurrentBpData() {
+	selectorById("dateChecked").innerHTML = timeStamp().slice(0, 10);
+	selectorById("bpTitle").value = "";
+	selectorById("direction").value = "";
+	selectorById("naviArea").value = "";
+	selectorById("naviB").value = "";
+	selectorById("naviA").value = "";
+	selectorById("actionPlan").value = "";
+	selectorById("guideMessage").innerHTML = "'파란색으로 쓰여진 곳의 네모칸에 내용을 작성해보세요~!'"
+	btnShowHideHandler("createFirstPaper");
+}; // checked!
+
+// --------------------------------------------------
 // *** indexing BpTitle 관리를 위한 함수 세트
-function indexBpTitle(bpData) {
-	console.log("indexBpTitle here!");
+// --------------------------------------------------
+function indexBpTitle() {
 
 	let selectboxBpTitleValue = selectorById("selectboxBpTitle").value;
 
-	console.log("selectboxBpTitleValue @ indexBpTitle = ", selectboxBpTitleValue);
-
-
-	if (selectboxBpTitleValue == "클릭하여 선택") {
-		// by reloaded or gotoMainBp_btn(=reloaded)
-		let currentBpTitle = findMainBpTitle(bpData);
-		console.log("currentBpTitle @ indexBpTitle = ", currentBpTitle);
+	if (selectboxBpTitleValue == SELECTBOX_BPTITLE_VALUE_INIT) {
+		// by reloaded or openMainBp_btn(=reloaded)
+		let currentBpTitle = findMainBpTitle();
 		return currentBpTitle;
 	} else {
 		// by selectbox
 		let currentBpTitle = selectorById("selectboxBpTitle").value;
 		return currentBpTitle;
 	};
-
-	// [질문] eventlistener로 할 수 있는 방법은 없을까?
-	// let selectboxBpTitle = selectorById("selectboxBpTitle");
-	// let isSelectedResult = selectboxBpTitle.addEventListener("change", isSelected);
-
-	// function isSelected() {
-	// 	console.log("isSelected() checked!");
-	// 	return "selected";
-	// };
-
-	// console.log("isSelectedResult = ", isSelectedResult);
-
-	// if (isSelectedResult == "selected") {
-	// 	// by selectbox
-	// 	let currentBpTitle = selectorById("selectboxBpTitle").value;
-	// 	return currentBpTitle;
-	// } else {
-	// 	// by reloaded or gotoMainBp_btn(=reloaded)
-	// 	let currentBpTitle = findMainBpTitle(bpData);
-	// 	return currentBpTitle;
-	// };
-
 }; // checked!
 
 function getSameBpTitle(newBpTitle) {
@@ -232,9 +228,10 @@ function getSameBpTitle(newBpTitle) {
 	return samebpTitleArray;
 }; // checked!
 
+// --------------------------------------------------
 // *** selectBox 관리를 위한 함수 세트
-
-function putSelectbox(bpData, selectboxId) {
+// --------------------------------------------------
+function putSelectbox(selectboxId) {
 
 	let bpTitleArray = Object.keys(bpData);
 	let selectbox = selectorById(selectboxId);
@@ -246,32 +243,37 @@ function putSelectbox(bpData, selectboxId) {
 	for (let i = 0; i < bpTitleArray.length; i++) {
 		let option = document.createElement("OPTION");
 		let txt = document.createTextNode(bpTitleArray[i]);
-		option.appendChild(txt);
+		let mainBpTitle = findMainBpTitle();
+		let bpTitle = bpData[bpTitleArray[i]].bpTitle;
+		if(mainBpTitle == bpTitle){
+			let mainBpTitleOptionMark = bpTitle + "★";
+			let mainTxt = document.createTextNode(mainBpTitleOptionMark);
+			option.appendChild(mainTxt);
+		} else {
+			option.appendChild(txt);
+		};
 		option.setAttribute("value", bpTitleArray[i]);
 		selectbox.insertBefore(option, selectbox.lastChild);
 	};
-	// selected 넣기
-	// printCurrentBpTitleOnSelectbox();
+	printCurrentBpTitleOnSelectbox();
 }; // checked!
 
-// 파라미터에 currentBpData 가 들어있었음, 필요 없을것으로 보여 지웠으나, 필요할 수 있음 - 검토하기
 function printCurrentBpTitleOnSelectbox() {
-
+	console.log("check: printCurrentBpTitleOnSelectbox");
 	let bpTitleArray = Object.keys(bpData);
-	console.log("bpData @ printCurrentBpTitleOnSelectbox = ", bpData);
-	console.log("currentBpData @ printCurrentBpTitleOnSelectbox = ", currentBpData);
 	let currentBpTitle = currentBpData.bpTitle;
-	console.log("currentBpTitle @ printCurrentBpTitleOnSelectbox = ", currentBpTitle);
+	console.log("currentBpTitle = ", currentBpTitle);
 
-	if (currentBpData != null) {
-		for (let i = 1; i < bpTitleArray.length + 1; i++) {
-			if(bpTitleArray.length == 0){
-				selectorById("selectboxBpTitle").options[0].setAttribute("selected", true);
-			} else {
-				let optionList = selectorById("selectboxBpTitle").options[i].value;
-				if (optionList == currentBpTitle) {
-					selectorById("selectboxBpTitle").options[i].setAttribute("selected", true);
-				};
+	for (let i = 0; i <= bpTitleArray.length; i++) {
+		if(bpTitleArray.length == 0){
+			selectorById("selectboxBpTitle").options[0].setAttribute("selected", true);
+		} else {
+			let selectorOption = selectorById("selectboxBpTitle").options[i];
+			let optionValue = selectorOption.value;
+			console.log("optionValue = ", optionValue);
+			selectorOption.removeAttribute("selected");
+			if (optionValue == currentBpTitle) {
+				selectorOption.setAttribute("selected", true);
 			};
 		};
 	};
@@ -279,44 +281,53 @@ function printCurrentBpTitleOnSelectbox() {
 
 function getBpTitleFromSelectboxBpTitle() {
 	let selectedBpTitleValue = selectorById("selectboxBpTitle").value;
-	if (selectedBpTitleValue == "클릭하여 선택") {
+	if (selectedBpTitleValue == SELECTBOX_BPTITLE_VALUE_INIT) {
 		let bpTitleArray = Object.keys(bpData);
 		selectedBpTitleValue = bpTitleArray[0];
 	};
-	console.log("getBpTitleFromSelectboxBpTitle well done!");
 	return selectedBpTitleValue;
 }; // checked!
 
 function openCurrentBpDataBySelectboxBpTitle() {
-	function returnCurrentBpDataBySelectboxBpTitle() {
-		let bpTitleArray = Object.keys(bpData);
-		let returnCurrentBpData = {};
-		for (let i = 0; i < bpTitleArray.length; i++) {
-			let bpTitles = [];
-			bpTitles.push(bpTitleArray[i]);
-			let bpTitleValue = getBpTitleFromSelectboxBpTitle();
-			if(bpTitles == bpTitleValue){
-				returnCurrentBpData = bpData[bpTitleValue];
-			};
-		};
-		return returnCurrentBpData;
-	};
-	let currentBpDataBySelectedBpTitle = returnCurrentBpDataBySelectboxBpTitle();
-	printCurrentBpData(currentBpDataBySelectedBpTitle);
-}; // checking..
+	let currentBpTitleBySelectbox = getBpTitleFromSelectboxBpTitle();
+	updateCurrentBpDataByBpTitle(currentBpTitleBySelectbox);
+	printCurrentBpData();
+	btnShowHideHandler("readPaper");
+}; // checked!
 
+// --------------------------------------------------
 // *** mainBpData 관리를 위한 함수 세트
+// --------------------------------------------------
 
-function findMainBpTitle(bpData) {
-	console.log("findMainBpTitle here!")
+function findMainBpTitle() {
+
 	let bpTitleArray = Object.keys(bpData);
-	console.log("bpTitleArray @ findMainBpTitle = ", bpTitleArray);
-	for (let i = 0; i < bpTitleArray.length; i++) {
-		let mainBpValue = bpData[bpTitleArray[i]].isMainBp;
-		if (mainBpValue == "main") {
-			let mainBpTitle = bpData[bpTitleArray[i]].bpTitle;
-			console.log("mainBpTitle @ findMainBpTitle = ", mainBpTitle);
-			return mainBpTitle;
+
+	function createIsMainBpValueArray() {
+		let isMainBpValueArray = [];
+		for (let i = 0; i < bpTitleArray.length; i++) {
+			let isMainBpValue = bpData[bpTitleArray[i]].isMainBp;
+			isMainBpValueArray.push(isMainBpValue);
+		};
+		return isMainBpValueArray;
+	};
+
+	let isMainBpValueArray = createIsMainBpValueArray();
+	
+	if (isMainBpValueArray.length == 1){
+		// isMainBpValueArray갯수가 1개인 경우, 
+		// mainBp가 없는 경우( = 기존 mainBp가 삭제된 경우), 또는 1개만 있는 경우이다.
+		// 이때, 첫번째 bpTitle을 mainBp로 놓기
+		bpData[bpTitleArray[0]].isMainBp = "main";
+		let mainBpTitle = bpData[bpTitleArray[0]].bpTitle;
+		return mainBpTitle;
+	} else {
+		for (let i = 0; i < bpTitleArray.length; i++) {
+			let isMainBpValue2 = bpData[bpTitleArray[i]].isMainBp;
+			if (isMainBpValue2 == "main") {
+				let mainBpTitle = bpData[bpTitleArray[i]].bpTitle;
+				return mainBpTitle;
+			};
 		};
 	};
 }; // checked!
@@ -324,12 +335,7 @@ function findMainBpTitle(bpData) {
 function setMainBp() {
 
 	let updatedBpData = {};
-
 	updatedBpData["isMainBp"] = "main";
-
-	console.log("currentBpData @ setMainBp = ", currentBpData);
-
-	//console.log("currentBpData.bpId = ", currentBpData.bpId);
 
 	db.ref("users")
 		.child(userInfoData.uid)
@@ -341,15 +347,25 @@ function setMainBp() {
 
 	unsetMainBp();
 
+	// local bpData update
+	currentBpData["isMainBp"] = "main";
 	let bpTitleArray = Object.keys(bpData);
+	for (let i = 0; i < bpTitleArray.length; i++) {
+		let bpTitle = bpData[bpTitleArray[i]].bpTitle;
+		if (bpTitle != currentBpData.bpTitle) {
+			bpData[bpTitleArray[i]].isMainBp = "";
+		};
+	};
+	
+	// alert message
 	if(bpTitleArray.length > 1){
 		alert("메인 페이퍼로 설정이 완료되었습니다.");
 	};
 
 	btnShowHideHandler("readPaper");
-	location.reload();
+	//location.reload();
 
-}; //checked!
+}; // checked!
 
 function unsetMainBp() {
 
@@ -360,6 +376,7 @@ function unsetMainBp() {
 	let bpTitleArray = Object.keys(bpData);
 	for (let i = 0; i < bpTitleArray.length; i++) {
 		let bpIds = bpData[bpTitleArray[i]].bpId;
+		console.log("bpIds = ", bpIds);
 
 		if (bpIds != currentBpData.bpId) {
 			db.ref("users")
@@ -373,32 +390,26 @@ function unsetMainBp() {
 	};
 }; // checked!
 
-// *** CRUD 관리를 위한 함수 세트
-
-function printEmptyPaper() {
-	selectorById("dateChecked").innerHTML = timeStamp().slice(0, 10);
-	selectorById("bpTitle").value = "";
-	selectorById("direction").value = "";
-	selectorById("naviArea").value = "";
-	selectorById("naviB").value = "";
-	selectorById("naviA").value = "";
-	selectorById("actionPlan").value = "";
-	selectorById("guideMessage").innerHTML = "'파란색으로 쓰여진 곳의 네모칸에 내용을 작성해보세요~!'"
-	btnShowHideHandler("createFirstPaper");
+function openMainBp() {
+	let mainBpTitle = findMainBpTitle();
+	updateCurrentBpDataByBpTitle(mainBpTitle);
+	console.log("currentBpData = ", currentBpData);
+	printCurrentBpData();
+	printCurrentBpTitleOnSelectbox();
 }; // checked!
 
+// --------------------------------------------------
+// *** CRUD 관리를 위한 함수 세트
+// --------------------------------------------------
+
 function openNewPaper() {
-	printEmptyPaper();
+	printEmptyCurrentBpData();
 	btnShowHideHandler("openNewPaper");
 }; // checked!
 
 function saveNewPaper() {
 
-	console.log("saveNewPaper start!");
-
 	let newBpData = inputCurrentBpData();
-	console.log("newBpData @ beginning of saveNewPaper = ", newBpData);
-
 	let newBpTitle = selectorById("bpTitle").value.trim();
 	let sameBpTitle = getSameBpTitle(newBpTitle);
 
@@ -421,18 +432,11 @@ function saveNewPaper() {
 				.child("bigPicture")
 				.push(newBpData);
 
-			//currentBpData = newBpData;
-			printCurrentBpData(currentBpData);
-			//printCurrentBpTitleOnSelectbox(currentBpData);
+			currentBpData = newBpData;
+			printCurrentBpData();
 			highLightBorder("bpTitle", "rgb(200, 200, 200)");
 			selectorById("guideMessage").style.display = "none";
 			alert("저장되었습니다.");
-
-			// console.log("bpTitleArray.length @ saveNewPaper = ", bpTitleArray.length);
-			// if (bpTitleArray.length == 1){
-			// 	location.reload();
-			// };
-
 		} else {
 			highLightBorder("bpTitle", "red");
 			alert("중복된 페이퍼 제목이 있습니다. 페이퍼 제목을 수정해주시기 바랍니다.");
@@ -441,36 +445,34 @@ function saveNewPaper() {
 		highLightBorder("bpTitle", "red");
 		alert("페이퍼 제목이 비어있습니다. 페이퍼 제목을 입력해주시기 바랍니다.");
 	};
-};
+}; // checked!
 
 function openEditPaper() {
-
 	btnShowHideHandler("editPaper");
+}; // checked!
 
-};
+function openEditPaperByDbclick() {
+	const card = document.getElementsByTagName("textarea");
+	for (let i = 0; i < card.length; i++) {
+		card[i].addEventListener("dblclick", function (e) {
+			openEditPaper();
+		});
+	};
+}; // checked!
 
 function cancelEditPaper() {
-	createCurrentBpData(bpData);
+	createCurrentBpData();
 	highLightBorder("bpTitle", "rgb(200, 200, 200)");
 	btnShowHideHandler("readPaper");
-};
+}; // checked!
 
 function saveEditedPaper() {
 
 	let updatedBpData = inputCurrentBpData();
-	console.log("updatedBpData @ saveEditedPaper = ", updatedBpData);
-	console.log("currentBpData @ saveEditedPaper = ", currentBpData);
-
 	let updatedCurrentBpTitle = selectorById("bpTitle").value.trim();
-	let sameBpTitle = getSameBpTitle(updatedCurrentBpTitle);
 
 	if (updatedCurrentBpTitle != "") {
-		if (sameBpTitle == undefined) {
 			updatedBpData["bpTitle"] = updatedCurrentBpTitle;
-			// updatedBpData["bpId"] = currentBpData.bpId;
-			// updatedBpData["createdDate"] = currentBpData.createdDate;
-			// updatedBpData["isMainBp"] = currentBpData.isMainBp;
-			console.log("updatedBpData @ saveEditedPaper = ", updatedBpData);
 
 			db.ref("users")
 				.child(userInfoData.uid)
@@ -480,26 +482,19 @@ function saveEditedPaper() {
 				console.log("update completed = ", e);
 				});
 
-			//currentBpData = updatedBpData;
+			currentBpData = updatedBpData;
+			printCurrentBpData();
+			putSelectbox("selectboxBpTitle");
 			highLightBorder("bpTitle", "rgb(200, 200, 200)");
 			alert("저장되었습니다.");
-			printCurrentBpData(updatedBpData);
-			putSelectbox(bpData, "selectboxBpTitle");
-			console.log("bpData @ after saveEditedPaper = ", bpData);
-
-			} else {
-			highLightBorder("bpTitle", "red");
-			alert("중복된 페이퍼 제목이 있습니다. 페이퍼 제목을 수정해주시기 바랍니다.");
-		};
 	} else {
 		highLightBorder("bpTitle", "red");
 		alert("페이퍼 제목이 비어있습니다. 페이퍼 제목을 입력해주시기 바랍니다.");
 	};
-};
+}; // checked!
 
 function removePaper() {
-
-	if (confirm("정말 삭제하시겠습니까?")) {
+	if (confirm("정말 삭제하시겠습니까? 삭제가 완료되면, 해당 내용은 다시 복구될 수 없습니다")) {
 		db.ref("users")
 			.child(userInfoData.uid)
 			.child("bigPicture")
@@ -508,92 +503,85 @@ function removePaper() {
 		alert("삭제되었습니다.");
 		location.reload();
 	};
+}; // checked!
 
-	btnShowHideHandler("readPaper");
-
-};
-
+// --------------------------------------------------
 // *** UI 관리를 위한 함수 세트
+// --------------------------------------------------
+
+function uiHide(id) {
+	selectorById(id).style.display = "none";
+}; // checked!
+
+function uiShow(id) {
+	selectorById(id).style.display = "initial";
+}; // checked!
 
 function btnShowHideHandler(state) {
 
-	function hide(id) {
-		selectorById(id).style.display = "none";
-	};
-
-	function show(id) {
-		selectorById(id).style.display = "initial";
-	};
-
-	hide("openEditPaper_btn");
-	hide("cancelEditPaper_btn");
-	hide("saveEditedPaper_btn");
-	hide("saveNewPaper_btn");
-	hide("removePaper_btn");
-	hide("openNewPaper_btn");
+	uiHide("openEditPaper_btn");
+	uiHide("cancelEditPaper_btn");
+	uiHide("saveEditedPaper_btn");
+	uiHide("saveNewPaper_btn");
+	uiHide("removePaper_btn");
+	uiHide("openNewPaper_btn");
 
 	switch(state){
 		case "createFirstPaper" :
-			show("saveNewPaper_btn");
-			hide("setMainBp_btn");
+			uiShow("saveNewPaper_btn");
 			editModeHandler("editing");
 			break;
 		case "openNewPaper" :
-			show("saveNewPaper_btn");
-			show("cancelEditPaper_btn")
+			uiShow("saveNewPaper_btn");
+			uiShow("cancelEditPaper_btn")
 			editModeHandler("editing");
 			break;
 		case "readPaper" :
-			show("openEditPaper_btn");
-			show("openNewPaper_btn");
-			show("removePaper_btn");
+			uiShow("openEditPaper_btn");
+			uiShow("openNewPaper_btn");
+			uiShow("removePaper_btn");
 			editModeHandler("reading");
 			break;
 		case "editPaper" :
-			show("saveEditedPaper_btn");
-			show("cancelEditPaper_btn");
-			show("saveNewPaper_btn");
-			show("removePaper_btn");
+			uiShow("saveEditedPaper_btn");
+			uiShow("cancelEditPaper_btn");
+			uiShow("saveNewPaper_btn");
+			uiShow("removePaper_btn");
 			editModeHandler("editing");
 			break;
 		default:
 			let state = null;
 	}
+	btnShowHideHandler_mainBp(state);
 	resizeTextarea();
-};
+}; // checked!
 
-function setMainBpHandler() {
-
-	console.log("currentBpData.isMainBp = ", currentBpData.isMainBp);
-	// console.log(currentBpData.isMainBp);
-	// if (currentBpData.isMainBp == "main") {
-	// 	hide("setMainBp_btn");
-	// 	show("setMainBp_txt");
-	// } else {
-	// 	if(state != "createFirstPaper") {
-	// 		show("setMainBp_btn");
-	// 	};
-	// 	hide("setMainBp_txt");
-
-	// 	let bpTitleArray = Object.keys(bpData);
-	// 	if(bpTitleArray.length == 1){
-	// 		setMainBp();
-	// 		location.reload();
-	// 	};
-
-	// };
-
-};
+function btnShowHideHandler_mainBp(state) {
+	if (currentBpData.isMainBp == "main") {
+		uiHide("setMainBp_btn");
+		uiHide("openMainBp_btn");
+		uiShow("setMainBp_txt");
+	} else {
+		if(state == "createFirstPaper") {
+			console.log("btnShowHideHandler_mainBp check");
+			uiHide("openMainBp_btn");
+			uiHide("setMainBp_btn");
+		} else {
+			uiShow("openMainBp_btn");
+			uiShow("setMainBp_btn");
+		};
+		uiHide("setMainBp_txt");
+	};
+}; // checked!
 
 function highLightBorder(id, color) {
 	return selectorById(id).style.borderColor = color;
-};
+}; // checked!
 
 function resizeTextarea() {
 	// 참고: https://stackoverflow.com/questions/454202/creating-a-textarea-with-auto-resize
 	const tx = document.getElementsByTagName("textarea");
 	for (let i = 0; i < tx.length; i++) {
-		//console.log("tx[i].scrollHeight = ", tx[i].scrollHeight);
 		tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
 		tx[i].addEventListener("input", OnInput, false);
 	};
@@ -602,7 +590,7 @@ function resizeTextarea() {
 		this.style.height = "auto";
 		this.style.height = (this.scrollHeight) + "px";
 	};
-}; // check!
+}; // checked!
 
 function darkmode() {
 	let selectorBody = document.querySelector("body")
@@ -640,22 +628,17 @@ function darkmode() {
 		selectordivContentsControl.style.backgroundColor = "rgb(240, 240, 240)";
 
 	}
-}; // 향후 적용하기
+}; // 쓰이지 않고 있음
 
+// --------------------------------------------------
 // *** 기타 함수 세트
+// --------------------------------------------------
 function selectorById(id) {
 	return document.getElementById(id);
-}; // check!
+}; // checked!
 
 function timeStamp() {
 	let now = new Date();
 	let nowString = now.toISOString();
 	return nowString;
-}; // check!
-
-
-
-
-
-
-
+}; // checked!

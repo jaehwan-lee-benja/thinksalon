@@ -43,15 +43,15 @@
             <div id="divContentsControl">
                 <div>
                     <div style="margin: 1rem 0;">
-                        <span>[페이퍼 불러오기]<br></span>
+                        <span>[다른 페이퍼로 이동하기]<br></span>
                         <select style="width: 100%; font-size: 0.8rem;" id="selectboxBpTitle"
                             onchange="openCurrentBpDataBySelectboxBpTitle();">
-                            <option>클릭하여 선택</option>
+                            <option value="INIT">클릭하여 이동</option>
                         </select>
-                        <div style="margin: 0.5rem 0;">
-                            <input id="setMainBp_btn" onClick="setMainBp()" type="button" value="메인 페이퍼로 설정하기">
-                            <span id="setMainBp_txt">*현재 페이퍼는 '메인 페이퍼'입니다.</span>
-                        </div>
+                    </div>
+                    <div>
+                        <input id="openMainBp_btn" onClick="openMainBp()" type="button" value="메인 페이퍼로 이동하기">
+                        <span id="setMainBp_txt">*현재 페이퍼는 '메인 페이퍼'입니다.</span>
                     </div>
                 </div>
                 <div style="margin: 2rem 0;">
@@ -69,6 +69,9 @@
                 </div>
                 <div id="divPaperInfo">
                     <p>[페이퍼 정보]</p>
+                    <div style="margin: 0.5rem 0;">
+                        <input id="setMainBp_btn" onClick="setMainBp()" type="button" value="메인 페이퍼로 설정하기">
+                    </div>
                     <table>
                         <tr>
                             <td>
