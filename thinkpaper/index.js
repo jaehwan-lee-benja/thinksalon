@@ -99,6 +99,7 @@ function printUserInfo(userInfoData) {
 function requestBpData(user) {
 
 	const userRef = db.ref("users").child(user.uid);
+
 	userRef.on("value", (snapshot) => {
 		snapshot.forEach(childSnap => {
 			let key = childSnap.key;
@@ -116,8 +117,9 @@ function requestBpData(user) {
 		});
 
 		let bpTitleArray = Object.keys(bpData);
+		let resultIsThereAnyBpData = isThereAnyBpData(bpTitleArray);
 
-		if (bpTitleArray.length > 0) {
+		if (resultIsThereAnyBpData == false) {
 			putSelectbox("selectboxBpTitle");
 			createCurrentBpData();
 			printCurrentBpData();
@@ -134,7 +136,7 @@ function emptyBpData() {
 	for (let i = 0; i < bpTitleArray.length; i++) {
 	delete bpData[bpTitleArray[i]];
 	};
-}; // 쓰이지 않고 있음
+}; // test
 
 function emptyCurrentBpData() {
 	let bpTitleArray = Object.keys(bpData);
@@ -145,8 +147,7 @@ function emptyCurrentBpData() {
 	};
 }; // 쓰이지 않고 있음
 
-function isEmptyBpData() {
-	let bpTitleArray = Object.keys(bpData);
+function isThereAnyBpData(bpTitleArray) {
 	if (bpTitleArray.length == 0) {
 		return true;
 	} else {
@@ -311,48 +312,24 @@ function openCurrentBpDataBySelectboxBpTitle() {
 
 function findMainBpTitle() {
 	let bpTitleArray = Object.keys(bpData);
-	let IsThereAnyMainBpResult = IsThereAnyMainBp();
-	console.log("IsThereAnyMainBpResult = ", IsThereAnyMainBpResult);
-	if (IsThereAnyMainBpResult == true){
+	
+	let resultRunMainBpSettingMonitoring_local = runMainBpSettingMonitoring_local();
+
+	if (resultRunMainBpSettingMonitoring_local == true){
 		for (let i = 0; i < bpTitleArray.length; i++) {
 			let isMainBpValue = bpData[bpTitleArray[i]].isMainBp;
 			let mainBpTitle = bpData[bpTitleArray[i]].bpTitle;
 			if (isMainBpValue == "main") {
-				console.log("findMainBpTitle1");
-				console.log("mainBpTitle1 = ", mainBpTitle);
 				return mainBpTitle;
 			};
 		};
 	} else {
-		console.log("findMainBpTitle3");
-		setMainBp();
+		setMainBp(); //이부분이 여기에 있을 필요가 없다. 서버에 메인 mainBp가 없다면, 별도의 서버와 통신하는 과정이 필요하다.
 		bpData[bpTitleArray[0]].isMainBp = "main";
 		let mainBpTitle = bpData[bpTitleArray[0]].bpTitle;
 		return mainBpTitle;
 	};
 }; // checked!
-
-function IsThereAnyMainBp() {
-	let isMainBpValueArray = [];
-	let bpTitleArray = Object.keys(bpData);
-	for (let i = 0; i < bpTitleArray.length; i++) {
-		let isMainBpValue = bpData[bpTitleArray[i]].isMainBp;
-		isMainBpValueArray.push(isMainBpValue);
-	};
-
-	let uniqueIsMainBpValueArray = isMainBpValueArray.filter((element, index) => {
-			return isMainBpValueArray.indexOf(element) == index;
-		});
-
-	console.log("uniqueIsMainBpValueArray = ", uniqueIsMainBpValueArray);
-	if (uniqueIsMainBpValueArray.length == 1){
-		if(uniqueIsMainBpValueArray[0] == ""){
-			return false;
-		};
-	} else {
-		return true;
-	};
-};
 
 function catchFirstBpIdByBpTitleArray() {
 	let bpTitleArray = Object.keys(bpData);
@@ -373,7 +350,7 @@ function setMainBp() {
 	if (currentBpDataLength > 0) {
 		thisBpIdArray.push(currentBpData.bpId);
 
-		unsetMainBp();
+		// unsetMainBp();
 
 		// update currentBpData(local) 
 		currentBpData["isMainBp"] = "main";
@@ -454,6 +431,73 @@ function openMainBp() {
 	printCurrentBpData();
 	btnShowHideHandler("readPaper");
 }; // checked!
+
+
+// --------------------------------------------------
+// *** monitoring 오브젝트 관리를 위한 함수 세트
+// --------------------------------------------------
+
+function runBpDataMonitoring() {
+
+}; // writing..
+
+function runCurrentBpDataMonitoring() {
+
+}; // writing..
+
+function runMainBpSettingMonitoring_firebase() {
+
+}; // writing..
+
+function runMainBpSettingMonitoring_local() {
+
+	let bpTitleArray = Object.keys(bpData);
+	let resultIsThereAnyBpData = isThereAnyBpData(bpTitleArray);
+	if (resultIsThereAnyBpData == true) {
+		console.log("isThereAnyBpData? @ runMainBpSettingMonitoring_local = true");
+		let resultIsThereAnyMainBp = isThereAnyMainBp();
+		if (resultIsThereAnyMainBp == true) {
+			console.log("isThereAnyMainBp? @ runMainBpSettingMonitoring_local = true");
+			return true;
+		} else {
+			console.log("isThereAnyMainBp? @ runMainBpSettingMonitoring_local = false");
+			return false;
+		};
+	} else { 
+		console.log("isThereAnyBpData? @ runMainBpSettingMonitoring_local = false");
+		return false;
+	};
+
+}; // writing..
+
+function isThereAnyMainBp() {
+	let isMainBpValueArray = [];
+	let bpTitleArray = Object.keys(bpData);
+	for (let i = 0; i < bpTitleArray.length; i++) {
+		let isMainBpValue = bpData[bpTitleArray[i]].isMainBp;
+		isMainBpValueArray.push(isMainBpValue);
+	};
+
+	let uniqueIsMainBpValueArray = isMainBpValueArray.filter((element, index) => {
+			return isMainBpValueArray.indexOf(element) == index;
+		});
+
+	// console.log("uniqueIsMainBpValueArray = ", uniqueIsMainBpValueArray);
+	
+	if (uniqueIsMainBpValueArray.length == 1){
+		if(uniqueIsMainBpValueArray[0] == ""){
+			console.log(`There is no {isMainBp = "main"} @isThereAnyMainBp`);
+			return false;
+		} else {
+			console.log(`There is {isMainBp = "main"} @isThereAnyMainBp`);
+			return true;
+		}
+	} else {
+		console.log(`There is {isMainBp = "main"} & {isMainBp = ""} @isThereAnyMainBp`);
+		return true;
+	};
+
+}; // writting..
 
 // --------------------------------------------------
 // *** CRUD 관리를 위한 함수 세트
