@@ -121,13 +121,13 @@ input:hover {
     text-align: right;
 }
 
-#gridCharacter{
+#gridBpTitle{
     display: grid;
     grid-template-columns: 5rem 1fr;
     max-width: 20rem;
     padding: 1rem;
     border-radius: 2px;
-    margin: 0 auto 0.5rem auto;
+    /* margin: 0 auto 0.5rem auto; */
     grid-gap: 0.2rem;
 }
 
@@ -140,7 +140,7 @@ input:hover {
     outline: none !important; 
     width: 100%;
     border: 0.2px solid rgb(200, 200, 200);
-    min-height: 2rem;
+    /* min-height: 2rem; */
     /* vertical-align: middle; */
     background-color: #f9f9f9;
     font-size: 0.8rem;
@@ -280,7 +280,7 @@ https://www.w3schools.com/howto/howto_js_todolist.asp
     .button{
         text-align: left;
     }
-    #gridCharacter{
+    #gridBpTitle{
         display: block;
         padding: 1rem;
         border-radius: 2px;
