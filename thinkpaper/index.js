@@ -364,6 +364,7 @@ function saveNewPaper() {
 	spoonedBpData = packagedBpData;
 	printSpoonedBpData();
 	putSelectbox("selectboxBpTitle");
+	alert("저장되었습니다.");
 
 }; // checked!
 
