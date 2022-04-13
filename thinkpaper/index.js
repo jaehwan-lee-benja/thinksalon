@@ -8,6 +8,7 @@ let spoonedBpData = {};
 let packagedBpData = {};
 let mainBpTitleMemory = "";
 let packagedBpTitleMemory = "";
+let updatedMainBpTitleMemory = "";
 
 (function() {
 	logIn();
@@ -53,6 +54,8 @@ function requestBpDataAtLogIn(user) {
 
 	const userRef = db.ref("users").child(user.uid);
 	userRef.on("value", (snapshot) => {
+		// 콜백은 서버에 데이터 변경시 자동으로 작동한다.
+		// 참고: https://firebase.google.com/docs/reference/js/v8/firebase.database.Reference#on
 		snapshot.forEach(childSnap => {
 			let key = childSnap.key;
 			let value = childSnap.val();
@@ -76,36 +79,6 @@ function requestBpDataAtLogIn(user) {
 	});
 }; // checked!
 
-function requestBpDataSimple() {
-
-	const userRef = db.ref("users").child(userData.uid);
-	userRef.on("value", (snapshot) => {
-		snapshot.forEach(childSnap => {
-			let key = childSnap.key;
-			let value = childSnap.val();
-			if(key == "bigPicture") {
-				let bigPictures = value;
-				let bpIds = Object.keys(bigPictures);
-				bpIds.forEach( bpId => {
-					let bigPicture = bigPictures[bpId];
-					let bpTitle = bigPicture.bpTitle;
-					bpDataPool[bpTitle] = bigPicture;
-					bpDataPool[bpTitle]["bpId"] = bpId;
-				});
-			};
-		});
-	});
-
-	let bpTitleArray = listupBpTitleArray();
-	if (bpTitleArray.length > 0) {
-		return true;
-	} else {
-		printItIfNoBpData();
-		return false;
-	};
-
-}; // checked!
-
 // --------------------------------------------------
 // *** server Manager_LtoS
 // --------------------------------------------------
@@ -118,20 +91,16 @@ function requestPushNewBpData(packagedBpDataHere) {
 }; // checked!
 
 function requestUpdateBpData(packagedBpDataHere) {
-	let packagedBpDataBpId = packagedBpDataHere.bpId;
-	console.log("packagedBpDataBpId = ", packagedBpDataBpId);
 	db.ref("users")
 	.child(userData.uid)
 	.child("bigPicture")
-	.child(packagedBpDataBpId)
+	.child(packagedBpDataHere.bpId)
 	.update(packagedBpDataHere, (e) => {
 		console.log("update completed = ", e);
 		});
-};
+}; // checked!
 
 function requestRemoveSpoonedBpData(packagedBpDataHere) {
-	console.log("userData.uid =", userData.uid);
-	console.log("packagedBpDataHere.bpId = ", packagedBpDataHere.bpId);
 	db.ref("users")
 	.child(userData.uid)
 	.child("bigPicture")
@@ -140,7 +109,6 @@ function requestRemoveSpoonedBpData(packagedBpDataHere) {
 }; // checked!
 
 function requestChangeIsMainBpValue() {
-	console.log("mainBpTitleMemory = ", mainBpTitleMemory);
 	requestUpdateEveryIsMainBpValueToBlank();
 	requestUpdateOneIsMainBpValueToMain();
 }; // checked!
@@ -174,7 +142,7 @@ function requestUpdateOneIsMainBpValueToMain() {
 	let bpTitleArray = listupBpTitleArray();
 	if (bpTitleArray.length > 0){
 		for (let i = 0; i < bpTitleArray.length; i++) {
-			if (bpDataPool[bpTitleArray[i]].bpTitle == mainBpTitleMemory) {
+			if (bpDataPool[bpTitleArray[i]].bpTitle == updatedMainBpTitleMemory) {
 				let bpIds = bpDataPool[bpTitleArray[i]].bpId;
 				db.ref("users")
 					.child(userData.uid)
@@ -287,7 +255,7 @@ function monitorIsThereAnyMainBp() {
 }; // checked!
 
 function setMainBp() {
-	mainBpTitleMemory = spoonedBpData.bpTitle;
+	updatedMainBpTitleMemory = spoonedBpData.bpTitle;
 	requestChangeIsMainBpValue();
 }; // checked!
 
@@ -300,7 +268,7 @@ function setAltMainBpTitle(packagedBpDataHere) {
 		};
 	};
 	filteredBpTitleArray.sort();
-	mainBpTitleMemory = filteredBpTitleArray[0];
+	updatedMainBpTitleMemory = filteredBpTitleArray[0];
 	requestChangeIsMainBpValue();
 }; // checked!
 
@@ -328,6 +296,7 @@ function processSpoonToPrint() {
 }; // checked!
 
 function packageBpDataNew() {
+
 	let monitorBpTitleBlankOrDuplicatesResult = monitorBpTitleBlankOrDuplicates();
 
 	if (monitorBpTitleBlankOrDuplicatesResult == true) {
@@ -343,12 +312,12 @@ function packageBpDataNew() {
 		packagedBpData["actionPlan"] = selectorById("actionPlan").value.trim();
 
 		let IsThereAnyMainBpResult = monitorIsThereAnyMainBp();
-		console.log("IsThereAnyMainBpResult = ", IsThereAnyMainBpResult);
 		if (IsThereAnyMainBpResult == true) {
 			packagedBpData["isMainBp"] = ""
 		} else {
 			packagedBpData["isMainBp"] = "main"
 		};
+
 
 		return packagedBpData;
 	};
@@ -563,7 +532,6 @@ function printBpTitleSpoonOnSelectbox() {
 
 function selectBpTitleBySelectbox() {
 	let bpTitleSpoon = pickupBpTitleSpoon();
-	console.log("bpTitleSpoon = ", bpTitleSpoon);
 	spoonBpData(bpTitleSpoon);
 	printSpoonedBpData();
 }; // testing..
@@ -573,83 +541,30 @@ function selectBpTitleBySelectbox() {
 // --------------------------------------------------
 
 function saveNewPaper() {
-	console.log("saveNewPaper() Start")
 	let packagedBpData = packageBpDataNew();
 
 	//sync Global packagedBpTitleMemory
 	packagedBpTitleMemory = packagedBpData.bpTitle;
 	
 	requestPushNewBpData(packagedBpData);
-	
-	let requestResult = requestBpDataSimple();
-	if (requestResult == true) {
-		processSpoonToPrint();
-		alert("저장되었습니다.");
-	};
+	alert("저장되었습니다.");
 
 }; // checked!
 
-function saveNewPaper_before() {
-
-	let newBpData = inputSpoonedBpData();
-	let newBpTitle = selectorById("bpTitle").value.trim();
-	let sameBpTitle = getSameBpTitle(newBpTitle);
-
-	if (newBpTitle != "") {
-		if (sameBpTitle == undefined) {
-			newBpData["bpTitle"] = newBpTitle;
-			newBpData["createdDate"] = timeStamp();
-
-			let bpTitleArray = Object.keys(bpDataPool);
-
-			// 첫 bpDataPool인 경우, 메인페이지로 셋팅되게하기
-			if (bpTitleArray.length == 0){
-				newBpData["isMainBp"] = "main";
-			} else {
-				newBpData["isMainBp"] = "";
-			};
-
-			db.ref("users")
-				.child(userData.uid)
-				.child("bigPicture")
-				.push(newBpData);
-
-			spoonedBpData = newBpData;
-			printSpoonedBpData();
-			highLightBorder("bpTitle", "rgb(200, 200, 200)");
-			selectorById("guideMessage").style.display = "none";
-			alert("저장되었습니다.");
-		} else {
-			highLightBorder("bpTitle", "red");
-			alert("중복된 페이퍼 제목이 있습니다. 페이퍼 제목을 수정해주시기 바랍니다.");
-		};
-	} else {
-		highLightBorder("bpTitle", "red");
-		alert("페이퍼 제목이 비어있습니다. 페이퍼 제목을 입력해주시기 바랍니다.");
-	};
-}; // checked! [질문] 비포 에프터 방식 비교
-
 function saveEditedPaper() {
-	console.log("saveEditedPaper() Start")
 	let packagedBpData = packageBpDataEdited();
 
 	//sync Global packagedBpTitleMemory
 	packagedBpTitleMemory = packagedBpData.bpTitle;
 
 	requestUpdateBpData(packagedBpData);
-	
-	let requestResult = requestBpDataSimple();
-	if (requestResult == true) {
-		processSpoonToPrint();
-		alert("저장되었습니다.");
-	};
+	alert("저장되었습니다.");
 
 }; // checked!
 
 function removePaper() {
 	packagedBpData = spoonedBpData;
 	if (packagedBpData.isMainBp == "main") {
-		console.log("check");
 		setAltMainBpTitle(packagedBpData);
 	};
 	if (confirm("정말 삭제하시겠습니까? 삭제가 완료되면, 해당 내용은 다시 복구될 수 없습니다.")) {
