@@ -1,0 +1,58 @@
+{
+    "userData": {
+        "uid": "user.uid",
+        "name": "userName",
+        "email": "",
+        "phone": "",
+        "signedinDate": "",
+        "lastLogin": "",
+        "visitCounts": "(향후)", 
+        "visitRate": "(향후)"
+    },
+    "character": {
+        "characterId": {
+            "characterId": "",
+            "uid": "",
+            "content": ""
+        }
+    },
+    "mainTag": {
+        "mainTagId": "",
+        "characterId": "",
+        "directionId": "",
+        "naviId": "",
+        "actionPlanId": ""
+    },
+    "bpDataPool": {
+        "direction": {
+            "directionId": {
+                "directionId": "",
+                "characterId": "",
+                "content": "",
+                "createdDate": "",
+                "editedDate": ""
+            }
+        },
+        "navi": {
+            "naviId": {
+                "naviId": "",
+                "directionId": "",
+                "contentNaviArea": "",
+                "contentNaviA": "",
+                "contentNaviB": "",
+                "createdDate": "",
+                "editedDate": ""
+            }
+        },
+        "actionPlan": {
+            "actionPlanId": {
+                "actionPlanId": "",
+                "naviId": "",
+                "contentTodo": "",
+                "contentDone": "",
+                "createdDate": "",
+                "editedDate": ""
+            }
+        }
+    }
+}
