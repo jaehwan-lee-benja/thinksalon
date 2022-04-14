@@ -1,4 +1,5 @@
 // const firebase = appFireBase; // firebase 자체의 버전 이슈로 있던 기능
+// test
 
 const db = firebase.database();
 const SELECTBOX_BPTITLE_VALUE_INIT = "INIT";
