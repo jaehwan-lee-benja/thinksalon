@@ -6,6 +6,7 @@ let userData = {};
 let bpDataPool = {};
 let spoonedBpData = {};
 let packagedBpData = {};
+let bpTitleArray = [];
 let mainBpTitleMemory = "";
 let bpTitleSpoonMemory = "";
 let updatedMainBpTitleMemory = "";
@@ -71,7 +72,7 @@ function requestBpData(user) {
 				});
 			};
 		});
-		let bpTitleArray = listupBpTitleArray();
+		bpTitleArray = Object.keys(bpDataPool);
 		if (bpTitleArray.length > 0) {
 			processSpoonToPrint();
 		} else {
@@ -119,7 +120,7 @@ function requestUpdateEveryIsMainBpValueToBlank() {
 	let updatedBpData = {};
 	updatedBpData["isMainBp"] = "";
 
-	let bpTitleArray = listupBpTitleArray();
+	// let bpTitleArray = listupBpTitleArray();
 	if (bpTitleArray.length > 0){
 		for (let i = 0; i < bpTitleArray.length; i++) {
 			let bpIds = bpDataPool[bpTitleArray[i]].bpId;
@@ -140,7 +141,7 @@ function requestUpdateOneIsMainBpValueToMain() {
 	let updatedBpData = {};
 	updatedBpData["isMainBp"] = "main";
 
-	let bpTitleArray = listupBpTitleArray();
+	// let bpTitleArray = listupBpTitleArray();
 	if (bpTitleArray.length > 0){
 		for (let i = 0; i < bpTitleArray.length; i++) {
 			if (bpDataPool[bpTitleArray[i]].bpTitle == updatedMainBpTitleMemory) {
@@ -177,10 +178,10 @@ function printUserData(userData) {
 // *** bpTitle Manager
 // --------------------------------------------------
 
-function listupBpTitleArray() {
-	let listupBpTitleArrayResult = Object.keys(bpDataPool);
-	return listupBpTitleArrayResult;
-}; // checked!
+// function listupBpTitleArray() {
+// 	let listupBpTitleArrayResult = Object.keys(bpDataPool);
+// 	return listupBpTitleArrayResult;
+// }; // checked!
 
 function pickupBpTitleSpoonBySelectbox() {
 	let selectboxBpTitleValue = selectorById("selectboxBpTitle").value;
@@ -225,7 +226,7 @@ function pickupBpTitleSpoon() {
 // --------------------------------------------------
 
 function pointMainBpTitle() {
-	let bpTitleArray = listupBpTitleArray();
+	// let bpTitleArray = listupBpTitleArray();
 	let IsThereAnyMainBpResult = monitorIsThereAnyMainBp();
 	if (IsThereAnyMainBpResult == true){
 		for (let i = 0; i < bpTitleArray.length; i++) {
@@ -242,7 +243,7 @@ function pointMainBpTitle() {
 function monitorIsThereAnyMainBp() {
 	
 	let isMainBpValueArray = [];
-	let bpTitleArray = listupBpTitleArray();
+	// let bpTitleArray = listupBpTitleArray();
 
 	for (let i = 0; i < bpTitleArray.length; i++) {
 		let isMainBpValue = bpDataPool[bpTitleArray[i]].isMainBp;
@@ -276,7 +277,7 @@ function setMainBp() {
 }; // checked!
 
 function setAltMainBpTitle(packagedBpDataHere) {
-	let bpTitleArray = listupBpTitleArray();
+	// let bpTitleArray = listupBpTitleArray();
 	let filteredBpTitleArray = [];
 	for (let i = 0; i < bpTitleArray.length; i++) {
 		if (bpTitleArray[i] != packagedBpDataHere.bpTitle) {
@@ -315,7 +316,7 @@ function processSpoonToPrint() {
 function packageBpDataNew() {
 
 	let monitorBpTitleBlankOrDuplicatesResult = monitorBpTitleBlankOrDuplicates();
-
+	console.log("monitorBpTitleBlankOrDuplicatesResult = ", monitorBpTitleBlankOrDuplicatesResult);
 	if (monitorBpTitleBlankOrDuplicatesResult == true) {
 
 		// 적혀있는 내용들로 패키징하기
@@ -334,10 +335,9 @@ function packageBpDataNew() {
 		} else {
 			packagedBpData["isMainBp"] = "main"
 		};
-
-
 		return packagedBpData;
 	};
+	return null;
 }; // checked!
 
 function packageBpDataEdited() {
@@ -502,7 +502,7 @@ function printItIfNoBpData() {
 
 function putSelectbox(selectboxId) {
 
-	let bpTitleArray = listupBpTitleArray();
+	// let bpTitleArray = listupBpTitleArray();
 	let selectbox = selectorById(selectboxId);
 	// selectbox 초기화하기
 	for (let i = selectbox.options.length - 1; i >= 0; i--) {
@@ -528,7 +528,7 @@ function putSelectbox(selectboxId) {
 }; // checked!
 
 function printBpTitleSpoonOnSelectbox() {
-	let bpTitleArray = listupBpTitleArray();
+	// let bpTitleArray = listupBpTitleArray();
 
 	for (let i = 0; i <= bpTitleArray.length; i++) {
 		if(bpTitleArray.length == 0){
@@ -559,11 +559,11 @@ function saveNewPaper() {
 	let packagedBpData = packageBpDataNew();
 
 	//sync Global bpTitleSpoonMemory
-	bpTitleSpoonMemory = packagedBpData.bpTitle;
-	
-	requestPushNewBpData(packagedBpData);
-	alert("저장되었습니다.");
-
+	if (packagedBpData != null) {
+		bpTitleSpoonMemory = packagedBpData.bpTitle;
+		requestPushNewBpData(packagedBpData);
+		alert("저장되었습니다.");
+	};
 }; // checked!
 
 function saveEditedPaper() {
@@ -598,7 +598,7 @@ function openEditPaperByDbclick() {
 	const card = document.getElementsByTagName("textarea");
 	for (let i = 0; i < card.length; i++) {
 		card[i].addEventListener("dblclick", function (e) {
-			let bpTitleArray = listupBpTitleArray();
+			// let bpTitleArray = listupBpTitleArray();
 			if(bpTitleArray.length > 0){
 				openEditPaper();
 			};
@@ -634,6 +634,7 @@ function monitorBpTitleBlankOrDuplicates() {
 		highLightBorder("bpTitle", "red");
 		alert("페이퍼 제목이 비어있습니다. 페이퍼 제목을 입력해주시기 바랍니다.");
 	};
+	return false;
 }; // checked!
 
 function monitorBpTitleBlank() {
@@ -647,7 +648,7 @@ function monitorBpTitleBlank() {
 }; // checked!
 
 function getSameBpTitleArray(packagedBpTitle) {
-	let bpTitleArray = listupBpTitleArray();
+	// let bpTitleArray = listupBpTitleArray();
 	let filterSameIndexArray = (query) => {
 		return bpTitleArray.find(packagedBpTitle => query == packagedBpTitle);
 	};
