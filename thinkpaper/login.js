@@ -27,20 +27,22 @@
 
           // Add this user to Firebase Database
           // Create User data
-          var userInfoData = {
-            uid: user.uid,
-            email: userEmail,
-            name: userName,
-            lastLogin: Date.now()
+          var initialData = {
+            user: {
+              uid: user.uid,
+              email: userEmail,
+              name: userName,
+              lastLogin: Date.now()
+            }
           }
 
           // Push to Firebase Database
           databaseRef.child('users/' + user.uid)
-            .set(userInfoData, (e) => {
+            .set(initialData, (e) => {
               window.location.replace("index.html")
             })
 
-          console.log("userInfoData = ", userInfoData)
+          console.log("initialData = ", initialData)
 
           return false;
 

@@ -45,12 +45,12 @@
                     <div style="margin: 1rem 0;">
                         <span>[캐릭터 별 큰그림 관리하기]<br></span>
                         <select style="width: 100%; font-size: 0.8rem;" id="selectboxBpTitle"
-                            onchange="selectBpTitleBySelectbox();">
+                            onchange="openCurrentBpDataBySelectboxBpTitle();">
                             <option value="INIT">클릭하여 이동</option>
                         </select>
                     </div>
                     <div>
-                        <input id="openMainBp_btn" onClick="gotoMainBp()" type="button" value="메인으로 이동하기">
+                        <input id="openMainBp_btn" onClick="openMainBp()" type="button" value="메인으로 이동하기">
                     </div>
                 </div>
                 <div style="margin: 2rem 0;">
@@ -110,7 +110,7 @@
                     <h3>캐릭터</h3>
                 </div>
                 <div>
-                    <textarea style="display: inline;" id="bpTitle" placeholder="예)개인으로서의 나" readonly></textarea>
+                    <textarea style="display: inline;" id="character" placeholder="예)개인으로서의 나" readonly></textarea>
                 </div>
             </div>
             <div id="gridMainContents" class="divDriection">
@@ -182,7 +182,7 @@
 <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/6.0.0/firebase-ui-auth.css" />
 
 <script type="text/javascript" src='fireBase.js'></script>
-<script type="text/javascript" src="index.js"></script>
+<script type="text/javascript" src="index_test.js"></script>
 
 
 </html>
