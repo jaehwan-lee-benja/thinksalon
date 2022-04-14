@@ -1,5 +1,4 @@
 // const firebase = appFireBase; // firebase 자체의 버전 이슈로 있던 기능
-// test
 
 const db = firebase.database();
 const SELECTBOX_BPTITLE_VALUE_INIT = "INIT";
@@ -8,7 +7,7 @@ let bpDataPool = {};
 let spoonedBpData = {};
 let packagedBpData = {};
 let mainBpTitleMemory = "";
-let packagedBpTitleMemory = "";
+let bpTitleSpoonMemory = "";
 let updatedMainBpTitleMemory = "";
 
 (function() {
@@ -23,7 +22,7 @@ function logIn() {
 	firebase.auth().onAuthStateChanged(function (user) {
 		if (user != null) {
 			requestUserData(user);
-			requestBpDataAtLogIn(user);
+			requestBpData(user);
 		} else {
 			window.location.replace("login.html");
 		};
@@ -51,7 +50,7 @@ function requestUserData(user) {
 	});
 }; // checked!
 
-function requestBpDataAtLogIn(user) {
+function requestBpData(user) {
 
 	const userRef = db.ref("users").child(user.uid);
 
@@ -183,25 +182,40 @@ function listupBpTitleArray() {
 	return listupBpTitleArrayResult;
 }; // checked!
 
+function pickupBpTitleSpoonBySelectbox() {
+	let selectboxBpTitleValue = selectorById("selectboxBpTitle").value;
+	if (selectboxBpTitleValue == SELECTBOX_BPTITLE_VALUE_INIT) {
+		console.log("pickupBpTitleSpoonBySelectbox by INIT");
+		let bpTitleSpoon = bpTitleSpoonMemory;
+		return bpTitleSpoon;
+	} else {
+		console.log("pickupBpTitleSpoonBySelectbox by selectboxBpTitleValue");
+		let bpTitleSpoon = selectboxBpTitleValue;
+		bpTitleSpoonMemory = bpTitleSpoon;
+		return bpTitleSpoon;
+	};
+};
+
 function pickupBpTitleSpoon() {
 	let selectboxBpTitleValue = selectorById("selectboxBpTitle").value;
 
 	if (selectboxBpTitleValue == SELECTBOX_BPTITLE_VALUE_INIT) {
 		// by reloaded or openMainBp_btn(=reloaded)
-		console.log("pickupBpTitleSpoon (1)")
+		console.log("pickupBpTitleSpoon by pointMainBpTitle")
 		let bpTitleSpoon = pointMainBpTitle();
+		bpTitleSpoonMemory = bpTitleSpoon;
 		return bpTitleSpoon;
 	} else {
-		if (packagedBpTitleMemory != "") {
+		if (bpTitleSpoonMemory != "") {
 			// by requestUpdateBpdata
-			console.log("pickupBpTitleSpoon (2)")
-			let bpTitleSpoon = packagedBpTitleMemory;
+			console.log("pickupBpTitleSpoon by bpTitleSpoonMemory")
+			let bpTitleSpoon = bpTitleSpoonMemory;
 			return bpTitleSpoon;
-		} else {
-			// by selectbox
-			console.log("pickupBpTitleSpoon (3)")
-			let bpTitleSpoon = selectorById("selectboxBpTitle").value;
-			return bpTitleSpoon;
+		// } else {
+		// 	// by selectbox
+		// 	console.log("pickupBpTitleSpoon (3)")
+		// 	let bpTitleSpoon = selectorById("selectboxBpTitle").value;
+		// 	return bpTitleSpoon;
 		};
 	};
 }; // testing..
@@ -275,6 +289,7 @@ function setAltMainBpTitle(packagedBpDataHere) {
 }; // checked!
 
 function gotoMainBp() {
+	bpTitleSpoonMemory = mainBpTitleMemory;
 	spoonBpData(mainBpTitleMemory);
 	printSpoonedBpData();
 	putSelectbox("selectboxBpTitle");
@@ -513,9 +528,7 @@ function putSelectbox(selectboxId) {
 }; // checked!
 
 function printBpTitleSpoonOnSelectbox() {
-
 	let bpTitleArray = listupBpTitleArray();
-	let currentBpTitle = spoonedBpData.bpTitle;
 
 	for (let i = 0; i <= bpTitleArray.length; i++) {
 		if(bpTitleArray.length == 0){
@@ -524,7 +537,7 @@ function printBpTitleSpoonOnSelectbox() {
 			let selectorOption = selectorById("selectboxBpTitle").options[i];
 			let optionValue = selectorOption.value;
 			selectorOption.removeAttribute("selected");
-			if (optionValue == currentBpTitle) {
+			if (optionValue == bpTitleSpoonMemory) {
 				selectorOption.setAttribute("selected", true);
 			};
 		};
@@ -533,7 +546,7 @@ function printBpTitleSpoonOnSelectbox() {
 }; // checked!
 
 function selectBpTitleBySelectbox() {
-	let bpTitleSpoon = pickupBpTitleSpoon();
+	let bpTitleSpoon = pickupBpTitleSpoonBySelectbox();
 	spoonBpData(bpTitleSpoon);
 	printSpoonedBpData();
 }; // testing..
@@ -545,8 +558,8 @@ function selectBpTitleBySelectbox() {
 function saveNewPaper() {
 	let packagedBpData = packageBpDataNew();
 
-	//sync Global packagedBpTitleMemory
-	packagedBpTitleMemory = packagedBpData.bpTitle;
+	//sync Global bpTitleSpoonMemory
+	bpTitleSpoonMemory = packagedBpData.bpTitle;
 	
 	requestPushNewBpData(packagedBpData);
 	alert("저장되었습니다.");
@@ -556,8 +569,8 @@ function saveNewPaper() {
 function saveEditedPaper() {
 	let packagedBpData = packageBpDataEdited();
 
-	//sync Global packagedBpTitleMemory
-	packagedBpTitleMemory = packagedBpData.bpTitle;
+	//sync Global bpTitleSpoonMemory
+	bpTitleSpoonMemory = packagedBpData.bpTitle;
 
 	requestUpdateBpData(packagedBpData);
 	alert("저장되었습니다.");
