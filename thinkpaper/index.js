@@ -342,7 +342,7 @@ function packageBpDataNew() {
 
 function packageBpDataEdited() {
 	let monitorBpTitleBlankResult = monitorBpTitleBlank();
-
+  
 	if (monitorBpTitleBlankResult == true) {
 
 		// 적혀있는 내용들로 패키징하기
