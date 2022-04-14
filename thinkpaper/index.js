@@ -73,7 +73,7 @@ function requestBpData(user) {
 				});
 			};
 		});
-		bpTitleArray = Object.keys(bpDataPool);
+		bpTitleArray = Object.keys(bpDataPool).sort();
 		if (bpTitleArray.length > 0) {
 			processSpoonToPrint();
 		} else {
