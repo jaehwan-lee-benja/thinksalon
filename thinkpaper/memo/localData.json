@@ -2,9 +2,9 @@
 
 {
     "json memo" : "firebase의 id로 묶는 구조로 바꾸기, 로컬형 구조 그리기",
-    "userInfoData": {
+    "userData": {
         "uid": "user.uid",
-        "userName": "userName",
+        "name": "userName",
         "email": "",
         "phone": "",
         "signedinDate": "",
@@ -22,30 +22,24 @@
         "createdDate": "",
         "editedDate": "",
         "bpTitle": "",
-        "setMainBp": "",
-        "contents": {
-            "direction": {
-                "dirctionId": "",
+        "isMainBp": "",
+        "directionId": {
+            "dirctionId": "",
+            "createdDate": "",
+            "editedDate": "",
+            "direction": "",
+            "naviId": {
+                "naviId": "",
                 "createdDate": "",
                 "editedDate": "",
-                "contents": {
-                    "navi": {
-                        "naviId": "",
-                        "createdDate": "",
-                        "editedDate": "",
-                        "scale": "",
-                        "area": "",
-                        "subArea": "",
-                        "contents": {
-                            "actionPlan": {
-                                "apId": "",
-                                "createdDate": "",
-                                "editedDate": "",
-                                "contents": {},
-                                "term": ""
-                            }
-                        }
-                    }
+                "naviArea": "",
+                "naviA": "",
+                "naviB": "",
+                "actionPlanId": {
+                    "actionPlanId": "",
+                    "createdDate": "",
+                    "editedDate": "",
+                    "actionPlan": ""
                 }
             }
         }
