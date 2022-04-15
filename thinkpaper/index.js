@@ -1,12 +1,17 @@
 // const firebase = appFireBase; // firebase 자체의 버전 이슈로 있던 기능
-// branch_test_220415
 
 const db = firebase.database();
 const SELECTBOX_BPTITLE_VALUE_INIT = "INIT";
 let userData = {};
 let bpDataPool = {};
 let spoonedBpData = {};
-let packagedBpData = {};
+let packagedBpData = {
+	// direction: {
+	// 	naviArea: {
+	// 		actionPlan: ""
+	// 	}
+	// }
+};
 let bpTitleArray = [];
 let mainBpTitleMemory = "";
 let bpTitleSpoonMemory = "";
@@ -301,19 +306,38 @@ function processSpoonToPrint() {
 
 function packageBpDataNew() {
 
+	console.log("packagedBpData - 0 = ", packagedBpData);
 	let monitorBpTitleBlankOrDuplicatesResult = monitorBpTitleBlankOrDuplicates();
 	console.log("monitorBpTitleBlankOrDuplicatesResult = ", monitorBpTitleBlankOrDuplicatesResult);
+	console.log("packagedBpData - 1 = ", packagedBpData);
 	if (monitorBpTitleBlankOrDuplicatesResult == true) {
+
+		// let directionId = "direction" + timeStamp();
+		let directionId = "direction" + timeStamp().replace(".", "");
+		let naviId = "navi" + timeStamp().replace(".", "");
+		let actionPlanId = "actionPlan" + timeStamp().replace(".", "");
 
 		// 적혀있는 내용들로 패키징하기
 		packagedBpData["createdDate"] = timeStamp(); // new에만 해당함
 		packagedBpData["editedDate"] = timeStamp();
 		packagedBpData["bpTitle"] = selectorById("bpTitle").value.trim();
-		packagedBpData["direction"] = selectorById("direction").value.trim();
-		packagedBpData["naviArea"] = selectorById("naviArea").value.trim();
-		packagedBpData["naviB"] = selectorById("naviB").value.trim();
-		packagedBpData["naviA"] = selectorById("naviA").value.trim();
-		packagedBpData["actionPlan"] = selectorById("actionPlan").value.trim();
+		packagedBpData[directionId] = {};
+		packagedBpData[directionId]["createdDate"] = timeStamp();
+		packagedBpData[directionId]["editedDate"] = timeStamp();
+		packagedBpData[directionId]["directionId"] = directionId;
+		packagedBpData[directionId]["direction"] = selectorById("direction").value.trim();
+		packagedBpData[directionId][naviId] = {};
+		packagedBpData[directionId][naviId]["createdDate"] = timeStamp();
+		packagedBpData[directionId][naviId]["editedDate"] = timeStamp();
+		packagedBpData[directionId][naviId]["naviId"] = naviId;
+		packagedBpData[directionId][naviId]["naviArea"] = selectorById("naviArea").value.trim();
+		packagedBpData[directionId][naviId]["naviB"] = selectorById("naviB").value.trim();
+		packagedBpData[directionId][naviId]["naviA"] = selectorById("naviA").value.trim();
+		packagedBpData[directionId][naviId][actionPlanId] = {};
+		packagedBpData[directionId][naviId][actionPlanId]["createdDate"] = timeStamp();
+		packagedBpData[directionId][naviId][actionPlanId]["editedDate"] = timeStamp();
+		packagedBpData[directionId][naviId][actionPlanId]["actionPlanId"] = actionPlanId;
+		packagedBpData[directionId][naviId][actionPlanId]["actionPlan"] = selectorById("actionPlan").value.trim();
 
 		let IsThereAnyMainBpResult = monitorIsThereAnyMainBp();
 		if (IsThereAnyMainBpResult == true) {
@@ -321,8 +345,12 @@ function packageBpDataNew() {
 		} else {
 			packagedBpData["isMainBp"] = "main"
 		};
+
+		console.log("packagedBpData - 2 = ", packagedBpData);
 		return packagedBpData;
+
 	};
+
 	return null;
 }; // checked!
 
@@ -333,7 +361,6 @@ function packageBpDataEdited() {
 
 		// 적혀있는 내용들로 패키징하기
 		packagedBpData["bpId"] = spoonedBpData.bpId; // edited에만 해당함
-		// packagedBpData["createdDate"] = spoonedBpData.createdDate; // edited에만 해당함
 		packagedBpData["editedDate"] = timeStamp();
 		packagedBpData["bpTitle"] = selectorById("bpTitle").value.trim();
 		packagedBpData["direction"] = selectorById("direction").value.trim();
@@ -354,10 +381,10 @@ function printSpoonedBpData() {
 	selectorById("dateChecked").innerHTML = spoonedBpData.editedDate.slice(0, 10);
 	selectorById("bpTitle").value = spoonedBpData.bpTitle;
 	selectorById("direction").value = spoonedBpData.direction;
-	selectorById("naviArea").value = spoonedBpData.naviArea;
-	selectorById("naviB").value = spoonedBpData.naviB;
-	selectorById("naviA").value = spoonedBpData.naviA;
-	selectorById("actionPlan").value = spoonedBpData.actionPlan;
+	selectorById("naviArea").value = spoonedBpData.direction.naviArea;
+	selectorById("naviB").value = spoonedBpData.direction.naviB;
+	selectorById("naviA").value = spoonedBpData.direction.naviA;
+	// selectorById("actionPlan").value = spoonedBpData.direction.naviArea.actionPlan;
 	btnShowHideHandler("readPaper");
 }; // checked!
 
