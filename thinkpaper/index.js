@@ -121,7 +121,6 @@ function requestUpdateEveryIsMainBpValueToBlank() {
 	let updatedBpData = {};
 	updatedBpData["isMainBp"] = "";
 
-	// let bpTitleArray = listupBpTitleArray();
 	if (bpTitleArray.length > 0){
 		for (let i = 0; i < bpTitleArray.length; i++) {
 			let bpIds = bpDataPool[bpTitleArray[i]].bpId;
@@ -142,7 +141,6 @@ function requestUpdateOneIsMainBpValueToMain() {
 	let updatedBpData = {};
 	updatedBpData["isMainBp"] = "main";
 
-	// let bpTitleArray = listupBpTitleArray();
 	if (bpTitleArray.length > 0){
 		for (let i = 0; i < bpTitleArray.length; i++) {
 			if (bpDataPool[bpTitleArray[i]].bpTitle == updatedMainBpTitleMemory) {
@@ -179,11 +177,6 @@ function printUserData(userData) {
 // *** bpTitle Manager
 // --------------------------------------------------
 
-// function listupBpTitleArray() {
-// 	let listupBpTitleArrayResult = Object.keys(bpDataPool);
-// 	return listupBpTitleArrayResult;
-// }; // checked!
-
 function pickupBpTitleSpoonBySelectbox() {
 	let selectboxBpTitleValue = selectorById("selectboxBpTitle").value;
 	if (selectboxBpTitleValue == SELECTBOX_BPTITLE_VALUE_INIT) {
@@ -213,21 +206,15 @@ function pickupBpTitleSpoon() {
 			console.log("pickupBpTitleSpoon by bpTitleSpoonMemory")
 			let bpTitleSpoon = bpTitleSpoonMemory;
 			return bpTitleSpoon;
-		// } else {
-		// 	// by selectbox
-		// 	console.log("pickupBpTitleSpoon (3)")
-		// 	let bpTitleSpoon = selectorById("selectboxBpTitle").value;
-		// 	return bpTitleSpoon;
 		};
 	};
-}; // testing..
+}; // checked!
 
 // --------------------------------------------------
 // *** mainTag Manager
 // --------------------------------------------------
 
 function pointMainBpTitle() {
-	// let bpTitleArray = listupBpTitleArray();
 	let IsThereAnyMainBpResult = monitorIsThereAnyMainBp();
 	if (IsThereAnyMainBpResult == true){
 		for (let i = 0; i < bpTitleArray.length; i++) {
@@ -244,7 +231,6 @@ function pointMainBpTitle() {
 function monitorIsThereAnyMainBp() {
 	
 	let isMainBpValueArray = [];
-	// let bpTitleArray = listupBpTitleArray();
 
 	for (let i = 0; i < bpTitleArray.length; i++) {
 		let isMainBpValue = bpDataPool[bpTitleArray[i]].isMainBp;
@@ -278,7 +264,6 @@ function setMainBp() {
 }; // checked!
 
 function setAltMainBpTitle(packagedBpDataHere) {
-	// let bpTitleArray = listupBpTitleArray();
 	let filteredBpTitleArray = [];
 	for (let i = 0; i < bpTitleArray.length; i++) {
 		if (bpTitleArray[i] != packagedBpDataHere.bpTitle) {
@@ -448,6 +433,7 @@ function editModeHandler(paperMode) {
 		textareaReadOnly("naviB", false);
 		textareaReadOnly("naviA", false);
 		textareaReadOnly("actionPlan", false);
+		textareaBorderColorHandler("#9CC0E7");
 	} else {
 		selectorById("divPaperMode").innerHTML = "읽기모드";
 		selectorById("gridMainFrame").style.color = "#424242";
@@ -457,8 +443,19 @@ function editModeHandler(paperMode) {
 		textareaReadOnly("naviB", true);
 		textareaReadOnly("naviA", true);
 		textareaReadOnly("actionPlan", true);
+		textareaBorderColorHandler("#424242");
 	};
 }; // checked!
+
+// [질문] 아래 함수가 작동하지 않음
+function textareaBorderColorHandler(color) {
+	// console.log("textareaBorderColorHandler - 1");
+	const selectorTextareaOnCard = document.getElementsByTagName("textarea");
+	for (let i = 0; i < selectorTextareaOnCard.length; i++) {
+		// console.log("textareaBorderColorHandler - 2");
+		selectorTextareaOnCard[i].style.borderColor = color;
+	};
+};
 
 function btnShowHideHandler_mainBp(state) {
 	uiHide("setMainBp_btn");
@@ -503,7 +500,6 @@ function printItIfNoBpData() {
 
 function putSelectbox(selectboxId) {
 
-	// let bpTitleArray = listupBpTitleArray();
 	let selectbox = selectorById(selectboxId);
 	// selectbox 초기화하기
 	for (let i = selectbox.options.length - 1; i >= 0; i--) {
@@ -529,7 +525,6 @@ function putSelectbox(selectboxId) {
 }; // checked!
 
 function printBpTitleSpoonOnSelectbox() {
-	// let bpTitleArray = listupBpTitleArray();
 
 	for (let i = 0; i <= bpTitleArray.length; i++) {
 		if(bpTitleArray.length == 0){
@@ -596,10 +591,9 @@ function openNewPaper() {
 }; // checked!
 
 function openEditPaperByDbclick() {
-	const card = document.getElementsByTagName("textarea");
-	for (let i = 0; i < card.length; i++) {
-		card[i].addEventListener("dblclick", function (e) {
-			// let bpTitleArray = listupBpTitleArray();
+	const TextareaOnCard = document.getElementsByTagName("textarea");
+	for (let i = 0; i < TextareaOnCard.length; i++) {
+		TextareaOnCard[i].addEventListener("dblclick", function (e) {
 			if(bpTitleArray.length > 0){
 				openEditPaper();
 			};
@@ -649,7 +643,6 @@ function monitorBpTitleBlank() {
 }; // checked!
 
 function getSameBpTitleArray(packagedBpTitle) {
-	// let bpTitleArray = listupBpTitleArray();
 	let filterSameIndexArray = (query) => {
 		return bpTitleArray.find(packagedBpTitle => query == packagedBpTitle);
 	};
