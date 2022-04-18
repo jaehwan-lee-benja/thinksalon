@@ -74,6 +74,7 @@ function requestBpData(user) {
 				});
 			};
 		});
+		// [개발] isMainBp에 대한 리뷰구간이 여기서 필요하겠다.
 		bpTitleArray = Object.keys(bpDataPool).sort();
 		if (bpTitleArray.length > 0) {
 			processSpoonToPrint();
@@ -212,7 +213,9 @@ function pickupBpTitleSpoon() {
 }; // checked!
 
 function pickupNaviIdSpoon() {
+	console.log("bpTitleSpoonMemory = ", bpTitleSpoonMemory);
 	let spoonedKeysArray = Object.keys(bpDataPool[bpTitleSpoonMemory]);
+	console.log("spoonedKeysArray = ", spoonedKeysArray);
 	const filterKeys = (query) => {
 		return spoonedKeysArray.filter(eachKey => eachKey.indexOf(query) > -1);
 	};
@@ -318,6 +321,7 @@ function spoonBpData(bpTitleSpoonHere) {
 	let spoonedActionPlanDataSet = spoonedNaviDataSet[actionPlanIdSpoon];
 
 	let spoonedBpDataInFunction = {};
+	spoonedBpDataInFunction["bpId"] = spoonedBpDataSet["bpId"];
 	spoonedBpDataInFunction["createdDate"] = spoonedBpDataSet["createdDate"];
 	spoonedBpDataInFunction["editedDate"] = spoonedBpDataSet["editedDate"];
 	spoonedBpDataInFunction["bpTitle"] = spoonedBpDataSet["bpTitle"];
@@ -349,42 +353,41 @@ function processSpoonToPrint() {
 
 function packageBpDataNew() {
 
-	console.log("packagedBpData - 0 = ", packagedBpData);
 	let monitorBpTitleBlankOrDuplicatesResult = monitorBpTitleBlankOrDuplicates();
-	console.log("monitorBpTitleBlankOrDuplicatesResult = ", monitorBpTitleBlankOrDuplicatesResult);
-	console.log("packagedBpData - 1 = ", packagedBpData);
 	if (monitorBpTitleBlankOrDuplicatesResult == true) {
 
 		let naviId = "navi" + timeStamp().replace(".", "");
 		let actionPlanId = "actionPlan" + timeStamp().replace(".", "");
 
 		// 적혀있는 내용들로 패키징하기
-		packagedBpData["createdDate"] = timeStamp(); // new에만 해당함
-		packagedBpData["editedDate"] = timeStamp();
-		packagedBpData["bpTitle"] = selectorById("bpTitle").value.trim();
-		packagedBpData["direction"] = selectorById("direction").value.trim();
-		packagedBpData[naviId] = {};
-		packagedBpData[naviId]["createdDate"] = timeStamp(); // new에만 해당함
-		packagedBpData[naviId]["editedDate"] = timeStamp();
-		packagedBpData[naviId]["naviId"] = naviId;
-		packagedBpData[naviId]["naviArea"] = selectorById("naviArea").value.trim();
-		packagedBpData[naviId]["naviB"] = selectorById("naviB").value.trim();
-		packagedBpData[naviId]["naviA"] = selectorById("naviA").value.trim();
-		packagedBpData[naviId][actionPlanId] = {};
-		packagedBpData[naviId][actionPlanId]["createdDate"] = timeStamp(); // new에만 해당함
-		packagedBpData[naviId][actionPlanId]["editedDate"] = timeStamp();
-		packagedBpData[naviId][actionPlanId]["actionPlanId"] = actionPlanId;
-		packagedBpData[naviId][actionPlanId]["actionPlan"] = selectorById("actionPlan").value.trim();
+		let packagedBpDataInFunction = {};
+		packagedBpDataInFunction["createdDate"] = timeStamp(); // new에만 해당함
+		packagedBpDataInFunction["editedDate"] = timeStamp();
+		packagedBpDataInFunction["bpTitle"] = selectorById("bpTitle").value.trim();
+		packagedBpDataInFunction["direction"] = selectorById("direction").value.trim();
+		packagedBpDataInFunction[naviId] = {};
+		packagedBpDataInFunction[naviId]["createdDate"] = timeStamp(); // new에만 해당함
+		packagedBpDataInFunction[naviId]["editedDate"] = timeStamp();
+		packagedBpDataInFunction[naviId]["naviId"] = naviId;
+		packagedBpDataInFunction[naviId]["naviArea"] = selectorById("naviArea").value.trim();
+		packagedBpDataInFunction[naviId]["naviB"] = selectorById("naviB").value.trim();
+		packagedBpDataInFunction[naviId]["naviA"] = selectorById("naviA").value.trim();
+		packagedBpDataInFunction[naviId][actionPlanId] = {};
+		packagedBpDataInFunction[naviId][actionPlanId]["createdDate"] = timeStamp(); // new에만 해당함
+		packagedBpDataInFunction[naviId][actionPlanId]["editedDate"] = timeStamp();
+		packagedBpDataInFunction[naviId][actionPlanId]["actionPlanId"] = actionPlanId;
+		packagedBpDataInFunction[naviId][actionPlanId]["actionPlan"] = selectorById("actionPlan").value.trim();
 
 		let IsThereAnyMainBpResult = monitorIsThereAnyMainBp();
 		if (IsThereAnyMainBpResult == true) {
-			packagedBpData["isMainBp"] = ""
+			packagedBpDataInFunction["isMainBp"] = ""
 		} else {
-			packagedBpData["isMainBp"] = "main"
+			packagedBpDataInFunction["isMainBp"] = "main"
 		};
 
-		console.log("packagedBpData - 2 = ", packagedBpData);
-		return packagedBpData;
+		packagedBpData = packagedBpDataInFunction;
+
+		return packagedBpDataInFunction;
 
 	};
 
@@ -392,21 +395,41 @@ function packageBpDataNew() {
 }; // checked!
 
 function packageBpDataEdited() {
+	console.log("packageBpDataEdited start");
 	let monitorBpTitleBlankResult = monitorBpTitleBlank();
-  
+	console.log("monitorBpTitleBlankResult = ", monitorBpTitleBlankResult);
+
 	if (monitorBpTitleBlankResult == true) {
 
-		// 적혀있는 내용들로 패키징하기
-		packagedBpData["bpId"] = spoonedBpData.bpId; // edited에만 해당함
-		packagedBpData["editedDate"] = timeStamp();
-		packagedBpData["bpTitle"] = selectorById("bpTitle").value.trim();
-		packagedBpData["direction"] = selectorById("direction").value.trim();
-		packagedBpData["naviArea"] = selectorById("naviArea").value.trim();
-		packagedBpData["naviB"] = selectorById("naviB").value.trim();
-		packagedBpData["naviA"] = selectorById("naviA").value.trim();
-		packagedBpData["actionPlan"] = selectorById("actionPlan").value.trim();
+		let naviId = naviIdSpoonMemory;
+		console.log("naviId = ", naviId);
+		let actionPlanId = actionPlanIdSpoonMemory;
+		console.log("actionPlanId = ", actionPlanId);
 
-		return packagedBpData;
+		// 적혀있는 내용들로 패키징하기
+		let packagedBpDataInFunction = {};
+		packagedBpDataInFunction["createdDate"] = spoonedBpData["createdDate"];
+		packagedBpDataInFunction["bpId"] = spoonedBpData["bpId"]; // edited에만 해당함
+		packagedBpDataInFunction["editedDate"] = timeStamp();
+		packagedBpDataInFunction["bpTitle"] = selectorById("bpTitle").value.trim();
+		packagedBpDataInFunction["direction"] = selectorById("direction").value.trim();
+		packagedBpDataInFunction[naviId] = {};
+		packagedBpDataInFunction[naviId]["createdDate"] = spoonedBpData[naviId]["createdDate"];
+		packagedBpDataInFunction[naviId]["editedDate"] = timeStamp();
+		packagedBpDataInFunction[naviId]["naviId"] = naviId;
+		packagedBpDataInFunction[naviId]["naviArea"] = selectorById("naviArea").value.trim();
+		packagedBpDataInFunction[naviId]["naviB"] = selectorById("naviB").value.trim();
+		packagedBpDataInFunction[naviId]["naviA"] = selectorById("naviA").value.trim();
+		packagedBpDataInFunction[naviId][actionPlanId] = {};
+		packagedBpDataInFunction[naviId][actionPlanId]["createdDate"] = spoonedBpData[naviId][actionPlanId]["createdDate"];
+		packagedBpDataInFunction[naviId][actionPlanId]["editedDate"] = timeStamp();
+		packagedBpDataInFunction[naviId][actionPlanId]["actionPlanId"] = actionPlanId;
+		packagedBpDataInFunction[naviId][actionPlanId]["actionPlan"] = selectorById("actionPlan").value.trim();
+		
+		packagedBpData = packagedBpDataInFunction;
+		console.log("packagedBpDataInFunction = ", packagedBpDataInFunction);
+
+		return packagedBpDataInFunction;
 	};
 }; // checked!
 
