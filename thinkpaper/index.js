@@ -2,20 +2,32 @@
 
 const db = firebase.database();
 const SELECTBOX_BPTITLE_VALUE_INIT = "INIT";
+
+// --------------------------------------------------
+// *** Gloabl items
+// --------------------------------------------------
+
+// HQ dept.
 let userData = {};
 let bpDataPool = {};
-let spoonedBpData = {};
-let packagedBpData = {};
 let bpTitleArray = [];
-let mainBpTitleMemory = "";
-let bpTitleSpoonMemory = "";
-let naviIdSpoonMemory = "";
-let actionPlanIdSpoonMemory = "";
-let updatedMainBpTitleMemory = "";
+let spoonMemory = {};
+let mainTagMemory = {};
+
+// stage dept.
+let spoonedBpData = {};
+
+// package dept.
+let packagedNewBpData = {};
+let packagedEditedBpData = {};
+let packagedRemoveBpData = {};
+let setMainTagMemory = {};
+let packagedMemory = {};
+
+
 
 (function() {
 	logIn();
-	openEditPaperByDbclick();
 })();
 
 // --------------------------------------------------
@@ -24,8 +36,9 @@ let updatedMainBpTitleMemory = "";
 function logIn() {
 	firebase.auth().onAuthStateChanged(function (user) {
 		if (user != null) {
-			requestUserData(user);
-			requestBpData(user);
+			requestReadUserData(user);
+			requestReadBpData(user);
+			openEditPaperByDbclick();
 		} else {
 			window.location.replace("login.html");
 		};
@@ -36,11 +49,15 @@ function logOut() {
 	firebase.auth().signOut();
 }; // checked!
 
+// ==================================================
+// *** StoL dept.
+// ==================================================
+
 // --------------------------------------------------
-// *** server Manager_StoL
+// *** StoL manager
 // --------------------------------------------------
 
-function requestUserData(user) {
+function requestReadUserData(user) {
 	const userRef = db.ref("users").child(user.uid).child("user");
 	userRef.on("value", (snapshot) => {
 		snapshot.forEach(childSnap => {
@@ -53,26 +70,19 @@ function requestUserData(user) {
 	});
 }; // checked!
 
-function requestBpData(user) {
+function requestReadBpData(user) {
 
-	const userRef = db.ref("users").child(user.uid);
+	const userRef = db.ref("users").child(user.uid).child("bpData");
 
 	userRef.on("value", (snapshot) => {
 		// 콜백은 서버에 데이터 변경시 자동으로 작동한다.
 		// 참고: https://firebase.google.com/docs/reference/js/v8/firebase.database.Reference#on
 		snapshot.forEach(childSnap => {
-			let key = childSnap.key;
-			let value = childSnap.val();
-			if(key == "bigPicture") {
-				let bigPictures = value;
-				let bpIds = Object.keys(bigPictures);
-				bpIds.forEach( bpId => {
-					let bigPicture = bigPictures[bpId];
-					let bpTitle = bigPicture.bpTitle;
-					bpDataPool[bpTitle] = bigPicture;
-					bpDataPool[bpTitle]["bpId"] = bpId;
-				});
-			};
+			let bpIdsKey = childSnap.key;
+			let bpDataValue = childSnap.val();
+			let bpTitle = bpDataValue.bpTitle;
+			bpDataPool[bpTitle] = bpDataValue;
+			bpDataPool[bpTitle]["bpId"] = bpIdsKey;
 		});
 		// [개발] isMainBp에 대한 리뷰구간이 여기서 필요하겠다.
 		bpTitleArray = Object.keys(bpDataPool).sort();
@@ -85,80 +95,83 @@ function requestBpData(user) {
 }; // checked!
 
 // --------------------------------------------------
-// *** server Manager_LtoS
+// *** LtoS manager
 // --------------------------------------------------
 
-function requestPushNewBpData(packagedBpDataHere) {
-	db.ref("users")
-	.child(userData.uid)
-	.child("bigPicture")
-	.push(packagedBpDataHere);
-}; // checked!
-
-function requestUpdateBpData(packagedBpDataHere) {
-	db.ref("users")
-	.child(userData.uid)
-	.child("bigPicture")
-	.child(packagedBpDataHere.bpId)
-	.update(packagedBpDataHere, (e) => {
-		console.log("update completed = ", e);
-		});
-}; // checked!
-
-function requestRemoveSpoonedBpData(packagedBpDataHere) {
-	db.ref("users")
-	.child(userData.uid)
-	.child("bigPicture")
-	.child(packagedBpDataHere.bpId)
-	.remove();
-}; // checked!
-
-function requestChangeIsMainBpValue() {
+function requestUpdateMainTag() {
 	requestUpdateEveryIsMainBpValueToBlank();
-	requestUpdateOneIsMainBpValueToMain();
+	requestUpdateIsMainBpValueToMain();
 }; // checked!
 
-function requestUpdateEveryIsMainBpValueToBlank() {
+	function requestUpdateEveryIsMainBpValueToBlank() {
 
-	let updatedBpData = {};
-	updatedBpData["isMainBp"] = "";
+		let updatedBpData = {};
+		updatedBpData["isMainBp"] = "";
 
-	if (bpTitleArray.length > 0){
-		for (let i = 0; i < bpTitleArray.length; i++) {
-			let bpIds = bpDataPool[bpTitleArray[i]].bpId;
-			db.ref("users")
-				.child(userData.uid)
-				.child("bigPicture")
-				.child(bpIds)
-				.update(updatedBpData, (e) => {
-				console.log("update completed = ", e);
-				});
-		};
-	};
-
-}; // checked!
-
-function requestUpdateOneIsMainBpValueToMain() {
-
-	let updatedBpData = {};
-	updatedBpData["isMainBp"] = "main";
-
-	if (bpTitleArray.length > 0){
-		for (let i = 0; i < bpTitleArray.length; i++) {
-			if (bpDataPool[bpTitleArray[i]].bpTitle == updatedMainBpTitleMemory) {
+		if (bpTitleArray.length > 0){
+			for (let i = 0; i < bpTitleArray.length; i++) {
 				let bpIds = bpDataPool[bpTitleArray[i]].bpId;
 				db.ref("users")
 					.child(userData.uid)
-					.child("bigPicture")
+					.child("bpData")
 					.child(bpIds)
 					.update(updatedBpData, (e) => {
 					console.log("update completed = ", e);
 					});
 			};
 		};
-	};
 
+	}; // checked!
+
+	function requestUpdateIsMainBpValueToMain() {
+
+		let updatedBpData = {};
+		updatedBpData["isMainBp"] = "main";
+
+		if (bpTitleArray.length > 0){
+			for (let i = 0; i < bpTitleArray.length; i++) {
+				if (bpDataPool[bpTitleArray[i]].bpTitle == setMainTagMemory["bpTitle"]) {
+					let bpIds = bpDataPool[bpTitleArray[i]].bpId;
+					db.ref("users")
+						.child(userData.uid)
+						.child("bpData")
+						.child(bpIds)
+						.update(updatedBpData, (e) => {
+						console.log("update completed = ", e);
+						});
+				};
+			};
+		};
+
+	}; // checked!
+
+function requestPushPackagedBpData(packagedBpDataHere) {
+	console.log("packagedBpDataHere = ", packagedBpDataHere);
+	db.ref("users")
+	.child(userData.uid)
+	.child("bpData")
+	.push(packagedBpDataHere);
 }; // checked!
+
+function requestUpdatePackagedBpData(packagedBpDataHere) {
+	db.ref("users")
+	.child(userData.uid)
+	.child("bpData")
+	.child(packagedBpDataHere.bpId)
+	.update(packagedBpDataHere, (e) => {
+		console.log("update completed = ", e);
+		});
+}; // checked!
+
+function requestRemovePackagedBpData(packagedBpDataHere) {
+	db.ref("users")
+	.child(userData.uid)
+	.child("bpData")
+	.child(packagedBpDataHere.bpId)
+	.remove();
+}; // checked!
+
+
 
 // --------------------------------------------------
 // *** userData Manager
@@ -183,12 +196,12 @@ function pickupBpTitleSpoonBySelectbox() {
 	let selectboxBpTitleValue = selectorById("selectboxBpTitle").value;
 	if (selectboxBpTitleValue == SELECTBOX_BPTITLE_VALUE_INIT) {
 		console.log("pickupBpTitleSpoonBySelectbox by INIT");
-		let bpTitleSpoon = bpTitleSpoonMemory;
+		let bpTitleSpoon = spoonMemory["bpTitle"];
 		return bpTitleSpoon;
 	} else {
 		console.log("pickupBpTitleSpoonBySelectbox by selectboxBpTitleValue");
 		let bpTitleSpoon = selectboxBpTitleValue;
-		bpTitleSpoonMemory = bpTitleSpoon;
+		spoonMemory["bpTitle"] = bpTitleSpoon;
 		return bpTitleSpoon;
 	};
 };
@@ -200,37 +213,37 @@ function pickupBpTitleSpoon() {
 		// by reloaded or openMainBp_btn(=reloaded)
 		console.log("pickupBpTitleSpoon by pointMainBpTitle")
 		let bpTitleSpoon = pointMainBpTitle();
-		bpTitleSpoonMemory = bpTitleSpoon;
+		spoonMemory["bpTitle"] = bpTitleSpoon;
 		return bpTitleSpoon;
 	} else {
-		if (bpTitleSpoonMemory != "") {
+		if (spoonMemory["bpTitle"] != "") {
 			// by requestUpdateBpdata
-			console.log("pickupBpTitleSpoon by bpTitleSpoonMemory")
-			let bpTitleSpoon = bpTitleSpoonMemory;
+			console.log("pickupBpTitleSpoon by spoonMemoryBpTitle")
+			let bpTitleSpoon = spoonMemory["bpTitle"];
 			return bpTitleSpoon;
 		};
 	};
 }; // checked!
 
 function pickupNaviIdSpoon() {
-	console.log("bpTitleSpoonMemory = ", bpTitleSpoonMemory);
-	let spoonedKeysArray = Object.keys(bpDataPool[bpTitleSpoonMemory]);
+	console.log("spoonMemoryBpTitle = ", spoonMemory["bpTitle"]);
+	let spoonedKeysArray = Object.keys(bpDataPool[spoonMemory["bpTitle"]]);
 	console.log("spoonedKeysArray = ", spoonedKeysArray);
 	const filterKeys = (query) => {
 		return spoonedKeysArray.filter(eachKey => eachKey.indexOf(query) > -1);
 	};
 	let naviIdSpoon = filterKeys("navi").toString();
-	naviIdSpoonMemory = naviIdSpoon;
+	spoonMemory["naviId"] = naviIdSpoon;
 	return naviIdSpoon;
 };
 
 function pickupActionPlanIdSpoon() {
-	let spoonedKeysArray = Object.keys(bpDataPool[bpTitleSpoonMemory][naviIdSpoonMemory]);
+	let spoonedKeysArray = Object.keys(bpDataPool[spoonMemory["bpTitle"]][spoonMemory["naviId"]]);
 	const filterKeys = (query) => {
 		return spoonedKeysArray.filter(eachKey => eachKey.indexOf(query) > -1);
 	};
 	let actionPlanIdSpoon = filterKeys("actionPlan").toString();
-	actionPlanIdSpoonMemory = actionPlanIdSpoon;
+	spoonMemory["actionPlanId"] = actionPlanIdSpoon;
 	return actionPlanIdSpoon;
 };
 
@@ -283,8 +296,8 @@ function monitorIsThereAnyMainBp() {
 }; // checked!
 
 function setMainBp() {
-	updatedMainBpTitleMemory = spoonedBpData.bpTitle;
-	requestChangeIsMainBpValue();
+	setMainTagMemory["bpTitle"] = spoonedBpData.bpTitle;
+	requestUpdateMainTag();
 }; // checked!
 
 function setAltMainBpTitle(packagedBpDataHere) {
@@ -295,13 +308,13 @@ function setAltMainBpTitle(packagedBpDataHere) {
 		};
 	};
 	filteredBpTitleArray.sort();
-	updatedMainBpTitleMemory = filteredBpTitleArray[0];
-	requestChangeIsMainBpValue();
+	setMainTagMemory["bpTitle"] = filteredBpTitleArray[0];
+	requestUpdateMainTag();
 }; // checked!
 
 function gotoMainBp() {
-	bpTitleSpoonMemory = mainBpTitleMemory;
-	spoonBpData(mainBpTitleMemory);
+	spoonMemory["bpTitle"] = mainTagMemory["bpTitle"];
+	spoonBpData(mainTagMemory["bpTitle"]);
 	printSpoonedBpData();
 	putSelectbox("selectboxBpTitle");
 }; // checked!
@@ -351,7 +364,7 @@ function processSpoonToPrint() {
 	putSelectbox("selectboxBpTitle");
 }; // checked!
 
-function packageBpDataNew() {
+function packageNewBpData() {
 
 	let monitorBpTitleBlankOrDuplicatesResult = monitorBpTitleBlankOrDuplicates();
 	if (monitorBpTitleBlankOrDuplicatesResult == true) {
@@ -385,9 +398,9 @@ function packageBpDataNew() {
 			packagedBpDataInFunction["isMainBp"] = "main"
 		};
 
-		packagedBpData = packagedBpDataInFunction;
+		packagedNewBpData = packagedBpDataInFunction;
 
-		return packagedBpDataInFunction;
+		return packagedNewBpData;
 
 	};
 
@@ -401,9 +414,9 @@ function packageBpDataEdited() {
 
 	if (monitorBpTitleBlankResult == true) {
 
-		let naviId = naviIdSpoonMemory;
+		let naviId = spoonMemory["naviId"];
 		console.log("naviId = ", naviId);
-		let actionPlanId = actionPlanIdSpoonMemory;
+		let actionPlanId = spoonMemory["actionPlanId"];
 		console.log("actionPlanId = ", actionPlanId);
 
 		// 적혀있는 내용들로 패키징하기
@@ -441,10 +454,10 @@ function printSpoonedBpData() {
 	selectorById("dateChecked").innerHTML = spoonedBpData.editedDate.slice(0, 10); // editedDate중 가장 최근 것
 	selectorById("bpTitle").value = spoonedBpData["bpTitle"];
 	selectorById("direction").value = spoonedBpData["direction"];
-	selectorById("naviArea").value = spoonedBpData[naviIdSpoonMemory]["naviArea"];
-	selectorById("naviB").value = spoonedBpData[naviIdSpoonMemory]["naviB"];
-	selectorById("naviA").value = spoonedBpData[naviIdSpoonMemory]["naviA"];
-	selectorById("actionPlan").value = spoonedBpData[naviIdSpoonMemory][actionPlanIdSpoonMemory]["actionPlan"];
+	selectorById("naviArea").value = spoonedBpData[spoonMemory["naviId"]]["naviArea"];
+	selectorById("naviB").value = spoonedBpData[spoonMemory["naviId"]]["naviB"];
+	selectorById("naviA").value = spoonedBpData[spoonMemory["naviId"]]["naviA"];
+	selectorById("actionPlan").value = spoonedBpData[spoonMemory["naviId"]][spoonMemory["actionPlanId"]]["actionPlan"];
 	btnShowHideHandler("readPaper");
 }; // checked!
 
@@ -620,7 +633,7 @@ function printBpTitleSpoonOnSelectbox() {
 			let selectorOption = selectorById("selectboxBpTitle").options[i];
 			let optionValue = selectorOption.value;
 			selectorOption.removeAttribute("selected");
-			if (optionValue == bpTitleSpoonMemory) {
+			if (optionValue == spoonMemory["bpTitle"]) {
 				selectorOption.setAttribute("selected", true);
 			};
 		};
@@ -639,12 +652,12 @@ function selectBpTitleBySelectbox() {
 // --------------------------------------------------
 
 function saveNewPaper() {
-	let packagedBpData = packageBpDataNew();
+	let packagedBpData = packageNewBpData();
 
-	//sync Global bpTitleSpoonMemory
+	//sync Global spoonMemory["bpTitle"]
 	if (packagedBpData != null) {
-		bpTitleSpoonMemory = packagedBpData.bpTitle;
-		requestPushNewBpData(packagedBpData);
+		spoonMemory["bpTitle"] = packagedBpData.bpTitle;
+		requestPushPackagedBpData(packagedBpData);
 		alert("저장되었습니다.");
 	};
 }; // checked!
@@ -652,8 +665,8 @@ function saveNewPaper() {
 function saveEditedPaper() {
 	let packagedBpData = packageBpDataEdited();
 
-	//sync Global bpTitleSpoonMemory
-	bpTitleSpoonMemory = packagedBpData.bpTitle;
+	//sync Global spoonMemory["bpTitle"]
+	spoonMemory["bpTitle"] = packagedBpData.bpTitle;
 
 	requestUpdateBpData(packagedBpData);
 	alert("저장되었습니다.");
@@ -666,7 +679,7 @@ function removePaper() {
 		setAltMainBpTitle(packagedBpData);
 	};
 	if (confirm("정말 삭제하시겠습니까? 삭제가 완료되면, 해당 내용은 다시 복구될 수 없습니다.")) {
-		requestRemoveSpoonedBpData(spoonedBpData);
+		requestRemovePackagedBpData(spoonedBpData);
 		alert("삭제되었습니다.");
 		location.reload();
 	};
