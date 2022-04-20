@@ -4,8 +4,10 @@ const db = firebase.database();
 const SELECTBOX_BPTITLE_VALUE_INIT = "INIT";
 
 // --------------------------------------------------
-// *** Gloabl items
+// *** gloabl items
 // --------------------------------------------------
+
+// [질문] global에 오브젝트 많은 것에 대해서
 
 // HQ dept.
 let userData = {};
@@ -88,8 +90,11 @@ function requestReadBpData(user) {
 			bpDataPool[bpTitle] = bpDataValue;
 			bpDataPool[bpTitle]["bpId"] = bpIdsKey;
 		});
+
 		// [개발] isMainBp에 대한 리뷰구간이 여기서 필요하겠다.
 		bpTitleArray = Object.keys(bpDataPool).sort();
+		mainTagMemory["bpTitle"] = pointMainBpTitle();
+
 		if (bpTitleArray.length > 0) {
 			processSpoonToPrint();
 		} else {
@@ -121,10 +126,9 @@ function requestUpdateMainTag() {
 					.child(bpIds)
 					.update(updatedBpData, (e) => {
 					console.log("** update completed = ", e);
-					});
+					}); // [질문] 여기 이후 오류가 뜨는데, 무시할지, 개선할지 고민
 			};
 		};
-
 	}; // checked!
 
 	function requestUpdateIsMainBpValueToMain() {
@@ -217,26 +221,27 @@ function pickupBpTitleSpoon() {
 	if (selectboxBpTitleValue == SELECTBOX_BPTITLE_VALUE_INIT) {
 		// by reloaded or openMainBp_btn(=reloaded)
 		console.log("** pickupBpTitleSpoon by reloaded or openMainBp_btn(=reloaded)");
-		spoonMemory["bpTitle"] = pointMainBpTitle();
+		spoonMemory["bpTitle"] = mainTagMemory["bpTitle"];
 		return spoonMemory["bpTitle"];
 	} else {
 		if (spoonMemory["bpTitle"] != "") {
 			if (spoonMemory["bpTitle"] == packagedMemory["bpTitle"]) {
-			// by requestRemove - remove 이후, reload를 하기때문에, 당장 작동되는 부분은 아님.
-			console.log("** pickupBpTitleSpoon by requestRemove");
-			spoonMemory["bpTitle"] = pointMainBpTitle();
-			return spoonMemory["bpTitle"];
+				// by requestRemove - remove 이후, reload를 하기때문에, 당장 작동되는 부분은 아님.
+				console.log("** pickupBpTitleSpoon by requestRemove or else");
+				spoonMemory["bpTitle"] = mainTagMemory["bpTitle"];
+				return spoonMemory["bpTitle"];
 			} else {
-			// by requestPush or requestUpdate
-			console.log("** pickupBpTitleSpoon by requestPush or requestUpdate");
-			spoonMemory["bpTitle"] = packagedMemory["bpTitle"];
-			return spoonMemory["bpTitle"];
+				// by requestPush or requestUpdate
+				console.log("** pickupBpTitleSpoon by requestPush or requestUpdate");
+				spoonMemory["bpTitle"] = packagedMemory["bpTitle"];
+				return spoonMemory["bpTitle"];
 			};
 		};
 	};
 }; // checked!
 
 function pickupNaviIdSpoon() {
+
 	let spoonedKeysArray = Object.keys(bpDataPool[spoonMemory["bpTitle"]]);
 	const filterKeys = (query) => {
 		return spoonedKeysArray.filter(eachKey => eachKey.indexOf(query) > -1);
@@ -290,7 +295,8 @@ function monitorIsThereAnyMainBp() {
 		if (uniqueIsMainBpValueArray.length == 1){
 			if(uniqueIsMainBpValueArray[0] == ""){
 				console.log("** There is no mainBp");
-				// setMainBpTitle(); [질문] removePaper에서 이 과정이 있지 않은데, 생기는 현상, update에서 관여를 하는가?
+				printItIfNoBpData();
+				putSelectbox("selectboxBpTitle");
 				return false;
 			} else {
 				// console.log("** There is mainBp1");
@@ -317,7 +323,7 @@ function setAltMainBpTitle(packagedBpDataHere) {
 	};
 	filteredBpTitleArray.sort();
 	setMainTagMemory["bpTitle"] = filteredBpTitleArray[0];
-	requestUpdateMainTag();
+	requestUpdateIsMainBpValueToMain();
 }; // checked!
 
 function gotoMainBp() {
@@ -618,7 +624,7 @@ function putSelectbox(selectboxId) {
 	for (let i = 0; i < bpTitleArray.length; i++) {
 		let option = document.createElement("OPTION");
 		let txt = document.createTextNode(bpTitleArray[i]);
-		let mainBpTitle = pointMainBpTitle();
+		let mainBpTitle = mainTagMemory["bpTitle"];
 		let bpTitle = bpDataPool[bpTitleArray[i]].bpTitle;
 		if(mainBpTitle == bpTitle){
 			let mainBpTitleOptionMark = bpTitle + " ★";
@@ -682,18 +688,19 @@ function saveEditedPaper() {
 
 }; // checked!
 
+
 function removePaper() {
-	let packagedBpData = spoonedBpData;
+	packagedRemoveBpData = spoonedBpData;
 
 	//sync Global packagedMemory["bpTitle"]
-	packagedMemory["bpTitle"] = packagedBpData.bpTitle;
+	packagedMemory["bpTitle"] = packagedRemoveBpData.bpTitle;
 	
-	if (packagedBpData.isMainBp == "main") {
-		setAltMainBpTitle(packagedBpData);
+	if (packagedRemoveBpData.bpTitle == mainTagMemory["bpTitle"]) {
+		setAltMainBpTitle(packagedRemoveBpData);
 	};
 
 	if (confirm("정말 삭제하시겠습니까? 삭제가 완료되면, 해당 내용은 다시 복구될 수 없습니다.")) {
-		requestRemovePackagedBpData(packagedBpData);
+		requestRemovePackagedBpData(packagedRemoveBpData);
 		alert("삭제되었습니다.");
 		location.reload();
 	};
