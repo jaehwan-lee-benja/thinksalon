@@ -73,10 +73,14 @@ function requestReadUserData(user) {
 function requestReadBpData(user) {
 
 	const userRef = db.ref("users").child(user.uid).child("bpData");
-
+	
 	userRef.on("value", (snapshot) => {
 		// 콜백은 서버에 데이터 변경시 자동으로 작동한다.
 		// 참고: https://firebase.google.com/docs/reference/js/v8/firebase.database.Reference#on
+		
+		// requestUpdatePackagedBpData 진행시 서버에서 삭제되었지만, 로컬에서 삭제가 안되는 경우를 방지
+		emptyBpDataPool();
+
 		snapshot.forEach(childSnap => {
 			let bpIdsKey = childSnap.key;
 			let bpDataValue = childSnap.val();
@@ -116,7 +120,7 @@ function requestUpdateMainTag() {
 					.child("bpData")
 					.child(bpIds)
 					.update(updatedBpData, (e) => {
-					console.log("update completed = ", e);
+					console.log("** update completed = ", e);
 					});
 			};
 		};
@@ -137,7 +141,7 @@ function requestUpdateMainTag() {
 						.child("bpData")
 						.child(bpIds)
 						.update(updatedBpData, (e) => {
-						console.log("update completed = ", e);
+						console.log("** update completed = ", e);
 						});
 				};
 			};
@@ -146,7 +150,6 @@ function requestUpdateMainTag() {
 	}; // checked!
 
 function requestPushPackagedBpData(packagedBpDataHere) {
-	console.log("packagedBpDataHere = ", packagedBpDataHere);
 	db.ref("users")
 	.child(userData.uid)
 	.child("bpData")
@@ -159,7 +162,7 @@ function requestUpdatePackagedBpData(packagedBpDataHere) {
 	.child("bpData")
 	.child(packagedBpDataHere.bpId)
 	.update(packagedBpDataHere, (e) => {
-		console.log("update completed = ", e);
+		console.log("** update completed = ", e);
 		});
 }; // checked!
 
@@ -188,6 +191,12 @@ function printUserData(userData) {
 // *** bpDataPool Manager
 // --------------------------------------------------
 
+function emptyBpDataPool() {
+	for (let i = 0; i < bpTitleArray.length; i++) {
+		delete bpDataPool[bpTitleArray[i]];
+	};
+};
+
 // --------------------------------------------------
 // *** bpTitle Manager
 // --------------------------------------------------
@@ -195,14 +204,10 @@ function printUserData(userData) {
 function pickupBpTitleSpoonBySelectbox() {
 	let selectboxBpTitleValue = selectorById("selectboxBpTitle").value;
 	if (selectboxBpTitleValue == SELECTBOX_BPTITLE_VALUE_INIT) {
-		console.log("pickupBpTitleSpoonBySelectbox by INIT");
-		let bpTitleSpoon = spoonMemory["bpTitle"];
-		return bpTitleSpoon;
+		return spoonMemory["bpTitle"];
 	} else {
-		console.log("pickupBpTitleSpoonBySelectbox by selectboxBpTitleValue");
-		let bpTitleSpoon = selectboxBpTitleValue;
-		spoonMemory["bpTitle"] = bpTitleSpoon;
-		return bpTitleSpoon;
+		spoonMemory["bpTitle"] = selectboxBpTitleValue;
+		return spoonMemory["bpTitle"];
 	};
 };
 
@@ -211,30 +216,33 @@ function pickupBpTitleSpoon() {
 
 	if (selectboxBpTitleValue == SELECTBOX_BPTITLE_VALUE_INIT) {
 		// by reloaded or openMainBp_btn(=reloaded)
-		console.log("pickupBpTitleSpoon by pointMainBpTitle")
-		let bpTitleSpoon = pointMainBpTitle();
-		spoonMemory["bpTitle"] = bpTitleSpoon;
-		return bpTitleSpoon;
+		console.log("** pickupBpTitleSpoon by reloaded or openMainBp_btn(=reloaded)");
+		spoonMemory["bpTitle"] = pointMainBpTitle();
+		return spoonMemory["bpTitle"];
 	} else {
 		if (spoonMemory["bpTitle"] != "") {
-			// by requestUpdateBpdata
-			console.log("pickupBpTitleSpoon by spoonMemoryBpTitle")
-			let bpTitleSpoon = spoonMemory["bpTitle"];
-			return bpTitleSpoon;
+			if (spoonMemory["bpTitle"] == packagedMemory["bpTitle"]) {
+			// by requestRemove - remove 이후, reload를 하기때문에, 당장 작동되는 부분은 아님.
+			console.log("** pickupBpTitleSpoon by requestRemove");
+			spoonMemory["bpTitle"] = pointMainBpTitle();
+			return spoonMemory["bpTitle"];
+			} else {
+			// by requestPush or requestUpdate
+			console.log("** pickupBpTitleSpoon by requestPush or requestUpdate");
+			spoonMemory["bpTitle"] = packagedMemory["bpTitle"];
+			return spoonMemory["bpTitle"];
+			};
 		};
 	};
 }; // checked!
 
 function pickupNaviIdSpoon() {
-	console.log("spoonMemoryBpTitle = ", spoonMemory["bpTitle"]);
 	let spoonedKeysArray = Object.keys(bpDataPool[spoonMemory["bpTitle"]]);
-	console.log("spoonedKeysArray = ", spoonedKeysArray);
 	const filterKeys = (query) => {
 		return spoonedKeysArray.filter(eachKey => eachKey.indexOf(query) > -1);
 	};
-	let naviIdSpoon = filterKeys("navi").toString();
-	spoonMemory["naviId"] = naviIdSpoon;
-	return naviIdSpoon;
+	spoonMemory["naviId"] = filterKeys("navi").toString();
+	return spoonMemory["naviId"];
 };
 
 function pickupActionPlanIdSpoon() {
@@ -258,8 +266,8 @@ function pointMainBpTitle() {
 			let isMainBpValue = bpDataPool[bpTitleArray[i]].isMainBp;
 			let mainBpTitle = bpDataPool[bpTitleArray[i]].bpTitle;
 			if (isMainBpValue == "main") {
-				mainBpTitleMemory = mainBpTitle;
-				return mainBpTitle;
+				mainTagMemory["bpTitle"] = mainBpTitle;
+				return mainTagMemory["bpTitle"];
 			};
 		};
 	};
@@ -281,15 +289,15 @@ function monitorIsThereAnyMainBp() {
 	if (uniqueIsMainBpValueArray.length != 0){
 		if (uniqueIsMainBpValueArray.length == 1){
 			if(uniqueIsMainBpValueArray[0] == ""){
-				console.log("There is no mainBp");
+				console.log("** There is no mainBp");
 				// setMainBpTitle(); [질문] removePaper에서 이 과정이 있지 않은데, 생기는 현상, update에서 관여를 하는가?
 				return false;
 			} else {
-				// console.log("There is mainBp1");
+				// console.log("** There is mainBp1");
 				return true;
 			};
 		} else {
-			// console.log("There is mainBp2");
+			// console.log("** There is mainBp2");
 			return true;
 		};
 	};
@@ -325,13 +333,18 @@ function gotoMainBp() {
 
 function spoonBpData(bpTitleSpoonHere) {
 
-	let bpTitleSpoon = bpTitleSpoonHere;
+	let bpTitleSpoon = bpTitleSpoonHere; 
 	let naviIdSpoon = pickupNaviIdSpoon();
 	let actionPlanIdSpoon = pickupActionPlanIdSpoon();
 
-	let spoonedBpDataSet = bpDataPool[bpTitleSpoon];
-	let spoonedNaviDataSet = spoonedBpDataSet[naviIdSpoon];
-	let spoonedActionPlanDataSet = spoonedNaviDataSet[actionPlanIdSpoon];
+	let spoonedBpDataSet = {};
+	spoonedBpDataSet = bpDataPool[bpTitleSpoon];
+
+	let spoonedNaviDataSet = {};
+	spoonedNaviDataSet = spoonedBpDataSet[naviIdSpoon];
+	
+	let spoonedActionPlanDataSet = {};
+	spoonedActionPlanDataSet = spoonedNaviDataSet[actionPlanIdSpoon];
 
 	let spoonedBpDataInFunction = {};
 	spoonedBpDataInFunction["bpId"] = spoonedBpDataSet["bpId"];
@@ -360,7 +373,7 @@ function spoonBpData(bpTitleSpoonHere) {
 function processSpoonToPrint() {
 	let bpTitleSpoon = pickupBpTitleSpoon();
 	spoonBpData(bpTitleSpoon);
-	printSpoonedBpData();
+	printSpoonedBpData(); 
 	putSelectbox("selectboxBpTitle");
 }; // checked!
 
@@ -407,17 +420,13 @@ function packageNewBpData() {
 	return null;
 }; // checked!
 
-function packageBpDataEdited() {
-	console.log("packageBpDataEdited start");
+function packageEditedBpData() {
 	let monitorBpTitleBlankResult = monitorBpTitleBlank();
-	console.log("monitorBpTitleBlankResult = ", monitorBpTitleBlankResult);
 
 	if (monitorBpTitleBlankResult == true) {
 
 		let naviId = spoonMemory["naviId"];
-		console.log("naviId = ", naviId);
 		let actionPlanId = spoonMemory["actionPlanId"];
-		console.log("actionPlanId = ", actionPlanId);
 
 		// 적혀있는 내용들로 패키징하기
 		let packagedBpDataInFunction = {};
@@ -439,10 +448,10 @@ function packageBpDataEdited() {
 		packagedBpDataInFunction[naviId][actionPlanId]["actionPlanId"] = actionPlanId;
 		packagedBpDataInFunction[naviId][actionPlanId]["actionPlan"] = selectorById("actionPlan").value.trim();
 		
-		packagedBpData = packagedBpDataInFunction;
-		console.log("packagedBpDataInFunction = ", packagedBpDataInFunction);
+		packagedEditedBpData = packagedBpDataInFunction;
 
-		return packagedBpDataInFunction;
+		return packagedEditedBpData;
+
 	};
 }; // checked!
 
@@ -654,32 +663,37 @@ function selectBpTitleBySelectbox() {
 function saveNewPaper() {
 	let packagedBpData = packageNewBpData();
 
-	//sync Global spoonMemory["bpTitle"]
+	//sync Global packagedMemory["bpTitle"]
 	if (packagedBpData != null) {
-		spoonMemory["bpTitle"] = packagedBpData.bpTitle;
+		packagedMemory["bpTitle"] = packagedBpData.bpTitle;
 		requestPushPackagedBpData(packagedBpData);
 		alert("저장되었습니다.");
 	};
 }; // checked!
 
 function saveEditedPaper() {
-	let packagedBpData = packageBpDataEdited();
+	let packagedBpData = packageEditedBpData();
 
-	//sync Global spoonMemory["bpTitle"]
-	spoonMemory["bpTitle"] = packagedBpData.bpTitle;
+	//sync Global packagedMemory["bpTitle"]
+	packagedMemory["bpTitle"] = packagedBpData.bpTitle;
 
-	requestUpdateBpData(packagedBpData);
+	requestUpdatePackagedBpData(packagedBpData);
 	alert("저장되었습니다.");
 
 }; // checked!
 
 function removePaper() {
-	packagedBpData = spoonedBpData;
+	let packagedBpData = spoonedBpData;
+
+	//sync Global packagedMemory["bpTitle"]
+	packagedMemory["bpTitle"] = packagedBpData.bpTitle;
+	
 	if (packagedBpData.isMainBp == "main") {
 		setAltMainBpTitle(packagedBpData);
 	};
+
 	if (confirm("정말 삭제하시겠습니까? 삭제가 완료되면, 해당 내용은 다시 복구될 수 없습니다.")) {
-		requestRemovePackagedBpData(spoonedBpData);
+		requestRemovePackagedBpData(packagedBpData);
 		alert("삭제되었습니다.");
 		location.reload();
 	};
