@@ -1,71 +1,51 @@
-
-
 {
-    "json memo" : "firebase의 id로 묶는 구조로 바꾸기, 로컬형 구조 그리기",
     "userData": {
-        "uid": "user.uid",
-        "name": "userName",
+        "uid": "",
+        "name": "",
         "email": "",
         "phone": "",
         "signedinDate": "",
         "visitCounts": "",
         "visitRate": ""
     },
-    "action": {
-        "actionId": "",
-        "createdDate": "",
-        "editedDate": "",
-        "contents": {}
-    },
-    "bigPicture": {
-        "bpId": "",
-        "createdDate": "",
-        "editedDate": "",
-        "bpTitle": "",
-        "isMainBp": "",
-        "directionId": {
-            "dirctionId": "",
-            "createdDate": "",
-            "editedDate": "",
-            "direction": "",
-            "naviId": {
-                "naviId": "",
+    "bpDataPool": {
+        "character": {
+            "characterId": {
+                "characterId": "",
                 "createdDate": "",
                 "editedDate": "",
-                "naviArea": "",
-                "naviA": "",
-                "naviB": "",
-                "actionPlanId": {
-                    "actionPlanId": "",
-                    "createdDate": "",
-                    "editedDate": "",
-                    "actionPlan": ""
+                "main": "",
+                "character": "",
+                "direction": {
+                    "directionId": {
+                        "dirctionId": "",
+                        "createdDate": "",
+                        "editedDate": "",
+                        "main": "",
+                        "direction": "",
+                        "navi": {
+                            "naviId": {
+                                "naviId": "",
+                                "createdDate": "",
+                                "editedDate": "",
+                                "main": "",
+                                "naviArea": "",
+                                "naviA": "",
+                                "naviB": "",
+                                "action": {
+                                    "actionId": {
+                                        "actionId": "",
+                                        "createdDate": "",
+                                        "editedDate": "",
+                                        "main": "",
+                                        "action": ""
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
-    },
-    "cycle": {
-        "cycleId": "",
-        "createdDate": "",
-        "editedDate": "",
-        "time": {
-            "timeid": "",
-            "createdDate": "",
-            "editedDate": "",
-            "contents": {}
-        },
-        "money": {
-            "monenyId": "",
-            "createdDate": "",
-            "editedDate": "",
-            "contents": {}
-        },
-        "routine": {
-            "routineId": "",
-            "createdDate": "",
-            "editedDate": "",
-            "contents": {}
-        }
-    },
-    "disucussing": {}
+    }
 }
