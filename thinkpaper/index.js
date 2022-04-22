@@ -26,8 +26,6 @@ let packagedRemoveBpData = {};
 let setMainTagMemory = {};
 let packagedMemory = {};
 
-
-
 (function() {
 	logIn();
 })();
@@ -158,6 +156,14 @@ function requestPushPackagedBpData(packagedBpDataHere) {
 	.child(userData.uid)
 	.child("bpData")
 	.push(packagedBpDataHere);
+}; // checked!
+
+function requestPushPackagedNaviCard(packagedBpIdHere, packagedNaviCardHere) {
+	db.ref("users")
+	.child(userData.uid)
+	.child("bpData")
+	.child(packagedBpIdHere)
+	.push(packagedNaviCardHere); // [질문] 업데이트와 푸시중 무엇이 좋을지 - Key 관련
 }; // checked!
 
 function requestUpdatePackagedBpData(packagedBpDataHere) {
@@ -426,6 +432,42 @@ function packageNewBpData() {
 	return null;
 }; // checked!
 
+function packageNewNaviCard() {
+
+	let monitorBpTitleBlankOrDuplicatesResult = monitorBpTitleBlank();
+	if (monitorBpTitleBlankOrDuplicatesResult == true) {
+
+		let actionPlanId = "actionPlan" + timeStamp().replace(".", "");
+
+		// 적혀있는 내용들로 패키징하기
+		packagedNewNaviCardInFunction = {};
+		packagedNewNaviCardInFunction["createdDate"] = timeStamp(); // new에만 해당함
+		packagedNewNaviCardInFunction["editedDate"] = timeStamp();
+		packagedNewNaviCardInFunction["naviArea"] = selectorById("naviArea").value.trim();
+		packagedNewNaviCardInFunction["naviB"] = selectorById("naviB").value.trim();
+		packagedNewNaviCardInFunction["naviA"] = selectorById("naviA").value.trim();
+		packagedNewNaviCardInFunction[actionPlanId] = {};
+		packagedNewNaviCardInFunction[actionPlanId]["createdDate"] = timeStamp(); // new에만 해당함
+		packagedNewNaviCardInFunction[actionPlanId]["editedDate"] = timeStamp();
+		packagedNewNaviCardInFunction[actionPlanId]["actionPlanId"] = actionPlanId;
+		packagedNewNaviCardInFunction[actionPlanId]["actionPlan"] = selectorById("actionPlan").value.trim();
+
+		let IsThereAnyMainBpResult = monitorIsThereAnyMainBp();
+		if (IsThereAnyMainBpResult == true) {
+			packagedNewNaviCardInFunction["isMainBp"] = ""
+		} else {
+			packagedNewNaviCardInFunction["isMainBp"] = "main"
+		};
+
+		// packagedNewBpData = packagedBpDataInFunction;
+
+		return packagedNewNaviCardInFunction;
+
+	};
+
+	return null;
+}; // checked!
+
 function packageEditedBpData() {
 	let monitorBpTitleBlankResult = monitorBpTitleBlank();
 
@@ -480,6 +522,14 @@ function printEmptySpoonedBpData() {
 	selectorById("dateChecked").innerHTML = timeStamp().slice(0, 10);
 	selectorById("bpTitle").value = "";
 	selectorById("direction").value = "";
+	selectorById("naviArea").value = "";
+	selectorById("naviB").value = "";
+	selectorById("naviA").value = "";
+	selectorById("actionPlan").value = "";
+	btnShowHideHandler("createFirstPaper");
+}; // checked!
+
+function printEmptyNaviCard() {
 	selectorById("naviArea").value = "";
 	selectorById("naviB").value = "";
 	selectorById("naviA").value = "";
@@ -558,18 +608,20 @@ function editModeHandler(paperMode) {
 		textareaReadOnly("naviB", true);
 		textareaReadOnly("naviA", true);
 		textareaReadOnly("actionPlan", true);
-		textareaBorderColorHandler("#424242");
+		textareaBorderColorHandler("#c8c8c8");
 	};
 }; // checked!
 
 // [질문] 아래 함수가 작동하지 않음
 function textareaBorderColorHandler(color) {
-	// console.log("textareaBorderColorHandler - 1");
-	const selectorTextareaOnCard = document.getElementsByTagName("textarea");
-	for (let i = 0; i < selectorTextareaOnCard.length; i++) {
-		// console.log("textareaBorderColorHandler - 2");
-		selectorTextareaOnCard[i].style.borderColor = color;
-	};
+    setTimeout(()=>{
+		console.log("textareaBorderColorHandler - 1 |"+ color+"|");
+		const selectorTextareaOnCard = document.getElementsByTagName("textarea");
+		for (let i = 0; i < selectorTextareaOnCard.length; i++) {
+			//console.log("textareaBorderColorHandler - 2", color);
+			selectorTextareaOnCard[i].style.borderColor = color;
+		};
+	},1);
 };
 
 function btnShowHideHandler_mainBp(state) {
@@ -587,7 +639,7 @@ function btnShowHideHandler_mainBp(state) {
 }; // checked!
 
 function highLightBorder(id, color) {
-	return selectorById(id).style.borderColor = color;
+	//return selectorById(id).style.borderColor = color;
 }; // checked!
 
 function resizeTextarea() {
@@ -724,6 +776,22 @@ function openEditPaperByDbclick() {
 
 function openEditPaper() {
 	btnShowHideHandler("editPaper");
+}; // checked!
+
+function openNewNaviCard() {
+	printEmptyNaviCard();
+	btnShowHideHandler("openNewPaper");
+}; // checked!
+
+function saveNewNaviCard() {
+	let packagedNewNaviCard = packageNewNaviCard();
+
+	//sync Global packagedMemory["bpTitle"]
+	if (packagedNewNaviCard != null) {
+		// packagedMemory["bpTitle"] = packagedNewNaviCard.bpTitle;
+		requestPushPackagedNaviCard(spoonedBpData.bpId, packagedNewNaviCard);
+		alert("저장되었습니다.");
+	};
 }; // checked!
 
 function cancelEditPaper() {
