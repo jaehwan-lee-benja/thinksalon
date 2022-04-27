@@ -7,8 +7,6 @@ const SELECTBOX_BPTITLE_VALUE_INIT = "INIT";
 // *** gloabl items
 // --------------------------------------------------
 
-// [질문] global에 오브젝트 많은 것에 대해서
-
 // HQ dept.
 let userData = {};
 let bpDataPool = {};
@@ -50,7 +48,7 @@ function logOut() {
 }; // checked!
 
 // ==================================================
-// *** StoL dept.
+// *** StoL dept
 // ==================================================
 
 // --------------------------------------------------
@@ -100,6 +98,10 @@ function requestReadBpData(user) {
 		};
 	});
 }; // checked!
+
+// ==================================================
+// *** LtoS dept
+// ==================================================
 
 // --------------------------------------------------
 // *** LtoS manager
@@ -598,7 +600,7 @@ function editModeHandler(paperMode) {
 		textareaReadOnly("naviB", false);
 		textareaReadOnly("naviA", false);
 		textareaReadOnly("actionPlan", false);
-		textareaBorderColorHandler("#9CC0E7");
+		textareaBorderColorHandler("2px", "#9CC0E7");
 	} else {
 		selectorById("divPaperMode").innerHTML = "읽기모드";
 		selectorById("gridMainFrame").style.color = "#424242";
@@ -608,18 +610,16 @@ function editModeHandler(paperMode) {
 		textareaReadOnly("naviB", true);
 		textareaReadOnly("naviA", true);
 		textareaReadOnly("actionPlan", true);
-		textareaBorderColorHandler("#c8c8c8");
+		textareaBorderColorHandler("1px", "#c8c8c8");
 	};
 }; // checked!
 
-// [질문] 아래 함수가 작동하지 않음
-function textareaBorderColorHandler(color) {
+function textareaBorderColorHandler(px, color) {
     setTimeout(()=>{
-		console.log("textareaBorderColorHandler - 1 |"+ color+"|");
+		// console.log("textareaBorderColorHandler |"+ px +" "+ color +"|");
 		const selectorTextareaOnCard = document.getElementsByTagName("textarea");
 		for (let i = 0; i < selectorTextareaOnCard.length; i++) {
-			//console.log("textareaBorderColorHandler - 2", color);
-			selectorTextareaOnCard[i].style.borderColor = color;
+			selectorTextareaOnCard[i].style.border = "solid " + px + color;
 		};
 	},1);
 };
