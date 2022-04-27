@@ -10,7 +10,7 @@ const SELECTBOX_BPTITLE_VALUE_INIT = "INIT";
 // HQ dept.
 let userData = {};
 let bpDataPool = {};
-let bpTitleArray = []; // 점검필요: bpIdArray로 바꾸기, selectbox는 별도로 만들기
+let bpTitleArray = [];
 let spoonMemory = {};
 let mainTagMemory = {};
 
@@ -35,17 +35,17 @@ function logIn() {
 	firebase.auth().onAuthStateChanged(function (user) {
 		if (user != null) {
 			requestReadUserData(user);
-			requestReadBpData(user); // 점검필요
+			requestReadBpData(user);
 			openEditPaperByDbclick();
 		} else {
 			window.location.replace("login.html");
 		};
 	});
-}; // 점검중
+}; // checked!
 
 function logOut() {
 	firebase.auth().signOut();
-}; // 점검완료
+}; // checked!
 
 // ==================================================
 // *** StoL dept
@@ -66,7 +66,7 @@ function requestReadUserData(user) {
 		});
 		printUserData(userData);
 	});
-}; // 완료
+}; // checked!
 
 function requestReadBpData(user) {
 
@@ -97,7 +97,7 @@ function requestReadBpData(user) {
 			printItIfNoBpData();
 		};
 	});
-}; // 점검중
+}; // checked!
 
 // ==================================================
 // *** LtoS dept
@@ -110,7 +110,7 @@ function requestReadBpData(user) {
 function requestUpdateMainTag() {
 	requestUpdateEveryIsMainBpValueToBlank();
 	requestUpdateIsMainBpValueToMain();
-}; // 점검중
+}; // checked!
 
 	function requestUpdateEveryIsMainBpValueToBlank() {
 
@@ -129,7 +129,7 @@ function requestUpdateMainTag() {
 					}); // [질문] 여기 이후 오류가 뜨는데, 무시할지, 개선할지 고민
 			};
 		};
-	}; // 점검중
+	}; // checked!
 
 	function requestUpdateIsMainBpValueToMain() {
 
@@ -151,14 +151,14 @@ function requestUpdateMainTag() {
 			};
 		};
 
-	}; // 점검중
+	}; // checked!
 
 function requestPushPackagedBpData(packagedBpDataHere) {
 	db.ref("users")
 	.child(userData.uid)
 	.child("bpData")
 	.push(packagedBpDataHere);
-}; // 점검중
+}; // checked!
 
 function requestPushPackagedNaviCard(packagedBpIdHere, packagedNaviCardHere) {
 	db.ref("users")
@@ -166,7 +166,7 @@ function requestPushPackagedNaviCard(packagedBpIdHere, packagedNaviCardHere) {
 	.child("bpData")
 	.child(packagedBpIdHere)
 	.push(packagedNaviCardHere); // [질문] 업데이트와 푸시중 무엇이 좋을지 - Key 관련
-}; // 점검중
+}; // checked!
 
 function requestUpdatePackagedBpData(packagedBpDataHere) {
 	db.ref("users")
@@ -176,7 +176,7 @@ function requestUpdatePackagedBpData(packagedBpDataHere) {
 	.update(packagedBpDataHere, (e) => {
 		console.log("** update completed = ", e);
 		});
-}; // 점검중
+}; // checked!
 
 function requestRemovePackagedBpData(packagedBpDataHere) {
 	db.ref("users")
@@ -184,7 +184,7 @@ function requestRemovePackagedBpData(packagedBpDataHere) {
 	.child("bpData")
 	.child(packagedBpDataHere.bpId)
 	.remove();
-}; // 점검중
+}; // checked!
 
 
 
@@ -197,7 +197,7 @@ function printUserData(userData) {
 	let userEmail = userData.email;
 	selectorById("nameChecked").innerHTML = "생각 설계자: " + userName + " 대표"
 	selectorById("emailChecked").innerHTML = "(" + userEmail + ")"
-}; // 점검중
+}; // checked!
 
 // --------------------------------------------------
 // *** bpDataPool Manager
@@ -246,7 +246,7 @@ function pickupBpTitleSpoon() {
 			};
 		};
 	};
-}; // 점검중
+}; // checked!
 
 function pickupNaviIdSpoon() {
 
@@ -284,7 +284,7 @@ function pointMainBpTitle() {
 			};
 		};
 	};
-}; // 점검중
+}; // checked!
 
 function monitorIsThereAnyMainBp() {
 	
@@ -315,12 +315,12 @@ function monitorIsThereAnyMainBp() {
 			return true;
 		};
 	};
-}; // 점검중
+}; // checked!
 
 function setMainBp() {
 	setMainTagMemory["bpTitle"] = spoonedBpData.bpTitle;
 	requestUpdateMainTag();
-}; // 점검중
+}; // checked!
 
 function setAltMainBpTitle(packagedBpDataHere) {
 	let filteredBpTitleArray = [];
@@ -332,14 +332,14 @@ function setAltMainBpTitle(packagedBpDataHere) {
 	filteredBpTitleArray.sort();
 	setMainTagMemory["bpTitle"] = filteredBpTitleArray[0];
 	requestUpdateIsMainBpValueToMain();
-}; // 점검중
+}; // checked!
 
 function gotoMainBp() {
 	spoonMemory["bpTitle"] = mainTagMemory["bpTitle"];
 	spoonBpData(mainTagMemory["bpTitle"]);
 	printSpoonedBpData();
 	putSelectbox("selectboxBpTitle");
-}; // 점검중
+}; // checked!
 
 // --------------------------------------------------
 // *** stage Manager
@@ -382,14 +382,14 @@ function spoonBpData(bpTitleSpoonHere) {
 	spoonedBpData = spoonedBpDataInFunction;
 
 	return spoonedBpDataInFunction;
-}; // 점검중
+}; // checked!
 
 function processSpoonToPrint() {
 	let bpTitleSpoon = pickupBpTitleSpoon();
 	spoonBpData(bpTitleSpoon);
 	printSpoonedBpData(); 
 	putSelectbox("selectboxBpTitle");
-}; // 점검중
+}; // checked!
 
 function packageNewBpData() {
 
@@ -432,7 +432,7 @@ function packageNewBpData() {
 	};
 
 	return null;
-}; // 점검중
+}; // checked!
 
 function packageNewNaviCard() {
 
@@ -468,7 +468,7 @@ function packageNewNaviCard() {
 	};
 
 	return null;
-}; // 점검중
+}; // checked!
 
 function packageEditedBpData() {
 	let monitorBpTitleBlankResult = monitorBpTitleBlank();
@@ -503,7 +503,7 @@ function packageEditedBpData() {
 		return packagedEditedBpData;
 
 	};
-}; // 점검중
+}; // checked!
 
 // --------------------------------------------------
 // *** UI Manager
@@ -518,7 +518,7 @@ function printSpoonedBpData() {
 	selectorById("naviA").value = spoonedBpData[spoonMemory["naviId"]]["naviA"];
 	selectorById("actionPlan").value = spoonedBpData[spoonMemory["naviId"]][spoonMemory["actionPlanId"]]["actionPlan"];
 	btnShowHideHandler("readPaper");
-}; // 점검중
+}; // checked!
 
 function printEmptySpoonedBpData() {
 	selectorById("dateChecked").innerHTML = timeStamp().slice(0, 10);
@@ -529,7 +529,7 @@ function printEmptySpoonedBpData() {
 	selectorById("naviA").value = "";
 	selectorById("actionPlan").value = "";
 	btnShowHideHandler("createFirstPaper");
-}; // 점검중
+}; // checked!
 
 function printEmptyNaviCard() {
 	selectorById("naviArea").value = "";
@@ -537,15 +537,15 @@ function printEmptyNaviCard() {
 	selectorById("naviA").value = "";
 	selectorById("actionPlan").value = "";
 	btnShowHideHandler("createFirstPaper");
-}; // 점검중
+}; // checked!
 
 function uiHide(id) {
 	selectorById(id).style.display = "none";
-}; // 점검중
+}; // checked!
 
 function uiShow(id) {
 	selectorById(id).style.display = "initial";
-}; // 점검중
+}; // checked!
 
 function btnShowHideHandler(state) {
 
@@ -585,7 +585,7 @@ function btnShowHideHandler(state) {
 	}
 	btnShowHideHandler_mainBp(state);
 	resizeTextarea();
-}; // 점검중
+}; // checked!
 
 function editModeHandler(paperMode) {
 	function textareaReadOnly(id, check){
@@ -612,7 +612,7 @@ function editModeHandler(paperMode) {
 		textareaReadOnly("actionPlan", true);
 		textareaBorderColorHandler("1px", "#c8c8c8");
 	};
-}; // 점검중
+}; // checked!
 
 function textareaBorderColorHandler(px, color) {
     setTimeout(()=>{
@@ -636,11 +636,11 @@ function btnShowHideHandler_mainBp(state) {
 			uiShow("setMainBp_btn");
 		};
 	};
-}; // 점검중
+}; // checked!
 
 function highLightBorder(id, color) {
 	//return selectorById(id).style.borderColor = color;
-}; // 점검중
+}; // checked!
 
 function resizeTextarea() {
 	// 참고: https://stackoverflow.com/questions/454202/creating-a-textarea-with-auto-resize
@@ -654,12 +654,12 @@ function resizeTextarea() {
 		this.style.height = "auto";
 		this.style.height = (this.scrollHeight) + "px";
 	};
-}; // 점검중
+}; // checked!
 
 function printItIfNoBpData() {
 	printEmptySpoonedBpData();
 	selectorById("guideMessage").innerHTML = "'파란색으로 쓰여진 곳의 네모칸에 내용을 작성해보세요~!'"
-}; // 점검중
+}; // checked!
 
 // --------------------------------------------------
 // *** selectbox Manager
@@ -689,7 +689,7 @@ function putSelectbox(selectboxId) {
 		selectbox.insertBefore(option, selectbox.lastChild);
 	};
 	printBpTitleSpoonOnSelectbox();
-}; // 점검중
+}; // checked!
 
 function printBpTitleSpoonOnSelectbox() {
 
@@ -706,7 +706,7 @@ function printBpTitleSpoonOnSelectbox() {
 		};
 	};
 
-}; // 점검중
+}; // checked!
 
 function selectBpTitleBySelectbox() {
 	let bpTitleSpoon = pickupBpTitleSpoonBySelectbox();
@@ -727,7 +727,7 @@ function saveNewPaper() {
 		requestPushPackagedBpData(packagedBpData);
 		alert("저장되었습니다.");
 	};
-}; // 점검중
+}; // checked!
 
 function saveEditedPaper() {
 	let packagedBpData = packageEditedBpData();
@@ -738,7 +738,7 @@ function saveEditedPaper() {
 	requestUpdatePackagedBpData(packagedBpData);
 	alert("저장되었습니다.");
 
-}; // 점검중
+}; // checked!
 
 
 function removePaper() {
@@ -756,12 +756,12 @@ function removePaper() {
 		alert("삭제되었습니다.");
 		location.reload();
 	};
-}; // 점검중
+}; // checked!
 
 function openNewPaper() {
 	printEmptySpoonedBpData();
 	btnShowHideHandler("openNewPaper");
-}; // 점검중
+}; // checked!
 
 function openEditPaperByDbclick() {
 	const TextareaOnCard = document.getElementsByTagName("textarea");
@@ -772,16 +772,16 @@ function openEditPaperByDbclick() {
 			};
 		});
 	};
-}; // 점검중
+}; // checked!
 
 function openEditPaper() {
 	btnShowHideHandler("editPaper");
-}; // 점검중
+}; // checked!
 
 function openNewNaviCard() {
 	printEmptyNaviCard();
 	btnShowHideHandler("openNewPaper");
-}; // 점검중
+}; // checked!
 
 function saveNewNaviCard() {
 	let packagedNewNaviCard = packageNewNaviCard();
@@ -792,13 +792,13 @@ function saveNewNaviCard() {
 		requestPushPackagedNaviCard(spoonedBpData.bpId, packagedNewNaviCard);
 		alert("저장되었습니다.");
 	};
-}; // 점검중
+}; // checked!
 
 function cancelEditPaper() {
 	spoonBpData(spoonedBpData.bpTitle);
 	printSpoonedBpData();
 	putSelectbox("selectboxBpTitle");
-}; // 점검중
+}; // checked!
 
 // --------------------------------------------------
 // *** monitor Manager
@@ -819,7 +819,7 @@ function monitorBpTitleBlankOrDuplicates() {
 		alert("페이퍼 제목이 비어있습니다. 페이퍼 제목을 입력해주시기 바랍니다.");
 	};
 	return false;
-}; // 점검중
+}; // checked!
 
 function monitorBpTitleBlank() {
 	let packagedBpTitle = selectorById("bpTitle").value.trim();
@@ -829,7 +829,7 @@ function monitorBpTitleBlank() {
 		highLightBorder("bpTitle", "red");
 		alert("페이퍼 제목이 비어있습니다. 페이퍼 제목을 입력해주시기 바랍니다.");
 	};
-}; // 점검중
+}; // checked!
 
 function getSameBpTitleArray(packagedBpTitle) {
 	let filterSameIndexArray = (query) => {
@@ -837,7 +837,7 @@ function getSameBpTitleArray(packagedBpTitle) {
 	};
 	let sameBpTitleArray = filterSameIndexArray(packagedBpTitle);
 	return sameBpTitleArray;
-}; // 점검중
+}; // checked!
 
 // --------------------------------------------------
 // *** general Supporter
@@ -845,10 +845,10 @@ function getSameBpTitleArray(packagedBpTitle) {
 
 function selectorById(id) {
 	return document.getElementById(id);
-}; // 점검중
+}; // checked!
 
 function timeStamp() {
 	let now = new Date();
 	let nowString = now.toISOString();
 	return nowString;
-}; // 점검중
+}; // checked!
