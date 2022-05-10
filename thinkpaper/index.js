@@ -1,5 +1,3 @@
-// branch test_220510_01
-
 // const firebase = appFireBase; // firebase 자체의 버전 이슈로 있던 기능
 
 const db = firebase.database();
@@ -10,10 +8,31 @@ const SELECTBOX_BPTITLE_VALUE_INIT = "INIT";
 // --------------------------------------------------
 
 // HQ dept.
-let userData = {};
-let bpDataPool = {};
-let bpTitleArray = []; // 점검필요: bpIdArray로 바꾸기, selectbox는 별도로 만들기
-let spoonMemory = {};
+let userData = {}; // 리뷰: user의 계정 정보를 지니고 있는 오브젝트
+let bpDataPool = {}; // 리뷰: 서버의 bpData를 로컬로 그대로 가져온 오브젝트
+	// 투두: 오브젝트의 구성을 서버와 동일하게 맞춰야함
+let bpTitleArray = []; // 리뷰: bpData에 연동되어 모든 id를 저장하고 있는 오브젝트
+	// [이 오브젝트의 역할에 대한 생각정리]
+	// 1. 기존에는 어떤 오브젝트에 접근하기 위한 키로 활용하였음
+	// 2. 어떤 오브젝트에 접근하기위한 키가 필요한가? 라는 생각이 들었음
+	// 3. A방식: 어떤 오브젝트를 불러오기 위해서, 오브젝트 키를 선정하여 데이터를 가져왔다.
+	// 4. 이 방식은 아래 세가지 절차로 진행된다.
+	//	1) bpDataPool에서 오브젝트의 속성 파악하기 - 예) isMainBp가 있는가?
+	//	2) 해당 속성으로 파악된 키 갖기 예) isMainBp가 포함된 id가 무엇인가?
+	//	3) 해당 키로 bpDataPool에서 읽어오기 예) 그 id의 bpData를 읽어오기
+	// 5. 그런데, 여기서 아래와 같은 방식으로 개선이 가능하다.
+	//	1) bpData의 속성을 파악하고, 해당 parent의 데이터를 가져온다.
+	// 이렇게되면, global에 memory로 남겨놓고, id 상태값을 비교하여 진행하지 않아도된다.
+	// 이렇게 개선되기 위해서는 5-1)의 기능을 구현할 수 있는 로직이 필요하다.
+	
+	function spoonMainBp() {
+		// bpDataPool 중 isMainBp 값 포착하기
+		// isMainBp의 parent 값 포착하기
+		// parent 값 중 원하는 데이터 오브젝트로 묶기 or 그대로 ui에 뿌리기
+		// - 오브젝트, ui에 뿌리기 경우, 데이터 수정시 오브젝트로 묶지 않고, 바로 진행하는 것이 더 깔끔할 것 같다.
+	};
+	// bpIdArray로 바꾸기, selectbox는 별도로 만들기
+let spoonMemory = {}; // 리뷰: 현재 direction, navi, actionPlan의 id값을 지니고 있는 메모리 오브젝트
 let mainTagMemory = {};
 
 // stage dept.
