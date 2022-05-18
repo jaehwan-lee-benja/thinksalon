@@ -10,35 +10,45 @@
     },
     "bpDataPool": {
         "character": {
-            "characterId": {
-                "characterId": "",
-                "createdDate": "",
-                "editedDate": "",
-                "main": "",
-                "character": "",
+            "characterId": { 
+                "container": {
+                    "id": "",
+                    "createdDate": "",
+                    "editedDate": "",
+                    "main": "",
+                    "contents": ""
+                },
                 "direction": {
                     "directionId": {
-                        "dirctionId": "",
-                        "createdDate": "",
-                        "editedDate": "",
-                        "main": "",
-                        "direction": "",
+                        "container": {
+                            "id": "",
+                            "createdDate": "",
+                            "editedDate": "",
+                            "main": "",
+                            "contents": ""
+                        },
                         "navi": {
                             "naviId": {
-                                "naviId": "",
-                                "createdDate": "",
-                                "editedDate": "",
-                                "main": "",
-                                "naviArea": "",
-                                "naviA": "",
-                                "naviB": "",
+                                "container": {
+                                    "id": "",
+                                    "createdDate": "",
+                                    "editedDate": "",
+                                    "main": "",
+                                    "contents": {
+                                        "naviArea": "",
+                                        "naviA": "",
+                                        "naviB": ""
+                                    }
+                                },
                                 "action": {
                                     "actionId": {
-                                        "actionId": "",
+                                        "container": {
+                                        "id": "",
                                         "createdDate": "",
                                         "editedDate": "",
                                         "main": "",
-                                        "action": ""
+                                        "contents": ""
+                                        }
                                     }
                                 }
                             }
