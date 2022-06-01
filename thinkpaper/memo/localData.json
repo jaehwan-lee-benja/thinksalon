@@ -8,19 +8,19 @@
         "visitCounts": "",
         "visitRate": ""
     },
-    "bpDataPool": {
+    "bigPicture": {
         "character": {
-            "characterId": { 
-                "container": {
-                    "id": "",
+            "#$characterId": {
+                "id": "",
+                "props": {
                     "createdDate": "",
                     "editedDate": "",
                     "main": "",
-                    "contents": ""
+                    "contents": {"chararter":""}
                 },
                 "direction": {
                     "directionId": {
-                        "container": {
+                        "props": {
                             "id": "",
                             "createdDate": "",
                             "editedDate": "",

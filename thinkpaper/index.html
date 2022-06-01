@@ -42,31 +42,22 @@
             </div>
             <div id="divContentsControl">
                 <div>
-                    <div style="margin: 1rem 0;">
-                        <span>[캐릭터 별 큰그림 관리하기]<br></span>
-                        <select style="width: 100%; font-size: 0.8rem;" id="selectboxBpTitle"
-                            onchange="selectBpTitleBySelectbox();">
-                            <option value="INIT">클릭하여 이동</option>
-                        </select>
-                    </div>
                     <div>
                         <input id="openMainBp_btn" onClick="gotoMainBp()" type="button" value="메인으로 이동하기">
                     </div>
                 </div>
-                <div style="margin: 2rem 0;">
+                <!-- <div style="margin: 2rem 0;">
                     <p>[페이퍼 관리]</p>
                     <div id="divPageEdit_menu">
-                        <div>
-                            <input id="openEditPaper_btn" onClick="openEditPaper()" type="button" value="수정하기">
-                            <input id="cancelEditPaper_btn" onClick="cancelEditPaper()" type="button" value="작성(수정) 취소하기">
-                            <input id="saveEditedPaper_btn" onClick="saveEditedPaper()" type="button" value="저장하기">
-                            <input id="saveNewPaper_btn" onClick="saveNewPaper()" type="button" value="새 페이퍼로 저장하기">
-                            <input id="removePaper_btn" onClick="removePaper()" type="button" value="삭제하기">
-                            <input id="openNewPaper_btn" onClick="openNewPaper()" type="button" value="새 페이퍼 작성하기">
-                        </div>
+                        <input id="openEditPaper_btn" onClick="openEditPaper()" type="button" value="수정하기">
+                        <input id="cancelEditPaper_btn" onClick="cancelEditPaper()" type="button" value="작성(수정) 취소하기">
+                        <input id="saveEditedPaper_btn" onClick="saveEditedPaper()" type="button" value="저장하기">
+                        <input id="saveNewPaper_btn" onClick="saveNewPaper()" type="button" value="새 페이퍼로 저장하기">
+                        <input id="removePaper_btn" onClick="removePaper()" type="button" value="삭제하기">
+                        <input id="openNewPaper_btn" onClick="openNewPaper()" type="button" value="새 페이퍼 작성하기">
                     </div>
-                </div>
-                <div id="divPaperInfo">
+                </div> -->
+                <!-- <div id="divPaperInfo">
                     <p>[페이퍼 정보]</p>
                     <div style="margin: 0.5rem 0;">
                         <input id="setMainBp_btn" onClick="setMainBp()" type="button" value="메인 페이퍼로 설정하기">
@@ -97,7 +88,7 @@
                             </td>
                         </tr>
                     </table>
-                </div>
+                </div> -->
             </div>
             
         </div>
@@ -105,21 +96,61 @@
             <div>
                 <p type="text" id="guideMessage"></p>
             </div>
-            <div id="gridCharacter">
+            <!-- <div id="gridCharacter">
                 <div>
                     <h3>캐릭터</h3>
                 </div>
                 <div>
                     <textarea style="display: inline;" id="bpTitle" placeholder="예)개인으로서의 나" readonly></textarea>
+                    <div id="divPageEdit_menu">
+                        <input id="openEditPaper_btn_D" onClick="openEditPaper()" type="button" value="수정하기">
+                        <input id="cancelEditPaper_btn_D" onClick="cancelEditPaper()" type="button" value="작성(수정) 취소하기">
+                        <input id="saveEditedPaper_btn_D" onClick="saveEditedPaper()" type="button" value="저장하기">
+                        <input id="saveNewPaper_btn_D" onClick="saveNewCard()" type="button" value="새 카드로 저장하기">
+                        <input id="removePaper_btn_D" onClick="removePaper()" type="button" value="삭제하기">
+                        <input id="openNewPaper_btn_D" onClick="openNewPaper()" type="button" value="새 카드 작성하기">
+                    </div>
+                </div>
+            </div> -->
+            <div id="gridMainContents" class="character">
+                <div>
+                    <h2>캐릭터</h2>
+                    <h3>큰 그림의 주인공, 내 삶의 역할 별 캐릭터 구분하기</h3>
+                </div>
+                <div>
+                    <textarea id="character" placeholder="예)개인으로서의 나" readonly></textarea>
+                </div>
+                <div id="divPageEdit_menu">
+                    <input id="openEditPaper_btn_character" onClick="openEditPaper()" type="button" value="수정하기">
+                    <input id="cancelEditPaper_btn_character" onClick="cancelEditPaper()" type="button" value="작성(수정) 취소하기">
+                    <input id="saveEditedPaper_btn_character" onClick="saveEditedPaper()" type="button" value="저장하기">
+                    <input id="saveNewPaper_btn_character" onClick="saveNewCard()" type="button" value="새 카드로 저장하기">
+                    <input id="removePaper_btn_character" onClick="removePaper()" type="button" value="삭제하기">
+                    <input id="openNewPaper_btn_character" onClick="openNewPaper()" type="button" value="새 카드 작성하기">
+                </div>
+                <div style="margin: 1rem 0;">
+                    <span>[캐릭터 별 큰그림 관리하기]<br></span>
+                    <select style="width: 100%; font-size: 0.8rem;" id="selectboxBpTitle"
+                        onchange="selectBpTitleBySelectbox();">
+                        <option value="INIT">클릭하여 이동</option>
+                    </select>
                 </div>
             </div>
-            <div id="gridMainContents" class="divDriection">
+            <div id="gridMainContents" class="divDirection">
                 <div>
                     <h2>[D] 방향성</h2>
                     <h3>이 길을 나아가는 '본질 가치'는 무엇인가?(목적, 의미, Why)</h3>
                 </div>
                 <div>
                     <textarea id="direction" placeholder="예)건강한 삶 살기" readonly></textarea>
+                </div>
+                <div id="divPageEdit_menu">
+                    <input id="openEditPaper_btn_D" onClick="openEditPaper()" type="button" value="수정하기">
+                    <input id="cancelEditPaper_btn_D" onClick="cancelEditPaper()" type="button" value="작성(수정) 취소하기">
+                    <input id="saveEditedPaper_btn_D" onClick="saveEditedPaper()" type="button" value="저장하기">
+                    <input id="saveNewPaper_btn_D" onClick="saveNewCard()" type="button" value="새 카드로 저장하기">
+                    <input id="removePaper_btn_D" onClick="removePaper()" type="button" value="삭제하기">
+                    <input id="openNewPaper_btn_D" onClick="openNewPaper()" type="button" value="새 카드 작성하기">
                 </div>
             </div>
             <div id="gridMainContents">
@@ -140,10 +171,14 @@
                         <h4>현재위치</h4>
                         <textarea id="naviA" placeholder="예)불규칙한 식습관" readonly></textarea>
                     </div>
-                    <div>
-                        <input id="openNewNaviCard_btn" onClick="openNewNaviCard()" type="button" value="새 카드 만들기">
-                        <input id="saveNewNaviCard_btn" onClick="saveNewNaviCard()" type="button" value="새 카드 저장하기">
-                    </div>
+                    <!-- <div id="divPageEdit_menu">
+                        <input id="openEditPaper_btn_N" onClick="openEditPaper()" type="button" value="수정하기">
+                        <input id="cancelEditPaper_btn_N" onClick="cancelEditPaper()" type="button" value="작성(수정) 취소하기">
+                        <input id="saveEditedPaper_btn_N" onClick="saveEditedPaper()" type="button" value="저장하기">
+                        <input id="saveNewPaper_btn_N" onClick="saveNewPaper()" type="button" value="새 페이퍼로 저장하기">
+                        <input id="removePaper_btn_N" onClick="removePaper()" type="button" value="삭제하기">
+                        <input id="openNewPaper_btn_N" onClick="openNewPaper()" type="button" value="새 페이퍼 작성하기">
+                    </div> -->
                 </div>
             </div>
             <div id="gridMainContents">
@@ -152,10 +187,16 @@
                     <h3>'도달 지점'까지 가기위한 '구체적인 행동'은 어떤 것들이 있는가?</h3>
                 </div>
                 <div>
-                    <div>
-                        <textarea id="actionPlan" placeholder="예)식습관 일기 쓰기" readonly></textarea>
-                    </div>
+                    <textarea id="actionPlan" placeholder="예)식습관 일기 쓰기" readonly></textarea>
                 </div>
+                <!-- <div id="divPageEdit_menu">
+                    <input id="openEditPaper_btn_A" onClick="openEditPaper()" type="button" value="수정하기">
+                    <input id="cancelEditPaper_btn_A" onClick="cancelEditPaper()" type="button" value="작성(수정) 취소하기">
+                    <input id="saveEditedPaper_btn_A" onClick="saveEditedPaper()" type="button" value="저장하기">
+                    <input id="saveNewPaper_btn_A" onClick="saveNewPaper()" type="button" value="새 페이퍼로 저장하기">
+                    <input id="removePaper_btn_A" onClick="removePaper()" type="button" value="삭제하기">
+                    <input id="openNewPaper_btn_A" onClick="openNewPaper()" type="button" value="새 페이퍼 작성하기">
+                </div> -->
             </div>
         </div>
     </div>
