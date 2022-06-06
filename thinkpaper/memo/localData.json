@@ -29,7 +29,7 @@
                         },
                         "navi": {
                             "naviId": {
-                                "container": {
+                                "props": {
                                     "id": "",
                                     "createdDate": "",
                                     "editedDate": "",
@@ -42,7 +42,7 @@
                                 },
                                 "action": {
                                     "actionId": {
-                                        "container": {
+                                        "props": {
                                         "id": "",
                                         "createdDate": "",
                                         "editedDate": "",

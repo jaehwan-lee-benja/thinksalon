@@ -9,7 +9,7 @@ const SELECTBOX_BPTITLE_VALUE_INIT = "INIT";
 
 // HQ dept.
 let userData = {}; // 리뷰: user의 계정 정보를 지니고 있는 오브젝트
-let bpDataPool = {}; // 리뷰: 서버의 bpData를 로컬로 그대로 가져온 오브젝트
+let bigPicture = {}; // 리뷰: 서버의 bpData를 로컬로 그대로 가져온 오브젝트
 
 (function() {
 	logIn();
@@ -64,10 +64,9 @@ function requestReadBpData(user) {
 		snapshot.forEach(childSnap => {
 			let bpIdsKey = childSnap.key;
 			let bpDataValue = childSnap.val();
-			bpDataPool[bpIdsKey] = bpDataValue;
+			bigPicture[bpIdsKey] = bpDataValue;
 			// [질문] ID를 꼭 넣어야할까? 또는 서버에 입력할 때, ID가 들어가도록 할수는 없을까?
 		});
-		console.log("bpDataPool2 = ", bpDataPool);
 
 		// ui에 print하기
 		printBpData();
@@ -76,56 +75,23 @@ function requestReadBpData(user) {
 }; // 점검중
 
 function printBpData() {
-	let lastestDate = getLastestEditedDate();
-	console.log("getLastestEditedDate = ", lastestDate);
+	let lastestId = getLastestEditedId();
 
-	let printDataId = getIdByEditedDate(lastestDate);
-
-	console.log("printDataId = ", printDataId);
-
-	printOnUI(printDataId);
+	printOnUI(lastestId);
 
 };
 
-function getLastestEditedDate(){
-
-	let keys = Object.keys(bpDataPool.character);
-	console.log("keys = ", keys);
+function getLastestEditedId(){
+	let keys = Object.keys(bigPicture.character);
 	let list = keys.map( id => {
-		let c = bpDataPool.character[id]
-		console.log("c = ", c);
-		return {"id": id, "date": c.container.editedDate}
+		let c = bigPicture.character[id];
+		return {"id": id, "date": c.container.editedDate};
 	  }).reverse();
-
-	console.log("list = ", list);
-
-	let characterIdArray = getCharacterIdArray();
-	console.log("characterIdArray** = ", characterIdArray)
-	let characterEditedDateArray = [];
-	characterIdArray.forEach(ids => 
-		characterEditedDateArray.push(bpDataPool.character[ids].container.editedDate));
-	console.log("characterEditedDateArray = ", characterEditedDateArray);
-	// let lastestDate = new Date(Math.max(characterEditedDateArray)); [질문]
-	// let lastestDate = characterEditedDateArray.reverse()[0];
-	return lastestDate;
-};
-
-function getIdByEditedDate(lastestDate) {
-	let characterIdArray = Object.keys(bpDataPool.character);
-	for (let i = 0; i < characterIdArray.length; i++){
-		if(bpDataPool.character[characterIdArray[i]].container.editedDate == lastestDate){
-			return characterIdArray[i]
-		}
-	}
+	return list[0].id;
 };
 
 function printOnUI(printDataId) {
-	selectorById("character").value = bpDataPool.character[printDataId].container.contents.character;
-};
-
-function getIdByContents() {
-	let contentsOnUI = selectorById("character").value.trim();
-	// bpDataPool.character.container.contents = contentsOnUI
+	selectorById("character").value = bigPicture.character[printDataId].container.contents.character;
 };
 
 // ==================================================
@@ -139,7 +105,7 @@ function getIdByContents() {
 function requestPushPackagedData_character(packagedBpDataHere) {
 	db.ref("users")
 	.child(userData.uid)
-	.child("bpData")
+	.child("bigPicture")
 	.child("character")
 	.push(packagedBpDataHere);
 };
@@ -462,13 +428,8 @@ function saveNewPaper() {
 }; // 점검중
 
 function saveNewCard() {
-	console.log("saveNewPaper start");
 	let packagedBpData = packageNewCard();
-	// console.log("packagedBpData @saveNewPaper  = ",packagedBpData);
-
-	//sync Global packagedMemory["bpTitle"]
 	if (packagedBpData != null) {
-		console.log("packagedBpData != null");
 		requestPushPackagedData_character(packagedBpData);
 		alert("저장되었습니다.");
 	};
