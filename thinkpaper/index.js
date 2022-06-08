@@ -9,7 +9,7 @@ const SELECTBOX_BPTITLE_VALUE_INIT = "INIT";
 
 // HQ dept.
 let userData = {}; // 리뷰: user의 계정 정보를 지니고 있는 오브젝트
-let bigPicture = {}; // 리뷰: 서버의 bpData를 로컬로 그대로 가져온 오브젝트
+let bigPicture = {}; // 리뷰: 서버 bigPicture를 로컬로 가져온 오브젝트
 
 (function() {
 	logIn();
@@ -18,21 +18,22 @@ let bigPicture = {}; // 리뷰: 서버의 bpData를 로컬로 그대로 가져�
 // --------------------------------------------------
 // *** logIn Manager
 // --------------------------------------------------
+
 function logIn() {
 	firebase.auth().onAuthStateChanged(function (user) {
 		if (user != null) {
-			openEditPaperByDbclick();
 			requestReadUserData(user);
-			requestReadBpData(user); // 점검필요
+			requestReadBpData(user);
+			// openEditPaperByDbclick(); 향후 테스트하기
 		} else {
 			window.location.replace("login.html");
 		};
 	});
-}; // 점검중
+}; // 진행중..
 
 function logOut() {
 	firebase.auth().signOut();
-}; // 점검완료
+}; // Done!
 
 // ==================================================
 // *** StoL dept
@@ -57,9 +58,10 @@ function requestReadUserData(user) {
 
 function requestReadBpData(user) {
 
-	const userRef = db.ref("users").child(user.uid).child("bpData");
-	
+	const userRef = db.ref("users").child(user.uid).child("bigPicture");
+
 	userRef.on("value", (snapshot) => {
+
 
 		snapshot.forEach(childSnap => {
 			let bpIdsKey = childSnap.key;
@@ -69,29 +71,38 @@ function requestReadBpData(user) {
 		});
 
 		// ui에 print하기
-		printBpData();
+
+		console.log("bigPicture = ", bigPicture);
+	
+		let characterKeysArray = Object.keys(bigPicture.character);
+		console.log("characterKeysArray = ", characterKeysArray);
+
+		if (characterKeysArray.length > 0) {
+			showBigPicture();
+		} else {
+			showItIfNoBpData();
+		};
 
 	});
 }; // 점검중
 
-function printBpData() {
+function showBigPicture() {
 	let lastestId = getLastestEditedId();
-
 	printOnUI(lastestId);
-
+	btnShowHideHandlerByClassName("character","readPaper");
 };
 
 function getLastestEditedId(){
 	let keys = Object.keys(bigPicture.character);
 	let list = keys.map( id => {
 		let c = bigPicture.character[id];
-		return {"id": id, "date": c.container.editedDate};
+		return {"id": id, "date": c.props.editedDate};
 	  }).reverse();
 	return list[0].id;
 };
 
 function printOnUI(printDataId) {
-	selectorById("character").value = bigPicture.character[printDataId].container.contents.character;
+	selectorById("character").value = bigPicture.character[printDataId].props.contents.character;
 };
 
 // ==================================================
@@ -103,11 +114,13 @@ function printOnUI(printDataId) {
 // --------------------------------------------------
 
 function requestPushPackagedData_character(packagedBpDataHere) {
+	console.log("packagedBpDataHere = ", packagedBpDataHere);
 	db.ref("users")
 	.child(userData.uid)
 	.child("bigPicture")
 	.child("character")
-	.push(packagedBpDataHere);
+	.child(packagedBpDataHere.id)
+	.set(packagedBpDataHere);
 };
 
 function requestPushPackagedData_direction(characterId, packagedBpDataHere) {
@@ -165,18 +178,21 @@ function packageNewCard() {
 
 	console.log("packageNewCard start here");
 
+		let idNew = uuidv4();
 		let packagedData = {};
-		packagedData["container"] = {};
-		let characterContainer = packagedData["container"];
+		packagedData["props"] = {};
+		packagedData["id"] = idNew;
+		packagedData["direction"] = "";
 
-		// characterContainer["id"] = characterId; // [질문] 가능할까?
+		let characterContainer;
+		characterContainer = packagedData["props"];
+
 		characterContainer["createdDate"] = timeStamp();
 		characterContainer["editedDate"] = timeStamp();
 		characterContainer["main"] = "";
 		characterContainer["contents"] = {};
 		characterContainer["contents"]["character"] = selectorById("character").value.trim();
 
-		console.log("packagedData = ", packagedData);
 		return packagedData;
 }; // 점검중
 
@@ -196,11 +212,11 @@ function printSpoonedBpData() {
 
 function printEmptySpoonedBpData() {
 	selectorById("character").value = "";
-	selectorById("direction").value = "";
-	selectorById("naviArea").value = "";
-	selectorById("naviB").value = "";
-	selectorById("naviA").value = "";
-	selectorById("actionPlan").value = "";
+	// selectorById("direction").value = "";
+	// selectorById("naviArea").value = "";
+	// selectorById("naviB").value = "";
+	// selectorById("naviA").value = "";
+	// selectorById("actionPlan").value = "";
 	btnShowHideHandlerByClassName("character","createFirstPaper");
 }; // 점검중
 
@@ -215,6 +231,8 @@ function uiShow(id) {
 }; // 점검중
 
 function btnShowHideHandlerByClassName(className, state) {
+
+	console.log("paperState = ", state);
 
 	uiHide("openEditPaper_btn_"+className);
 	uiHide("cancelEditPaper_btn_"+className);
@@ -351,7 +369,7 @@ function resizeTextarea() {
 	};
 }; // 점검중
 
-function printItIfNoBpData() {
+function showItIfNoBpData() {
 	printEmptySpoonedBpData();
 	selectorById("guideMessage").innerHTML = "'파란색으로 쓰여진 곳의 네모칸에 내용을 작성해보세요~!'"
 }; // 점검중
@@ -446,7 +464,6 @@ function saveEditedPaper() {
 
 }; // 점검중
 
-
 function removePaper() {
 	packagedRemoveBpData = spoonedBpData;
 
@@ -524,3 +541,10 @@ function timeStamp() {
 function getCharacterIdArray() {
 	return Object.keys(bpDataPool.character);
 };
+
+function uuidv4() {
+	return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+	  (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+	);
+  }
+  
