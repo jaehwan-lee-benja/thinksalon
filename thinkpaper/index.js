@@ -1,23 +1,14 @@
-// const firebase = appFireBase; // firebase 자체의 버전 이슈로 있던 기능
-
 const db = firebase.database();
 const SELECTBOX_BPTITLE_VALUE_INIT = "INIT";
 
-// --------------------------------------------------
-// *** gloabl items
-// --------------------------------------------------
-
-// HQ dept.
-let userData = {}; // 리뷰: user의 계정 정보를 지니고 있는 오브젝트
-let bigPicture = {}; // 리뷰: 서버 bigPicture를 로컬로 가져온 오브젝트
+let userData = {};
+let bigPicture = {};
 
 (function() {
 	logIn();
 })();
 
-// --------------------------------------------------
-// *** logIn Manager
-// --------------------------------------------------
+///// logIn manager
 
 function logIn() {
 	firebase.auth().onAuthStateChanged(function (user) {
@@ -29,19 +20,13 @@ function logIn() {
 			window.location.replace("login.html");
 		};
 	});
-}; // 진행중..
+};
 
 function logOut() {
 	firebase.auth().signOut();
-}; // Done!
+};
 
-// ==================================================
-// *** StoL dept
-// ==================================================
-
-// --------------------------------------------------
-// *** StoL manager
-// --------------------------------------------------
+///// StoL manager
 
 function requestReadUserData(user) {
 	const userRef = db.ref("users").child(user.uid).child("user");
@@ -54,7 +39,7 @@ function requestReadUserData(user) {
 		});
 		printUserData(userData);
 	});
-}; // 완료
+};
 
 function requestReadBpData(user) {
 
@@ -62,20 +47,13 @@ function requestReadBpData(user) {
 
 	userRef.on("value", (snapshot) => {
 
-
 		snapshot.forEach(childSnap => {
 			let bpIdsKey = childSnap.key;
 			let bpDataValue = childSnap.val();
 			bigPicture[bpIdsKey] = bpDataValue;
-			// [질문] ID를 꼭 넣어야할까? 또는 서버에 입력할 때, ID가 들어가도록 할수는 없을까?
 		});
-
-		// ui에 print하기
-
-		console.log("bigPicture = ", bigPicture);
 	
 		let characterKeysArray = Object.keys(bigPicture.character);
-		console.log("characterKeysArray = ", characterKeysArray);
 
 		if (characterKeysArray.length > 0) {
 			showBigPicture();
@@ -84,11 +62,11 @@ function requestReadBpData(user) {
 		};
 
 	});
-}; // 점검중
+};
 
 function showBigPicture() {
 	let lastestId = getLastestEditedId();
-	printOnUI(lastestId);
+	showItOnUI(lastestId);
 	btnShowHideHandlerByClassName("character","readPaper");
 };
 
@@ -101,17 +79,13 @@ function getLastestEditedId(){
 	return list[0].id;
 };
 
-function printOnUI(printDataId) {
+function showItOnUI(printDataId) {
 	selectorById("character").value = bigPicture.character[printDataId].props.contents.character;
 };
 
-// ==================================================
-// *** LtoS dept
-// ==================================================
+///// LtoS dept
 
-// --------------------------------------------------
-// *** LtoS manager
-// --------------------------------------------------
+///// LtoS manager
 
 function requestPushPackagedData_character(packagedBpDataHere) {
 	console.log("packagedBpDataHere = ", packagedBpDataHere);
@@ -121,16 +95,6 @@ function requestPushPackagedData_character(packagedBpDataHere) {
 	.child("character")
 	.child(packagedBpDataHere.id)
 	.set(packagedBpDataHere);
-};
-
-function requestPushPackagedData_direction(characterId, packagedBpDataHere) {
-	db.ref("users")
-	.child(userData.uid)
-	.child("bpData")
-	.child("character")
-	.child(characterId)
-	.child("direction")
-	.push(packagedBpDataHere);
 };
 
 function requestUpdatePackagedBpData(packagedBpDataHere) {
@@ -151,28 +115,16 @@ function requestRemovePackagedBpData(packagedBpDataHere) {
 	.remove();
 };
 
-// --------------------------------------------------
-// *** userData Manager
-// --------------------------------------------------
+///// user data manager
 
 function printUserData(userData) {
 	let userName = userData.name;
 	let userEmail = userData.email;
 	selectorById("nameChecked").innerHTML = "생각 설계자: " + userName + " 대표"
 	selectorById("emailChecked").innerHTML = "(" + userEmail + ")"
-}; // 점검중
+};
 
-// --------------------------------------------------
-// *** bpDataPool Manager
-// --------------------------------------------------
-
-// --------------------------------------------------
-// *** mainTag Manager
-// --------------------------------------------------
-
-// --------------------------------------------------
-// *** stage Manager
-// --------------------------------------------------
+///// local data manager
 
 function packageNewCard() {
 
@@ -194,21 +146,9 @@ function packageNewCard() {
 		characterContainer["contents"]["character"] = selectorById("character").value.trim();
 
 		return packagedData;
-}; // 점검중
+};
 
-// --------------------------------------------------
-// *** UI Manager
-// --------------------------------------------------
-
-function printSpoonedBpData() {
-	selectorById("character").value = spoonedBpData["bpTitle"];
-	selectorById("direction").value = spoonedBpData["direction"];
-	selectorById("naviArea").value = spoonedBpData[spoonMemory["naviId"]]["naviArea"];
-	selectorById("naviB").value = spoonedBpData[spoonMemory["naviId"]]["naviB"];
-	selectorById("naviA").value = spoonedBpData[spoonMemory["naviId"]]["naviA"];
-	selectorById("actionPlan").value = spoonedBpData[spoonMemory["naviId"]][spoonMemory["actionPlanId"]]["actionPlan"];
-	btnShowHideHandlerByClassName("character","readPaper");
-}; // 점검중
+///// UI Manager
 
 function printEmptySpoonedBpData() {
 	selectorById("character").value = "";
@@ -218,17 +158,15 @@ function printEmptySpoonedBpData() {
 	// selectorById("naviA").value = "";
 	// selectorById("actionPlan").value = "";
 	btnShowHideHandlerByClassName("character","createFirstPaper");
-}; // 점검중
-
-// 버튼, 편집모드 UI 조절
+};
 
 function uiHide(id) {
 	selectorById(id).style.display = "none";
-}; // 점검중
+};
 
 function uiShow(id) {
 	selectorById(id).style.display = "initial";
-}; // 점검중
+};
 
 function btnShowHideHandlerByClassName(className, state) {
 
@@ -270,7 +208,7 @@ function btnShowHideHandlerByClassName(className, state) {
 	}
 	// btnShowHideHandler_mainBp(state, section);
 	resizeTextarea();
-}; // 점검중
+};
 
 function editModeHandlerByClassName(className, paperMode) {
 	function textareaReadOnly(id, check){
@@ -288,7 +226,7 @@ function editModeHandlerByClassName(className, paperMode) {
 		textareaBorderColorHandlerByClass(className, "1px", "#c8c8c8");
 		textareaReadOnly("character", true);
 	};
-}; // 점검중
+};
 
 function editModeHandler(paperMode) {
 	function textareaReadOnly(id, check){
@@ -315,7 +253,7 @@ function editModeHandler(paperMode) {
 		textareaReadOnly("actionPlan", true);
 		textareaBorderColorHandler("1px", "#c8c8c8");
 	};
-}; // 점검중
+};
 
 function textareaBorderColorHandler(px, color) {
     setTimeout(()=>{
@@ -337,24 +275,6 @@ function textareaBorderColorHandlerByClass(className, px, color) {
 	},1);
 };
 
-function btnShowHideHandler_mainBp(state, section) {
-	uiHide("setMainBp_btn", section);
-	uiHide("openMainBp_btn", section);
-	uiHide("setMainBp_txt", section);
-	if (spoonedBpData.isMainBp == "main") {
-		uiShow("setMainBp_txt");
-	} else {
-		if(state != "createFirstPaper") {
-			uiShow("openMainBp_btn", section);
-			uiShow("setMainBp_btn", section);
-		};
-	};
-}; // 점검중
-
-function highLightBorder(id, color) {
-	//return selectorById(id).style.borderColor = color;
-}; // 점검중
-
 function resizeTextarea() {
 	// 참고: https://stackoverflow.com/questions/454202/creating-a-textarea-with-auto-resize
 	const tx = document.getElementsByTagName("textarea");
@@ -367,16 +287,14 @@ function resizeTextarea() {
 		this.style.height = "auto";
 		this.style.height = (this.scrollHeight) + "px";
 	};
-}; // 점검중
+};
 
 function showItIfNoBpData() {
 	printEmptySpoonedBpData();
 	selectorById("guideMessage").innerHTML = "'파란색으로 쓰여진 곳의 네모칸에 내용을 작성해보세요~!'"
-}; // 점검중
+};
 
-// --------------------------------------------------
-// *** selectbox Manager
-// --------------------------------------------------
+///// selectbox Manager
 
 function putSelectbox(selectboxId) {
 
@@ -402,7 +320,7 @@ function putSelectbox(selectboxId) {
 		selectbox.insertBefore(option, selectbox.lastChild);
 	};
 	printBpTitleSpoonOnSelectbox();
-}; // 점검중
+};
 
 function printBpTitleSpoonOnSelectbox() {
 
@@ -419,31 +337,15 @@ function printBpTitleSpoonOnSelectbox() {
 		};
 	};
 
-}; // 점검중
+};
 
 function selectBpTitleBySelectbox() {
 	let bpTitleSpoon = pickupBpTitleSpoonBySelectbox();
 	spoonBpData(bpTitleSpoon);
 	printSpoonedBpData();
-}; // testing..
+};
 
-// --------------------------------------------------
-// *** CRUD Manager
-// --------------------------------------------------
-
-function saveNewPaper() {
-	console.log("saveNewPaper start");
-	let packagedBpData = packageNewBpData();
-	console.log("packagedBpData @saveNewPaper  = ",packagedBpData);
-
-	//sync Global packagedMemory["bpTitle"]
-	if (packagedBpData != null) {
-		console.log("packagedBpData != null");
-		packagedMemory["bpTitle"] = packagedBpData.bpTitle;
-		requestPushPackagedBpData(packagedBpData);
-		alert("저장되었습니다.");
-	};
-}; // 점검중
+///// CRUD Manager
 
 function saveNewCard() {
 	let packagedBpData = packageNewCard();
@@ -451,7 +353,7 @@ function saveNewCard() {
 		requestPushPackagedData_character(packagedBpData);
 		alert("저장되었습니다.");
 	};
-}; // 점검중
+};
 
 function saveEditedPaper() {
 	let packagedBpData = packageEditedBpData();
@@ -462,7 +364,7 @@ function saveEditedPaper() {
 	requestUpdatePackagedBpData(packagedBpData);
 	alert("저장되었습니다.");
 
-}; // 점검중
+};
 
 function removePaper() {
 	packagedRemoveBpData = spoonedBpData;
@@ -479,12 +381,12 @@ function removePaper() {
 		alert("삭제되었습니다.");
 		location.reload();
 	};
-}; // 점검중
+};
 
 function openNewPaper() {
 	printEmptySpoonedBpData();
 	btnShowHideHandlerByClassName("character","openNewPaper");
-}; // 점검중
+};
 
 function openEditPaperByDbclick() {
 	const TextareaOnCard = document.getElementsByTagName("textarea");
@@ -496,47 +398,29 @@ function openEditPaperByDbclick() {
 			};
 		});
 	};
-}; // 점검중
+};
 
 function openEditPaper() {
 	btnShowHideHandlerByClassName("character","editPaper");
-}; // 점검중
-
-function openNewNaviCard() {
-	printEmptyNaviCard();
-	btnShowHideHandlerByClassName("character","openNewPaper");
-}; // 점검중
-
-function saveNewNaviCard() {
-	let packagedNewNaviCard = packageNewNaviCard();
-
-	//sync Global packagedMemory["bpTitle"]
-	if (packagedNewNaviCard != null) {
-		// packagedMemory["bpTitle"] = packagedNewNaviCard.bpTitle;
-		requestPushPackagedNaviCard(spoonedBpData.bpId, packagedNewNaviCard);
-		alert("저장되었습니다.");
-	};
-}; // 점검중
+};
 
 function cancelEditPaper() {
 	spoonBpData(spoonedBpData.bpTitle);
 	printSpoonedBpData();
 	putSelectbox("selectboxBpTitle");
-}; // 점검중
+};
 
-// --------------------------------------------------
-// *** general Supporter
-// --------------------------------------------------
+///// general supporter
 
 function selectorById(id) {
 	return document.getElementById(id);
-}; // 점검중
+};
 
 function timeStamp() {
 	let now = new Date();
 	let nowString = now.toISOString();
 	return nowString;
-}; // 점검중
+};
 
 function getCharacterIdArray() {
 	return Object.keys(bpDataPool.character);
@@ -547,4 +431,3 @@ function uuidv4() {
 	  (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
 	);
   }
-  
