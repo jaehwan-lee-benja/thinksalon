@@ -13,33 +13,33 @@
             "#$characterId": {
                 "id": "",
                 "parentsId": "",
-                "level": "character",
                 "props": {
                     "createdDate": "",
                     "editedDate": "",
                     "main": "",
+                    "level": "character",
                     "contents": {"character":""}
                 },
                 "children": {
                     "#$directionId": {
                         "id": "",
                         "parentsId": "",
-                        "level": "direction",
                         "props": {
                             "createdDate": "",
                             "editedDate": "",
                             "main": "",
+                            "level": "direction",
                             "contents": {"direction":""}
                         },
                         "children": {
                             "#$naviId": {
                                 "id": "",
                                 "parentsId": "",
-                                "level": "navi",
                                 "props": {
                                     "createdDate": "",
                                     "editedDate": "",
                                     "main": "",
+                                    "level": "navi",
                                     "contents": {
                                         "navi":"",
                                         "naviA":"",
@@ -49,11 +49,11 @@
                                     "#$actionPlanId": {
                                         "id": "",
                                         "parentsId": "",
-                                        "level": "actionPlan",
                                         "props": {
                                             "createdDate": "",
                                             "editedDate": "",
                                             "main": "",
+                                            "level": "actionPlan",
                                             "contents": {"actionPlan":""}
                                         },
                                         "children": ""

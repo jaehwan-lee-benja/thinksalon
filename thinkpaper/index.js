@@ -37,7 +37,7 @@ function requestReadUserData(user) {
 			value["uid"] = childSnap.key;
 			userData[key] = value;
 		});
-		printUserData(userData);
+		showUserData(userData);
 	});
 };
 
@@ -76,6 +76,7 @@ function getLastestEditedId(){
 		let c = bigPicture.character[id];
 		return {"id": id, "date": c.props.editedDate};
 	  }).reverse();
+	  // [질문] reverse가 왜 date 기준으로 되는것일까? id 기준으로 되지는 않을까? 
 	return list[0].id;
 };
 
@@ -107,17 +108,18 @@ function requestUpdatePackagedBpData(packagedBpDataHere) {
 		});
 };
 
-function requestRemovePackagedBpData(packagedBpDataHere) {
+function requestRemoveByCharacterId(characterId) {
 	db.ref("users")
 	.child(userData.uid)
-	.child("bpData")
-	.child(packagedBpDataHere.bpId)
+	.child("bigPicture")
+	.child("character")
+	.child(characterId)
 	.remove();
 };
 
 ///// user data manager
 
-function printUserData(userData) {
+function showUserData(userData) {
 	let userName = userData.name;
 	let userEmail = userData.email;
 	selectorById("nameChecked").innerHTML = "생각 설계자: " + userName + " 대표"
@@ -126,26 +128,67 @@ function printUserData(userData) {
 
 ///// local data manager
 
-function packageNewCard() {
+function packageNewCard(level) {
 
 	console.log("packageNewCard start here");
 
 		let idNew = uuidv4();
+
 		let packagedData = {};
-		packagedData["props"] = {};
 		packagedData["id"] = idNew;
-		packagedData["direction"] = "";
+		packagedData["parentsId"] = "";
+		packagedData["props"] = {};
+		packagedData["children"] = "";
 
-		let characterContainer;
-		characterContainer = packagedData["props"];
+		let props = packagedData["props"];
+		props["createdDate"] = timeStamp();
+		props["editedDate"] = timeStamp();
+		props["main"] = "";
+		props["level"] = level;
+		props["contents"] = {};
 
-		characterContainer["createdDate"] = timeStamp();
-		characterContainer["editedDate"] = timeStamp();
-		characterContainer["main"] = "";
-		characterContainer["contents"] = {};
-		characterContainer["contents"]["character"] = selectorById("character").value.trim();
+		let contents = props["contents"];
+		switch(level){
+			case "character" :
+				contents["character"] = selectorById("character").value.trim();
+				break;
+			case "direction" :
+				contents["direction"] = selectorById("direction").value.trim();
+				break;
+			case "navi" :
+				contents["naviArea"] = selectorById("naviArea").value.trim();
+				contents["naviA"] = selectorById("naviA").value.trim();
+				contents["naviB"] = selectorById("naviArea").value.trim();
+				break;
+			case "actionPlan" :
+				contents["actionPlan"] = selectorById("actionPlan").value.trim();
+				break;
+			default: 
+				let level = null;
+		};
 
 		return packagedData;
+};
+
+function catchId() {
+
+	let valueCharacter = document.getElementById("character").value;
+
+	let characterKeysArray = Object.keys(bigPicture.character);
+	let idCharacterArray = characterKeysArray.map( id => {
+		let c = bigPicture.character[id];
+		return {"id": id, "character": c.props.contents.character};
+	  });
+
+	// 배열의 특정 값 찾기 - 참고 링크: https://hianna.tistory.com/406
+	function isValueCharacter(element) {
+		if(element.character == valueCharacter) {
+			return true;
+		};
+	};
+	const character = idCharacterArray.find(isValueCharacter);
+	return character.id;
+
 };
 
 ///// UI Manager
@@ -348,7 +391,7 @@ function selectBpTitleBySelectbox() {
 ///// CRUD Manager
 
 function saveNewCard() {
-	let packagedBpData = packageNewCard();
+	let packagedBpData = packageNewCard("character");
 	if (packagedBpData != null) {
 		requestPushPackagedData_character(packagedBpData);
 		alert("저장되었습니다.");
@@ -366,17 +409,10 @@ function saveEditedPaper() {
 
 };
 
-function removePaper() {
-	// 지금 적혀있는 값으로 로컬에서 오브젝트를 찾고
-	// (부모 키값도 같이 넣어놓을 필요가 있겠다. 제이스 구조에서 이름도 child라고 수정하자.)
-	packagedRemoveBpData = spoonedBpData;
-	
-	if (packagedRemoveBpData.bpTitle == mainTagMemory["bpTitle"]) {
-		setAltMainBpTitle(packagedRemoveBpData);
-	};
-
+function removeCard() {
+	let removeId = catchId();
 	if (confirm("정말 삭제하시겠습니까? 삭제가 완료되면, 해당 내용은 다시 복구될 수 없습니다.")) {
-		requestRemovePackagedBpData(packagedRemoveBpData);
+		requestRemoveByCharacterId(removeId);
 		alert("삭제되었습니다.");
 		location.reload();
 	};
@@ -429,4 +465,4 @@ function uuidv4() {
 	return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
 	  (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
 	);
-  }
+};
