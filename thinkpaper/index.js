@@ -367,10 +367,9 @@ function saveEditedPaper() {
 };
 
 function removePaper() {
+	// 지금 적혀있는 값으로 로컬에서 오브젝트를 찾고
+	// (부모 키값도 같이 넣어놓을 필요가 있겠다. 제이스 구조에서 이름도 child라고 수정하자.)
 	packagedRemoveBpData = spoonedBpData;
-
-	//sync Global packagedMemory["bpTitle"]
-	packagedMemory["bpTitle"] = packagedRemoveBpData.bpTitle;
 	
 	if (packagedRemoveBpData.bpTitle == mainTagMemory["bpTitle"]) {
 		setAltMainBpTitle(packagedRemoveBpData);

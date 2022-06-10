@@ -12,43 +12,51 @@
         "character": {
             "#$characterId": {
                 "id": "",
+                "parentsId": "",
+                "level": "character",
                 "props": {
                     "createdDate": "",
                     "editedDate": "",
                     "main": "",
-                    "contents": {"chararter":""}
+                    "contents": {"character":""}
                 },
-                "direction": {
-                    "directionId": {
+                "children": {
+                    "#$directionId": {
+                        "id": "",
+                        "parentsId": "",
+                        "level": "direction",
                         "props": {
-                            "id": "",
                             "createdDate": "",
                             "editedDate": "",
                             "main": "",
-                            "contents": ""
+                            "contents": {"direction":""}
                         },
-                        "navi": {
-                            "naviId": {
+                        "children": {
+                            "#$naviId": {
+                                "id": "",
+                                "parentsId": "",
+                                "level": "navi",
                                 "props": {
-                                    "id": "",
                                     "createdDate": "",
                                     "editedDate": "",
                                     "main": "",
                                     "contents": {
-                                        "naviArea": "",
-                                        "naviA": "",
-                                        "naviB": ""
-                                    }
+                                        "navi":"",
+                                        "naviA":"",
+                                        "naviB":""}
                                 },
-                                "action": {
-                                    "actionId": {
-                                        "props": {
+                                "children": {
+                                    "#$actionPlanId": {
                                         "id": "",
-                                        "createdDate": "",
-                                        "editedDate": "",
-                                        "main": "",
-                                        "contents": ""
-                                        }
+                                        "parentsId": "",
+                                        "level": "actionPlan",
+                                        "props": {
+                                            "createdDate": "",
+                                            "editedDate": "",
+                                            "main": "",
+                                            "contents": {"actionPlan":""}
+                                        },
+                                        "children": ""
                                     }
                                 }
                             }
