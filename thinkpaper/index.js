@@ -2,7 +2,7 @@ const db = firebase.database();
 const SELECTBOX_BPTITLE_VALUE_INIT = "INIT";
 
 let userData = {};
-let bigPicture = {};
+let bigPicture = {character:""};
 
 (function() {
 	logIn();
@@ -14,8 +14,8 @@ function logIn() {
 	firebase.auth().onAuthStateChanged(function (user) {
 		if (user != null) {
 			requestReadUserData(user);
-			requestReadBpData(user);
-			// openEditPaperByDbclick(); 향후 테스트하기
+			requestReadBigPicture(user);
+			openEditPaperByDbclick();
 		} else {
 			window.location.replace("login.html");
 		};
@@ -41,7 +41,7 @@ function requestReadUserData(user) {
 	});
 };
 
-function requestReadBpData(user) {
+function requestReadBigPicture(user) {
 
 	const userRef = db.ref("users").child(user.uid).child("bigPicture");
 
@@ -52,6 +52,8 @@ function requestReadBpData(user) {
 			let bpDataValue = childSnap.val();
 			bigPicture[bpIdsKey] = bpDataValue;
 		});
+
+		console.log("bigPicture = ", bigPicture);
 	
 		let characterKeysArray = Object.keys(bigPicture.character);
 
@@ -88,22 +90,22 @@ function showItOnUI(printDataId) {
 
 ///// LtoS manager
 
-function requestPushPackagedData_character(packagedBpDataHere) {
-	console.log("packagedBpDataHere = ", packagedBpDataHere);
+function requestPushPackagedData_character(packagedDataHere) {
 	db.ref("users")
 	.child(userData.uid)
 	.child("bigPicture")
 	.child("character")
-	.child(packagedBpDataHere.id)
-	.set(packagedBpDataHere);
+	.child(packagedDataHere.id)
+	.set(packagedDataHere);
 };
 
-function requestUpdatePackagedBpData(packagedBpDataHere) {
+function requestUpdatePackagedData_character(packagedDataHere) {
 	db.ref("users")
 	.child(userData.uid)
-	.child("bpData")
-	.child(packagedBpDataHere.bpId)
-	.update(packagedBpDataHere, (e) => {
+	.child("bigPicture")
+	.child("character")
+	.child(packagedDataHere.id)
+	.update(packagedDataHere, (e) => {
 		console.log("** update completed = ", e);
 		});
 };
@@ -170,15 +172,55 @@ function packageNewCard(level) {
 		return packagedData;
 };
 
-function catchId() {
+function packageEditedCard(level) {
+
+	console.log("packageEditedCard start here");
+
+		let packagedData = {};
+		packagedData["id"] = catchId_character();
+		packagedData["props"] = {};
+
+		let props = packagedData["props"];
+		props["editedDate"] = timeStamp();
+		props["contents"] = {};
+
+		let contents = props["contents"];
+		switch(level){
+			case "character" :
+				contents["character"] = selectorById("character").value.trim();
+				break;
+			case "direction" :
+				contents["direction"] = selectorById("direction").value.trim();
+				break;
+			case "navi" :
+				contents["naviArea"] = selectorById("naviArea").value.trim();
+				contents["naviA"] = selectorById("naviA").value.trim();
+				contents["naviB"] = selectorById("naviArea").value.trim();
+				break;
+			case "actionPlan" :
+				contents["actionPlan"] = selectorById("actionPlan").value.trim();
+				break;
+			default: 
+				let level = null;
+		};
+
+		return packagedData;
+};
+
+function catchId_character() {
 
 	let valueCharacter = document.getElementById("character").value;
 
+	console.log("valueCharacter = ", valueCharacter);
+
 	let characterKeysArray = Object.keys(bigPicture.character);
+
 	let idCharacterArray = characterKeysArray.map( id => {
 		let c = bigPicture.character[id];
 		return {"id": id, "character": c.props.contents.character};
 	  });
+
+	console.log("idCharacterArray = ", idCharacterArray);
 
 	// 배열의 특정 값 찾기 - 참고 링크: https://hianna.tistory.com/406
 	function isValueCharacter(element) {
@@ -186,7 +228,12 @@ function catchId() {
 			return true;
 		};
 	};
+
 	const character = idCharacterArray.find(isValueCharacter);
+
+	console.log("character = ", character);
+	console.log("character.id = ", character.id);
+
 	return character.id;
 
 };
@@ -398,19 +445,16 @@ function saveNewCard() {
 	};
 };
 
-function saveEditedPaper() {
-	let packagedBpData = packageEditedBpData();
+function saveEditedCard() {
+	let packagedData = packageEditedCard("character");
 
-	//sync Global packagedMemory["bpTitle"]
-	packagedMemory["bpTitle"] = packagedBpData.bpTitle;
-
-	requestUpdatePackagedBpData(packagedBpData);
+	requestUpdatePackagedBpData(packagedData);
 	alert("저장되었습니다.");
 
 };
 
 function removeCard() {
-	let removeId = catchId();
+	let removeId = catchId_character();
 	if (confirm("정말 삭제하시겠습니까? 삭제가 완료되면, 해당 내용은 다시 복구될 수 없습니다.")) {
 		requestRemoveByCharacterId(removeId);
 		alert("삭제되었습니다.");
@@ -458,7 +502,7 @@ function timeStamp() {
 };
 
 function getCharacterIdArray() {
-	return Object.keys(bpDataPool.character);
+	return Object.keys(bigPicture.character);
 };
 
 function uuidv4() {

@@ -16,6 +16,7 @@
                 "props": {
                     "createdDate": "",
                     "editedDate": "",
+                    "readDate": "",
                     "main": "",
                     "level": "character",
                     "contents": {"character":""}
@@ -27,6 +28,7 @@
                         "props": {
                             "createdDate": "",
                             "editedDate": "",
+                            "readDate": "",
                             "main": "",
                             "level": "direction",
                             "contents": {"direction":""}
@@ -38,6 +40,7 @@
                                 "props": {
                                     "createdDate": "",
                                     "editedDate": "",
+                                    "readDate": "",
                                     "main": "",
                                     "level": "navi",
                                     "contents": {
@@ -52,6 +55,7 @@
                                         "props": {
                                             "createdDate": "",
                                             "editedDate": "",
+                                            "readDate": "",
                                             "main": "",
                                             "level": "actionPlan",
                                             "contents": {"actionPlan":""}
