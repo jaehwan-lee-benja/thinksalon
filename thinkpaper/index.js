@@ -84,6 +84,9 @@ function getLastestEditedId(){
 
 function showItOnUI(printDataId) {
 	selectorById("character").value = bigPicture.character[printDataId].props.contents.character;
+	selectorById("cardId_character").value = bigPicture.character[printDataId].id;
+	console.log("test = ", bigPicture.character[printDataId].id);
+	console.log(selectorById("cardId_character").value);
 };
 
 ///// LtoS dept
@@ -177,7 +180,8 @@ function packageEditedCard(level) {
 	console.log("packageEditedCard start here");
 
 		let packagedData = {};
-		packagedData["id"] = catchId_character();
+		packagedData["id"] = selectorById("cardId_character").value; //[질문] 이 방식에 대해(글로은 아닌 요소 숨겨서 값 가져오기)
+		console.log("packagedData[id] = ", packagedData["id"]);
 		packagedData["props"] = {};
 
 		let props = packagedData["props"];
@@ -207,36 +211,36 @@ function packageEditedCard(level) {
 		return packagedData;
 };
 
-function catchId_character() {
+// function catchId_character() {
 
-	let valueCharacter = document.getElementById("character").value;
+// 	let valueCharacter = document.getElementById("character").value;
 
-	console.log("valueCharacter = ", valueCharacter);
+// 	console.log("valueCharacter = ", valueCharacter);
 
-	let characterKeysArray = Object.keys(bigPicture.character);
+// 	let characterKeysArray = Object.keys(bigPicture.character);
 
-	let idCharacterArray = characterKeysArray.map( id => {
-		let c = bigPicture.character[id];
-		return {"id": id, "character": c.props.contents.character};
-	  });
+// 	let idCharacterArray = characterKeysArray.map( id => {
+// 		let c = bigPicture.character[id];
+// 		return {"id": id, "character": c.props.contents.character};
+// 	  });
 
-	console.log("idCharacterArray = ", idCharacterArray);
+// 	console.log("idCharacterArray = ", idCharacterArray);
 
-	// 배열의 특정 값 찾기 - 참고 링크: https://hianna.tistory.com/406
-	function isValueCharacter(element) {
-		if(element.character == valueCharacter) {
-			return true;
-		};
-	};
+// 	// 배열의 특정 값 찾기 - 참고 링크: https://hianna.tistory.com/406
+// 	function isValueCharacter(element) {
+// 		if(element.character == valueCharacter) {
+// 			return true;
+// 		};
+// 	};
 
-	const character = idCharacterArray.find(isValueCharacter);
+// 	const character = idCharacterArray.find(isValueCharacter);
 
-	console.log("character = ", character);
-	console.log("character.id = ", character.id);
+// 	console.log("character = ", character);
+// 	console.log("character.id = ", character.id);
 
-	return character.id;
+// 	return character.id;
 
-};
+// };
 
 ///// UI Manager
 
@@ -448,13 +452,14 @@ function saveNewCard() {
 function saveEditedCard() {
 	let packagedData = packageEditedCard("character");
 
-	requestUpdatePackagedBpData(packagedData);
+	requestUpdatePackagedData_character(packagedData);
 	alert("저장되었습니다.");
 
 };
 
 function removeCard() {
-	let removeId = catchId_character();
+	let removeId = selectorById("cardId_character").value;
+	// let removeId = catchId_character();
 	if (confirm("정말 삭제하시겠습니까? 삭제가 완료되면, 해당 내용은 다시 복구될 수 없습니다.")) {
 		requestRemoveByCharacterId(removeId);
 		alert("삭제되었습니다.");
