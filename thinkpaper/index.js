@@ -15,7 +15,7 @@ function logIn() {
 		if (user != null) {
 			requestReadUserData(user);
 			requestReadBigPicture(user);
-			openEditPaperByDbclick();
+			openEditCardByDbclick();
 		} else {
 			window.location.replace("login.html");
 		};
@@ -69,7 +69,6 @@ function requestReadBigPicture(user) {
 function showBigPicture() {
 	let lastestId = getLastestEditedId();
 	showItOnUI(lastestId);
-	btnShowHideHandlerByClassName("character","readPaper");
 };
 
 function getLastestEditedId(){
@@ -87,6 +86,7 @@ function showItOnUI(printDataId) {
 	selectorById("cardId_character").value = bigPicture.character[printDataId].id;
 	console.log("test = ", bigPicture.character[printDataId].id);
 	console.log(selectorById("cardId_character").value);
+	btnShowHideHandlerByClassName("character","readPaper");
 };
 
 ///// LtoS dept
@@ -244,7 +244,7 @@ function packageEditedCard(level) {
 
 ///// UI Manager
 
-function printEmptySpoonedBpData() {
+function showEmptyCard() {
 	selectorById("character").value = "";
 	// selectorById("direction").value = "";
 	// selectorById("naviArea").value = "";
@@ -384,7 +384,7 @@ function resizeTextarea() {
 };
 
 function showItIfNoBpData() {
-	printEmptySpoonedBpData();
+	showEmptyCard();
 	selectorById("guideMessage").innerHTML = "'파란색으로 쓰여진 곳의 네모칸에 내용을 작성해보세요~!'"
 };
 
@@ -467,31 +467,31 @@ function removeCard() {
 	};
 };
 
-function openNewPaper() {
-	printEmptySpoonedBpData();
+function openNewCard() {
+	showEmptyCard();
 	btnShowHideHandlerByClassName("character","openNewPaper");
 };
 
-function openEditPaperByDbclick() {
+function openEditCardByDbclick() {
 	const TextareaOnCard = document.getElementsByTagName("textarea");
 	for (let i = 0; i < TextareaOnCard.length; i++) {
 		TextareaOnCard[i].addEventListener("dblclick", function (e) {
 			let characterIdArray = getCharacterIdArray();
 			if(characterIdArray.length > 0){
-				openEditPaper();
+				openEditCard();
 			};
 		});
 	};
 };
 
-function openEditPaper() {
+function openEditCard() {
 	btnShowHideHandlerByClassName("character","editPaper");
 };
 
-function cancelEditPaper() {
-	spoonBpData(spoonedBpData.bpTitle);
-	printSpoonedBpData();
-	putSelectbox("selectboxBpTitle");
+function cancelEditCard() {
+	let cardId = selectorById("cardId_character").value;
+	showItOnUI(cardId);
+	//putSelectbox("selectboxBpTitle");
 };
 
 ///// general supporter
