@@ -479,21 +479,28 @@ function showSelectbox(selectboxId) {
 	let characterArray = keys.map( id => {
 		let c = bigPicture.character[id];
 		return {"id": id, "character": c.props.contents.character};
-	  }).reverse();
+	  });
 
 	// <option> 만들어서, Array 넣기
 	for (let i = 0; i < characterArray.length; i++) {
 		let option = document.createElement("OPTION");
 		let txt = document.createTextNode(characterArray[i].character);
+		let optionId = characterArray[i].id;
+		let optionValue = characterArray[i].character;
+		let mainId = getMainId();
+		if(optionId == mainId) {
+			let mainOptionMark = optionValue + " ★";
+			let mainTxt = document.createTextNode(mainOptionMark);
+			option.appendChild(mainTxt);
 		// let mainBpTitle = mainTagMemory["bpTitle"];
 		// let bpTitle = bpDataPool[characterArray[i]].bpTitle;
 		// if(mainBpTitle == bpTitle){
 		//	let mainBpTitleOptionMark = bpTitle + " ★";
 		//	let mainTxt = document.createTextNode(mainBpTitleOptionMark);
 		//	option.appendChild(mainTxt);
-		// } else {
+		} else {
 			option.appendChild(txt);
-		// };
+		};
 		option.setAttribute("value", characterArray[i].id);
 		option.setAttribute("innerHTML", characterArray[i].character);
 		selectbox.insertBefore(option, selectbox.lastChild);
