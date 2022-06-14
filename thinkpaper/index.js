@@ -118,6 +118,44 @@ function requestRemoveByCharacterId(characterId) {
 	.remove();
 };
 
+function requestUpdateMainCard_character(packagedDataHere) {
+
+	let characterIdArray = Object.keys(bigPicture.character);
+	console.log("characterIdArray @requestUpdateMainCard_character = ", characterIdArray);
+	
+	characterIdArray.forEach(eachId => {
+		if (eachId == packagedDataHere.id) {
+
+			db.ref("users")
+			.child(userData.uid)
+			.child("bigPicture")
+			.child("character")
+			.child(packagedDataHere.id)
+			.child("props")
+			.update(packagedDataHere, (e) => {
+				console.log("** update completed = ", e);
+				});
+
+		} else {
+
+			let setMainValueBlankData = {
+					"main": ""
+			};
+
+			db.ref("users")
+			.child(userData.uid)
+			.child("bigPicture")
+			.child("character")
+			.child(eachId)
+			.child("props")
+			.update(setMainValueBlankData, (e) => {
+				console.log("** update completed = ", e);
+				});	
+		};
+	});
+	
+};
+
 ///// user data manager
 
 function showUserData(userData) {
@@ -383,7 +421,7 @@ function showItIfNoBpData() {
 	selectorById("guideMessage").innerHTML = "'파란색으로 쓰여진 곳의 네모칸에 내용을 작성해보세요~!'"
 };
 
-///// selectbox Manager
+///// selectbox manager
 
 function showSelectbox(selectboxId) {
 
@@ -424,7 +462,20 @@ function selectBySelectbox_character() {
 	showBigPicture(selectedCharacterId);
 };
 
-///// CRUD Manager
+///// mainCard mananger
+
+function setMainCard(){
+	let setMainValueMainData = {
+			"main": "main"
+	};
+	requestUpdateMainCard_character(setMainValueMainData);
+};
+
+function gotoMainCard_character() {
+
+};
+
+///// CRUD manager
 
 function saveNewCard() {
 	let packagedBpData = packageNewCard("character");
