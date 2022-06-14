@@ -118,40 +118,34 @@ function requestRemoveByCharacterId(characterId) {
 	.remove();
 };
 
-function requestUpdateMainCard_character(packagedDataHere) {
+function requestUpdateMainCard_character(characterId) {
 
 	let characterIdArray = Object.keys(bigPicture.character);
-	console.log("characterIdArray @requestUpdateMainCard_character = ", characterIdArray);
 	
 	characterIdArray.forEach(eachId => {
-		if (eachId == packagedDataHere.id) {
 
-			db.ref("users")
-			.child(userData.uid)
-			.child("bigPicture")
-			.child("character")
-			.child(packagedDataHere.id)
-			.child("props")
-			.update(packagedDataHere, (e) => {
-				console.log("** update completed = ", e);
-				});
+		let setMainValue = {};
 
-		} else {
-
-			let setMainValueBlankData = {
-					"main": ""
+		if (eachId == characterId) {
+			setMainValue = {
+				"main": "main"
 			};
-
-			db.ref("users")
-			.child(userData.uid)
-			.child("bigPicture")
-			.child("character")
-			.child(eachId)
-			.child("props")
-			.update(setMainValueBlankData, (e) => {
-				console.log("** update completed = ", e);
-				});	
+		} else {
+			setMainValue = {
+				"main": ""
+			};
 		};
+
+		db.ref("users")
+		.child(userData.uid)
+		.child("bigPicture")
+		.child("character")
+		.child(eachId)
+		.child("props")
+		.update(setMainValue, (e) => {
+			console.log("** update completed = ", e);
+			});
+
 	});
 	
 };
@@ -464,11 +458,9 @@ function selectBySelectbox_character() {
 
 ///// mainCard mananger
 
-function setMainCard(){
-	let setMainValueMainData = {
-			"main": "main"
-	};
-	requestUpdateMainCard_character(setMainValueMainData);
+function setMainCard() {
+	let characterId = selectorById("cardId_character").value;
+	requestUpdateMainCard_character(characterId);
 };
 
 function gotoMainCard_character() {
