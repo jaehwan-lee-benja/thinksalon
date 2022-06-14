@@ -69,14 +69,44 @@ function showBigPicture(id) {
 	showItOnUI(id);
 };
 
-function getLastestEditedId(){
+function getIdArrayByMap(key) {
 	let keys = Object.keys(bigPicture.character);
-	let editedDateArray = keys.map( id => {
-		let c = bigPicture.character[id];
-		return {"id": id, "date": c.props.editedDate};
-	  }).reverse();
-	  // [질문] reverse가 왜 date 기준으로 되는것일까? id 기준으로 되지는 않을까? 
-	return editedDateArray[0].id;
+	let idArray = keys.map( id => {
+		return {"id": id, key: bigPicture.character[id].props[key]};
+		// [질문] key 명칭을 파라미터로 넣을 수 있을까?
+		// [질문] bigPicture.character[id][key]로 하며, 향후 파라미터로 'props.editedDate' 또는 'props[editedDate]'라고 쓸 수 있을까?
+	  });
+	return idArray;
+};
+
+// function getLastestEditedId(){
+// 	let keys = Object.keys(bigPicture.character);
+// 	let editedDateArray = keys.map( id => {
+// 		let c = bigPicture.character[id];
+// 		return {"id": id, "date": c.props.editedDate};
+// 	  }).reverse();
+	  // [질문] reverse가 왜 date 기준으로 되는것일까? id 기준으로 되지는 않을까? reverse안에 특정 키에 대한 순서로 반영하라는 변수를 넣는 방식은 없을까? 
+// 	return editedDateArray[0].id;
+// };
+
+function getLastestEditedId() {
+	let idEditedDateArray = getIdArrayByMap("editedDate");
+	function getLastestDate() {
+		let editedDateArray = idEditedDateArray.map(element => element.key);
+		let editedDateArrayinReverseOrder = editedDateArray.sort(date_descending);
+		return editedDateArrayinReverseOrder[0];
+	};
+	function getId(latestDate) {
+		for(let i = 0; i < idEditedDateArray.length; i++) {
+			let dateInArray = idEditedDateArray[i].key;
+			if (latestDate == dateInArray) {
+				return idEditedDateArray[i].id;
+			// } else {
+			//	return null;
+			}; // [질문] else가 없어도 되는가?
+		};
+	};
+	return getId(getLastestDate());
 };
 
 function showItOnUI(printDataId) {
@@ -504,7 +534,7 @@ function openEditCardByDbclick() {
 	const TextareaOnCard = document.getElementsByTagName("textarea");
 	for (let i = 0; i < TextareaOnCard.length; i++) {
 		TextareaOnCard[i].addEventListener("dblclick", function (e) {
-			let characterIdArray = getCharacterIdArray();
+			let characterIdArray = Object.keys(bigPicture.character);
 			if(characterIdArray.length > 0){
 				openEditCard();
 			};
@@ -534,12 +564,16 @@ function timeStamp() {
 	return nowString;
 };
 
-function getCharacterIdArray() {
-	return Object.keys(bigPicture.character);
-};
-
 function uuidv4() {
 	return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
 	  (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
 	);
+};
+
+function date_ascending(a, b) { // 오름차순    
+	return Date.parse(a) - Date.parse(b);
+};
+	
+function date_descending(a, b) { // 내림차순    
+	return Date.parse(b) - Date.parse(a);
 };
