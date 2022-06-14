@@ -90,6 +90,7 @@ function getIdArrayByMap(key) {
 // };
 
 function getLastestEditedId() {
+	// [질문] 글로벌에서 상태 비교가 아닌, 내부함수에서 상태 비교는 쓸만한가?
 	let idEditedDateArray = getIdArrayByMap("editedDate");
 	function getLastestDate() {
 		let editedDateArray = idEditedDateArray.map(element => element.key);
