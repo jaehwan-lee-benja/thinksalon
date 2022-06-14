@@ -91,24 +91,26 @@ function getIdArrayByMap(key) {
 // };
 
 function getLastestEditedId() {
+	return sortedEditedDateArrayWithId()[0].id
+};
+
+function sortedEditedDateArrayWithId() {
 	// [질문] 글로벌에서 상태 비교가 아닌, 내부함수에서 상태 비교는 쓸만한가?
 	let idEditedDateArray = getIdArrayByMap("editedDate");
-	function getLastestDate() {
-		let editedDateArray = idEditedDateArray.map(element => element.key);
-		let editedDateArrayinReverseOrder = editedDateArray.sort(date_descending);
-		return editedDateArrayinReverseOrder[0];
-	};
-	function getId(latestDate) {
-		for(let i = 0; i < idEditedDateArray.length; i++) {
-			let dateInArray = idEditedDateArray[i].key;
-			if (latestDate == dateInArray) {
-				return idEditedDateArray[i].id;
-			// } else {
-			//	return null;
-			}; // [질문] else가 없어도 되는가?
+	let editedDateArray = idEditedDateArray.map(element => element.key);
+	let editedDateArrayinReverseOrder = editedDateArray.sort(date_descending);
+	for(let i = 0; i < editedDateArrayinReverseOrder.length; i++) {
+		let datesAfterSorting = editedDateArrayinReverseOrder[i];
+		for (let j = 0; j < editedDateArray.length; j++) {
+			let datesBeforeSorting = idEditedDateArray[j].key;
+			let id = idEditedDateArray[j].id
+			if (datesAfterSorting == datesBeforeSorting) {
+				let arr = [];
+				arr.push({"id": id, "editedDate": datesAfterSorting});
+				return arr;
+			};
 		};
 	};
-	return getId(getLastestDate());
 };
 
 function showItOnUI(printDataId) {
@@ -478,6 +480,8 @@ function showSelectbox(selectboxId) {
 	for (let i = selectbox.options.length - 1; i >= 0; i--) {
 		selectbox.remove(i + 1);
 	};
+
+	// 정렬된 arr 가져오기
 
 	// Array 만들기
 	let keys = Object.keys(bigPicture.character);
