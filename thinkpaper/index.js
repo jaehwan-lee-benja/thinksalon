@@ -52,13 +52,12 @@ function requestReadBigPicture(user) {
 			let bpDataValue = childSnap.val();
 			bigPicture[bpIdsKey] = bpDataValue;
 		});
-
-		console.log("bigPicture = ", bigPicture);
 	
 		let characterKeysArray = Object.keys(bigPicture.character);
 
 		if (characterKeysArray.length > 0) {
-			showBigPicture();
+			showBigPicture(getLastestEditedId());
+			showSelectbox("selectbox_character");
 		} else {
 			showItIfNoBpData();
 		};
@@ -66,26 +65,23 @@ function requestReadBigPicture(user) {
 	});
 };
 
-function showBigPicture() {
-	let lastestId = getLastestEditedId();
-	showItOnUI(lastestId);
+function showBigPicture(id) {
+	showItOnUI(id);
 };
 
 function getLastestEditedId(){
 	let keys = Object.keys(bigPicture.character);
-	let list = keys.map( id => {
+	let editedDateArray = keys.map( id => {
 		let c = bigPicture.character[id];
 		return {"id": id, "date": c.props.editedDate};
 	  }).reverse();
 	  // [질문] reverse가 왜 date 기준으로 되는것일까? id 기준으로 되지는 않을까? 
-	return list[0].id;
+	return editedDateArray[0].id;
 };
 
 function showItOnUI(printDataId) {
 	selectorById("character").value = bigPicture.character[printDataId].props.contents.character;
 	selectorById("cardId_character").value = bigPicture.character[printDataId].id;
-	console.log("test = ", bigPicture.character[printDataId].id);
-	console.log(selectorById("cardId_character").value);
 	btnShowHideHandlerByClassName("character","readPaper");
 };
 
@@ -181,7 +177,6 @@ function packageEditedCard(level) {
 
 		let packagedData = {};
 		packagedData["id"] = selectorById("cardId_character").value; //[질문] 이 방식에 대해(글로은 아닌 요소 숨겨서 값 가져오기)
-		console.log("packagedData[id] = ", packagedData["id"]);
 		packagedData["props"] = {};
 
 		let props = packagedData["props"];
@@ -390,53 +385,43 @@ function showItIfNoBpData() {
 
 ///// selectbox Manager
 
-function putSelectbox(selectboxId) {
+function showSelectbox(selectboxId) {
 
 	let selectbox = selectorById(selectboxId);
 	// selectbox 초기화하기
 	for (let i = selectbox.options.length - 1; i >= 0; i--) {
 		selectbox.remove(i + 1);
 	};
-	// <option> 만들어서, bpTitleArray 넣기
-	for (let i = 0; i < bpTitleArray.length; i++) {
+
+	// Array 만들기
+	let keys = Object.keys(bigPicture.character);
+	let characterArray = keys.map( id => {
+		let c = bigPicture.character[id];
+		return {"id": id, "character": c.props.contents.character};
+	  }).reverse();
+
+	// <option> 만들어서, Array 넣기
+	for (let i = 0; i < characterArray.length; i++) {
 		let option = document.createElement("OPTION");
-		let txt = document.createTextNode(bpTitleArray[i]);
-		let mainBpTitle = mainTagMemory["bpTitle"];
-		let bpTitle = bpDataPool[bpTitleArray[i]].bpTitle;
-		if(mainBpTitle == bpTitle){
-			let mainBpTitleOptionMark = bpTitle + " ★";
-			let mainTxt = document.createTextNode(mainBpTitleOptionMark);
-			option.appendChild(mainTxt);
-		} else {
+		let txt = document.createTextNode(characterArray[i].character);
+		// let mainBpTitle = mainTagMemory["bpTitle"];
+		// let bpTitle = bpDataPool[characterArray[i]].bpTitle;
+		// if(mainBpTitle == bpTitle){
+		//	let mainBpTitleOptionMark = bpTitle + " ★";
+		//	let mainTxt = document.createTextNode(mainBpTitleOptionMark);
+		//	option.appendChild(mainTxt);
+		// } else {
 			option.appendChild(txt);
-		};
-		option.setAttribute("value", bpTitleArray[i]);
+		// };
+		option.setAttribute("value", characterArray[i].id);
+		option.setAttribute("innerHTML", characterArray[i].character);
 		selectbox.insertBefore(option, selectbox.lastChild);
 	};
-	printBpTitleSpoonOnSelectbox();
 };
 
-function printBpTitleSpoonOnSelectbox() {
-
-	for (let i = 0; i <= bpTitleArray.length; i++) {
-		if(bpTitleArray.length == 0){
-			selectorById("selectboxBpTitle").options[0].setAttribute("selected", true);
-		} else {
-			let selectorOption = selectorById("selectboxBpTitle").options[i];
-			let optionValue = selectorOption.value;
-			selectorOption.removeAttribute("selected");
-			if (optionValue == spoonMemory["bpTitle"]) {
-				selectorOption.setAttribute("selected", true);
-			};
-		};
-	};
-
-};
-
-function selectBpTitleBySelectbox() {
-	let bpTitleSpoon = pickupBpTitleSpoonBySelectbox();
-	spoonBpData(bpTitleSpoon);
-	printSpoonedBpData();
+function selectBySelectbox_character() {
+	let selectedCharacterId = selectorById("selectbox_character").value;
+	showBigPicture(selectedCharacterId);
 };
 
 ///// CRUD Manager
