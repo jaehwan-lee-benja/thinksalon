@@ -313,6 +313,8 @@ function showEmptyCard() {
 	btnShowHideHandlerByClassName("character","createFirstPaper");
 };
 
+///// UI manager
+
 function uiHide(id) {
 	selectorById(id).style.display = "none";
 };
@@ -359,8 +361,23 @@ function btnShowHideHandlerByClassName(className, state) {
 		default:
 			let state = null;
 	}
-	// btnShowHideHandler_mainBp(state, section);
+	btnShowHideHandlerByClassName_main(className, state);
 	resizeTextarea();
+};
+
+function btnShowHideHandlerByClassName_main(className) {
+	uiHide("gotoMainCard_btn_"+className);
+	uiHide("setMainCard_btn_"+className);
+	uiHide("setMainCard_txt_"+className);
+
+	let cardId = selectorById("cardId_character").value;
+	let mainId = getMainId();
+	if(cardId == mainId) {
+		uiShow("setMainCard_txt_"+className);
+	} else {
+		uiShow("gotoMainCard_btn_"+className);
+		uiShow("setMainCard_btn_"+className);
+	};
 };
 
 function editModeHandlerByClassName(className, paperMode) {
