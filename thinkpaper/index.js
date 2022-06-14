@@ -359,9 +359,14 @@ function btnShowHideHandlerByClassName_main(className) {
 	if(cardId == mainId) {
 		uiShow("setMainCard_txt_"+className);
 	} else {
-		uiShow("gotoMainCard_btn_"+className);
-		uiShow("setMainCard_btn_"+className);
+		if (mainId != null) {
+			uiShow("gotoMainCard_btn_"+className);
+			uiShow("setMainCard_btn_"+className);
+		} else {
+			uiShow("setMainCard_btn_"+className);
+		};
 	};
+
 };
 
 function editModeHandlerByClassName(className, paperMode) {
