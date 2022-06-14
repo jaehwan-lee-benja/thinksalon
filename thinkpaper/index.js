@@ -56,17 +56,13 @@ function requestReadBigPicture(user) {
 		let characterKeysArray = Object.keys(bigPicture.character);
 
 		if (characterKeysArray.length > 0) {
-			showBigPicture(getLastestEditedId());
+			showItOnUI(getLastestEditedId());
 			showSelectbox("selectbox_character");
 		} else {
 			showItIfNoBpData();
 		};
 
 	});
-};
-
-function showBigPicture(id) {
-	showItOnUI(id);
 };
 
 function getIdArrayByMap(key) {
@@ -489,7 +485,7 @@ function showSelectbox(selectboxId) {
 
 function selectBySelectbox_character() {
 	let selectedCharacterId = selectorById("selectbox_character").value;
-	showBigPicture(selectedCharacterId);
+	showItOnUI(selectedCharacterId);
 };
 
 ///// mainCard mananger
@@ -500,8 +496,16 @@ function setMainCard() {
 };
 
 function gotoMainCard_character() {
+	showItOnUI(getMainId());
+};
+
+function getMainId() {
 	let idMainArray = getIdArrayByMap("main");
-	console.log("idMainArray = ", idMainArray);
+	for(let i = 0; i < idMainArray.length; i++) {
+		if(idMainArray[i].key == "main"){
+			return idMainArray[i].id;
+		};
+	};
 };
 
 ///// CRUD manager
