@@ -56,7 +56,12 @@ function requestReadBigPicture(user) {
 		let characterKeysArray = Object.keys(bigPicture.character);
 
 		if (characterKeysArray.length > 0) {
-			showItOnUI(getLastestEditedId());
+			let mainId = getMainId();
+			if(mainId != null) {
+				showItOnUI(mainId);
+			} else {
+				showItOnUI(getLastestEditedId());
+			};
 			showSelectbox("selectbox_character");
 		} else {
 			showItIfNoBpData();
