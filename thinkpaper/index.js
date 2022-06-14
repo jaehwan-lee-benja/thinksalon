@@ -70,55 +70,6 @@ function requestReadBigPicture(user) {
 	});
 };
 
-function getIdArrayByMap(key) {
-	let keys = Object.keys(bigPicture.character);
-	let idArray = keys.map( id => {
-		return {"id": id, key: bigPicture.character[id].props[key]};
-		// [질문] key 명칭을 파라미터로 넣을 수 있을까?
-		// [질문] bigPicture.character[id][key]로 하며, 향후 파라미터로 'props.editedDate' 또는 'props[editedDate]'라고 쓸 수 있을까?
-	  });
-	return idArray;
-};
-
-// function getLastestEditedId(){
-// 	let keys = Object.keys(bigPicture.character);
-// 	let editedDateArray = keys.map( id => {
-// 		let c = bigPicture.character[id];
-// 		return {"id": id, "date": c.props.editedDate};
-// 	  }).reverse();
-	  // [질문] reverse가 왜 date 기준으로 되는것일까? id 기준으로 되지는 않을까? reverse안에 특정 키에 대한 순서로 반영하라는 변수를 넣는 방식은 없을까? 
-// 	return editedDateArray[0].id;
-// };
-
-function getLastestEditedId() {
-	return sortedEditedDateArrayWithId()[0].id
-};
-
-function sortedEditedDateArrayWithId() {
-	// [질문] 글로벌에서 상태 비교가 아닌, 내부함수에서 상태 비교는 쓸만한가?
-	let idEditedDateArray = getIdArrayByMap("editedDate");
-	let editedDateArray = idEditedDateArray.map(element => element.key);
-	let editedDateArrayinReverseOrder = editedDateArray.sort(date_descending);
-	for(let i = 0; i < editedDateArrayinReverseOrder.length; i++) {
-		let datesAfterSorting = editedDateArrayinReverseOrder[i];
-		for (let j = 0; j < editedDateArray.length; j++) {
-			let datesBeforeSorting = idEditedDateArray[j].key;
-			let id = idEditedDateArray[j].id
-			if (datesAfterSorting == datesBeforeSorting) {
-				let arr = [];
-				arr.push({"id": id, "editedDate": datesAfterSorting});
-				return arr;
-			};
-		};
-	};
-};
-
-function showItOnUI(printDataId) {
-	selectorById("character").value = bigPicture.character[printDataId].props.contents.character;
-	selectorById("cardId_character").value = bigPicture.character[printDataId].id;
-	btnShowHideHandlerByClassName("character","readPaper");
-};
-
 ///// LtoS dept
 
 ///// LtoS manager
@@ -277,38 +228,50 @@ function packageEditedCard(level) {
 		return packagedData;
 };
 
-// function catchId_character() {
+function getLastestEditedId() {
+	return sortedEditedDateArrayWithId()[0].id
+};
 
-// 	let valueCharacter = document.getElementById("character").value;
-
-// 	console.log("valueCharacter = ", valueCharacter);
-
-// 	let characterKeysArray = Object.keys(bigPicture.character);
-
-// 	let idCharacterArray = characterKeysArray.map( id => {
+// function getLastestEditedId(){
+// 	let keys = Object.keys(bigPicture.character);
+// 	let editedDateArray = keys.map( id => {
 // 		let c = bigPicture.character[id];
-// 		return {"id": id, "character": c.props.contents.character};
-// 	  });
-
-// 	console.log("idCharacterArray = ", idCharacterArray);
-
-// 	// 배열의 특정 값 찾기 - 참고 링크: https://hianna.tistory.com/406
-// 	function isValueCharacter(element) {
-// 		if(element.character == valueCharacter) {
-// 			return true;
-// 		};
-// 	};
-
-// 	const character = idCharacterArray.find(isValueCharacter);
-
-// 	console.log("character = ", character);
-// 	console.log("character.id = ", character.id);
-
-// 	return character.id;
-
+// 		return {"id": id, "date": c.props.editedDate};
+// 	  }).reverse();
+	  // [질문] reverse가 왜 date 기준으로 되는것일까? id 기준으로 되지는 않을까? reverse안에 특정 키에 대한 순서로 반영하라는 변수를 넣는 방식은 없을까? 
+// 	return editedDateArray[0].id;
 // };
 
-///// UI Manager
+function sortedEditedDateArrayWithId() {
+	// [질문] 글로벌에서 상태 비교가 아닌, 내부함수에서 상태 비교는 쓸만한가?
+	let idEditedDateArray = getIdArrayByMap("editedDate");
+	let editedDateArray = idEditedDateArray.map(element => element.key);
+	let editedDateArrayinReverseOrder = editedDateArray.sort(date_descending);
+	for(let i = 0; i < editedDateArrayinReverseOrder.length; i++) {
+		let datesAfterSorting = editedDateArrayinReverseOrder[i];
+		for (let j = 0; j < editedDateArray.length; j++) {
+			let datesBeforeSorting = idEditedDateArray[j].key;
+			let id = idEditedDateArray[j].id
+			if (datesAfterSorting == datesBeforeSorting) {
+				let arr = [];
+				arr.push({"id": id, "editedDate": datesAfterSorting});
+				return arr;
+			};
+		};
+	};
+};
+
+function getIdArrayByMap(key) {
+	let keys = Object.keys(bigPicture.character);
+	let idArray = keys.map( id => {
+		return {"id": id, key: bigPicture.character[id].props[key]};
+		// [질문] key 명칭을 파라미터로 넣을 수 있을까?
+		// [질문] bigPicture.character[id][key]로 하며, 향후 파라미터로 'props.editedDate' 또는 'props[editedDate]'라고 쓸 수 있을까?
+	  });
+	return idArray;
+};
+
+///// UI manager
 
 function showEmptyCard() {
 	selectorById("character").value = "";
@@ -320,7 +283,21 @@ function showEmptyCard() {
 	btnShowHideHandlerByClassName("character","createFirstPaper");
 };
 
-///// UI manager
+function showEmptyCard() {
+	selectorById("character").value = "";
+	// selectorById("direction").value = "";
+	// selectorById("naviArea").value = "";
+	// selectorById("naviB").value = "";
+	// selectorById("naviA").value = "";
+	// selectorById("actionPlan").value = "";
+	btnShowHideHandlerByClassName("character","createFirstPaper");
+};
+
+function showItOnUI(printDataId) {
+	selectorById("character").value = bigPicture.character[printDataId].props.contents.character;
+	selectorById("cardId_character").value = bigPicture.character[printDataId].id;
+	btnShowHideHandlerByClassName("character","readPaper");
+};
 
 function uiHide(id) {
 	selectorById(id).style.display = "none";
@@ -621,3 +598,5 @@ function date_ascending(a, b) { // 오름차순
 function date_descending(a, b) { // 내림차순    
 	return Date.parse(b) - Date.parse(a);
 };
+
+
