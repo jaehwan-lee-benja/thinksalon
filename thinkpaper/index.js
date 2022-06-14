@@ -130,14 +130,23 @@ function requestPushPackagedData_character(packagedDataHere) {
 };
 
 function requestUpdatePackagedData_character(packagedDataHere) {
+
+	let cardId = selectorById("cardId_character").value; //[질문] 이 방식에 대해(글로은 아닌 요소 숨겨서 값 가져오기)
+	// let data = {"editedDate": timeStamp()};
+	console.log("packagedDataHere = ", packagedDataHere);
+
 	db.ref("users")
 	.child(userData.uid)
 	.child("bigPicture")
 	.child("character")
-	.child(packagedDataHere.id)
+	.child(cardId)
+	.child("props")
 	.update(packagedDataHere, (e) => {
 		console.log("** update completed = ", e);
 		});
+
+	console.log(packagedDataHere);
+
 };
 
 function requestRemoveByCharacterId(characterId) {
@@ -239,14 +248,10 @@ function packageEditedCard(level) {
 	console.log("packageEditedCard start here");
 
 		let packagedData = {};
-		packagedData["id"] = selectorById("cardId_character").value; //[질문] 이 방식에 대해(글로은 아닌 요소 숨겨서 값 가져오기)
-		packagedData["props"] = {};
+		packagedData["editedDate"] = timeStamp();
+		packagedData["contents"] = {};
 
-		let props = packagedData["props"];
-		props["editedDate"] = timeStamp();
-		props["contents"] = {};
-
-		let contents = props["contents"];
+		let contents = packagedData["contents"];
 		switch(level){
 			case "character" :
 				contents["character"] = selectorById("character").value.trim();
@@ -495,7 +500,8 @@ function setMainCard() {
 };
 
 function gotoMainCard_character() {
-
+	let idMainArray = getIdArrayByMap("main");
+	console.log("idMainArray = ", idMainArray);
 };
 
 ///// CRUD manager
