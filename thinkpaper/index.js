@@ -366,7 +366,6 @@ function btnShowHideHandlerByClassName_main(className) {
 			uiShow("setMainCard_btn_"+className);
 		};
 	};
-
 };
 
 function editModeHandlerByClassName(className, paperMode) {
@@ -462,15 +461,18 @@ function showSelectbox(selectboxId) {
 	for (let i = selectbox.options.length - 1; i >= 0; i--) {
 		selectbox.remove(i + 1);
 	};
-
-	// 정렬된 arr 가져오기
-
+	
 	// Array 만들기
 	let keys = Object.keys(bigPicture.character);
 	let characterArray = keys.map( id => {
 		let c = bigPicture.character[id];
 		return {"id": id, "character": c.props.contents.character};
 	  });
+
+	// selectbox option list 순서 잡기
+	function sortingArray() {
+		// 가나다순, 만들어진 순서, 최근 편집 순서
+	};
 
 	// <option> 만들어서, Array 넣기
 	for (let i = 0; i < characterArray.length; i++) {
