@@ -92,7 +92,6 @@ function requestPushPackagedData_character(packagedDataHere) {
 function requestUpdatePackagedData_character(packagedDataHere) {
 
 	let cardId = selectorById("cardId_character").value; //[질문] 이 방식에 대해(글로은 아닌 요소 숨겨서 값 가져오기)
-	// let data = {"editedDate": timeStamp()};
 	console.log("packagedDataHere = ", packagedDataHere);
 
 	db.ref("users")
@@ -163,8 +162,12 @@ function showUserData(userData) {
 
 function packageNewCard(level) {
 
+	
 	console.log("packageNewCard start here");
 
+	let moniterResult = monitorCharacterBlankOrDuplicates();
+
+	if (moniterResult == true) {
 		let idNew = uuidv4();
 
 		let packagedData = {};
@@ -201,6 +204,8 @@ function packageNewCard(level) {
 		};
 
 		return packagedData;
+	};
+		
 };
 
 function packageEditedCard(level) {
@@ -458,6 +463,10 @@ function showItIfNoBpData() {
 	selectorById("guideMessage").innerHTML = "'파란색으로 쓰여진 곳의 네모칸에 내용을 작성해보세요~!'"
 };
 
+function highLightBorder(id, color) {
+	return selectorById(id).style.borderColor = color;
+};
+
 ///// selectbox manager
 
 function showSelectbox(selectboxId) {
@@ -604,6 +613,49 @@ function cancelEditCard() {
 	let cardId = selectorById("cardId_character").value;
 	showItOnUI(cardId);
 	//putSelectbox("selectboxBpTitle");
+};
+
+///// monitor manager
+
+function monitorCharacterBlankOrDuplicates() {
+	let characterValue = selectorById("character").value.trim();
+	if (characterValue != "") {
+		let sameCharacterArray = getSameCharacterArray(characterValue);
+		if (sameCharacterArray == undefined) {
+			return true;
+		} else {
+			highLightBorder("character", "red");
+			alert("중복된 페이퍼 제목이 있습니다. 페이퍼 제목을 수정해주시기 바랍니다.");
+		};
+	} else {
+		highLightBorder("character", "red");
+		alert("페이퍼 제목이 비어있습니다. 페이퍼 제목을 입력해주시기 바랍니다.");
+	};
+	return false;
+};
+
+function getSameCharacterArray(characterValue) {
+
+	let keys = Object.keys(bigPicture.character);
+
+	let characterArrayWithId = keys.map( id => {
+		return {"id": id, "character": bigPicture.character[id].props.contents.character};
+		});
+
+	console.log("characterArrayWithId = ", characterArrayWithId);
+	
+	let characterArray = [];
+	for(let i = 0; i < characterArrayWithId.length; i++) {
+		characterArray.push(characterArrayWithId[i].character);
+	};
+
+	let filterSameIndexArray = (query) => {
+		return characterArray.find(characterValue => query == characterValue);
+	};
+
+	let sameCharacterArray = filterSameIndexArray(characterValue);
+
+	return sameCharacterArray;
 };
 
 ///// general supporter
