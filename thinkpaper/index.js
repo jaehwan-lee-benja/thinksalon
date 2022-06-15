@@ -162,7 +162,6 @@ function showUserData(userData) {
 
 function packageNewCard(level) {
 
-	
 	console.log("packageNewCard start here");
 
 	let moniterResult = monitorCharacterBlankOrDuplicates();
@@ -212,6 +211,42 @@ function packageEditedCard(level) {
 
 	console.log("packageEditedCard start here");
 
+	function moniterIfCharacterChanged() {
+
+		// 현재 UI에 띄워진 값 포착하기
+		let characterId = selectorById("cardId_character").value;
+		let characterValue = selectorById("character").value.trim();
+		let characterObject = {"id": characterId, "character": characterValue};
+
+		// 로컬 데이터에 있는 값 포착하기
+		let keys = Object.keys(bigPicture.character);
+		let characterArrayWithId = keys.map( id => {
+			return {"id": id, "character": bigPicture.character[id].props.contents.character};
+			});
+	
+		// 위 두가지가 같은 경우의 수라면, 수정이 이뤄지지 않은 상태
+		for(let i = 0; i < characterArrayWithId.length; i++) {
+			if(JSON.stringify(characterObject) === JSON.stringify(characterArrayWithId[i])) {
+				console.log("moniterIfCharacterChanged = not changed");
+				return false;
+			};
+		};
+		console.log("moniterIfCharacterChanged = changed");
+		return true;
+	};
+	
+	function getMoniterResult(isChanged) {
+		if (isChanged == true) {
+			let moniterResultInFunction = monitorCharacterBlankOrDuplicates()
+			return moniterResultInFunction;
+		} else {
+			return true;
+		};
+	};
+
+	let moniterResult = getMoniterResult(moniterIfCharacterChanged());
+	
+	if (moniterResult == true) {
 		let packagedData = {};
 		packagedData["editedDate"] = timeStamp();
 		packagedData["contents"] = {};
@@ -237,6 +272,8 @@ function packageEditedCard(level) {
 		};
 
 		return packagedData;
+
+	};
 };
 
 function getLastestEditedId() {
@@ -571,10 +608,13 @@ function saveNewCard() {
 };
 
 function saveEditedCard() {
+
 	let packagedData = packageEditedCard("character");
 
-	requestUpdatePackagedData_character(packagedData);
-	alert("저장되었습니다.");
+	if (packagedData != null) {
+		requestUpdatePackagedData_character(packagedData);
+		alert("저장되었습니다.");
+	};
 
 };
 
@@ -625,11 +665,11 @@ function monitorCharacterBlankOrDuplicates() {
 			return true;
 		} else {
 			highLightBorder("character", "red");
-			alert("중복된 페이퍼 제목이 있습니다. 페이퍼 제목을 수정해주시기 바랍니다.");
+			alert("중복된 카드가 있습니다. 내용을 수정해주시기 바랍니다.");
 		};
 	} else {
 		highLightBorder("character", "red");
-		alert("페이퍼 제목이 비어있습니다. 페이퍼 제목을 입력해주시기 바랍니다.");
+		alert("카드가 비어있습니다. 내용을 입력해주시기 바랍니다.");
 	};
 	return false;
 };
