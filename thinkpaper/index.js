@@ -47,6 +47,8 @@ function requestReadBigPicture(user) {
 
 	userRef.on("value", (snapshot) => {
 
+		console.log("on is here");
+		
 		snapshot.forEach(childSnap => {
 			let bpIdsKey = childSnap.key;
 			let bpDataValue = childSnap.val();
@@ -75,12 +77,16 @@ function requestReadBigPicture(user) {
 ///// LtoS manager
 
 function requestPushPackagedData_character(packagedDataHere) {
+
 	db.ref("users")
 	.child(userData.uid)
 	.child("bigPicture")
 	.child("character")
 	.child(packagedDataHere.id)
 	.set(packagedDataHere);
+
+	showItOnUI(getLastestEditedId()); // [질문] 순서에 대한 우려
+
 };
 
 function requestUpdatePackagedData_character(packagedDataHere) {
@@ -99,7 +105,7 @@ function requestUpdatePackagedData_character(packagedDataHere) {
 		console.log("** update completed = ", e);
 		});
 
-	console.log(packagedDataHere);
+	showItOnUI(getLastestEditedId()); // [질문] 순서에 대한 우려
 
 };
 
@@ -247,18 +253,18 @@ function sortedEditedDateArrayWithId() {
 	let idEditedDateArray = getIdArrayByMap("editedDate");
 	let editedDateArray = idEditedDateArray.map(element => element.key);
 	let editedDateArrayinReverseOrder = editedDateArray.sort(date_descending);
+	let arr = [];
 	for(let i = 0; i < editedDateArrayinReverseOrder.length; i++) {
 		let datesAfterSorting = editedDateArrayinReverseOrder[i];
 		for (let j = 0; j < editedDateArray.length; j++) {
 			let datesBeforeSorting = idEditedDateArray[j].key;
 			let id = idEditedDateArray[j].id
 			if (datesAfterSorting == datesBeforeSorting) {
-				let arr = [];
 				arr.push({"id": id, "editedDate": datesAfterSorting});
-				return arr;
 			};
 		};
 	};
+	return arr;
 };
 
 function getIdArrayByMap(key) {
@@ -466,36 +472,62 @@ function showSelectbox(selectboxId) {
 	let keys = Object.keys(bigPicture.character);
 	let characterArray = keys.map( id => {
 		let c = bigPicture.character[id];
-		return {"id": id, "character": c.props.contents.character};
+		return {"id": id, "editedDate":c.props.editedDate ,"character": c.props.contents.character};
 	  });
+	  
+	  console.log("characterArray = ", characterArray);
 
 	// selectbox option list 순서 잡기
 	function sortingArray() {
 		// 가나다순, 만들어진 순서, 최근 편집 순서
+		let editedDateArray = characterArray.map(element => element.editedDate);
+		console.log("editedDateArray = ", editedDateArray);
+
+		let editedDateArrayinReverseOrder = editedDateArray.sort(date_descending);
+
+		console.log("editedDateArrayinReverseOrder = ", editedDateArrayinReverseOrder);
+
+		let arr = [];
+
+		for(let i = 0; i < editedDateArrayinReverseOrder.length; i++) {
+
+			let datesAfterSorting = editedDateArrayinReverseOrder[i];
+
+			for (let j = 0; j < editedDateArray.length; j++) {
+
+				let id = characterArray[j].id;
+				let datesBeforeSorting = characterArray[j].editedDate;
+				let character = characterArray[j].character;
+
+				if (datesAfterSorting == datesBeforeSorting) {
+					arr.push({"id": id, "editedDate": datesBeforeSorting, "character": character});
+				};
+
+			};
+
+		};
+		return arr;
 	};
 
+	let orderedCharacterArray = sortingArray();
+	console.log("orderedCharacterArray = ", orderedCharacterArray);
+
 	// <option> 만들어서, Array 넣기
-	for (let i = 0; i < characterArray.length; i++) {
+	for (let i = 0; i < orderedCharacterArray.length; i++) {
 		let option = document.createElement("OPTION");
-		let txt = document.createTextNode(characterArray[i].character);
-		let optionId = characterArray[i].id;
-		let optionValue = characterArray[i].character;
+		let txt = document.createTextNode(orderedCharacterArray[i].character);
+		let optionId = orderedCharacterArray[i].id;
+		let optionValue = orderedCharacterArray[i].character;
 		let mainId = getMainId();
 		if(optionId == mainId) {
 			let mainOptionMark = optionValue + " ★";
 			let mainTxt = document.createTextNode(mainOptionMark);
 			option.appendChild(mainTxt);
-		// let mainBpTitle = mainTagMemory["bpTitle"];
-		// let bpTitle = bpDataPool[characterArray[i]].bpTitle;
-		// if(mainBpTitle == bpTitle){
-		//	let mainBpTitleOptionMark = bpTitle + " ★";
-		//	let mainTxt = document.createTextNode(mainBpTitleOptionMark);
-		//	option.appendChild(mainTxt);
 		} else {
 			option.appendChild(txt);
 		};
-		option.setAttribute("value", characterArray[i].id);
-		option.setAttribute("innerHTML", characterArray[i].character);
+		option.setAttribute("value", orderedCharacterArray[i].id);
+		option.setAttribute("innerHTML", orderedCharacterArray[i].character);
 		selectbox.insertBefore(option, selectbox.lastChild);
 	};
 };
@@ -514,6 +546,7 @@ function setMainCard() {
 
 function gotoMainCard_character() {
 	showItOnUI(getMainId());
+	showSelectbox("selectbox_character");
 };
 
 function getMainId() {
