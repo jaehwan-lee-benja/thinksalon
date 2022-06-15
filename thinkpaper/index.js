@@ -48,7 +48,7 @@ function requestReadBigPicture(user) {
 	userRef.on("value", (snapshot) => {
 
 		console.log("on is here");
-		
+
 		snapshot.forEach(childSnap => {
 			let bpIdsKey = childSnap.key;
 			let bpDataValue = childSnap.val();
@@ -475,17 +475,11 @@ function showSelectbox(selectboxId) {
 		return {"id": id, "editedDate":c.props.editedDate ,"character": c.props.contents.character};
 	  });
 	  
-	  console.log("characterArray = ", characterArray);
-
 	// selectbox option list 순서 잡기
 	function sortingArray() {
 		// 가나다순, 만들어진 순서, 최근 편집 순서
 		let editedDateArray = characterArray.map(element => element.editedDate);
-		console.log("editedDateArray = ", editedDateArray);
-
 		let editedDateArrayinReverseOrder = editedDateArray.sort(date_descending);
-
-		console.log("editedDateArrayinReverseOrder = ", editedDateArrayinReverseOrder);
 
 		let arr = [];
 
@@ -510,7 +504,6 @@ function showSelectbox(selectboxId) {
 	};
 
 	let orderedCharacterArray = sortingArray();
-	console.log("orderedCharacterArray = ", orderedCharacterArray);
 
 	// <option> 만들어서, Array 넣기
 	for (let i = 0; i < orderedCharacterArray.length; i++) {
