@@ -3,6 +3,7 @@ const SELECTBOX_BPTITLE_VALUE_INIT = "INIT";
 
 let userData = {};
 let bigPicture = {character:""};
+let isMainShown = false;
 
 (function() {
 	logIn();
@@ -47,7 +48,7 @@ function requestReadBigPicture(user) {
 
 	userRef.on("value", (snapshot) => {
 
-		console.log("on is here");
+		console.log("===== .on is here =====");
 
 		snapshot.forEach(childSnap => {
 			let bpIdsKey = childSnap.key;
@@ -59,7 +60,8 @@ function requestReadBigPicture(user) {
 
 		if (characterKeysArray.length > 0) {
 			let mainId = getMainId();
-			if(mainId != null) {
+			if(mainId != null && isMainShown == false) {
+				isMainShown = true;
 				showItOnUI(mainId);
 			} else {
 				showItOnUI(getLastestEditedId());
@@ -68,7 +70,6 @@ function requestReadBigPicture(user) {
 		} else {
 			showItIfNoBpData();
 		};
-
 	});
 };
 
@@ -85,14 +86,11 @@ function requestPushPackagedData_character(packagedDataHere) {
 	.child(packagedDataHere.id)
 	.set(packagedDataHere);
 
-	showItOnUI(getLastestEditedId()); // [질문] 순서에 대한 우려
-
 };
 
 function requestUpdatePackagedData_character(packagedDataHere) {
 
-	let cardId = selectorById("cardId_character").value; //[질문] 이 방식에 대해(글로은 아닌 요소 숨겨서 값 가져오기)
-	console.log("packagedDataHere = ", packagedDataHere);
+	let cardId = selectorById("cardId_character").value;
 
 	db.ref("users")
 	.child(userData.uid)
@@ -103,8 +101,6 @@ function requestUpdatePackagedData_character(packagedDataHere) {
 	.update(packagedDataHere, (e) => {
 		console.log("** update completed = ", e);
 		});
-
-	showItOnUI(getLastestEditedId()); // [질문] 순서에 대한 우려
 
 };
 
@@ -162,8 +158,6 @@ function showUserData(userData) {
 
 function packageNewCard(level) {
 
-	console.log("packageNewCard start here");
-
 	let moniterResult = monitorCharacterBlankOrDuplicates();
 
 	if (moniterResult == true) {
@@ -209,8 +203,6 @@ function packageNewCard(level) {
 
 function packageEditedCard(level) {
 
-	console.log("packageEditedCard start here");
-
 	function moniterIfCharacterChanged() {
 
 		// 현재 UI에 띄워진 값 포착하기
@@ -227,11 +219,9 @@ function packageEditedCard(level) {
 		// 위 두가지가 같은 경우의 수라면, 수정이 이뤄지지 않은 상태
 		for(let i = 0; i < characterArrayWithId.length; i++) {
 			if(JSON.stringify(characterObject) === JSON.stringify(characterArrayWithId[i])) {
-				console.log("moniterIfCharacterChanged = not changed");
 				return false;
 			};
 		};
-		console.log("moniterIfCharacterChanged = changed");
 		return true;
 	};
 	
@@ -276,22 +266,21 @@ function packageEditedCard(level) {
 	};
 };
 
-function getLastestEditedId() {
-	return sortedEditedDateArrayWithId()[0].id
-};
-
-// function getLastestEditedId(){
-// 	let keys = Object.keys(bigPicture.character);
-// 	let editedDateArray = keys.map( id => {
-// 		let c = bigPicture.character[id];
-// 		return {"id": id, "date": c.props.editedDate};
-// 	  }).reverse();
-	  // [질문] reverse가 왜 date 기준으로 되는것일까? id 기준으로 되지는 않을까? reverse안에 특정 키에 대한 순서로 반영하라는 변수를 넣는 방식은 없을까? 
-// 	return editedDateArray[0].id;
+// function getLastestEditedId() {
+// 	return sortedEditedDateArrayWithId()[0].id
 // };
 
+function getLastestEditedId(){
+	let keys = Object.keys(bigPicture.character);
+	let editedDateArray = keys.map( id => {
+		let c = bigPicture.character[id];
+		return {"id": id, "date": c.props.editedDate};
+	  }).sort((a,b) => a.date - b.date)
+	  .reverse();
+	return editedDateArray[0].id;
+};
+
 function sortedEditedDateArrayWithId() {
-	// [질문] 글로벌에서 상태 비교가 아닌, 내부함수에서 상태 비교는 쓸만한가?
 	let idEditedDateArray = getIdArrayByMap("editedDate");
 	let editedDateArray = idEditedDateArray.map(element => element.key);
 	let editedDateArrayinReverseOrder = editedDateArray.sort(date_descending);
@@ -312,10 +301,13 @@ function sortedEditedDateArrayWithId() {
 function getIdArrayByMap(key) {
 	let keys = Object.keys(bigPicture.character);
 	let idArray = keys.map( id => {
-		return {"id": id, key: bigPicture.character[id].props[key]};
+		let obj = {"id":id}
+		obj[key] =  bigPicture.character[id].props[key]
+		return obj;
 		// [질문] key 명칭을 파라미터로 넣을 수 있을까?
 		// [질문] bigPicture.character[id][key]로 하며, 향후 파라미터로 'props.editedDate' 또는 'props[editedDate]'라고 쓸 수 있을까?
 	  });
+	console.log("idArray = ", idArray);
 	return idArray;
 };
 
@@ -463,7 +455,6 @@ function editModeHandler(paperMode) {
 
 function textareaBorderColorHandler(px, color) {
     setTimeout(()=>{
-		// console.log("textareaBorderColorHandler |"+ px +" "+ color +"|");
 		const selectorTextareaOnCard = document.getElementsByTagName("textarea");
 		for (let i = 0; i < selectorTextareaOnCard.length; i++) {
 			selectorTextareaOnCard[i].style.border = "solid " + px + color;
@@ -473,7 +464,6 @@ function textareaBorderColorHandler(px, color) {
 
 function textareaBorderColorHandlerByClass(className, px, color) {
     setTimeout(()=>{
-		// console.log("textareaBorderColorHandler |"+ px +" "+ color +"|");
 		const selectorTextareaOnCard = document.getElementsByClassName(className);
 		for (let i = 0; i < selectorTextareaOnCard.length; i++) {
 			selectorTextareaOnCard[i].style.border = "solid " + px + color;
@@ -681,8 +671,6 @@ function getSameCharacterArray(characterValue) {
 	let characterArrayWithId = keys.map( id => {
 		return {"id": id, "character": bigPicture.character[id].props.contents.character};
 		});
-
-	console.log("characterArrayWithId = ", characterArrayWithId);
 	
 	let characterArray = [];
 	for(let i = 0; i < characterArrayWithId.length; i++) {
@@ -723,5 +711,3 @@ function date_ascending(a, b) { // 오름차순
 function date_descending(a, b) { // 내림차순    
 	return Date.parse(b) - Date.parse(a);
 };
-
-
