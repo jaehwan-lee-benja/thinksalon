@@ -61,19 +61,20 @@ function requestReadBigPicture(user) {
 		if (characterKeysArray.length > 0) {
 			let mainId = getMainId();
 			if(mainId != null && isMainShown == false) {
+				console.log("1");
 				isMainShown = true;
 				showItOnUI(mainId);
 			} else {
+				console.log("2");
 				showItOnUI(getLastestEditedId());
 			};
 			showSelectbox("selectbox_character");
 		} else {
+			console.log("3");
 			showItIfNoBpData();
 		};
 	});
 };
-
-///// LtoS dept
 
 ///// LtoS manager
 
@@ -212,9 +213,10 @@ function packageEditedCard(level) {
 
 		// 로컬 데이터에 있는 값 포착하기
 		let keys = Object.keys(bigPicture.character);
-		let characterArrayWithId = keys.map( id => {
-			return {"id": id, "character": bigPicture.character[id].props.contents.character};
-			});
+		let characterArrayWithId = getIdArrayByMap("contents", "character");
+		// let characterArrayWithId = keys.map( id => {
+		// 	return {"id": id, "character": bigPicture.character[id].props.contents.character};
+		// 	});
 	
 		// 위 두가지가 같은 경우의 수라면, 수정이 이뤄지지 않은 상태
 		for(let i = 0; i < characterArrayWithId.length; i++) {
@@ -227,7 +229,7 @@ function packageEditedCard(level) {
 	
 	function getMoniterResult(isChanged) {
 		if (isChanged == true) {
-			let moniterResultInFunction = monitorCharacterBlankOrDuplicates()
+			let moniterResultInFunction = monitorCharacterBlankOrDuplicates();
 			return moniterResultInFunction;
 		} else {
 			return true;
@@ -260,35 +262,38 @@ function packageEditedCard(level) {
 			default: 
 				let level = null;
 		};
-
 		return packagedData;
-
 	};
 };
 
-// function getLastestEditedId() {
-// 	return sortedEditedDateArrayWithId()[0].id
-// };
-
-function getLastestEditedId(){
-	let keys = Object.keys(bigPicture.character);
-	let editedDateArray = keys.map( id => {
-		let c = bigPicture.character[id];
-		return {"id": id, "date": c.props.editedDate};
-	  }).sort((a,b) => a.date - b.date)
-	  .reverse();
-	return editedDateArray[0].id;
+function getLastestEditedId() {
+	return sortedEditedDateArrayWithId()[0].id
 };
 
+// function getLastestEditedId(){
+// 	let keys = Object.keys(bigPicture.character);
+// 	let editedDateArray = keys.map( id => {
+// 		let c = bigPicture.character[id];
+// 		return {"id": id, "date": c.props.editedDate};
+// 	  });
+// 	console.log("editedDateArray = ", editedDateArray);
+// 	let sortedEditedDateArray = editedDateArray.sort((a,b) => a.date - b.date);
+// 	console.log("sortedEditedDateArray = ", sortedEditedDateArray);
+// 	// let reversedEditedDateArray = sortedEditedDateArray.reverse();
+// 	// console.log("reversedEditedDateArray = ", reversedEditedDateArray);
+// 	console.log("sortedEditedDateArray[0].id = ", sortedEditedDateArray[0].id);
+// 	return sortedEditedDateArray[0].id;
+// }; // sorting이 되지 않음
+
 function sortedEditedDateArrayWithId() {
-	let idEditedDateArray = getIdArrayByMap("editedDate");
-	let editedDateArray = idEditedDateArray.map(element => element.key);
+	let idEditedDateArray = getIdArrayByMap("props", "editedDate");
+	let editedDateArray = idEditedDateArray.map(element => element.editedDate);
 	let editedDateArrayinReverseOrder = editedDateArray.sort(date_descending);
 	let arr = [];
 	for(let i = 0; i < editedDateArrayinReverseOrder.length; i++) {
 		let datesAfterSorting = editedDateArrayinReverseOrder[i];
 		for (let j = 0; j < editedDateArray.length; j++) {
-			let datesBeforeSorting = idEditedDateArray[j].key;
+			let datesBeforeSorting = idEditedDateArray[j].editedDate;
 			let id = idEditedDateArray[j].id
 			if (datesAfterSorting == datesBeforeSorting) {
 				arr.push({"id": id, "editedDate": datesAfterSorting});
@@ -298,17 +303,19 @@ function sortedEditedDateArrayWithId() {
 	return arr;
 };
 
-function getIdArrayByMap(key) {
-	let keys = Object.keys(bigPicture.character);
-	let idArray = keys.map( id => {
-		let obj = {"id":id}
-		obj[key] =  bigPicture.character[id].props[key]
+function getIdArrayByMap(scope, key1, key2) {
+	let characterIdArray = Object.keys(bigPicture.character);
+	let idArrayWithKeys = characterIdArray.map( id => {
+		let obj = {"id":id};
+		if (scope == "props") {
+			obj[key1] =  bigPicture.character[id].props[key1];
+			obj[key2] =  bigPicture.character[id].props[key2];
+		} else {
+			obj[key1] =  bigPicture.character[id].props.contents[key1];
+		};
 		return obj;
-		// [질문] key 명칭을 파라미터로 넣을 수 있을까?
-		// [질문] bigPicture.character[id][key]로 하며, 향후 파라미터로 'props.editedDate' 또는 'props[editedDate]'라고 쓸 수 있을까?
 	  });
-	console.log("idArray = ", idArray);
-	return idArray;
+	return idArrayWithKeys;
 };
 
 ///// UI manager
@@ -579,9 +586,9 @@ function gotoMainCard_character() {
 };
 
 function getMainId() {
-	let idMainArray = getIdArrayByMap("main");
+	let idMainArray = getIdArrayByMap("props", "main");
 	for(let i = 0; i < idMainArray.length; i++) {
-		if(idMainArray[i].key == "main"){
+		if(idMainArray[i].main == "main"){
 			return idMainArray[i].id;
 		};
 	};
