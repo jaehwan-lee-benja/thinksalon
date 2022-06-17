@@ -270,20 +270,19 @@ function getLastestEditedId() {
 	return sortedEditedDateArrayWithId()[0].id
 };
 
-// function getLastestEditedId(){
-// 	let keys = Object.keys(bigPicture.character);
-// 	let editedDateArray = keys.map( id => {
-// 		let c = bigPicture.character[id];
-// 		return {"id": id, "date": c.props.editedDate};
-// 	  });
-// 	console.log("editedDateArray = ", editedDateArray);
-// 	let sortedEditedDateArray = editedDateArray.sort((a,b) => a.date - b.date);
-// 	console.log("sortedEditedDateArray = ", sortedEditedDateArray);
-// 	// let reversedEditedDateArray = sortedEditedDateArray.reverse();
-// 	// console.log("reversedEditedDateArray = ", reversedEditedDateArray);
-// 	console.log("sortedEditedDateArray[0].id = ", sortedEditedDateArray[0].id);
-// 	return sortedEditedDateArray[0].id;
-// }; // sorting이 되지 않음
+function sortedEditedDateArrayWithId2(){
+	let keys = Object.keys(bigPicture.character);
+	let editedDateArray = keys.map( id => {
+		let c = bigPicture.character[id];
+		return {"id": id, "date": c.props.editedDate};
+	  });
+	console.log("editedDateArray = ", editedDateArray);
+	let sortedEditedDateArray = editedDateArray.sort((a,b) => a.date - b.date);
+	console.log("sortedEditedDateArray = ", sortedEditedDateArray);
+	let reversedEditedDateArray = sortedEditedDateArray.reverse();
+	console.log("reversedEditedDateArray = ", reversedEditedDateArray);
+	return sortedEditedDateArray;
+}; // sorting이 되지 않음
 
 function sortedEditedDateArrayWithId() {
 	let idEditedDateArray = getIdArrayByMap("props", "editedDate");
