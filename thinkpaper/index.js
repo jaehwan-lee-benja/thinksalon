@@ -276,7 +276,7 @@ function sortedEditedDateArrayWithId2(){
 	let reversedEditedDateArray = sortedEditedDateArray.reverse();
 	console.log("reversedEditedDateArray = ", reversedEditedDateArray);
 	return sortedEditedDateArray;
-}; // sorting이 되지 않음
+}; // [질문] sorting이 되지 않음
 
 function sortedEditedDateArrayWithId() {
 	let idEditedDateArray = getIdArrayByMap("props", "editedDate");
