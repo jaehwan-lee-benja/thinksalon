@@ -61,16 +61,13 @@ function requestReadBigPicture(user) {
 		if (characterKeysArray.length > 0) {
 			let mainId = getMainId();
 			if(mainId != null && isMainShown == false) {
-				console.log("1");
 				isMainShown = true;
 				showItOnUI(mainId);
 			} else {
-				console.log("2");
 				showItOnUI(getLastestEditedId());
 			};
 			showSelectbox("selectbox_character");
 		} else {
-			console.log("3");
 			showItIfNoBpData();
 		};
 	});
@@ -212,11 +209,7 @@ function packageEditedCard(level) {
 		let characterObject = {"id": characterId, "character": characterValue};
 
 		// 로컬 데이터에 있는 값 포착하기
-		let keys = Object.keys(bigPicture.character);
 		let characterArrayWithId = getIdArrayByMap("contents", "character");
-		// let characterArrayWithId = keys.map( id => {
-		// 	return {"id": id, "character": bigPicture.character[id].props.contents.character};
-		// 	});
 	
 		// 위 두가지가 같은 경우의 수라면, 수정이 이뤄지지 않은 상태
 		for(let i = 0; i < characterArrayWithId.length; i++) {
@@ -237,6 +230,7 @@ function packageEditedCard(level) {
 	};
 
 	let moniterResult = getMoniterResult(moniterIfCharacterChanged());
+	// 파라미터 direction, navi, actionPlan 가능할것으로 보임
 	
 	if (moniterResult == true) {
 		let packagedData = {};
@@ -302,15 +296,19 @@ function sortedEditedDateArrayWithId() {
 	return arr;
 };
 
-function getIdArrayByMap(scope, key1, key2) {
+function getIdArrayByMap(scope1, key1, scope2, key2) {
 	let characterIdArray = Object.keys(bigPicture.character);
 	let idArrayWithKeys = characterIdArray.map( id => {
 		let obj = {"id":id};
-		if (scope == "props") {
+		if (scope1 == "props") {
 			obj[key1] =  bigPicture.character[id].props[key1];
-			obj[key2] =  bigPicture.character[id].props[key2];
 		} else {
 			obj[key1] =  bigPicture.character[id].props.contents[key1];
+		};
+		if (scope2 == "props") {
+			obj[key2] =  bigPicture.character[id].props[key2];
+		} else {
+			obj[key2] =  bigPicture.character[id].props.contents[key2];
 		};
 		return obj;
 	  });
@@ -318,16 +316,6 @@ function getIdArrayByMap(scope, key1, key2) {
 };
 
 ///// UI manager
-
-function showEmptyCard() {
-	selectorById("character").value = "";
-	// selectorById("direction").value = "";
-	// selectorById("naviArea").value = "";
-	// selectorById("naviB").value = "";
-	// selectorById("naviA").value = "";
-	// selectorById("actionPlan").value = "";
-	btnShowHideHandlerByClassName("character","createFirstPaper");
-};
 
 function showEmptyCard() {
 	selectorById("character").value = "";
@@ -511,15 +499,11 @@ function showSelectbox(selectboxId) {
 	};
 	
 	// Array 만들기
-	let keys = Object.keys(bigPicture.character);
-	let characterArray = keys.map( id => {
-		let c = bigPicture.character[id];
-		return {"id": id, "editedDate":c.props.editedDate ,"character": c.props.contents.character};
-	  });
+	let characterArray = getIdArrayByMap("props", "editedDate", "contents", "character");
 	  
-	// selectbox option list 순서 잡기
+	// selectbox option list 순서 잡기(최근 편집 순서)
 	function sortingArray() {
-		// 가나다순, 만들어진 순서, 최근 편집 순서
+
 		let editedDateArray = characterArray.map(element => element.editedDate);
 		let editedDateArrayinReverseOrder = editedDateArray.sort(date_descending);
 
@@ -648,7 +632,6 @@ function openEditCard() {
 function cancelEditCard() {
 	let cardId = selectorById("cardId_character").value;
 	showItOnUI(cardId);
-	//putSelectbox("selectboxBpTitle");
 };
 
 ///// monitor manager
@@ -673,10 +656,8 @@ function monitorCharacterBlankOrDuplicates() {
 function getSameCharacterArray(characterValue) {
 
 	let keys = Object.keys(bigPicture.character);
-
-	let characterArrayWithId = keys.map( id => {
-		return {"id": id, "character": bigPicture.character[id].props.contents.character};
-		});
+	
+	let characterArrayWithId = getIdArrayByMap("contents", "character");
 	
 	let characterArray = [];
 	for(let i = 0; i < characterArrayWithId.length; i++) {
