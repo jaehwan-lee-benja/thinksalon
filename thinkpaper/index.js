@@ -51,9 +51,9 @@ function requestReadBigPicture(user) {
 		console.log("===== .on is here =====");
 
 		snapshot.forEach(childSnap => {
-			let bpIdsKey = childSnap.key;
-			let bpDataValue = childSnap.val();
-			bigPicture[bpIdsKey] = bpDataValue;
+			let key_ids = childSnap.key;
+			let value_data = childSnap.val();
+			bigPicture[key_ids] = value_data;
 		});
 	
 		let characterKeysArray = Object.keys(bigPicture.character);
@@ -76,7 +76,7 @@ function requestReadBigPicture(user) {
 
 ///// LtoS manager
 
-function requestPushPackagedData_character(packagedDataHere) {
+function requestPushCard_character(packagedDataHere) {
 
 	db.ref("users")
 	.child(userData.uid)
@@ -87,7 +87,7 @@ function requestPushPackagedData_character(packagedDataHere) {
 
 };
 
-function requestUpdatePackagedData_character(packagedDataHere) {
+function requestUpdateCard_character(packagedDataHere) {
 
 	let cardId = selectorById("cardId_character").value;
 
@@ -103,7 +103,7 @@ function requestUpdatePackagedData_character(packagedDataHere) {
 
 };
 
-function requestRemoveByCharacterId(characterId) {
+function requestRemoveCard_character(characterId) {
 	db.ref("users")
 	.child(userData.uid)
 	.child("bigPicture")
@@ -158,7 +158,7 @@ function showUserData(userData) {
 
 function packageNewCard(level) {
 
-	let moniterResult = monitorCharacterBlankOrDuplicates();
+	let moniterResult = monitorCardBlankOrDuplicates_character();
 
 	if (moniterResult == true) {
 		let idNew = uuidv4();
@@ -203,7 +203,7 @@ function packageNewCard(level) {
 
 function packageEditedCard(level) {
 
-	function moniterIfCharacterChanged() {
+	function moniterIfCardChanged_character() {
 
 		// 현재 UI에 띄워진 값 포착하기
 		let characterId = selectorById("cardId_character").value;
@@ -224,14 +224,14 @@ function packageEditedCard(level) {
 	
 	function getMoniterResult(isChanged) {
 		if (isChanged == true) {
-			let moniterResultInFunction = monitorCharacterBlankOrDuplicates();
+			let moniterResultInFunction = monitorCardBlankOrDuplicates_character();
 			return moniterResultInFunction;
 		} else {
 			return true;
 		};
 	};
 
-	let moniterResult = getMoniterResult(moniterIfCharacterChanged());
+	let moniterResult = getMoniterResult(moniterIfCardChanged_character());
 	// 파라미터 direction, navi, actionPlan 가능할것으로 보임
 	
 	if (moniterResult == true) {
@@ -584,7 +584,7 @@ function getMainId() {
 function saveNewCard() {
 	let packagedBpData = packageNewCard("character");
 	if (packagedBpData != null) {
-		requestPushPackagedData_character(packagedBpData);
+		requestPushCard_character(packagedBpData);
 		alert("저장되었습니다.");
 	};
 };
@@ -594,7 +594,7 @@ function saveEditedCard() {
 	let packagedData = packageEditedCard("character");
 
 	if (packagedData != null) {
-		requestUpdatePackagedData_character(packagedData);
+		requestUpdateCard_character(packagedData);
 		alert("저장되었습니다.");
 	};
 
@@ -602,11 +602,9 @@ function saveEditedCard() {
 
 function removeCard() {
 	let removeId = selectorById("cardId_character").value;
-	// let removeId = catchId_character();
 	if (confirm("정말 삭제하시겠습니까? 삭제가 완료되면, 해당 내용은 다시 복구될 수 없습니다.")) {
-		requestRemoveByCharacterId(removeId);
+		requestRemoveCard_character(removeId);
 		alert("삭제되었습니다.");
-		location.reload();
 	};
 };
 
@@ -638,11 +636,11 @@ function cancelEditCard() {
 
 ///// monitor manager
 
-function monitorCharacterBlankOrDuplicates() {
-	let characterValue = selectorById("character").value.trim();
-	if (characterValue != "") {
-		let sameCharacterArray = getSameCharacterArray(characterValue);
-		if (sameCharacterArray == undefined) {
+function monitorCardBlankOrDuplicates_character() {
+	let cardValue = selectorById("character").value.trim();
+	if (cardValue != "") {
+		let sameTextArray = getSameTextArray(cardValue);
+		if (sameTextArray == undefined) {
 			return true;
 		} else {
 			highLightBorder("character", "red");
@@ -655,24 +653,22 @@ function monitorCharacterBlankOrDuplicates() {
 	return false;
 };
 
-function getSameCharacterArray(characterValue) {
-
-	let keys = Object.keys(bigPicture.character);
+function getSameTextArray(text) {
 	
-	let characterArrayWithId = getIdArrayByMap("contents", "character");
+	let IdArray_character = getIdArrayByMap("contents", "character");
 	
-	let characterArray = [];
-	for(let i = 0; i < characterArrayWithId.length; i++) {
-		characterArray.push(characterArrayWithId[i].character);
+	let textArray = [];
+	for(let i = 0; i < IdArray_character.length; i++) {
+		textArray.push(IdArray_character[i].character);
 	};
 
-	let filterSameIndexArray = (query) => {
-		return characterArray.find(characterValue => query == characterValue);
+	let filterSameTextArray = (query) => {
+		return textArray.find(text => query == text);
 	};
 
-	let sameCharacterArray = filterSameIndexArray(characterValue);
+	let sameTextArray = filterSameTextArray(text);
 
-	return sameCharacterArray;
+	return sameTextArray;
 };
 
 ///// general supporter
