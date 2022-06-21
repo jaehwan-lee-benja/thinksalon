@@ -60,7 +60,6 @@ function requestReadBigPicture(user) {
 
 		if (characterKeysArray.length > 0) {
 			let mainId = getMainId();
-			console.log("isMainShown = ", isMainShown);
 			if(mainId != null && isMainShown == false) {
 				isMainShown = true;
 				showItOnUI(mainId);
@@ -413,7 +412,6 @@ function editModeHandlerByClassName(className, paperMode) {
 		document.getElementsByClassName(className)[0].style.borderColor = "#9CC0E7";
 		textareaBorderColorHandlerByClass(className, "3px", "#9CC0E7");
 		textareaReadOnly("character", false);
-		// selectorById -> byClassName으로 바꾸기
 	} else {
 		document.getElementsByClassName(className)[0].style.color = "#424242";
 		document.getElementsByClassName(className)[0].style.borderColor = "#424242";
@@ -495,6 +493,7 @@ function highLightBorder(id, color) {
 function showSelectbox(selectboxId) {
 
 	let selectbox = selectorById(selectboxId);
+
 	// selectbox 초기화하기
 	for (let i = selectbox.options.length - 1; i >= 0; i--) {
 		selectbox.remove(i + 1);
@@ -531,14 +530,14 @@ function showSelectbox(selectboxId) {
 		return arr;
 	};
 
-	let orderedCharacterArray = sortingArray();
+	let sortedArray = sortingArray();
 
 	// <option> 만들어서, Array 넣기
-	for (let i = 0; i < orderedCharacterArray.length; i++) {
+	for (let i = 0; i < sortedArray.length; i++) {
 		let option = document.createElement("OPTION");
-		let txt = document.createTextNode(orderedCharacterArray[i].character);
-		let optionId = orderedCharacterArray[i].id;
-		let optionValue = orderedCharacterArray[i].character;
+		let txt = document.createTextNode(sortedArray[i].character);
+		let optionId = sortedArray[i].id;
+		let optionValue = sortedArray[i].character;
 		let mainId = getMainId();
 		if(optionId == mainId) {
 			let mainOptionMark = optionValue + " ★";
@@ -547,8 +546,8 @@ function showSelectbox(selectboxId) {
 		} else {
 			option.appendChild(txt);
 		};
-		option.setAttribute("value", orderedCharacterArray[i].id);
-		option.setAttribute("innerHTML", orderedCharacterArray[i].character);
+		option.setAttribute("value", sortedArray[i].id);
+		option.setAttribute("innerHTML", sortedArray[i].character);
 		selectbox.insertBefore(option, selectbox.lastChild);
 	};
 };
@@ -590,14 +589,11 @@ function saveNewCard() {
 };
 
 function saveEditedCard() {
-
 	let packagedData = packageEditedCard("character");
-
 	if (packagedData != null) {
 		requestUpdateCard_character(packagedData);
 		alert("저장되었습니다.");
 	};
-
 };
 
 function removeCard() {
