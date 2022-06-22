@@ -302,7 +302,7 @@ function packageEditedCard(layer) {
 };
 
 function getLastestEditedId() {
-	return sortedEditedDateArrayWithId()[0].id
+	return sortedEditedDateArrayWithId2()[0].id
 };
 
 function sortedEditedDateArrayWithId2(){
@@ -317,7 +317,7 @@ function sortedEditedDateArrayWithId2(){
 	let reversedEditedDateArray = sortedEditedDateArray.reverse();
 	console.log("reversedEditedDateArray = ", reversedEditedDateArray);
 	return sortedEditedDateArray;
-}; // [질문] sorting이 되지 않음
+};
 
 function sortedEditedDateArrayWithId() {
 	let idEditedDateArray = getIdArrayByMap("props", "editedDate");
@@ -373,8 +373,9 @@ function showItOnUI(printDataId) {
 	selectorById("character").value = characterParents.props.contents.character;
 	selectorById("cardId_character").value = characterParents.id;
 
-	selectorById("character").value = characterParents.children.directionId;
-	selectorById("cardId_character").value = characterParents.id;
+	// 작업중
+	//selectorById("character").value = characterParents.children.directionId;
+	//selectorById("cardId_character").value = characterParents.id;
 
 	btnShowHideHandlerByClassName("character","readCard");
 	btnShowHideHandlerByClassName("direction","readCard");
@@ -624,22 +625,13 @@ function getMainId() {
 
 ///// CRUD manager
 
-function saveNewCard() {
-	let packagedBpData = packageNewCard("character");
+function saveNewCard(layer) {
+	let packagedBpData = packageNewCard(layer);
 	if (packagedBpData != null) {
-		requestSetCard_character(packagedBpData);
+		requestSetCard(layer, packagedBpData);
 		alert("저장되었습니다.");
 	};
-}; //질문: 해당 id?를 활용하여 파라미터 넣기
-
-function saveNewCard_direction() {
-	console.log("saveNewCard_direction start here");
-	let packagedBpData = packageNewCard("direction");
-	if (packagedBpData != null) {
-		requestSetCard("direction", packagedBpData);
-		alert("저장되었습니다.");
-	};
-}; //질문: 해당 id?를 활용하여 파라미터 넣기
+};
 
 function saveEditedCard() {
 	let packagedData = packageEditedCard("character");

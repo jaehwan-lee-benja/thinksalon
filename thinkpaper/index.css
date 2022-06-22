@@ -129,7 +129,7 @@ input:hover {
     grid-template-rows: 1.5rem 3rem 4rem;
     grid-gap: 0.2rem;
     max-width: 20rem;
-    padding: 1rem;
+    padding: 0 1rem;
     margin: 0 auto;
     align-content: center;
 }
@@ -138,15 +138,6 @@ input:hover {
     display: grid;
     grid-template-rows: 1fr 2rem;
     grid-gap: 0.2rem;
-}
-
-#gridMainTitle{
-    display: grid;
-    grid-gap: 0.2rem;
-    max-width: 20rem;
-    padding: 1rem;
-    margin: 0 auto;
-    align-content: center;
 }
 
 #gridMainContents{
