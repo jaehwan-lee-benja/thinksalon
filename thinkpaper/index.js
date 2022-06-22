@@ -155,7 +155,7 @@ function showUserData(userData) {
 
 ///// local data manager
 
-function packageNewCard(level) {
+function packageNewCard(layer) {
 
 	let moniterResult = monitorCardBlankOrDuplicates_character();
 
@@ -172,11 +172,11 @@ function packageNewCard(level) {
 		props["createdDate"] = timeStamp();
 		props["editedDate"] = timeStamp();
 		props["main"] = "";
-		props["level"] = level;
+		props["layer"] = layer;
 		props["contents"] = {};
 
 		let contents = props["contents"];
-		switch(level){
+		switch(layer){
 			case "character" :
 				contents["character"] = selectorById("character").value.trim();
 				break;
@@ -192,7 +192,7 @@ function packageNewCard(level) {
 				contents["actionPlan"] = selectorById("actionPlan").value.trim();
 				break;
 			default: 
-				let level = null;
+				let layer = null;
 		};
 
 		return packagedData;
@@ -200,7 +200,7 @@ function packageNewCard(level) {
 		
 };
 
-function packageEditedCard(level) {
+function packageEditedCard(layer) {
 
 	function moniterIfCardChanged_character() {
 
@@ -239,7 +239,7 @@ function packageEditedCard(level) {
 		packagedData["contents"] = {};
 
 		let contents = packagedData["contents"];
-		switch(level){
+		switch(layer){
 			case "character" :
 				contents["character"] = selectorById("character").value.trim();
 				break;
@@ -255,7 +255,7 @@ function packageEditedCard(level) {
 				contents["actionPlan"] = selectorById("actionPlan").value.trim();
 				break;
 			default: 
-				let level = null;
+				let layer = null;
 		};
 		return packagedData;
 	};

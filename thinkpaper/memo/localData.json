@@ -18,7 +18,7 @@
                     "editedDate": "",
                     "readDate": "",
                     "main": "",
-                    "level": "character",
+                    "layer": "character",
                     "contents": {"character":""}
                 },
                 "children": {
@@ -30,7 +30,7 @@
                             "editedDate": "",
                             "readDate": "",
                             "main": "",
-                            "level": "direction",
+                            "layer": "direction",
                             "contents": {"direction":""}
                         },
                         "children": {
@@ -42,7 +42,7 @@
                                     "editedDate": "",
                                     "readDate": "",
                                     "main": "",
-                                    "level": "navi",
+                                    "layer": "navi",
                                     "contents": {
                                         "navi":"",
                                         "naviA":"",
@@ -57,7 +57,7 @@
                                             "editedDate": "",
                                             "readDate": "",
                                             "main": "",
-                                            "level": "actionPlan",
+                                            "layer": "actionPlan",
                                             "contents": {"actionPlan":""}
                                         },
                                         "children": ""
