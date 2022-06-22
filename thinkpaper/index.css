@@ -112,6 +112,12 @@ input:hover {
     border: 0.2px solid rgb(200, 200, 200);
 }
 
+#gridLayer{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 0.2rem;
+}
+
 #guideMessage{
     display: block;
     text-align: center;
@@ -120,7 +126,7 @@ input:hover {
 
 #gridMainTitle{
     display: grid;
-    grid-template-rows: auto 1fr auto;
+    grid-template-rows: 1.5rem 3rem 4rem;
     grid-gap: 0.2rem;
     max-width: 20rem;
     padding: 1rem;
@@ -254,6 +260,13 @@ https://www.w3schools.com/howto/howto_js_todolist.asp
     #imageMain{
         max-width: 60%;
         min-width : 15rem;
+    }
+    #gridLayer{
+        display: block;
+        margin-bottom: 3rem;
+    }
+    #divLayer{
+        margin-bottom: 3rem;
     }
     .pageInfoBrand{  
         text-align: left;

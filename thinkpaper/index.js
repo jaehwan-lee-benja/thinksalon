@@ -16,7 +16,7 @@ function logIn() {
 		if (user != null) {
 			requestReadUserData(user);
 			requestReadBigPicture(user);
-			openEditCardByDbclick();
+			// openEditCardByDbclick();
 		} else {
 			window.location.replace("login.html");
 		};
@@ -320,18 +320,18 @@ function getIdArrayByMap(scope1, key1, scope2, key2) {
 
 function showEmptyCard() {
 	selectorById("character").value = "";
-	// selectorById("direction").value = "";
+	selectorById("direction").value = "";
 	// selectorById("naviArea").value = "";
 	// selectorById("naviB").value = "";
 	// selectorById("naviA").value = "";
 	// selectorById("actionPlan").value = "";
-	btnShowHideHandlerByClassName("character","createFirstPaper");
+	btnShowHideHandlerByClassName("character","createFirstCard");
 };
 
 function showItOnUI(printDataId) {
 	selectorById("character").value = bigPicture.character[printDataId].props.contents.character;
 	selectorById("cardId_character").value = bigPicture.character[printDataId].id;
-	btnShowHideHandlerByClassName("character","readPaper");
+	btnShowHideHandlerByClassName("character","readCard");
 };
 
 function uiHide(id) {
@@ -344,37 +344,37 @@ function uiShow(id) {
 
 function btnShowHideHandlerByClassName(className, state) {
 
-	console.log("paperState = ", state);
+	console.log("cardState = ", state);
 
-	uiHide("openEditPaper_btn_"+className);
-	uiHide("cancelEditPaper_btn_"+className);
-	uiHide("saveEditedPaper_btn_"+className);
-	uiHide("saveNewPaper_btn_"+className);
-	uiHide("removePaper_btn_"+className);
-	uiHide("openNewPaper_btn_"+className);
+	uiHide("openEditCard_btn_"+className);
+	uiHide("cancelEditCard_btn_"+className);
+	uiHide("saveEditedCard_btn_"+className);
+	uiHide("saveNewCard_btn_"+className);
+	uiHide("removeCard_btn_"+className);
+	uiHide("openNewCard_btn_"+className);
 
 	switch(state){
-		case "createFirstPaper" :
-			uiShow("saveNewPaper_btn_"+className);
+		case "createFirstCard" :
+			uiShow("saveNewCard_btn_"+className);
 			editModeHandlerByClassName(className, "editing");
 			break;
-		case "openNewPaper" :
-			uiShow("saveNewPaper_btn_"+className);
-			uiShow("cancelEditPaper_btn_"+className)
+		case "openNewCard" :
+			uiShow("saveNewCard_btn_"+className);
+			uiShow("cancelEditCard_btn_"+className)
 			editModeHandlerByClassName(className, "editing");
 			break;
-		case "readPaper" :
+		case "readCard" :
 			uiHide("guideMessage");
-			uiShow("openEditPaper_btn_"+className);
-			uiShow("openNewPaper_btn_"+className);
-			uiShow("removePaper_btn_"+className);
+			uiShow("openEditCard_btn_"+className);
+			uiShow("openNewCard_btn_"+className);
+			uiShow("removeCard_btn_"+className);
 			editModeHandlerByClassName(className, "reading");
 			break;
-		case "editPaper" :
-			uiShow("saveEditedPaper_btn_"+className);
-			uiShow("cancelEditPaper_btn_"+className);
-			uiShow("saveNewPaper_btn_"+className);
-			uiShow("removePaper_btn_"+className);
+		case "editCard" :
+			uiShow("saveEditedCard_btn_"+className);
+			uiShow("cancelEditCard_btn_"+className);
+			uiShow("saveNewCard_btn_"+className);
+			uiShow("removeCard_btn_"+className);
 			editModeHandlerByClassName(className, "editing");
 			break;
 		default:
@@ -403,29 +403,28 @@ function btnShowHideHandlerByClassName_main(className) {
 	};
 };
 
-function editModeHandlerByClassName(className, paperMode) {
+function editModeHandlerByClassName(className, cardMode) {
 	function textareaReadOnly(id, check){
 		selectorById(id).readOnly = check;
 	};
-	if (paperMode == "editing") {
+	if (cardMode == "editing") {
 		document.getElementsByClassName(className)[0].style.color = "#9CC0E7";
 		document.getElementsByClassName(className)[0].style.borderColor = "#9CC0E7";
 		textareaBorderColorHandlerByClass(className, "3px", "#9CC0E7");
-		textareaReadOnly("character", false);
+		textareaReadOnly(className, false);
 	} else {
 		document.getElementsByClassName(className)[0].style.color = "#424242";
 		document.getElementsByClassName(className)[0].style.borderColor = "#424242";
 		textareaBorderColorHandlerByClass(className, "1px", "#c8c8c8");
-		textareaReadOnly("character", true);
+		textareaReadOnly(className, true);
 	};
 };
 
-function editModeHandler(paperMode) {
-	function textareaReadOnly(id, check){
-		selectorById(id).readOnly = check;
+function editModeHandler(cardMode) {
+	function textareaReadOnly(id, trueOrFalse){
+		selectorById(id).readOnly = trueOrFalse;
 	};
-	if (paperMode == "editing") {
-		selectorById("divPaperMode").innerHTML = "작성모드";
+	if (cardMode == "editing") {
 		selectorById("gridMainFrame").style.color = "#9CC0E7";
 		textareaReadOnly("character", false);
 		textareaReadOnly("direction", false);
@@ -435,7 +434,6 @@ function editModeHandler(paperMode) {
 		textareaReadOnly("actionPlan", false);
 		textareaBorderColorHandler("2px", "#9CC0E7");
 	} else {
-		selectorById("divPaperMode").innerHTML = "읽기모드";
 		selectorById("gridMainFrame").style.color = "#424242";
 		textareaReadOnly("character", true);
 		textareaReadOnly("direction", true);
@@ -606,7 +604,7 @@ function removeCard() {
 
 function openNewCard() {
 	showEmptyCard();
-	btnShowHideHandlerByClassName("character","openNewPaper");
+	btnShowHideHandlerByClassName("character","openNewCard");
 };
 
 function openEditCardByDbclick() {
@@ -622,7 +620,11 @@ function openEditCardByDbclick() {
 };
 
 function openEditCard() {
-	btnShowHideHandlerByClassName("character","editPaper");
+	btnShowHideHandlerByClassName("character","editCard");
+};
+
+function openEditCard_direction() {
+	btnShowHideHandlerByClassName("direction","editCard");
 };
 
 function cancelEditCard() {
