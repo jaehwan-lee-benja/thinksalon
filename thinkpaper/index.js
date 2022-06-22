@@ -67,6 +67,7 @@ function requestReadBigPicture(user) {
 				showItOnUI(getLastestEditedId());
 			};
 			showSelectbox("selectbox_character");
+			// showSelectbox("selectbox_direction");
 		} else {
 			showItIfNoBpData();
 		};
@@ -75,15 +76,52 @@ function requestReadBigPicture(user) {
 
 ///// LtoS manager
 
-function requestPushCard_character(packagedDataHere) {
+function requestSetCard_character(packagedDataHere) {
 
-	db.ref("users")
-	.child(userData.uid)
-	.child("bigPicture")
-	.child("character")
-	.child(packagedDataHere.id)
-	.set(packagedDataHere);
+		db.ref("users")
+		.child(userData.uid)
+		.child("bigPicture")
+		.child("character")
+		.child(packagedDataHere.id)
+		.set(packagedDataHere);
 
+};
+
+function requestSetCard(layer, packagedDataHere) {
+
+	function cardId(layerHere) {
+		return selectorById("cardId_"+layerHere).value;
+	};
+
+	let cardId_character = cardId("character");
+
+	const characterRef = db.ref("users")
+		.child(userData.uid)
+		.child("bigPicture")
+		.child("character");
+
+	switch(layer){
+		case "character" :
+			characterRef
+			.child(packagedDataHere.id)
+			.set(packagedDataHere);
+			break;
+		case "direction" :
+			characterRef
+			.child(cardId_character)
+			.child("children")
+			.child(packagedDataHere.id)
+			.set(packagedDataHere);
+			break;
+		case "navi" :
+			console.log("navi");
+			break;
+		case "actionPlan" :
+			console.log("actionPlan");
+			break;
+		default: 
+			let layer = null;
+	};
 };
 
 function requestUpdateCard_character(packagedDataHere) {
@@ -157,7 +195,9 @@ function showUserData(userData) {
 
 function packageNewCard(layer) {
 
-	let moniterResult = monitorCardBlankOrDuplicates_character();
+	// let moniterResult = monitorCardBlankOrDuplicates_character();
+
+	let moniterResult = true;
 
 	if (moniterResult == true) {
 		let idNew = uuidv4();
@@ -329,9 +369,15 @@ function showEmptyCard() {
 };
 
 function showItOnUI(printDataId) {
-	selectorById("character").value = bigPicture.character[printDataId].props.contents.character;
-	selectorById("cardId_character").value = bigPicture.character[printDataId].id;
+	let characterParents = bigPicture.character[printDataId]
+	selectorById("character").value = characterParents.props.contents.character;
+	selectorById("cardId_character").value = characterParents.id;
+
+	selectorById("character").value = characterParents.children.directionId;
+	selectorById("cardId_character").value = characterParents.id;
+
 	btnShowHideHandlerByClassName("character","readCard");
+	btnShowHideHandlerByClassName("direction","readCard");
 };
 
 function uiHide(id) {
@@ -581,10 +627,19 @@ function getMainId() {
 function saveNewCard() {
 	let packagedBpData = packageNewCard("character");
 	if (packagedBpData != null) {
-		requestPushCard_character(packagedBpData);
+		requestSetCard_character(packagedBpData);
 		alert("저장되었습니다.");
 	};
-};
+}; //질문: 해당 id?를 활용하여 파라미터 넣기
+
+function saveNewCard_direction() {
+	console.log("saveNewCard_direction start here");
+	let packagedBpData = packageNewCard("direction");
+	if (packagedBpData != null) {
+		requestSetCard("direction", packagedBpData);
+		alert("저장되었습니다.");
+	};
+}; //질문: 해당 id?를 활용하여 파라미터 넣기
 
 function saveEditedCard() {
 	let packagedData = packageEditedCard("character");
