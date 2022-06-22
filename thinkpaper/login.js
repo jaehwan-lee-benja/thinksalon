@@ -33,6 +33,9 @@
               email: userEmail,
               name: userName,
               lastLogin: Date.now()
+            },
+            bigPicture: {
+              character: ""
             }
           }
 

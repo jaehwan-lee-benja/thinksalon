@@ -1,77 +1,73 @@
-
-
 {
-    "json memo" : "firebase의 id로 묶는 구조로 바꾸기, 로컬형 구조 그리기",
-    "userInfoData": {
-        "uid": "user.uid",
-        "userName": "userName",
+    "userData": {
+        "uid": "",
+        "name": "",
         "email": "",
         "phone": "",
         "signedinDate": "",
         "visitCounts": "",
         "visitRate": ""
     },
-    "action": {
-        "actionId": "",
-        "createdDate": "",
-        "editedDate": "",
-        "contents": {}
-    },
     "bigPicture": {
-        "bpId": "",
-        "createdDate": "",
-        "editedDate": "",
-        "bpTitle": "",
-        "setMainBp": "",
-        "contents": {
-            "direction": {
-                "dirctionId": "",
-                "createdDate": "",
-                "editedDate": "",
-                "contents": {
-                    "navi": {
-                        "naviId": "",
-                        "createdDate": "",
-                        "editedDate": "",
-                        "scale": "",
-                        "area": "",
-                        "subArea": "",
-                        "contents": {
-                            "actionPlan": {
-                                "apId": "",
-                                "createdDate": "",
-                                "editedDate": "",
-                                "contents": {},
-                                "term": ""
+        "character": {
+            "#$characterId": {
+                "id": "",
+                "parentsId": "",
+                "props": {
+                    "createdDate": "",
+                    "editedDate": "",
+                    "readDate": "",
+                    "main": "",
+                    "layer": "character",
+                    "contents": {"character":""}
+                },
+                "children": {
+                    "#$directionId": {
+                        "id": "",
+                        "parentsId": "",
+                        "props": {
+                            "createdDate": "",
+                            "editedDate": "",
+                            "readDate": "",
+                            "main": "",
+                            "layer": "direction",
+                            "contents": {"direction":""}
+                        },
+                        "children": {
+                            "#$naviId": {
+                                "id": "",
+                                "parentsId": "",
+                                "props": {
+                                    "createdDate": "",
+                                    "editedDate": "",
+                                    "readDate": "",
+                                    "main": "",
+                                    "layer": "navi",
+                                    "contents": {
+                                        "navi":"",
+                                        "naviA":"",
+                                        "naviB":""}
+                                },
+                                "children": {
+                                    "#$actionPlanId": {
+                                        "id": "",
+                                        "parentsId": "",
+                                        "props": {
+                                            "createdDate": "",
+                                            "editedDate": "",
+                                            "readDate": "",
+                                            "main": "",
+                                            "layer": "actionPlan",
+                                            "contents": {"actionPlan":""}
+                                        },
+                                        "children": ""
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
         }
-    },
-    "cycle": {
-        "cycleId": "",
-        "createdDate": "",
-        "editedDate": "",
-        "time": {
-            "timeid": "",
-            "createdDate": "",
-            "editedDate": "",
-            "contents": {}
-        },
-        "money": {
-            "monenyId": "",
-            "createdDate": "",
-            "editedDate": "",
-            "contents": {}
-        },
-        "routine": {
-            "routineId": "",
-            "createdDate": "",
-            "editedDate": "",
-            "contents": {}
-        }
-    },
-    "disucussing": {}
+    }
 }

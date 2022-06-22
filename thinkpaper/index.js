@@ -1,45 +1,35 @@
-// const firebase = appFireBase; // firebase 자체의 버전 이슈로 있던 기능
-// branch_test_220415
-
 const db = firebase.database();
 const SELECTBOX_BPTITLE_VALUE_INIT = "INIT";
+
 let userData = {};
-let bpDataPool = {};
-let spoonedBpData = {};
-let packagedBpData = {};
-let bpTitleArray = [];
-let mainBpTitleMemory = "";
-let bpTitleSpoonMemory = "";
-let updatedMainBpTitleMemory = "";
+let bigPicture = {character:""};
+let isMainShown = false;
 
 (function() {
 	logIn();
-	openEditPaperByDbclick();
 })();
 
-// --------------------------------------------------
-// *** logIn Manager
-// --------------------------------------------------
+///// logIn manager
+
 function logIn() {
 	firebase.auth().onAuthStateChanged(function (user) {
 		if (user != null) {
-			requestUserData(user);
-			requestBpData(user);
+			requestReadUserData(user);
+			requestReadBigPicture(user);
+			// openEditCardByDbclick();
 		} else {
 			window.location.replace("login.html");
 		};
 	});
-}; // checked!
+};
 
 function logOut() {
 	firebase.auth().signOut();
-}; // checked!
+};
 
-// --------------------------------------------------
-// *** server Manager_StoL
-// --------------------------------------------------
+///// StoL manager
 
-function requestUserData(user) {
+function requestReadUserData(user) {
 	const userRef = db.ref("users").child(user.uid).child("user");
 	userRef.on("value", (snapshot) => {
 		snapshot.forEach(childSnap => {
@@ -48,432 +38,476 @@ function requestUserData(user) {
 			value["uid"] = childSnap.key;
 			userData[key] = value;
 		});
-		printUserData(userData);
+		showUserData(userData);
 	});
-}; // checked!
+};
 
-function requestBpData(user) {
+function requestReadBigPicture(user) {
 
-	const userRef = db.ref("users").child(user.uid);
+	const userRef = db.ref("users").child(user.uid).child("bigPicture");
 
 	userRef.on("value", (snapshot) => {
-		// 콜백은 서버에 데이터 변경시 자동으로 작동한다.
-		// 참고: https://firebase.google.com/docs/reference/js/v8/firebase.database.Reference#on
+
+		console.log("===== .on is here =====");
+
 		snapshot.forEach(childSnap => {
-			let key = childSnap.key;
-			let value = childSnap.val();
-			if(key == "bigPicture") {
-				let bigPictures = value;
-				let bpIds = Object.keys(bigPictures);
-				bpIds.forEach( bpId => {
-					let bigPicture = bigPictures[bpId];
-					let bpTitle = bigPicture.bpTitle;
-					bpDataPool[bpTitle] = bigPicture;
-					bpDataPool[bpTitle]["bpId"] = bpId;
-				});
-			};
+			let key_ids = childSnap.key;
+			let value_data = childSnap.val();
+			bigPicture[key_ids] = value_data;
 		});
-		bpTitleArray = Object.keys(bpDataPool).sort();
-		if (bpTitleArray.length > 0) {
-			processSpoonToPrint();
+	
+		let characterKeysArray = Object.keys(bigPicture.character);
+
+		if (characterKeysArray.length > 0) {
+			let mainId = getMainId();
+			if(mainId != null && isMainShown == false) {
+				isMainShown = true;
+				showItOnUI(mainId);
+			} else {
+				showItOnUI(getLastestEditedId());
+			};
+			showSelectbox("selectbox_character");
+			// showSelectbox("selectbox_direction");
 		} else {
-			printItIfNoBpData();
+			showItIfNoBpData();
 		};
 	});
-}; // checked!
+};
 
-// --------------------------------------------------
-// *** server Manager_LtoS
-// --------------------------------------------------
+///// LtoS manager
 
-function requestPushNewBpData(packagedBpDataHere) {
-	db.ref("users")
-	.child(userData.uid)
-	.child("bigPicture")
-	.push(packagedBpDataHere);
-}; // checked!
+function requestSetCard_character(packagedDataHere) {
 
-function requestUpdateBpData(packagedBpDataHere) {
-	db.ref("users")
-	.child(userData.uid)
-	.child("bigPicture")
-	.child(packagedBpDataHere.bpId)
-	.update(packagedBpDataHere, (e) => {
-		console.log("update completed = ", e);
-		});
-}; // checked!
+		db.ref("users")
+		.child(userData.uid)
+		.child("bigPicture")
+		.child("character")
+		.child(packagedDataHere.id)
+		.set(packagedDataHere);
 
-function requestRemoveSpoonedBpData(packagedBpDataHere) {
-	db.ref("users")
-	.child(userData.uid)
-	.child("bigPicture")
-	.child(packagedBpDataHere.bpId)
-	.remove();
-}; // checked!
+};
 
-function requestChangeIsMainBpValue() {
-	requestUpdateEveryIsMainBpValueToBlank();
-	requestUpdateOneIsMainBpValueToMain();
-}; // checked!
+function requestSetCard(layer, packagedDataHere) {
 
-function requestUpdateEveryIsMainBpValueToBlank() {
-
-	let updatedBpData = {};
-	updatedBpData["isMainBp"] = "";
-
-	if (bpTitleArray.length > 0){
-		for (let i = 0; i < bpTitleArray.length; i++) {
-			let bpIds = bpDataPool[bpTitleArray[i]].bpId;
-			db.ref("users")
-				.child(userData.uid)
-				.child("bigPicture")
-				.child(bpIds)
-				.update(updatedBpData, (e) => {
-				console.log("update completed = ", e);
-				});
-		};
+	function cardId(layerHere) {
+		return selectorById("cardId_"+layerHere).value;
 	};
 
-}; // checked!
+	let cardId_character = cardId("character");
 
-function requestUpdateOneIsMainBpValueToMain() {
+	const characterRef = db.ref("users")
+		.child(userData.uid)
+		.child("bigPicture")
+		.child("character");
 
-	let updatedBpData = {};
-	updatedBpData["isMainBp"] = "main";
-
-	if (bpTitleArray.length > 0){
-		for (let i = 0; i < bpTitleArray.length; i++) {
-			if (bpDataPool[bpTitleArray[i]].bpTitle == updatedMainBpTitleMemory) {
-				let bpIds = bpDataPool[bpTitleArray[i]].bpId;
-				db.ref("users")
-					.child(userData.uid)
-					.child("bigPicture")
-					.child(bpIds)
-					.update(updatedBpData, (e) => {
-					console.log("update completed = ", e);
-					});
-			};
-		};
-	};
-
-}; // checked!
-
-// --------------------------------------------------
-// *** userData Manager
-// --------------------------------------------------
-
-function printUserData(userData) {
-	let userName = userData.name;
-	let userEmail = userData.email;
-	selectorById("nameChecked").innerHTML = "생각 설계자: " + userName + " 대표"
-	selectorById("emailChecked").innerHTML = "(" + userEmail + ")"
-}; // checked!
-
-// --------------------------------------------------
-// *** bpDataPool Manager
-// --------------------------------------------------
-
-// --------------------------------------------------
-// *** bpTitle Manager
-// --------------------------------------------------
-
-function pickupBpTitleSpoonBySelectbox() {
-	let selectboxBpTitleValue = selectorById("selectboxBpTitle").value;
-	if (selectboxBpTitleValue == SELECTBOX_BPTITLE_VALUE_INIT) {
-		console.log("pickupBpTitleSpoonBySelectbox by INIT");
-		let bpTitleSpoon = bpTitleSpoonMemory;
-		return bpTitleSpoon;
-	} else {
-		console.log("pickupBpTitleSpoonBySelectbox by selectboxBpTitleValue");
-		let bpTitleSpoon = selectboxBpTitleValue;
-		bpTitleSpoonMemory = bpTitleSpoon;
-		return bpTitleSpoon;
+	switch(layer){
+		case "character" :
+			characterRef
+			.child(packagedDataHere.id)
+			.set(packagedDataHere);
+			break;
+		case "direction" :
+			characterRef
+			.child(cardId_character)
+			.child("children")
+			.child(packagedDataHere.id)
+			.set(packagedDataHere);
+			break;
+		case "navi" :
+			console.log("navi");
+			break;
+		case "actionPlan" :
+			console.log("actionPlan");
+			break;
+		default: 
+			let layer = null;
 	};
 };
 
-function pickupBpTitleSpoon() {
-	let selectboxBpTitleValue = selectorById("selectboxBpTitle").value;
+function requestUpdateCard_character(packagedDataHere) {
 
-	if (selectboxBpTitleValue == SELECTBOX_BPTITLE_VALUE_INIT) {
-		// by reloaded or openMainBp_btn(=reloaded)
-		console.log("pickupBpTitleSpoon by pointMainBpTitle")
-		let bpTitleSpoon = pointMainBpTitle();
-		bpTitleSpoonMemory = bpTitleSpoon;
-		return bpTitleSpoon;
-	} else {
-		if (bpTitleSpoonMemory != "") {
-			// by requestUpdateBpdata
-			console.log("pickupBpTitleSpoon by bpTitleSpoonMemory")
-			let bpTitleSpoon = bpTitleSpoonMemory;
-			return bpTitleSpoon;
-		};
-	};
-}; // checked!
+	let cardId = selectorById("cardId_character").value;
 
-// --------------------------------------------------
-// *** mainTag Manager
-// --------------------------------------------------
-
-function pointMainBpTitle() {
-	let IsThereAnyMainBpResult = monitorIsThereAnyMainBp();
-	if (IsThereAnyMainBpResult == true){
-		for (let i = 0; i < bpTitleArray.length; i++) {
-			let isMainBpValue = bpDataPool[bpTitleArray[i]].isMainBp;
-			let mainBpTitle = bpDataPool[bpTitleArray[i]].bpTitle;
-			if (isMainBpValue == "main") {
-				mainBpTitleMemory = mainBpTitle;
-				return mainBpTitle;
-			};
-		};
-	};
-}; // checked!
-
-function monitorIsThereAnyMainBp() {
-	
-	let isMainBpValueArray = [];
-
-	for (let i = 0; i < bpTitleArray.length; i++) {
-		let isMainBpValue = bpDataPool[bpTitleArray[i]].isMainBp;
-		isMainBpValueArray.push(isMainBpValue);
-	};
-
-	let uniqueIsMainBpValueArray = isMainBpValueArray.filter((element, index) => {
-			return isMainBpValueArray.indexOf(element) == index;
+	db.ref("users")
+	.child(userData.uid)
+	.child("bigPicture")
+	.child("character")
+	.child(cardId)
+	.child("props")
+	.update(packagedDataHere, (e) => {
+		console.log("** update completed = ", e);
 		});
 
-	if (uniqueIsMainBpValueArray.length != 0){
-		if (uniqueIsMainBpValueArray.length == 1){
-			if(uniqueIsMainBpValueArray[0] == ""){
-				console.log("There is no mainBp");
-				// setMainBpTitle(); [질문] removePaper에서 이 과정이 있지 않은데, 생기는 현상, update에서 관여를 하는가?
-				return false;
-			} else {
-				// console.log("There is mainBp1");
-				return true;
+};
+
+function requestRemoveCard_character(characterId) {
+	db.ref("users")
+	.child(userData.uid)
+	.child("bigPicture")
+	.child("character")
+	.child(characterId)
+	.remove();
+};
+
+function requestUpdateMainCard_character(characterId) {
+
+	let characterIdArray = Object.keys(bigPicture.character);
+	
+	characterIdArray.forEach(eachId => {
+
+		let setMainValue = {};
+
+		if (eachId == characterId) {
+			setMainValue = {
+				"main": "main",
+				"editedDate": timeStamp()
 			};
 		} else {
-			// console.log("There is mainBp2");
+			setMainValue = {
+				"main": ""
+			};
+		};
+
+		db.ref("users")
+		.child(userData.uid)
+		.child("bigPicture")
+		.child("character")
+		.child(eachId)
+		.child("props")
+		.update(setMainValue, (e) => {
+			console.log("** update completed = ", e);
+			});
+
+	});
+	
+};
+
+///// user data manager
+
+function showUserData(userData) {
+	let userName = userData.name;
+	let userEmail = userData.email;
+	selectorById("nameChecked").innerHTML = "방문자: " + userName + " 대표"
+	selectorById("emailChecked").innerHTML = "(" + userEmail + ")"
+};
+
+///// local data manager
+
+function packageNewCard(layer) {
+
+	// let moniterResult = monitorCardBlankOrDuplicates_character();
+
+	let moniterResult = true;
+
+	if (moniterResult == true) {
+		let idNew = uuidv4();
+
+		let packagedData = {};
+		packagedData["id"] = idNew;
+		packagedData["parentsId"] = "";
+		packagedData["props"] = {};
+		packagedData["children"] = "";
+
+		let props = packagedData["props"];
+		props["createdDate"] = timeStamp();
+		props["editedDate"] = timeStamp();
+		props["main"] = "";
+		props["layer"] = layer;
+		props["contents"] = {};
+
+		let contents = props["contents"];
+		switch(layer){
+			case "character" :
+				contents["character"] = selectorById("character").value.trim();
+				break;
+			case "direction" :
+				contents["direction"] = selectorById("direction").value.trim();
+				break;
+			case "navi" :
+				contents["naviArea"] = selectorById("naviArea").value.trim();
+				contents["naviA"] = selectorById("naviA").value.trim();
+				contents["naviB"] = selectorById("naviArea").value.trim();
+				break;
+			case "actionPlan" :
+				contents["actionPlan"] = selectorById("actionPlan").value.trim();
+				break;
+			default: 
+				let layer = null;
+		};
+
+		return packagedData;
+	};
+		
+};
+
+function packageEditedCard(layer) {
+
+	function moniterIfCardChanged_character() {
+
+		// 현재 UI에 띄워진 값 포착하기
+		let characterId = selectorById("cardId_character").value;
+		let characterValue = selectorById("character").value.trim();
+		let characterObject = {"id": characterId, "character": characterValue};
+
+		// 로컬 데이터에 있는 값 포착하기
+		let characterArrayWithId = getIdArrayByMap("contents", "character");
+	
+		// 위 두가지가 같은 경우의 수라면, 수정이 이뤄지지 않은 상태
+		for(let i = 0; i < characterArrayWithId.length; i++) {
+			if(JSON.stringify(characterObject) === JSON.stringify(characterArrayWithId[i])) {
+				return false;
+			};
+		};
+		return true;
+	};
+	
+	function getMoniterResult(isChanged) {
+		if (isChanged == true) {
+			let moniterResultInFunction = monitorCardBlankOrDuplicates_character();
+			return moniterResultInFunction;
+		} else {
 			return true;
 		};
 	};
-}; // checked!
 
-function setMainBp() {
-	updatedMainBpTitleMemory = spoonedBpData.bpTitle;
-	requestChangeIsMainBpValue();
-}; // checked!
+	let moniterResult = getMoniterResult(moniterIfCardChanged_character());
+	// 파라미터 direction, navi, actionPlan 가능할것으로 보임
+	
+	if (moniterResult == true) {
+		let packagedData = {};
+		packagedData["editedDate"] = timeStamp();
+		packagedData["contents"] = {};
 
-function setAltMainBpTitle(packagedBpDataHere) {
-	let filteredBpTitleArray = [];
-	for (let i = 0; i < bpTitleArray.length; i++) {
-		if (bpTitleArray[i] != packagedBpDataHere.bpTitle) {
-			filteredBpTitleArray.push(bpTitleArray[i]);
+		let contents = packagedData["contents"];
+		switch(layer){
+			case "character" :
+				contents["character"] = selectorById("character").value.trim();
+				break;
+			case "direction" :
+				contents["direction"] = selectorById("direction").value.trim();
+				break;
+			case "navi" :
+				contents["naviArea"] = selectorById("naviArea").value.trim();
+				contents["naviA"] = selectorById("naviA").value.trim();
+				contents["naviB"] = selectorById("naviArea").value.trim();
+				break;
+			case "actionPlan" :
+				contents["actionPlan"] = selectorById("actionPlan").value.trim();
+				break;
+			default: 
+				let layer = null;
+		};
+		return packagedData;
+	};
+};
+
+function getLastestEditedId() {
+	return sortedEditedDateArrayWithId()[0].id
+};
+
+function sortedEditedDateArrayWithId2(){
+	let keys = Object.keys(bigPicture.character);
+	let editedDateArray = keys.map( id => {
+		let c = bigPicture.character[id];
+		return {"id": id, "date": c.props.editedDate};
+	  });
+	console.log("editedDateArray = ", editedDateArray);
+	let sortedEditedDateArray = editedDateArray.sort((a,b) => a.date - b.date);
+	console.log("sortedEditedDateArray = ", sortedEditedDateArray);
+	let reversedEditedDateArray = sortedEditedDateArray.reverse();
+	console.log("reversedEditedDateArray = ", reversedEditedDateArray);
+	return sortedEditedDateArray;
+}; // [질문] sorting이 되지 않음
+
+function sortedEditedDateArrayWithId() {
+	let idEditedDateArray = getIdArrayByMap("props", "editedDate");
+	let editedDateArray = idEditedDateArray.map(element => element.editedDate);
+	let editedDateArrayinReverseOrder = editedDateArray.sort(date_descending);
+	let arr = [];
+	for(let i = 0; i < editedDateArrayinReverseOrder.length; i++) {
+		let datesAfterSorting = editedDateArrayinReverseOrder[i];
+		for (let j = 0; j < editedDateArray.length; j++) {
+			let datesBeforeSorting = idEditedDateArray[j].editedDate;
+			let id = idEditedDateArray[j].id
+			if (datesAfterSorting == datesBeforeSorting) {
+				arr.push({"id": id, "editedDate": datesAfterSorting});
+			};
 		};
 	};
-	filteredBpTitleArray.sort();
-	updatedMainBpTitleMemory = filteredBpTitleArray[0];
-	requestChangeIsMainBpValue();
-}; // checked!
+	return arr;
+};
 
-function gotoMainBp() {
-	bpTitleSpoonMemory = mainBpTitleMemory;
-	spoonBpData(mainBpTitleMemory);
-	printSpoonedBpData();
-	putSelectbox("selectboxBpTitle");
-}; // checked!
-
-// --------------------------------------------------
-// *** stage Manager
-// --------------------------------------------------
-
-function spoonBpData(bpTitleSpoonHere) {
-	let spoonedBpDataInFunction = bpDataPool[bpTitleSpoonHere];
-	spoonedBpData = spoonedBpDataInFunction;
-	return spoonedBpDataInFunction;
-}; // checked!
-
-function processSpoonToPrint() {
-	let bpTitleSpoon = pickupBpTitleSpoon();
-	spoonBpData(bpTitleSpoon);
-	printSpoonedBpData();
-	putSelectbox("selectboxBpTitle");
-}; // checked!
-
-function packageBpDataNew() {
-
-	let monitorBpTitleBlankOrDuplicatesResult = monitorBpTitleBlankOrDuplicates();
-	console.log("monitorBpTitleBlankOrDuplicatesResult = ", monitorBpTitleBlankOrDuplicatesResult);
-	if (monitorBpTitleBlankOrDuplicatesResult == true) {
-
-		// 적혀있는 내용들로 패키징하기
-		packagedBpData["createdDate"] = timeStamp(); // new에만 해당함
-		packagedBpData["editedDate"] = timeStamp();
-		packagedBpData["bpTitle"] = selectorById("bpTitle").value.trim();
-		packagedBpData["direction"] = selectorById("direction").value.trim();
-		packagedBpData["naviArea"] = selectorById("naviArea").value.trim();
-		packagedBpData["naviB"] = selectorById("naviB").value.trim();
-		packagedBpData["naviA"] = selectorById("naviA").value.trim();
-		packagedBpData["actionPlan"] = selectorById("actionPlan").value.trim();
-
-		let IsThereAnyMainBpResult = monitorIsThereAnyMainBp();
-		if (IsThereAnyMainBpResult == true) {
-			packagedBpData["isMainBp"] = ""
+function getIdArrayByMap(scope1, key1, scope2, key2) {
+	let characterIdArray = Object.keys(bigPicture.character);
+	let idArrayWithKeys = characterIdArray.map( id => {
+		let obj = {"id":id};
+		if (scope1 == "props") {
+			obj[key1] =  bigPicture.character[id].props[key1];
 		} else {
-			packagedBpData["isMainBp"] = "main"
+			obj[key1] =  bigPicture.character[id].props.contents[key1];
 		};
-		return packagedBpData;
-	};
-	return null;
-}; // checked!
+		if (scope2 == "props") {
+			obj[key2] =  bigPicture.character[id].props[key2];
+		} else {
+			obj[key2] =  bigPicture.character[id].props.contents[key2];
+		};
+		return obj;
+	  });
+	return idArrayWithKeys;
+};
 
-function packageBpDataEdited() {
-	let monitorBpTitleBlankResult = monitorBpTitleBlank();
-  
-	if (monitorBpTitleBlankResult == true) {
+///// UI manager
 
-		// 적혀있는 내용들로 패키징하기
-		packagedBpData["bpId"] = spoonedBpData.bpId; // edited에만 해당함
-		// packagedBpData["createdDate"] = spoonedBpData.createdDate; // edited에만 해당함
-		packagedBpData["editedDate"] = timeStamp();
-		packagedBpData["bpTitle"] = selectorById("bpTitle").value.trim();
-		packagedBpData["direction"] = selectorById("direction").value.trim();
-		packagedBpData["naviArea"] = selectorById("naviArea").value.trim();
-		packagedBpData["naviB"] = selectorById("naviB").value.trim();
-		packagedBpData["naviA"] = selectorById("naviA").value.trim();
-		packagedBpData["actionPlan"] = selectorById("actionPlan").value.trim();
-
-		return packagedBpData;
-	};
-}; // checked!
-
-// --------------------------------------------------
-// *** UI Manager
-// --------------------------------------------------
-
-function printSpoonedBpData() {
-	selectorById("dateChecked").innerHTML = spoonedBpData.editedDate.slice(0, 10);
-	selectorById("bpTitle").value = spoonedBpData.bpTitle;
-	selectorById("direction").value = spoonedBpData.direction;
-	selectorById("naviArea").value = spoonedBpData.naviArea;
-	selectorById("naviB").value = spoonedBpData.naviB;
-	selectorById("naviA").value = spoonedBpData.naviA;
-	selectorById("actionPlan").value = spoonedBpData.actionPlan;
-	btnShowHideHandler("readPaper");
-}; // checked!
-
-function printEmptySpoonedBpData() {
-	selectorById("dateChecked").innerHTML = timeStamp().slice(0, 10);
-	selectorById("bpTitle").value = "";
+function showEmptyCard() {
+	selectorById("character").value = "";
 	selectorById("direction").value = "";
-	selectorById("naviArea").value = "";
-	selectorById("naviB").value = "";
-	selectorById("naviA").value = "";
-	selectorById("actionPlan").value = "";
-	btnShowHideHandler("createFirstPaper");
-}; // checked!
+	// selectorById("naviArea").value = "";
+	// selectorById("naviB").value = "";
+	// selectorById("naviA").value = "";
+	// selectorById("actionPlan").value = "";
+	btnShowHideHandlerByClassName("character","createFirstCard");
+};
+
+function showItOnUI(printDataId) {
+	let characterParents = bigPicture.character[printDataId]
+	selectorById("character").value = characterParents.props.contents.character;
+	selectorById("cardId_character").value = characterParents.id;
+
+	selectorById("character").value = characterParents.children.directionId;
+	selectorById("cardId_character").value = characterParents.id;
+
+	btnShowHideHandlerByClassName("character","readCard");
+	btnShowHideHandlerByClassName("direction","readCard");
+};
 
 function uiHide(id) {
 	selectorById(id).style.display = "none";
-}; // checked!
+};
 
 function uiShow(id) {
 	selectorById(id).style.display = "initial";
-}; // checked!
+};
 
-function btnShowHideHandler(state) {
+function btnShowHideHandlerByClassName(className, state) {
 
-	uiHide("openEditPaper_btn");
-	uiHide("cancelEditPaper_btn");
-	uiHide("saveEditedPaper_btn");
-	uiHide("saveNewPaper_btn");
-	uiHide("removePaper_btn");
-	uiHide("openNewPaper_btn");
+	console.log("cardState = ", state);
+
+	uiHide("openEditCard_btn_"+className);
+	uiHide("cancelEditCard_btn_"+className);
+	uiHide("saveEditedCard_btn_"+className);
+	uiHide("saveNewCard_btn_"+className);
+	uiHide("removeCard_btn_"+className);
+	uiHide("openNewCard_btn_"+className);
 
 	switch(state){
-		case "createFirstPaper" :
-			uiShow("saveNewPaper_btn");
-			editModeHandler("editing");
+		case "createFirstCard" :
+			uiShow("saveNewCard_btn_"+className);
+			editModeHandlerByClassName(className, "editing");
 			break;
-		case "openNewPaper" :
-			uiShow("saveNewPaper_btn");
-			uiShow("cancelEditPaper_btn")
-			editModeHandler("editing");
+		case "openNewCard" :
+			uiShow("saveNewCard_btn_"+className);
+			uiShow("cancelEditCard_btn_"+className)
+			editModeHandlerByClassName(className, "editing");
 			break;
-		case "readPaper" :
+		case "readCard" :
 			uiHide("guideMessage");
-			uiShow("openEditPaper_btn");
-			uiShow("openNewPaper_btn");
-			uiShow("removePaper_btn");
-			editModeHandler("reading");
+			uiShow("openEditCard_btn_"+className);
+			uiShow("openNewCard_btn_"+className);
+			uiShow("removeCard_btn_"+className);
+			editModeHandlerByClassName(className, "reading");
 			break;
-		case "editPaper" :
-			uiShow("saveEditedPaper_btn");
-			uiShow("cancelEditPaper_btn");
-			uiShow("saveNewPaper_btn");
-			uiShow("removePaper_btn");
-			editModeHandler("editing");
+		case "editCard" :
+			uiShow("saveEditedCard_btn_"+className);
+			uiShow("cancelEditCard_btn_"+className);
+			uiShow("saveNewCard_btn_"+className);
+			uiShow("removeCard_btn_"+className);
+			editModeHandlerByClassName(className, "editing");
 			break;
 		default:
 			let state = null;
 	}
-	btnShowHideHandler_mainBp(state);
+	btnShowHideHandlerByClassName_main(className, state);
 	resizeTextarea();
-}; // checked!
+};
 
-function editModeHandler(paperMode) {
+function btnShowHideHandlerByClassName_main(className) {
+	uiHide("gotoMainCard_btn_"+className);
+	uiHide("setMainCard_btn_"+className);
+	uiHide("setMainCard_txt_"+className);
+
+	let cardId = selectorById("cardId_character").value;
+	let mainId = getMainId();
+	if(cardId == mainId) {
+		uiShow("setMainCard_txt_"+className);
+	} else {
+		if (mainId != null) {
+			uiShow("gotoMainCard_btn_"+className);
+			uiShow("setMainCard_btn_"+className);
+		} else {
+			uiShow("setMainCard_btn_"+className);
+		};
+	};
+};
+
+function editModeHandlerByClassName(className, cardMode) {
 	function textareaReadOnly(id, check){
 		selectorById(id).readOnly = check;
 	};
-	if (paperMode == "editing") {
-		selectorById("divPaperMode").innerHTML = "작성모드";
+	if (cardMode == "editing") {
+		document.getElementsByClassName(className)[0].style.color = "#9CC0E7";
+		document.getElementsByClassName(className)[0].style.borderColor = "#9CC0E7";
+		textareaBorderColorHandlerByClass(className, "3px", "#9CC0E7");
+		textareaReadOnly(className, false);
+	} else {
+		document.getElementsByClassName(className)[0].style.color = "#424242";
+		document.getElementsByClassName(className)[0].style.borderColor = "#424242";
+		textareaBorderColorHandlerByClass(className, "1px", "#c8c8c8");
+		textareaReadOnly(className, true);
+	};
+};
+
+function editModeHandler(cardMode) {
+	function textareaReadOnly(id, trueOrFalse){
+		selectorById(id).readOnly = trueOrFalse;
+	};
+	if (cardMode == "editing") {
 		selectorById("gridMainFrame").style.color = "#9CC0E7";
-		textareaReadOnly("bpTitle", false);
+		textareaReadOnly("character", false);
 		textareaReadOnly("direction", false);
 		textareaReadOnly("naviArea", false);
 		textareaReadOnly("naviB", false);
 		textareaReadOnly("naviA", false);
 		textareaReadOnly("actionPlan", false);
-		textareaBorderColorHandler("#9CC0E7");
+		textareaBorderColorHandler("2px", "#9CC0E7");
 	} else {
-		selectorById("divPaperMode").innerHTML = "읽기모드";
 		selectorById("gridMainFrame").style.color = "#424242";
-		textareaReadOnly("bpTitle", true);
+		textareaReadOnly("character", true);
 		textareaReadOnly("direction", true);
 		textareaReadOnly("naviArea", true);
 		textareaReadOnly("naviB", true);
 		textareaReadOnly("naviA", true);
 		textareaReadOnly("actionPlan", true);
-		textareaBorderColorHandler("#424242");
-	};
-}; // checked!
-
-// [질문] 아래 함수가 작동하지 않음
-function textareaBorderColorHandler(color) {
-	// console.log("textareaBorderColorHandler - 1");
-	const selectorTextareaOnCard = document.getElementsByTagName("textarea");
-	for (let i = 0; i < selectorTextareaOnCard.length; i++) {
-		// console.log("textareaBorderColorHandler - 2");
-		selectorTextareaOnCard[i].style.borderColor = color;
+		textareaBorderColorHandler("1px", "#c8c8c8");
 	};
 };
 
-function btnShowHideHandler_mainBp(state) {
-	uiHide("setMainBp_btn");
-	uiHide("openMainBp_btn");
-	uiHide("setMainBp_txt");
-	if (spoonedBpData.isMainBp == "main") {
-		uiShow("setMainBp_txt");
-	} else {
-		if(state != "createFirstPaper") {
-			uiShow("openMainBp_btn");
-			uiShow("setMainBp_btn");
+function textareaBorderColorHandler(px, color) {
+    setTimeout(()=>{
+		const selectorTextareaOnCard = document.getElementsByTagName("textarea");
+		for (let i = 0; i < selectorTextareaOnCard.length; i++) {
+			selectorTextareaOnCard[i].style.border = "solid " + px + color;
 		};
-	};
-}; // checked!
+	},1);
+};
 
-function highLightBorder(id, color) {
-	return selectorById(id).style.borderColor = color;
-}; // checked!
+function textareaBorderColorHandlerByClass(className, px, color) {
+    setTimeout(()=>{
+		const selectorTextareaOnCard = document.getElementsByClassName(className);
+		for (let i = 0; i < selectorTextareaOnCard.length; i++) {
+			selectorTextareaOnCard[i].style.border = "solid " + px + color;
+		};
+	},1);
+};
 
 function resizeTextarea() {
 	// 참고: https://stackoverflow.com/questions/454202/creating-a-textarea-with-auto-resize
@@ -487,179 +521,231 @@ function resizeTextarea() {
 		this.style.height = "auto";
 		this.style.height = (this.scrollHeight) + "px";
 	};
-}; // checked!
+};
 
-function printItIfNoBpData() {
-	printEmptySpoonedBpData();
+function showItIfNoBpData() {
+	showEmptyCard();
 	selectorById("guideMessage").innerHTML = "'파란색으로 쓰여진 곳의 네모칸에 내용을 작성해보세요~!'"
-}; // checked!
+};
 
-// --------------------------------------------------
-// *** selectbox Manager
-// --------------------------------------------------
+function highLightBorder(id, color) {
+	return selectorById(id).style.borderColor = color;
+};
 
-function putSelectbox(selectboxId) {
+///// selectbox manager
+
+function showSelectbox(selectboxId) {
 
 	let selectbox = selectorById(selectboxId);
+
 	// selectbox 초기화하기
 	for (let i = selectbox.options.length - 1; i >= 0; i--) {
 		selectbox.remove(i + 1);
 	};
-	// <option> 만들어서, bpTitleArray 넣기
-	for (let i = 0; i < bpTitleArray.length; i++) {
+	
+	// Array 만들기
+	let characterArray = getIdArrayByMap("props", "editedDate", "contents", "character");
+	  
+	// selectbox option list 순서 잡기(최근 편집 순서)
+	function sortingArray() {
+
+		let editedDateArray = characterArray.map(element => element.editedDate);
+		let editedDateArrayinReverseOrder = editedDateArray.sort(date_descending);
+
+		let arr = [];
+
+		for(let i = 0; i < editedDateArrayinReverseOrder.length; i++) {
+
+			let datesAfterSorting = editedDateArrayinReverseOrder[i];
+
+			for (let j = 0; j < editedDateArray.length; j++) {
+
+				let id = characterArray[j].id;
+				let datesBeforeSorting = characterArray[j].editedDate;
+				let character = characterArray[j].character;
+
+				if (datesAfterSorting == datesBeforeSorting) {
+					arr.push({"id": id, "editedDate": datesBeforeSorting, "character": character});
+				};
+
+			};
+
+		};
+		return arr;
+	};
+
+	let sortedArray = sortingArray();
+
+	// <option> 만들어서, Array 넣기
+	for (let i = 0; i < sortedArray.length; i++) {
 		let option = document.createElement("OPTION");
-		let txt = document.createTextNode(bpTitleArray[i]);
-		let mainBpTitle = pointMainBpTitle();
-		let bpTitle = bpDataPool[bpTitleArray[i]].bpTitle;
-		if(mainBpTitle == bpTitle){
-			let mainBpTitleOptionMark = bpTitle + " ★";
-			let mainTxt = document.createTextNode(mainBpTitleOptionMark);
+		let txt = document.createTextNode(sortedArray[i].character);
+		let optionId = sortedArray[i].id;
+		let optionValue = sortedArray[i].character;
+		let mainId = getMainId();
+		if(optionId == mainId) {
+			let mainOptionMark = optionValue + " ★";
+			let mainTxt = document.createTextNode(mainOptionMark);
 			option.appendChild(mainTxt);
 		} else {
 			option.appendChild(txt);
 		};
-		option.setAttribute("value", bpTitleArray[i]);
+		option.setAttribute("value", sortedArray[i].id);
+		option.setAttribute("innerHTML", sortedArray[i].character);
 		selectbox.insertBefore(option, selectbox.lastChild);
 	};
-	printBpTitleSpoonOnSelectbox();
-}; // checked!
+};
 
-function printBpTitleSpoonOnSelectbox() {
+function selectBySelectbox_character() {
+	let selectedCharacterId = selectorById("selectbox_character").value;
+	showItOnUI(selectedCharacterId);
+};
 
-	for (let i = 0; i <= bpTitleArray.length; i++) {
-		if(bpTitleArray.length == 0){
-			selectorById("selectboxBpTitle").options[0].setAttribute("selected", true);
-		} else {
-			let selectorOption = selectorById("selectboxBpTitle").options[i];
-			let optionValue = selectorOption.value;
-			selectorOption.removeAttribute("selected");
-			if (optionValue == bpTitleSpoonMemory) {
-				selectorOption.setAttribute("selected", true);
-			};
+///// mainCard mananger
+
+function setMainCard() {
+	let characterId = selectorById("cardId_character").value;
+	requestUpdateMainCard_character(characterId);
+};
+
+function gotoMainCard_character() {
+	showItOnUI(getMainId());
+	showSelectbox("selectbox_character");
+};
+
+function getMainId() {
+	let idMainArray = getIdArrayByMap("props", "main");
+	for(let i = 0; i < idMainArray.length; i++) {
+		if(idMainArray[i].main == "main"){
+			return idMainArray[i].id;
 		};
 	};
+};
 
-}; // checked!
+///// CRUD manager
 
-function selectBpTitleBySelectbox() {
-	let bpTitleSpoon = pickupBpTitleSpoonBySelectbox();
-	spoonBpData(bpTitleSpoon);
-	printSpoonedBpData();
-}; // testing..
-
-// --------------------------------------------------
-// *** CRUD Manager
-// --------------------------------------------------
-
-function saveNewPaper() {
-	let packagedBpData = packageBpDataNew();
-
-	//sync Global bpTitleSpoonMemory
+function saveNewCard() {
+	let packagedBpData = packageNewCard("character");
 	if (packagedBpData != null) {
-		bpTitleSpoonMemory = packagedBpData.bpTitle;
-		requestPushNewBpData(packagedBpData);
+		requestSetCard_character(packagedBpData);
 		alert("저장되었습니다.");
 	};
-}; // checked!
+}; //질문: 해당 id?를 활용하여 파라미터 넣기
 
-function saveEditedPaper() {
-	let packagedBpData = packageBpDataEdited();
-
-	//sync Global bpTitleSpoonMemory
-	bpTitleSpoonMemory = packagedBpData.bpTitle;
-
-	requestUpdateBpData(packagedBpData);
-	alert("저장되었습니다.");
-
-}; // checked!
-
-function removePaper() {
-	packagedBpData = spoonedBpData;
-	if (packagedBpData.isMainBp == "main") {
-		setAltMainBpTitle(packagedBpData);
+function saveNewCard_direction() {
+	console.log("saveNewCard_direction start here");
+	let packagedBpData = packageNewCard("direction");
+	if (packagedBpData != null) {
+		requestSetCard("direction", packagedBpData);
+		alert("저장되었습니다.");
 	};
+}; //질문: 해당 id?를 활용하여 파라미터 넣기
+
+function saveEditedCard() {
+	let packagedData = packageEditedCard("character");
+	if (packagedData != null) {
+		requestUpdateCard_character(packagedData);
+		alert("저장되었습니다.");
+	};
+};
+
+function removeCard() {
+	let removeId = selectorById("cardId_character").value;
 	if (confirm("정말 삭제하시겠습니까? 삭제가 완료되면, 해당 내용은 다시 복구될 수 없습니다.")) {
-		requestRemoveSpoonedBpData(spoonedBpData);
+		requestRemoveCard_character(removeId);
 		alert("삭제되었습니다.");
-		location.reload();
 	};
-}; // checked!
+};
 
-function openNewPaper() {
-	printEmptySpoonedBpData();
-	btnShowHideHandler("openNewPaper");
-}; // checked!
+function openNewCard() {
+	showEmptyCard();
+	btnShowHideHandlerByClassName("character","openNewCard");
+};
 
-function openEditPaperByDbclick() {
+function openEditCardByDbclick() {
 	const TextareaOnCard = document.getElementsByTagName("textarea");
 	for (let i = 0; i < TextareaOnCard.length; i++) {
 		TextareaOnCard[i].addEventListener("dblclick", function (e) {
-			if(bpTitleArray.length > 0){
-				openEditPaper();
+			let characterIdArray = Object.keys(bigPicture.character);
+			if(characterIdArray.length > 0){
+				openEditCard();
 			};
 		});
 	};
-}; // checked!
+};
 
-function openEditPaper() {
-	btnShowHideHandler("editPaper");
-}; // checked!
+function openEditCard() {
+	btnShowHideHandlerByClassName("character","editCard");
+};
 
-function cancelEditPaper() {
-	spoonBpData(spoonedBpData.bpTitle);
-	printSpoonedBpData();
-	putSelectbox("selectboxBpTitle");
-}; // checked!
+function openEditCard_direction() {
+	btnShowHideHandlerByClassName("direction","editCard");
+};
 
-// --------------------------------------------------
-// *** monitor Manager
-// --------------------------------------------------
+function cancelEditCard() {
+	let cardId = selectorById("cardId_character").value;
+	showItOnUI(cardId);
+};
 
-function monitorBpTitleBlankOrDuplicates() {
-	let packagedBpTitle = selectorById("bpTitle").value.trim();
-	if (packagedBpTitle != "") {
-		let sameBpTitleArray = getSameBpTitleArray(packagedBpTitle);
-		if (sameBpTitleArray == undefined) {
+///// monitor manager
+
+function monitorCardBlankOrDuplicates_character() {
+	let cardValue = selectorById("character").value.trim();
+	if (cardValue != "") {
+		let sameTextArray = getSameTextArray(cardValue);
+		if (sameTextArray == undefined) {
 			return true;
 		} else {
-			highLightBorder("bpTitle", "red");
-			alert("중복된 페이퍼 제목이 있습니다. 페이퍼 제목을 수정해주시기 바랍니다.");
+			highLightBorder("character", "red");
+			alert("중복된 카드가 있습니다. 내용을 수정해주시기 바랍니다.");
 		};
 	} else {
-		highLightBorder("bpTitle", "red");
-		alert("페이퍼 제목이 비어있습니다. 페이퍼 제목을 입력해주시기 바랍니다.");
+		highLightBorder("character", "red");
+		alert("카드가 비어있습니다. 내용을 입력해주시기 바랍니다.");
 	};
 	return false;
-}; // checked!
+};
 
-function monitorBpTitleBlank() {
-	let packagedBpTitle = selectorById("bpTitle").value.trim();
-	if (packagedBpTitle != "") {
-		return true;
-	} else {
-		highLightBorder("bpTitle", "red");
-		alert("페이퍼 제목이 비어있습니다. 페이퍼 제목을 입력해주시기 바랍니다.");
+function getSameTextArray(text) {
+	
+	let IdArray_character = getIdArrayByMap("contents", "character");
+	
+	let textArray = [];
+	for(let i = 0; i < IdArray_character.length; i++) {
+		textArray.push(IdArray_character[i].character);
 	};
-}; // checked!
 
-function getSameBpTitleArray(packagedBpTitle) {
-	let filterSameIndexArray = (query) => {
-		return bpTitleArray.find(packagedBpTitle => query == packagedBpTitle);
+	let filterSameTextArray = (query) => {
+		return textArray.find(text => query == text);
 	};
-	let sameBpTitleArray = filterSameIndexArray(packagedBpTitle);
-	return sameBpTitleArray;
-}; // checked!
 
-// --------------------------------------------------
-// *** general Supporter
-// --------------------------------------------------
+	let sameTextArray = filterSameTextArray(text);
+
+	return sameTextArray;
+};
+
+///// general supporter
 
 function selectorById(id) {
 	return document.getElementById(id);
-}; // checked!
+};
 
 function timeStamp() {
 	let now = new Date();
 	let nowString = now.toISOString();
 	return nowString;
-}; // checked!
+};
+
+function uuidv4() {
+	return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+	  (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+	);
+};
+
+function date_ascending(a, b) { // 오름차순    
+	return Date.parse(a) - Date.parse(b);
+};
+	
+function date_descending(a, b) { // 내림차순    
+	return Date.parse(b) - Date.parse(a);
+};
