@@ -35,8 +35,8 @@
               lastLogin: Date.now()
             },
             bigPicture: {
-              character: ""
-            }
+              children: ""
+            }          
           }
 
           // Push to Firebase Database

@@ -2,7 +2,7 @@ const db = firebase.database();
 const SELECTBOX_BPTITLE_VALUE_INIT = "INIT";
 
 let userData = {};
-let bigPicture = {children:""};
+let bigPicture = {};
 let isMainShown = false;
 
 (function() {
@@ -45,7 +45,7 @@ function requestReadUserData(user) {
 function requestReadBigPicture(user) {
 
 	const userRef = db.ref("users").child(user.uid).child("bigPicture");
-
+	
 	userRef.on("value", (snapshot) => {
 
 		console.log("===== .on is here =====");
@@ -55,7 +55,7 @@ function requestReadBigPicture(user) {
 			let value_data = childSnap.val();
 			bigPicture[key_ids] = value_data;
 		});
-	
+
 		let characterKeysArray = Object.keys(bigPicture.children);
 
 		if (characterKeysArray.length > 0) {
@@ -69,8 +69,9 @@ function requestReadBigPicture(user) {
 			showSelectbox("selectbox_character");
 			// showSelectbox("selectbox_direction");
 		} else {
-			showItIfNoBpData();
+		showItIfNoBpData();
 		};
+
 	});
 };
 
@@ -140,12 +141,23 @@ function requestUpdateCard_character(packagedDataHere) {
 };
 
 function requestRemoveCard_character(characterId) {
-	db.ref("users")
-	.child(userData.uid)
-	.child("bigPicture")
-	.child("children")
-	.child(characterId)
-	.remove();
+
+	let characterArray = Object.keys(bigPicture.children);
+
+	if (characterArray.length != 1) {
+		db.ref("users")
+		.child(userData.uid)
+		.child("bigPicture")
+		.child("children")
+		.child(characterId)
+		.remove();
+	} else {
+		let emptyData = {children: ""};
+		db.ref("users")
+		.child(userData.uid)
+		.child("bigPicture")
+		.set(emptyData);
+	}
 };
 
 function requestUpdateMainCard_character(characterId) {
