@@ -9,57 +9,49 @@
         "visitRate": ""
     },
     "bigPicture": {
-        "character": {
+        "children": {
             "#$characterId": {
                 "id": "",
                 "parentsId": "",
-                "props": {
-                    "createdDate": "",
-                    "editedDate": "",
-                    "readDate": "",
-                    "main": "",
-                    "layer": "character",
-                    "contents": {"character":""}
-                },
+                "createdDate": "",
+                "editedDate": "",
+                "readDate": "",
+                "main": "",
+                "layer": "character",
+                "contents": {"character":""},
                 "children": {
                     "#$directionId": {
                         "id": "",
                         "parentsId": "",
-                        "props": {
-                            "createdDate": "",
-                            "editedDate": "",
-                            "readDate": "",
-                            "main": "",
-                            "layer": "direction",
-                            "contents": {"direction":""}
-                        },
+                        "createdDate": "",
+                        "editedDate": "",
+                        "readDate": "",
+                        "main": "",
+                        "layer": "direction",
+                        "contents": {"direction":""},
                         "children": {
                             "#$naviId": {
                                 "id": "",
                                 "parentsId": "",
-                                "props": {
-                                    "createdDate": "",
-                                    "editedDate": "",
-                                    "readDate": "",
-                                    "main": "",
-                                    "layer": "navi",
-                                    "contents": {
-                                        "navi":"",
-                                        "naviA":"",
-                                        "naviB":""}
-                                },
+                                "createdDate": "",
+                                "editedDate": "",
+                                "readDate": "",
+                                "main": "",
+                                "layer": "navi",
+                                "contents": {
+                                    "navi":"",
+                                    "naviA":"",
+                                    "naviB":""},
                                 "children": {
                                     "#$actionPlanId": {
                                         "id": "",
                                         "parentsId": "",
-                                        "props": {
-                                            "createdDate": "",
-                                            "editedDate": "",
-                                            "readDate": "",
-                                            "main": "",
-                                            "layer": "actionPlan",
-                                            "contents": {"actionPlan":""}
-                                        },
+                                        "createdDate": "",
+                                        "editedDate": "",
+                                        "readDate": "",
+                                        "main": "",
+                                        "layer": "actionPlan",
+                                        "contents": {"actionPlan":""},
                                         "children": ""
                                     }
                                 }

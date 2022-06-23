@@ -2,7 +2,7 @@ const db = firebase.database();
 const SELECTBOX_BPTITLE_VALUE_INIT = "INIT";
 
 let userData = {};
-let bigPicture = {character:""};
+let bigPicture = {children:""};
 let isMainShown = false;
 
 (function() {
@@ -56,7 +56,7 @@ function requestReadBigPicture(user) {
 			bigPicture[key_ids] = value_data;
 		});
 	
-		let characterKeysArray = Object.keys(bigPicture.character);
+		let characterKeysArray = Object.keys(bigPicture.children);
 
 		if (characterKeysArray.length > 0) {
 			let mainId = getMainId();
@@ -81,7 +81,7 @@ function requestSetCard_character(packagedDataHere) {
 		db.ref("users")
 		.child(userData.uid)
 		.child("bigPicture")
-		.child("character")
+		.child("children")
 		.child(packagedDataHere.id)
 		.set(packagedDataHere);
 
@@ -98,7 +98,7 @@ function requestSetCard(layer, packagedDataHere) {
 	const characterRef = db.ref("users")
 		.child(userData.uid)
 		.child("bigPicture")
-		.child("character");
+		.child("children");
 
 	switch(layer){
 		case "character" :
@@ -131,9 +131,8 @@ function requestUpdateCard_character(packagedDataHere) {
 	db.ref("users")
 	.child(userData.uid)
 	.child("bigPicture")
-	.child("character")
+	.child("children")
 	.child(cardId)
-	.child("props")
 	.update(packagedDataHere, (e) => {
 		console.log("** update completed = ", e);
 		});
@@ -144,14 +143,14 @@ function requestRemoveCard_character(characterId) {
 	db.ref("users")
 	.child(userData.uid)
 	.child("bigPicture")
-	.child("character")
+	.child("children")
 	.child(characterId)
 	.remove();
 };
 
 function requestUpdateMainCard_character(characterId) {
 
-	let characterIdArray = Object.keys(bigPicture.character);
+	let characterIdArray = Object.keys(bigPicture.children);
 	
 	characterIdArray.forEach(eachId => {
 
@@ -171,9 +170,8 @@ function requestUpdateMainCard_character(characterId) {
 		db.ref("users")
 		.child(userData.uid)
 		.child("bigPicture")
-		.child("character")
+		.child("children")
 		.child(eachId)
-		.child("props")
 		.update(setMainValue, (e) => {
 			console.log("** update completed = ", e);
 			});
@@ -205,17 +203,15 @@ function packageNewCard(layer) {
 		let packagedData = {};
 		packagedData["id"] = idNew;
 		packagedData["parentsId"] = "";
-		packagedData["props"] = {};
 		packagedData["children"] = "";
 
-		let props = packagedData["props"];
-		props["createdDate"] = timeStamp();
-		props["editedDate"] = timeStamp();
-		props["main"] = "";
-		props["layer"] = layer;
-		props["contents"] = {};
+		packagedData["createdDate"] = timeStamp();
+		packagedData["editedDate"] = timeStamp();
+		packagedData["main"] = "";
+		packagedData["layer"] = layer;
+		packagedData["contents"] = {};
 
-		let contents = props["contents"];
+		let contents = packagedData["contents"];
 		switch(layer){
 			case "character" :
 				contents["character"] = selectorById("character").value.trim();
@@ -302,14 +298,14 @@ function packageEditedCard(layer) {
 };
 
 function getLastestEditedId() {
-	return sortedEditedDateArrayWithId2()[0].id
+	return sortedEditedDateArrayWithId()[0].id
 };
 
 function sortedEditedDateArrayWithId2(){
-	let keys = Object.keys(bigPicture.character);
+	let keys = Object.keys(bigPicture.children);
 	let editedDateArray = keys.map( id => {
-		let c = bigPicture.character[id];
-		return {"id": id, "date": c.props.editedDate};
+		let c = bigPicture.children[id];
+		return {"id": id, "date": c.editedDate};
 	  });
 	console.log("editedDateArray = ", editedDateArray);
 	let sortedEditedDateArray = editedDateArray.sort((a,b) => a.date - b.date);
@@ -317,10 +313,10 @@ function sortedEditedDateArrayWithId2(){
 	let reversedEditedDateArray = sortedEditedDateArray.reverse();
 	console.log("reversedEditedDateArray = ", reversedEditedDateArray);
 	return sortedEditedDateArray;
-};
+}; // show를 할때 최신의 것이 나오지 않음
 
 function sortedEditedDateArrayWithId() {
-	let idEditedDateArray = getIdArrayByMap("props", "editedDate");
+	let idEditedDateArray = getIdArrayByMap("general", "editedDate");
 	let editedDateArray = idEditedDateArray.map(element => element.editedDate);
 	let editedDateArrayinReverseOrder = editedDateArray.sort(date_descending);
 	let arr = [];
@@ -338,18 +334,18 @@ function sortedEditedDateArrayWithId() {
 };
 
 function getIdArrayByMap(scope1, key1, scope2, key2) {
-	let characterIdArray = Object.keys(bigPicture.character);
+	let characterIdArray = Object.keys(bigPicture.children);
 	let idArrayWithKeys = characterIdArray.map( id => {
 		let obj = {"id":id};
-		if (scope1 == "props") {
-			obj[key1] =  bigPicture.character[id].props[key1];
+		if (scope1 == "contents") {
+			obj[key1] =  bigPicture.children[id].contents[key1];
 		} else {
-			obj[key1] =  bigPicture.character[id].props.contents[key1];
+			obj[key1] =  bigPicture.children[id][key1];
 		};
-		if (scope2 == "props") {
-			obj[key2] =  bigPicture.character[id].props[key2];
+		if (scope2 == "contents") {
+			obj[key2] =  bigPicture.children[id].contents[key2];
 		} else {
-			obj[key2] =  bigPicture.character[id].props.contents[key2];
+			obj[key2] =  bigPicture.children[id][key2];
 		};
 		return obj;
 	  });
@@ -369,8 +365,8 @@ function showEmptyCard() {
 };
 
 function showItOnUI(printDataId) {
-	let characterParents = bigPicture.character[printDataId]
-	selectorById("character").value = characterParents.props.contents.character;
+	let characterParents = bigPicture.children[printDataId]
+	selectorById("character").value = characterParents.contents.character;
 	selectorById("cardId_character").value = characterParents.id;
 
 	// 작업중
@@ -545,7 +541,7 @@ function showSelectbox(selectboxId) {
 	};
 	
 	// Array 만들기
-	let characterArray = getIdArrayByMap("props", "editedDate", "contents", "character");
+	let characterArray = getIdArrayByMap("general", "editedDate", "contents", "character");
 	  
 	// selectbox option list 순서 잡기(최근 편집 순서)
 	function sortingArray() {
@@ -615,7 +611,7 @@ function gotoMainCard_character() {
 };
 
 function getMainId() {
-	let idMainArray = getIdArrayByMap("props", "main");
+	let idMainArray = getIdArrayByMap("general", "main");
 	for(let i = 0; i < idMainArray.length; i++) {
 		if(idMainArray[i].main == "main"){
 			return idMainArray[i].id;
@@ -658,7 +654,7 @@ function openEditCardByDbclick() {
 	const TextareaOnCard = document.getElementsByTagName("textarea");
 	for (let i = 0; i < TextareaOnCard.length; i++) {
 		TextareaOnCard[i].addEventListener("dblclick", function (e) {
-			let characterIdArray = Object.keys(bigPicture.character);
+			let characterIdArray = Object.keys(bigPicture.children);
 			if(characterIdArray.length > 0){
 				openEditCard();
 			};
