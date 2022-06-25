@@ -13,37 +13,15 @@
 
     <div id="divTop">
         <div style="text-align: center;">
-            <h2>Big Picture</h2>
-            <span>내 삶의 큰그림을 그리는 곳으로, 나의 다양한 캐릭터별 '방향성, 로드맵, 액션플랜'을 정리할 수 있습니다.</span>
             <div id="divImageMain">
                 <img id="imageMain" src="images/img_main.png">
             </div>
+            <h1>see the big picture</h1>
+            <span>내 삶의 큰그림 정리하기</span>
         </div>
-        <div id="gridWelcome">
-            <div>
-                <p>
-                    <span type="text" id="nameChecked">로딩중...</span>
-                    <span type="text" id="emailChecked"></span><br>
-                </p>
-
-            </div>
-            <div id="divLogOutBtn">
-                <input onClick="logOut()" type="button" value="로그아웃"></input>
-            </div>
-        </div>
-
     </div>
 
     <div id="gridMain">
-        <div id="divIndex">
-            <div>
-                <h4>B zone - Big picture</h4>
-                <p>B존은 내 삶의 큰그림을 그리는 곳으로, 나의 다양한 캐릭터별 '방향성, 로드맵, 액션플랜'을 정리할 수 있습니다.</p>
-            </div>
-            <div id="divImageMain">
-                <img id="imageMain" src="images/img_main.png">
-            </div>
-        </div>
         <div id="divNoticeMain">
             <div>
                 <p type="text" id="guideMessage"></p>
@@ -52,7 +30,7 @@
                 <div id="divLayer">
                     <div id="gridMainTitle">
                         <h2>캐릭터</h2>
-                        <h3>큰 그림의 주인공, 내 삶의 역할 별 캐릭터 구분하기</h3>
+                        <span>큰 그림의 주인공, 내 삶의 역할 별 캐릭터 구분하기</span>
                         <div id="gridMainIndex">
                             <div>
                                 <span>[목록 선택하기]<br></span>
@@ -91,7 +69,7 @@
                 <div id="divLayer">
                     <div id="gridMainTitle">
                         <h2>방향성</h2>
-                        <h3>이 길을 나아가는 '본질 가치'는 무엇인가?(목적, 의미, Why)</h3>
+                        <span>이 길을 나아가는 '본질 가치'는 무엇인가?(목적, 의미, Why)</span>
                         <div id="gridMainIndex">
                             <div>
                                 <span>[목록 선택하기]<br></span>
@@ -164,7 +142,8 @@
     <!--하단 정보-->
     <div id="gridWebInfo">
         <div>
-            <div>
+
+            <div style="margin-bottom: 1rem;">
                 <span>
                     <b>Life Design Park</b><br>
                     라이프 디자인 파크는 '생각정리 놀이공원'입니다.<br> 
@@ -181,6 +160,13 @@
             <!-- <input id="darkMode" type="button" value="다크모드 켜기" onclick="darkmode()"> -->
         </div>
         <div class="pageInfoBrand">
+            <div>
+                <p>
+                    <span type="text" id="nameChecked">로딩중...</span>
+                    <span type="text" id="emailChecked"></span><br>
+                </p>
+                <input onClick="logOut()" type="button" value="로그아웃"></input>
+            </div>
             <a href="http://thinksalon.net">thinksalon.net | 생각살롱</a>
         </div>
     </div>
