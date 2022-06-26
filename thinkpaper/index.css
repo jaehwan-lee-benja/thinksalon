@@ -70,6 +70,10 @@ input:hover {
     color: #FFF;
 }
 
+#titleText{
+    font-family: 'Playfair Display', serif;
+}
+
 #date {
     width: 10rem;
 }
@@ -90,7 +94,7 @@ input:hover {
 #divTop{
     padding-bottom: 3rem;
     margin: 0 0 2rem 0;
-    border-bottom: 1px solid rgb(200, 200, 200);
+    border-bottom: 1px solid rgb(230, 230, 230);
 }
 
 #divInfoTable{
@@ -111,11 +115,9 @@ input:hover {
     font-style: italic;
 }
 
-#girdMain {
-    border-bottom: 1px solid rgb(200, 200, 200);
-    margin: 10rem;
+#gridMain{
+    margin: 2rem 0;
 }
-
 #gridMainTitle{
     display: grid;
     grid-template-rows: 1.5rem 3rem 4rem;
@@ -172,11 +174,12 @@ input:hover {
 
 #gridWebInfo{
     font-size: 0.6rem;
+    color: rgb(100, 100, 100);
     display: block;
     /* grid-template-columns: 1fr 10rem 10rem; */
-    padding-top: 0.5rem;
+    border: 1px solid rgb(230, 230, 230);
+    padding: 1rem;
     grid-gap: 0.2rem;
-    margin: 0 20%;
 }
 
 #divCreateName{
@@ -185,20 +188,15 @@ input:hover {
     border: 1px solid rgb(200, 200, 200);
 }
 
-.pageInfoBrand{  
-    text-align: right;
-    font-size: 0.8rem;
-}
-
 #imageMain{
     width: 70%;
 }
 
-#imageMain:hover{
+/* #imageMain:hover{
     box-shadow: 
         0 10px 20px rgba(0,0,0,0.19), 
         0 6px 6px rgba(0,0,0,0.23);
-}
+} */
 
 .button{
     text-align: right;
@@ -245,11 +243,6 @@ https://www.w3schools.com/howto/howto_js_todolist.asp
     }
     #divLayer{
         margin-bottom: 3rem;
-    }
-    .pageInfoBrand{  
-        text-align: left;
-        font-size: 0.8rem;
-        padding-top: 0.5rem;    
     }
     #gridMainSubFrame{
         display: block;

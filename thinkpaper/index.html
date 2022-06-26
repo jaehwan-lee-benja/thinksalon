@@ -16,7 +16,9 @@
             <div id="divImageMain">
                 <img id="imageMain" src="images/img_main.png">
             </div>
-            <h1>see the big picture</h1>
+            <div id = "titleText">
+                <h1>see the big picture</h1>
+            </div>
             <span>내 삶의 큰그림 정리하기</span>
         </div>
     </div>
@@ -142,32 +144,31 @@
     <!--하단 정보-->
     <div id="gridWebInfo">
         <div>
-            <div style="margin-bottom: 1rem;">
+            <div>
                 <span>
                     <b>Life Design Park</b><br>
                     라이프 디자인 파크는 '생각정리 놀이공원'입니다.<br> 
                     내 삶에 대한 생각 짜임새를 기록, 관리할 수 있는 곳입니다.
                 </span>
             </div>
-            <span>
-                This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
-                License.
-                <a href="http://creativecommons.org/licenses/by-nc-sa/2.0/kr/">더 알아보기(More information)</a><br>
-            </span>
         </div>
         <!-- <div class="button">
             <input id="darkMode" type="button" value="다크모드 켜기" onclick="darkmode()">
         </div> -->
-        <div class="pageInfoBrand">
+        <div>
             <div>
                 <p>
                     <span type="text" id="nameChecked">로딩중...</span>
-                    <span type="text" id="emailChecked"></span><br>
+                    <span type="text" id="emailChecked"></span>
+                    <input style="width: 5rem;" onClick="logOut()" type="button" value="로그아웃"></input>
                 </p>
-                <input onClick="logOut()" type="button" value="로그아웃"></input>
             </div>
-            <a href="http://thinksalon.net">thinksalon.net | 생각살롱</a>
         </div>
+        <span>
+            This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+            License.<br>
+            <a href="http://creativecommons.org/licenses/by-nc-sa/2.0/kr/">더 알아보기(More information)</a><br>
+        </span>
     </div>
 </body>
 
@@ -181,5 +182,8 @@
 <script type="text/javascript" src='fireBase.js'></script>
 <script type="text/javascript" src="index.js"></script>
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,500&display=swap" rel="stylesheet">
 
 </html>

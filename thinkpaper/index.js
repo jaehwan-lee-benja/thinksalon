@@ -197,8 +197,8 @@ function requestUpdateMainCard_character(characterId) {
 function showUserData(userData) {
 	let userName = userData.name;
 	let userEmail = userData.email;
-	selectorById("nameChecked").innerHTML = "방문자: " + userName + " 대표"
-	selectorById("emailChecked").innerHTML = "(" + userEmail + ")"
+	selectorById("nameChecked").innerHTML = "방문자: " + userName + " 대표";
+	selectorById("emailChecked").innerHTML = "(" + userEmail + ")"+"		";
 };
 
 ///// local data manager
