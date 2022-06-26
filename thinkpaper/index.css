@@ -111,6 +111,11 @@ input:hover {
     font-style: italic;
 }
 
+#girdMain {
+    border-bottom: 1px solid rgb(200, 200, 200);
+    margin: 10rem;
+}
+
 #gridMainTitle{
     display: grid;
     grid-template-rows: 1.5rem 3rem 4rem;
@@ -167,11 +172,11 @@ input:hover {
 
 #gridWebInfo{
     font-size: 0.6rem;
-    display: grid;
-    grid-template-columns: 1fr 10rem 10rem;
-    border-top: 1px solid rgb(200, 200, 200);
+    display: block;
+    /* grid-template-columns: 1fr 10rem 10rem; */
     padding-top: 0.5rem;
     grid-gap: 0.2rem;
+    margin: 0 20%;
 }
 
 #divCreateName{
