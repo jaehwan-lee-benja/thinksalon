@@ -66,8 +66,8 @@ function requestReadBigPicture(user) {
 			// } else {
 				showItOnUI(getLastestEditedId('character'), getLastestEditedId('direction'));
 			// };
-			showSelectbox("selectbox_character");
-			showSelectbox("selectbox_direction");
+			showSelectbox("character");
+			showSelectbox("direction");
 		} else {
 		showItIfNoBpData();
 		};
@@ -370,8 +370,7 @@ function getIdArrayByMap(layer, scope1, key1, scope2, key2) {
 		return mappedArray;
 
 	} else {
-		// let parentsOfDirection = bigPicture.children[getLastestEditedId('character')];
-		let parentsOfDirection = bigPicture.children["39f03efb-6425-46e3-9f88-9acb56d51aee"];
+		let parentsOfDirection = bigPicture.children[getLastestEditedId('character')];
 		let idArray = Object.keys(parentsOfDirection.children);
 		let mappedArray = idArray.map( id => {
 			let obj = {"id":id};
@@ -381,7 +380,7 @@ function getIdArrayByMap(layer, scope1, key1, scope2, key2) {
 				obj[key1] =  parentsOfDirection[key1];
 			};
 			if (scope2 == "contents") {
-				obj[key2] =  parentsOfDirection.contents[key2];
+				obj[key2] =  parentsOfDirection.children[id].contents[key2];
 			} else {
 				obj[key2] =  parentsOfDirection[key2];
 			};
@@ -412,12 +411,27 @@ function showItOnUI(characterId, directionId) {
 
 	// 작업중
 	let parentsOfDirection = bigPicture.children[characterId].children[directionId];
-	console.log("parentsOfDirection = ", parentsOfDirection);
 	selectorById("direction").value = parentsOfDirection.contents.direction;
 	selectorById("cardId_direction").value = parentsOfDirection.id;
 
 	btnShowHideHandlerByClassName("character","readCard");
 	btnShowHideHandlerByClassName("direction","readCard");
+};
+
+function showItOnUIWithLayer(layer, id) {
+	if (layer == "character") {
+		let parentsOfCharacter = bigPicture.children[id]
+		selectorById("character").value = parentsOfCharacter.contents.character;
+		selectorById("cardId_character").value = parentsOfCharacter.id;
+		btnShowHideHandlerByClassName("character","readCard");
+	} else {
+		let parentsIdOfDirection = indexId(id).parentsId;
+		let parentsOfDirection = bigPicture.children[parentsIdOfDirection].children[id];
+		selectorById("direction").value = parentsOfDirection.contents.direction;
+		selectorById("cardId_direction").value = parentsOfDirection.id;
+		btnShowHideHandlerByClassName("direction","readCard");
+	};
+	// 작업중
 };
 
 function uiHide(id) {
@@ -430,7 +444,7 @@ function uiShow(id) {
 
 function btnShowHideHandlerByClassName(className, state) {
 
-	console.log("cardState = ", state);
+	// console.log("cardState = ", state);
 
 	uiHide("openEditCard_btn_"+className);
 	uiHide("cancelEditCard_btn_"+className);
@@ -574,8 +588,9 @@ function highLightBorder(id, color) {
 
 ///// selectbox manager
 
-function showSelectbox(selectboxId) {
+function showSelectbox(layer) {
 
+	let selectboxId = "selectbox_"+layer;
 	let selectbox = selectorById(selectboxId);
 
 	// selectbox 초기화하기
@@ -584,13 +599,12 @@ function showSelectbox(selectboxId) {
 	};
 	
 	// Array 만들기
-	if (selectboxId == "selectbox_character") {
-		let mappedArray = getIdArrayByMap("character","general", "editedDate", "contents", "character");
+	function getMappedArray(layerHere){
+		let mappedArray = getIdArrayByMap(layerHere,"general", "editedDate", "contents", layerHere);
 		return mappedArray;
-	} else {
-		let mappedArray = getIdArrayByMap("direction","general", "editedDate", "contents", "character");
-		return mappedArray;
-	}
+	};
+	let mappedArray = getMappedArray(layer);
+	console.log("mappedArray =", mappedArray);
 	  
 	// selectbox option list 순서 잡기(최근 편집 순서)
 	function sortingArray() {
@@ -611,28 +625,32 @@ function showSelectbox(selectboxId) {
 
 				if (datesAfterSorting == datesBeforeSorting) {
 					if (selectboxId == "selectbox_character") {
+						console.log("test1");
 						let value = mappedArray[j].character;
 						arr.push({"id": id, "editedDate": datesBeforeSorting, "character": value});
 					} else {
-						let value = mappedArray[j].direction;
-						arr.push({"id": id, "editedDate": datesBeforeSorting, "direction": value});
+						for (let k = 0; k < editedDateArray.length; k++) {
+							console.log("test2");
+							let value = mappedArray[k].direction;
+							arr.push({"id": id, "editedDate": datesBeforeSorting, "direction": value});
+						};
+						return arr;
 					};
 				};
-
 			};
-
 		};
 		return arr;
 	};
 
 	let sortedArray = sortingArray();
+	console.log("sortedArray = ", sortedArray);
 
 	// <option> 만들어서, Array 넣기
 	for (let i = 0; i < sortedArray.length; i++) {
 		let option = document.createElement("OPTION");
-		let txt = document.createTextNode(sortedArray[i].character);
+		let txt = document.createTextNode(sortedArray[i][layer]);
 		let optionId = sortedArray[i].id;
-		let optionValue = sortedArray[i].character;
+		let optionValue = sortedArray[i][layer];
 		let mainId = getMainId();
 		if(optionId == mainId) {
 			let mainOptionMark = optionValue + " ★";
@@ -642,14 +660,16 @@ function showSelectbox(selectboxId) {
 			option.appendChild(txt);
 		};
 		option.setAttribute("value", sortedArray[i].id);
-		option.setAttribute("innerHTML", sortedArray[i].character);
+		option.setAttribute("innerHTML", sortedArray[i][layer]);
 		selectbox.insertBefore(option, selectbox.lastChild);
 	};
 };
 
-function selectBySelectbox_character() {
-	let selectedCharacterId = selectorById("selectbox_character").value;
-	showItOnUI(selectedCharacterId);
+function selectBySelectbox(layer) {
+	let selectboxId = "selectbox_"+layer
+	let id = selectorById(selectboxId).value;
+	console.log("id = ", id);
+	showItOnUIWithLayer(layer, id);
 };
 
 ///// mainCard mananger
@@ -796,3 +816,21 @@ function date_descending(a, b) { // 내림차순
 function getCardId(layerHere) {
 	return selectorById("cardId_"+layerHere).value;
 };
+
+function indexId(idHere) {
+	let characterArray = Object.keys(bigPicture.children);
+	for(let i = 0; i < characterArray.length; i++) {
+		if(characterArray[i] == idHere) {
+			return {"layer": "character", "id": idHere};
+		} else {
+			console.log("characterArray[i] = ", characterArray[i]);
+			let directionArray = Object.keys(characterArray[i].children);
+			for(let j = 0; j < directionArray.length; j++) {
+				if(directionArray[j] == idHere) {
+					return {"layer": "direction", "id": idHere, "parentsid": characterArray[i]};
+				};
+			};
+		};
+	};
+	return console.log("There's any same id");
+}
