@@ -3,6 +3,7 @@ const SELECTBOX_BPTITLE_VALUE_INIT = "INIT";
 
 let userData = {};
 let bigPicture = {};
+let objectById = {};
 let isMainShown = false;
 
 (function() {
@@ -42,6 +43,22 @@ function requestReadUserData(user) {
 	});
 };
 
+function getIdAndObjectFromChildren(o){
+	console.log('getIdAndObjectFromChildren >>',o)
+	const c = o.children
+	if(!c) return;
+
+	const ids = Object.keys(c)
+	if(ids.length == undefined) return;
+
+	ids.forEach( id => {
+		const v = c[id]
+		objectById[id] = v
+		getIdAndObjectFromChildren(v)
+	});
+	
+}
+
 function requestReadBigPicture(user) {
 
 	const userRef = db.ref("users").child(user.uid).child("bigPicture");
@@ -50,10 +67,16 @@ function requestReadBigPicture(user) {
 
 		console.log("===== .on is here =====");
 
+		const v = snapshot.val()
+		getIdAndObjectFromChildren(v)
+		console.log('objectById >>',objectById)
+
 		snapshot.forEach(childSnap => {
-			let key_ids = childSnap.key;
+			let key_id = childSnap.key;
 			let value_data = childSnap.val();
-			bigPicture[key_ids] = value_data;
+			bigPicture[key_id] = value_data;
+			console.log('>>>> ',bigPicture);
+
 		});
 
 		let characterKeysArray = Object.keys(bigPicture.children);
@@ -308,7 +331,7 @@ function packageEditedCard(layer) {
 };
 
 function getLastestEditedId(layer) {
-	let latestEditedId = sortedEditedDateArrayWithId(layer)[0].id;
+	let latestEditedId = sortedEditedDateArrayWithId2(layer)[0].id;
 	return latestEditedId;
 };
 
@@ -318,12 +341,13 @@ function sortedEditedDateArrayWithId2(){
 		let c = bigPicture.children[id];
 		return {"id": id, "date": c.editedDate};
 	  });
-	console.log("editedDateArray = ", editedDateArray);
-	let sortedEditedDateArray = editedDateArray.sort((a,b) => a.date - b.date);
-	console.log("sortedEditedDateArray = ", sortedEditedDateArray);
-	let reversedEditedDateArray = sortedEditedDateArray.reverse();
-	console.log("reversedEditedDateArray = ", reversedEditedDateArray);
-	return sortedEditedDateArray;
+	console.log("editedDateArray = ", editedDateArray.slice());
+
+	editedDateArray.sort(
+		(a,b) => new Date(b.date) - new Date(a.date)
+	);
+	console.log("sortedEditedDateArray = ", editedDateArray);
+	return editedDateArray;
 }; // show를 할때 최신의 것이 나오지 않음
 
 function sortedEditedDateArrayWithId(layer) {
@@ -410,9 +434,9 @@ function showItOnUI(characterId, directionId) {
 	selectorById("cardId_character").value = parentsOfCharacter.id;
 
 	// 작업중
-	let parentsOfDirection = bigPicture.children[characterId].children[directionId];
-	selectorById("direction").value = parentsOfDirection.contents.direction;
-	selectorById("cardId_direction").value = parentsOfDirection.id;
+	// let parentsOfDirection = bigPicture.children[characterId].children[directionId];
+	// selectorById("direction").value = parentsOfDirection.contents.direction;
+	// selectorById("cardId_direction").value = parentsOfDirection.id;
 
 	btnShowHideHandlerByClassName("character","readCard");
 	btnShowHideHandlerByClassName("direction","readCard");
@@ -819,12 +843,13 @@ function getCardId(layerHere) {
 
 function indexId(idHere) {
 	let characterArray = Object.keys(bigPicture.children);
+	console.log('characterArray >', characterArray)
 	for(let i = 0; i < characterArray.length; i++) {
 		if(characterArray[i] == idHere) {
 			return {"layer": "character", "id": idHere};
 		} else {
 			console.log("characterArray[i] = ", characterArray[i]);
-			let directionArray = Object.keys(characterArray[i].children);
+			let directionArray = Object.keys(bigPicture.children[characterArray[i]].children);
 			for(let j = 0; j < directionArray.length; j++) {
 				if(directionArray[j] == idHere) {
 					return {"layer": "direction", "id": idHere, "parentsid": characterArray[i]};
