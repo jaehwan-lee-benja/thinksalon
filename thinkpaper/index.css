@@ -94,7 +94,7 @@ input:hover {
 #divTop{
     padding-bottom: 3rem;
     margin: 0 0 2rem 0;
-    border-bottom: 1px solid rgb(230, 230, 230);
+    border-bottom: 1px solid rgb(220, 220, 220);
 }
 
 #divInfoTable{
@@ -177,7 +177,7 @@ input:hover {
     color: rgb(100, 100, 100);
     display: block;
     /* grid-template-columns: 1fr 10rem 10rem; */
-    border: 1px solid rgb(230, 230, 230);
+    border: 1px solid rgb(220, 220, 220);
     padding: 1rem;
     grid-gap: 0.2rem;
 }

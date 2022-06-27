@@ -59,15 +59,15 @@ function requestReadBigPicture(user) {
 		let characterKeysArray = Object.keys(bigPicture.children);
 
 		if (characterKeysArray.length > 0) {
-			let mainId = getMainId();
-			if(mainId != null && isMainShown == false) {
-				isMainShown = true;
-				showItOnUI(mainId);
-			} else {
-				showItOnUI(getLastestEditedId());
-			};
+			// let mainId = getMainId();
+			// if(mainId != null && isMainShown == false) {
+			//	isMainShown = true;
+			//	showItOnUI(mainId);
+			// } else {
+				showItOnUI(getLastestEditedId('character'), getLastestEditedId('direction'));
+			// };
 			showSelectbox("selectbox_character");
-			// showSelectbox("selectbox_direction");
+			showSelectbox("selectbox_direction");
 		} else {
 		showItIfNoBpData();
 		};
@@ -90,11 +90,7 @@ function requestSetCard_character(packagedDataHere) {
 
 function requestSetCard(layer, packagedDataHere) {
 
-	function cardId(layerHere) {
-		return selectorById("cardId_"+layerHere).value;
-	};
-
-	let cardId_character = cardId("character");
+	let cardId_character = getCardId("character");
 
 	const characterRef = db.ref("users")
 		.child(userData.uid)
@@ -229,6 +225,8 @@ function packageNewCard(layer) {
 				contents["character"] = selectorById("character").value.trim();
 				break;
 			case "direction" :
+				console.log("getCardId('character') = ", getCardId("character"));
+				packagedData["parentsId"] = getCardId("character");
 				contents["direction"] = selectorById("direction").value.trim();
 				break;
 			case "navi" :
@@ -258,7 +256,7 @@ function packageEditedCard(layer) {
 		let characterObject = {"id": characterId, "character": characterValue};
 
 		// 로컬 데이터에 있는 값 포착하기
-		let characterArrayWithId = getIdArrayByMap("contents", "character");
+		let characterArrayWithId = getIdArrayByMap("character","contents", "character");
 	
 		// 위 두가지가 같은 경우의 수라면, 수정이 이뤄지지 않은 상태
 		for(let i = 0; i < characterArrayWithId.length; i++) {
@@ -309,8 +307,9 @@ function packageEditedCard(layer) {
 	};
 };
 
-function getLastestEditedId() {
-	return sortedEditedDateArrayWithId()[0].id
+function getLastestEditedId(layer) {
+	let latestEditedId = sortedEditedDateArrayWithId(layer)[0].id;
+	return latestEditedId;
 };
 
 function sortedEditedDateArrayWithId2(){
@@ -327,8 +326,8 @@ function sortedEditedDateArrayWithId2(){
 	return sortedEditedDateArray;
 }; // show를 할때 최신의 것이 나오지 않음
 
-function sortedEditedDateArrayWithId() {
-	let idEditedDateArray = getIdArrayByMap("general", "editedDate");
+function sortedEditedDateArrayWithId(layer) {
+	let idEditedDateArray = getIdArrayByMap(layer, "general", "editedDate");
 	let editedDateArray = idEditedDateArray.map(element => element.editedDate);
 	let editedDateArrayinReverseOrder = editedDateArray.sort(date_descending);
 	let arr = [];
@@ -345,23 +344,53 @@ function sortedEditedDateArrayWithId() {
 	return arr;
 };
 
-function getIdArrayByMap(scope1, key1, scope2, key2) {
-	let characterIdArray = Object.keys(bigPicture.children);
-	let idArrayWithKeys = characterIdArray.map( id => {
-		let obj = {"id":id};
-		if (scope1 == "contents") {
-			obj[key1] =  bigPicture.children[id].contents[key1];
-		} else {
-			obj[key1] =  bigPicture.children[id][key1];
-		};
-		if (scope2 == "contents") {
-			obj[key2] =  bigPicture.children[id].contents[key2];
-		} else {
-			obj[key2] =  bigPicture.children[id][key2];
-		};
-		return obj;
-	  });
-	return idArrayWithKeys;
+function getIdArrayByMap(layer, scope1, key1, scope2, key2) {		
+	
+	if(layer == "character"){
+		let idArray = Object.keys(bigPicture.children);
+		let mappedArray = idArray.map( id => {
+
+			let obj = {"id":id};
+
+			if (scope1 == "contents") {
+				obj[key1] =  bigPicture.children[id].contents[key1];
+			} else {
+				obj[key1] =  bigPicture.children[id][key1];
+			};
+
+			if (scope2 == "contents") {
+				obj[key2] =  bigPicture.children[id].contents[key2];
+			} else {
+				obj[key2] =  bigPicture.children[id][key2];
+			};
+
+			return obj;
+
+			});
+		return mappedArray;
+
+	} else {
+		// let parentsOfDirection = bigPicture.children[getLastestEditedId('character')];
+		let parentsOfDirection = bigPicture.children["39f03efb-6425-46e3-9f88-9acb56d51aee"];
+		let idArray = Object.keys(parentsOfDirection.children);
+		let mappedArray = idArray.map( id => {
+			let obj = {"id":id};
+			if (scope1 == "contents") {
+				obj[key1] =  parentsOfDirection.contents[key1];
+			} else {
+				obj[key1] =  parentsOfDirection[key1];
+			};
+			if (scope2 == "contents") {
+				obj[key2] =  parentsOfDirection.contents[key2];
+			} else {
+				obj[key2] =  parentsOfDirection[key2];
+			};
+			return obj;
+			});
+
+		return mappedArray;
+	};
+
 };
 
 ///// UI manager
@@ -376,14 +405,16 @@ function showEmptyCard() {
 	btnShowHideHandlerByClassName("character","createFirstCard");
 };
 
-function showItOnUI(printDataId) {
-	let characterParents = bigPicture.children[printDataId]
-	selectorById("character").value = characterParents.contents.character;
-	selectorById("cardId_character").value = characterParents.id;
+function showItOnUI(characterId, directionId) {
+	let parentsOfCharacter = bigPicture.children[characterId]
+	selectorById("character").value = parentsOfCharacter.contents.character;
+	selectorById("cardId_character").value = parentsOfCharacter.id;
 
 	// 작업중
-	//selectorById("character").value = characterParents.children.directionId;
-	//selectorById("cardId_character").value = characterParents.id;
+	let parentsOfDirection = bigPicture.children[characterId].children[directionId];
+	console.log("parentsOfDirection = ", parentsOfDirection);
+	selectorById("direction").value = parentsOfDirection.contents.direction;
+	selectorById("cardId_direction").value = parentsOfDirection.id;
 
 	btnShowHideHandlerByClassName("character","readCard");
 	btnShowHideHandlerByClassName("direction","readCard");
@@ -553,12 +584,18 @@ function showSelectbox(selectboxId) {
 	};
 	
 	// Array 만들기
-	let characterArray = getIdArrayByMap("general", "editedDate", "contents", "character");
+	if (selectboxId == "selectbox_character") {
+		let mappedArray = getIdArrayByMap("character","general", "editedDate", "contents", "character");
+		return mappedArray;
+	} else {
+		let mappedArray = getIdArrayByMap("direction","general", "editedDate", "contents", "character");
+		return mappedArray;
+	}
 	  
 	// selectbox option list 순서 잡기(최근 편집 순서)
 	function sortingArray() {
 
-		let editedDateArray = characterArray.map(element => element.editedDate);
+		let editedDateArray = mappedArray.map(element => element.editedDate);
 		let editedDateArrayinReverseOrder = editedDateArray.sort(date_descending);
 
 		let arr = [];
@@ -569,12 +606,17 @@ function showSelectbox(selectboxId) {
 
 			for (let j = 0; j < editedDateArray.length; j++) {
 
-				let id = characterArray[j].id;
-				let datesBeforeSorting = characterArray[j].editedDate;
-				let character = characterArray[j].character;
+				let id = mappedArray[j].id;
+				let datesBeforeSorting = mappedArray[j].editedDate;
 
 				if (datesAfterSorting == datesBeforeSorting) {
-					arr.push({"id": id, "editedDate": datesBeforeSorting, "character": character});
+					if (selectboxId == "selectbox_character") {
+						let value = mappedArray[j].character;
+						arr.push({"id": id, "editedDate": datesBeforeSorting, "character": value});
+					} else {
+						let value = mappedArray[j].direction;
+						arr.push({"id": id, "editedDate": datesBeforeSorting, "direction": value});
+					};
 				};
 
 			};
@@ -623,7 +665,7 @@ function gotoMainCard_character() {
 };
 
 function getMainId() {
-	let idMainArray = getIdArrayByMap("general", "main");
+	let idMainArray = getIdArrayByMap("character","general", "main");
 	for(let i = 0; i < idMainArray.length; i++) {
 		if(idMainArray[i].main == "main"){
 			return idMainArray[i].id;
@@ -660,6 +702,7 @@ function removeCard() {
 function openNewCard() {
 	showEmptyCard();
 	btnShowHideHandlerByClassName("character","openNewCard");
+	btnShowHideHandlerByClassName("direction","openNewCard");
 };
 
 function openEditCardByDbclick() {
@@ -708,7 +751,7 @@ function monitorCardBlankOrDuplicates_character() {
 
 function getSameTextArray(text) {
 	
-	let IdArray_character = getIdArrayByMap("contents", "character");
+	let IdArray_character = getIdArrayByMap("character","contents", "character");
 	
 	let textArray = [];
 	for(let i = 0; i < IdArray_character.length; i++) {
@@ -748,4 +791,8 @@ function date_ascending(a, b) { // 오름차순
 	
 function date_descending(a, b) { // 내림차순    
 	return Date.parse(b) - Date.parse(a);
+};
+
+function getCardId(layerHere) {
+	return selectorById("cardId_"+layerHere).value;
 };
