@@ -44,7 +44,7 @@ function requestReadUserData(user) {
 };
 
 function getIdAndObjectFromChildren(o){
-	console.log('getIdAndObjectFromChildren >>',o)
+	// console.log('getIdAndObjectFromChildren >>',o)
 	const c = o.children
 	if(!c) return;
 
@@ -69,13 +69,13 @@ function requestReadBigPicture(user) {
 
 		const v = snapshot.val()
 		getIdAndObjectFromChildren(v)
-		console.log('objectById >>',objectById)
+		// console.log('objectById >>',objectById)
 
 		snapshot.forEach(childSnap => {
 			let key_id = childSnap.key;
 			let value_data = childSnap.val();
 			bigPicture[key_id] = value_data;
-			console.log('>>>> ',bigPicture);
+			// console.log('>>>> ',bigPicture);
 
 		});
 
@@ -87,7 +87,8 @@ function requestReadBigPicture(user) {
 			//	isMainShown = true;
 			//	showItOnUI(mainId);
 			// } else {
-				showItOnUI(getLastestEditedId('character'), getLastestEditedId('direction'));
+				showItOnUI("character", getLastestEditedId('character'));
+				showItOnUI("direction", getLastestEditedId('direction'));
 			// };
 			showSelectbox("character");
 			showSelectbox("direction");
@@ -331,24 +332,35 @@ function packageEditedCard(layer) {
 };
 
 function getLastestEditedId(layer) {
-	let latestEditedId = sortedEditedDateArrayWithId2(layer)[0].id;
+	let latestEditedId = sortedEditedDateArrayWithId(layer)[0].id;
 	return latestEditedId;
 };
 
-function sortedEditedDateArrayWithId2(){
-	let keys = Object.keys(bigPicture.children);
-	let editedDateArray = keys.map( id => {
+function sortedEditedDateArrayWithId2(keysArrayHere){
+
+	function getKeysArray(keysArrayHere){
+		console.log("keysArrayHere = ", keysArrayHere);
+		if (keysArrayHere == null) {
+			let keysArrayReturn = Object.keys(bigPicture.children);
+			return keysArrayReturn;
+		} else {
+			return keysArrayHere;
+		};
+	};
+
+	let keysArray = getKeysArray(keysArrayHere);
+
+	let editedDateArray = keysArray.map( id => {
 		let c = bigPicture.children[id];
 		return {"id": id, "date": c.editedDate};
 	  });
-	console.log("editedDateArray = ", editedDateArray.slice());
 
 	editedDateArray.sort(
 		(a,b) => new Date(b.date) - new Date(a.date)
 	);
-	console.log("sortedEditedDateArray = ", editedDateArray);
+
 	return editedDateArray;
-}; // show를 할때 최신의 것이 나오지 않음
+};
 
 function sortedEditedDateArrayWithId(layer) {
 	let idEditedDateArray = getIdArrayByMap(layer, "general", "editedDate");
@@ -428,18 +440,30 @@ function showEmptyCard() {
 	btnShowHideHandlerByClassName("character","createFirstCard");
 };
 
-function showItOnUI(characterId, directionId) {
-	let parentsOfCharacter = bigPicture.children[characterId]
-	selectorById("character").value = parentsOfCharacter.contents.character;
-	selectorById("cardId_character").value = parentsOfCharacter.id;
+function showItOnUI(layer, id) {
+	let parentsOfCharacter = bigPicture.children[id]
 
-	// 작업중
-	// let parentsOfDirection = bigPicture.children[characterId].children[directionId];
-	// selectorById("direction").value = parentsOfDirection.contents.direction;
-	// selectorById("cardId_direction").value = parentsOfDirection.id;
+	if(layer == "character") {
+		selectorById("character").value = parentsOfCharacter.contents.character;
+		selectorById("cardId_character").value = parentsOfCharacter.id;
+		btnShowHideHandlerByClassName("character","readCard");
+	} else {
+		console.log("objectById = ", objectById);
+		let everyKeysArray = Object.keys(objectById);
+		for(let i = 0; i < everyKeysArray.length; i++) {
+			if(everyKeysArray[i].parentsId == selectorById("character").value){
+				let arr = [];
+				arr.push(everyKeysArray[i].parentsId);
+				getLastestEditedId("direction");
+				//다시 key를 넣고 불러오는 방식의 근본적인 고민이 필요하다.
+			}
+		}
+		console.log("parentsOfDirection = ", parentsOfDirection);
+		selectorById("direction").value = parentsOfDirection.contents.direction;
+		selectorById("cardId_direction").value = parentsOfDirection.id;
+		btnShowHideHandlerByClassName("direction","readCard");
+	};
 
-	btnShowHideHandlerByClassName("character","readCard");
-	btnShowHideHandlerByClassName("direction","readCard");
 };
 
 function showItOnUIWithLayer(layer, id) {
