@@ -331,8 +331,8 @@ function packageEditedCard(layer) {
 	};
 };
 
-function getLastestEditedId(layer, arr) {
-	let latestEditedId = sortEditedDateArrayWithId(layer, arr)[0].id;
+function getLastestEditedId(layer) {
+	let latestEditedId = sortEditedDateArrayWithId(layer)[0].id;
 	return latestEditedId;
 };
 
@@ -362,20 +362,9 @@ function sortEditedDateArrayWithId2(keysArrayHere){
 	return editedDateArray;
 };
 
-function sortEditedDateArrayWithId(layer,arr) {
+function sortEditedDateArrayWithId(layerHere) {
 
-	function getArr(arr) {
-		if (arr == null) {
-			let resultArr = getIdArrayByMap(layer, "general", "editedDate");
-			return resultArr;
-		} else {
-			let resultArr = arr;
-			return resultArr;
-		};
-	};
-
-	let idEditedDateArray = getArr();
-
+	let idEditedDateArray = getIdArrayByMap(layerHere, "general", "editedDate");
 	let editedDateArray = idEditedDateArray.map(element => element.editedDate);
 	let editedDateArrayinReverseOrder = editedDateArray.sort(date_descending);
 	let arr2 = [];
@@ -424,10 +413,8 @@ function getIdArrayByMap(layer, scope1, key1, scope2, key2) {
 			let obj = {"id":id};
 
 			if (scope1 == "contents") {
-				console.log("test1");
 				obj[key1] =  parentsOfDirection.children[id].contents[key1];
 			} else {
-				console.log("test2");
 				obj[key1] =  parentsOfDirection.children[id][key1];
 			};
 			if (scope2 == "contents") {
@@ -439,7 +426,6 @@ function getIdArrayByMap(layer, scope1, key1, scope2, key2) {
 			return obj;
 			
 			});
-		console.log("mappedArray @getIdArrayByMap =", mappedArray);
 		return mappedArray;
 	};
 
@@ -458,7 +444,7 @@ function showEmptyCard() {
 };
 
 function showItOnUI(layer, id) {
-	let parentsOfCharacter = bigPicture.children[id]
+	let parentsOfCharacter = bigPicture.children[id];
 
 	if(layer == "character") {
 		selectorById("character").value = parentsOfCharacter.contents.character;
@@ -473,11 +459,9 @@ function showItOnUI(layer, id) {
 			let eachParentsIdOfDirection = objectById[everyKeysArray[i]].parentsId;
 
 			if(eachParentsIdOfDirection == characterCardId){
-				let arr = [];
-				arr.push(everyKeysArray[i].parentsId);
-				let parentsOfDirection = getLastestEditedId("direction", arr);
-				selectorById("direction").value = objectById[parentsOfDirection].contents.direction;
-				selectorById("cardId_direction").value = parentsOfDirection.id;
+				let keyOfDirection = getLastestEditedId("direction");
+				selectorById("direction").value = objectById[keyOfDirection].contents.direction;
+				selectorById("cardId_direction").value = keyOfDirection.id;
 				btnShowHideHandlerByClassName("direction","readCard");
 			};
 		};
@@ -498,7 +482,6 @@ function showItOnUIWithLayer(layer, id) {
 		selectorById("cardId_direction").value = parentsOfDirection.id;
 		btnShowHideHandlerByClassName("direction","readCard");
 	};
-	// 작업중
 };
 
 function uiHide(id) {
@@ -673,35 +656,27 @@ function showSelectbox(layerHere) {
 		return mappedArray;
 	};
 	let mappedArray = getMappedArray(layerHere);
-	console.log("mappedArray = ", mappedArray);
 	  
 	// selectbox option list 순서 잡기(최근 편집 순서)
 	function sortingArray(mappedArrayHere) {
 
 		let editedDateArray = mappedArrayHere.map(element => element.editedDate);
-		console.log("editedDateArray = ", editedDateArray);
 		let editedDateArrayinReverseOrder = editedDateArray.sort(date_descending);
-		console.log("editedDateArrayinReverseOrder = ", editedDateArrayinReverseOrder);
 
 		let arr = [];
 
 		for(let i = 0; i < editedDateArrayinReverseOrder.length; i++) {
 
-			console.log("i =", i);
-			console.log("editedDateArrayinReverseOrder.length", editedDateArrayinReverseOrder.length);
 			let datesAfterSorting = editedDateArrayinReverseOrder[i];
-			console.log("datesAfterSorting = ", "|", i, "|", datesAfterSorting);
 
 			for (let j = 0; j < editedDateArray.length; j++) {
 
-				console.log("j =", j);
 				let id = mappedArrayHere[j].id;
 				let datesBeforeSorting = mappedArrayHere[j].editedDate;
 
 				if (datesAfterSorting == datesBeforeSorting) {
 					let value = mappedArrayHere[j][layerHere];
 					arr.push({"id": id, "editedDate": datesBeforeSorting, [layerHere]: value});
-					console.log("arr = ", "|", layerHere, "|", arr);
 				};
 			};
 		};
@@ -709,7 +684,6 @@ function showSelectbox(layerHere) {
 	};
 
 	let sortedArray = sortingArray(mappedArray);
-	console.log("sortedArray = ", sortedArray);
 
 	// <option> 만들어서, Array 넣기
 	for (let i = 0; i < sortedArray.length; i++) {
@@ -726,7 +700,6 @@ function showSelectbox(layerHere) {
 			option.appendChild(txt);
 		};
 		option.setAttribute("value", sortedArray[i].id);
-		console.log("sortedArray[i].id = ", sortedArray[i].id);
 		option.setAttribute("innerHTML", sortedArray[i][layerHere]);
 		selectbox.insertBefore(option, selectbox.lastChild);
 	};
@@ -737,6 +710,14 @@ function selectBySelectbox(layerHere) {
 	let id = selectorById(selectboxId).value;
 	console.log("id = ", id);
 	showItOnUIWithLayer(layerHere, id);
+
+	if(layerHere == "character") {
+		console.log("test");
+		console.log("objectById = ",objectById);
+		console.log("getLastestEditedId('direction') =", getLastestEditedId('direction'));
+		showItOnUI("direction", getLastestEditedId('direction'));
+		showSelectbox("direction");
+	};
 };
 
 ///// mainCard mananger
