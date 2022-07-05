@@ -422,19 +422,24 @@ function getIdArrayByMap(layer, scope1, key1, scope2, key2) {
 		let idArray = Object.keys(parentsOfDirection.children);
 		let mappedArray = idArray.map( id => {
 			let obj = {"id":id};
+
 			if (scope1 == "contents") {
-				obj[key1] =  parentsOfDirection.contents[key1];
+				console.log("test1");
+				obj[key1] =  parentsOfDirection.children[id].contents[key1];
 			} else {
-				obj[key1] =  parentsOfDirection[key1];
+				console.log("test2");
+				obj[key1] =  parentsOfDirection.children[id][key1];
 			};
 			if (scope2 == "contents") {
 				obj[key2] =  parentsOfDirection.children[id].contents[key2];
 			} else {
 				obj[key2] =  parentsOfDirection[key2];
 			};
-			return obj;
-			});
 
+			return obj;
+			
+			});
+		console.log("mappedArray @getIdArrayByMap =", mappedArray);
 		return mappedArray;
 	};
 
@@ -652,9 +657,9 @@ function highLightBorder(id, color) {
 
 ///// selectbox manager
 
-function showSelectbox(layer) {
+function showSelectbox(layerHere) {
 
-	let selectboxId = "selectbox_"+layer;
+	let selectboxId = "selectbox_"+layerHere;
 	let selectbox = selectorById(selectboxId);
 
 	// selectbox 초기화하기
@@ -663,58 +668,55 @@ function showSelectbox(layer) {
 	};
 	
 	// Array 만들기
-	function getMappedArray(layerHere){
-		let mappedArray = getIdArrayByMap(layerHere,"general", "editedDate", "contents", layerHere);
+	function getMappedArray(layerHere2){
+		let mappedArray = getIdArrayByMap(layerHere2,"general", "editedDate", "contents", layerHere2);
 		return mappedArray;
 	};
-	let mappedArray = getMappedArray(layer);
+	let mappedArray = getMappedArray(layerHere);
 	console.log("mappedArray = ", mappedArray);
 	  
 	// selectbox option list 순서 잡기(최근 편집 순서)
-	function sortingArray() {
+	function sortingArray(mappedArrayHere) {
 
-		let editedDateArray = mappedArray.map(element => element.editedDate);
+		let editedDateArray = mappedArrayHere.map(element => element.editedDate);
 		console.log("editedDateArray = ", editedDateArray);
-		// direction의 editedDate가 잘못 셋팅 되어있음을 발견!
 		let editedDateArrayinReverseOrder = editedDateArray.sort(date_descending);
+		console.log("editedDateArrayinReverseOrder = ", editedDateArrayinReverseOrder);
 
 		let arr = [];
 
 		for(let i = 0; i < editedDateArrayinReverseOrder.length; i++) {
 
+			console.log("i =", i);
+			console.log("editedDateArrayinReverseOrder.length", editedDateArrayinReverseOrder.length);
 			let datesAfterSorting = editedDateArrayinReverseOrder[i];
+			console.log("datesAfterSorting = ", "|", i, "|", datesAfterSorting);
 
 			for (let j = 0; j < editedDateArray.length; j++) {
 
-				let id = mappedArray[j].id;
-				let datesBeforeSorting = mappedArray[j].editedDate;
+				console.log("j =", j);
+				let id = mappedArrayHere[j].id;
+				let datesBeforeSorting = mappedArrayHere[j].editedDate;
 
 				if (datesAfterSorting == datesBeforeSorting) {
-					if (selectboxId == "selectbox_character") {
-						let value = mappedArray[j].character;
-						arr.push({"id": id, "editedDate": datesBeforeSorting, "character": value});
-					} else {
-						for (let k = 0; k < editedDateArray.length; k++) {
-							let value = mappedArray[k].direction;
-							arr.push({"id": id, "editedDate": datesBeforeSorting, "direction": value});
-						};
-						return arr;
-					};
+					let value = mappedArrayHere[j][layerHere];
+					arr.push({"id": id, "editedDate": datesBeforeSorting, [layerHere]: value});
+					console.log("arr = ", "|", layerHere, "|", arr);
 				};
 			};
 		};
 		return arr;
 	};
 
-	let sortedArray = sortingArray();
+	let sortedArray = sortingArray(mappedArray);
 	console.log("sortedArray = ", sortedArray);
 
 	// <option> 만들어서, Array 넣기
 	for (let i = 0; i < sortedArray.length; i++) {
 		let option = document.createElement("OPTION");
-		let txt = document.createTextNode(sortedArray[i][layer]);
+		let txt = document.createTextNode(sortedArray[i][layerHere]);
 		let optionId = sortedArray[i].id;
-		let optionValue = sortedArray[i][layer];
+		let optionValue = sortedArray[i][layerHere];
 		let mainId = getMainId();
 		if(optionId == mainId) {
 			let mainOptionMark = optionValue + " ★";
@@ -725,16 +727,16 @@ function showSelectbox(layer) {
 		};
 		option.setAttribute("value", sortedArray[i].id);
 		console.log("sortedArray[i].id = ", sortedArray[i].id);
-		option.setAttribute("innerHTML", sortedArray[i][layer]);
+		option.setAttribute("innerHTML", sortedArray[i][layerHere]);
 		selectbox.insertBefore(option, selectbox.lastChild);
 	};
 };
 
-function selectBySelectbox(layer) {
-	let selectboxId = "selectbox_"+layer
+function selectBySelectbox(layerHere) {
+	let selectboxId = "selectbox_"+layerHere
 	let id = selectorById(selectboxId).value;
 	console.log("id = ", id);
-	showItOnUIWithLayer(layer, id);
+	showItOnUIWithLayer(layerHere, id);
 };
 
 ///// mainCard mananger
