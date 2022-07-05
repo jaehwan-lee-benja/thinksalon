@@ -460,15 +460,25 @@ function showItOnUI(layer, id) {
 		selectorById("cardId_character").value = parentsOfCharacter.id;
 		btnShowHideHandlerByClassName("character","readCard");
 	} else {
-		console.log("objectById = ", objectById);
+		console.log("layer == direction");
+
 		let everyKeysArray = Object.keys(objectById);
+		console.log("objectById =", objectById);
+
+		let characterCardId = selectorById("cardId_character").value;
+		console.log("characterCardId =", characterCardId);
+
 		for(let i = 0; i < everyKeysArray.length; i++) {
-			if(everyKeysArray[i].parentsId == selectorById("character").value){
+
+			let eachParentsIdOfDirection = objectById[everyKeysArray[i]].parentsId;
+
+			if(eachParentsIdOfDirection == characterCardId){
+				console.log("layer direction, same character id case");
 				let arr = [];
 				arr.push(everyKeysArray[i].parentsId);
 				let parentsOfDirection = getLastestEditedId("direction", arr);
 				console.log("parentsOfDirection = ", parentsOfDirection);
-				selectorById("direction").value = parentsOfDirection.contents.direction;
+				selectorById("direction").value = objectById[parentsOfDirection].contents.direction;
 				selectorById("cardId_direction").value = parentsOfDirection.id;
 				btnShowHideHandlerByClassName("direction","readCard");
 			};
@@ -663,7 +673,6 @@ function showSelectbox(layer) {
 		return mappedArray;
 	};
 	let mappedArray = getMappedArray(layer);
-	console.log("mappedArray =", mappedArray);
 	  
 	// selectbox option list 순서 잡기(최근 편집 순서)
 	function sortingArray() {
@@ -684,12 +693,10 @@ function showSelectbox(layer) {
 
 				if (datesAfterSorting == datesBeforeSorting) {
 					if (selectboxId == "selectbox_character") {
-						console.log("test1");
 						let value = mappedArray[j].character;
 						arr.push({"id": id, "editedDate": datesBeforeSorting, "character": value});
 					} else {
 						for (let k = 0; k < editedDateArray.length; k++) {
-							console.log("test2");
 							let value = mappedArray[k].direction;
 							arr.push({"id": id, "editedDate": datesBeforeSorting, "direction": value});
 						};
@@ -702,7 +709,6 @@ function showSelectbox(layer) {
 	};
 
 	let sortedArray = sortingArray();
-	console.log("sortedArray = ", sortedArray);
 
 	// <option> 만들어서, Array 넣기
 	for (let i = 0; i < sortedArray.length; i++) {
