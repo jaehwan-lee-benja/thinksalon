@@ -331,12 +331,12 @@ function packageEditedCard(layer) {
 	};
 };
 
-function getLastestEditedId(layer) {
-	let latestEditedId = sortedEditedDateArrayWithId(layer)[0].id;
+function getLastestEditedId(layer, arr) {
+	let latestEditedId = sortEditedDateArrayWithId(layer, arr)[0].id;
 	return latestEditedId;
 };
 
-function sortedEditedDateArrayWithId2(keysArrayHere){
+function sortEditedDateArrayWithId2(keysArrayHere){
 
 	function getKeysArray(keysArrayHere){
 		console.log("keysArrayHere = ", keysArrayHere);
@@ -362,22 +362,34 @@ function sortedEditedDateArrayWithId2(keysArrayHere){
 	return editedDateArray;
 };
 
-function sortedEditedDateArrayWithId(layer) {
-	let idEditedDateArray = getIdArrayByMap(layer, "general", "editedDate");
+function sortEditedDateArrayWithId(layer,arr) {
+
+	function getArr(arr) {
+		if (arr == null) {
+			let resultArr = getIdArrayByMap(layer, "general", "editedDate");
+			return resultArr;
+		} else {
+			let resultArr = arr;
+			return resultArr;
+		};
+	};
+
+	let idEditedDateArray = getArr();
+
 	let editedDateArray = idEditedDateArray.map(element => element.editedDate);
 	let editedDateArrayinReverseOrder = editedDateArray.sort(date_descending);
-	let arr = [];
+	let arr2 = [];
 	for(let i = 0; i < editedDateArrayinReverseOrder.length; i++) {
 		let datesAfterSorting = editedDateArrayinReverseOrder[i];
 		for (let j = 0; j < editedDateArray.length; j++) {
 			let datesBeforeSorting = idEditedDateArray[j].editedDate;
 			let id = idEditedDateArray[j].id
 			if (datesAfterSorting == datesBeforeSorting) {
-				arr.push({"id": id, "editedDate": datesAfterSorting});
+				arr2.push({"id": id, "editedDate": datesAfterSorting});
 			};
 		};
 	};
-	return arr;
+	return arr2;
 };
 
 function getIdArrayByMap(layer, scope1, key1, scope2, key2) {		
@@ -454,14 +466,13 @@ function showItOnUI(layer, id) {
 			if(everyKeysArray[i].parentsId == selectorById("character").value){
 				let arr = [];
 				arr.push(everyKeysArray[i].parentsId);
-				getLastestEditedId("direction");
-				//다시 key를 넣고 불러오는 방식의 근본적인 고민이 필요하다.
-			}
-		}
-		console.log("parentsOfDirection = ", parentsOfDirection);
-		selectorById("direction").value = parentsOfDirection.contents.direction;
-		selectorById("cardId_direction").value = parentsOfDirection.id;
-		btnShowHideHandlerByClassName("direction","readCard");
+				let parentsOfDirection = getLastestEditedId("direction", arr);
+				console.log("parentsOfDirection = ", parentsOfDirection);
+				selectorById("direction").value = parentsOfDirection.contents.direction;
+				selectorById("cardId_direction").value = parentsOfDirection.id;
+				btnShowHideHandlerByClassName("direction","readCard");
+			};
+		};
 	};
 
 };
