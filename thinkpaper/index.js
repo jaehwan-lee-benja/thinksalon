@@ -460,24 +460,17 @@ function showItOnUI(layer, id) {
 		selectorById("cardId_character").value = parentsOfCharacter.id;
 		btnShowHideHandlerByClassName("character","readCard");
 	} else {
-		console.log("layer == direction");
-
 		let everyKeysArray = Object.keys(objectById);
-		console.log("objectById =", objectById);
-
 		let characterCardId = selectorById("cardId_character").value;
-		console.log("characterCardId =", characterCardId);
 
 		for(let i = 0; i < everyKeysArray.length; i++) {
 
 			let eachParentsIdOfDirection = objectById[everyKeysArray[i]].parentsId;
 
 			if(eachParentsIdOfDirection == characterCardId){
-				console.log("layer direction, same character id case");
 				let arr = [];
 				arr.push(everyKeysArray[i].parentsId);
 				let parentsOfDirection = getLastestEditedId("direction", arr);
-				console.log("parentsOfDirection = ", parentsOfDirection);
 				selectorById("direction").value = objectById[parentsOfDirection].contents.direction;
 				selectorById("cardId_direction").value = parentsOfDirection.id;
 				btnShowHideHandlerByClassName("direction","readCard");
@@ -549,7 +542,9 @@ function btnShowHideHandlerByClassName(className, state) {
 		default:
 			let state = null;
 	}
-	btnShowHideHandlerByClassName_main(className, state);
+	if(className == "character") {
+		btnShowHideHandlerByClassName_main(className, state);
+	};
 	resizeTextarea();
 };
 
@@ -673,11 +668,14 @@ function showSelectbox(layer) {
 		return mappedArray;
 	};
 	let mappedArray = getMappedArray(layer);
+	console.log("mappedArray = ", mappedArray);
 	  
 	// selectbox option list 순서 잡기(최근 편집 순서)
 	function sortingArray() {
 
 		let editedDateArray = mappedArray.map(element => element.editedDate);
+		console.log("editedDateArray = ", editedDateArray);
+		// direction의 editedDate가 잘못 셋팅 되어있음을 발견!
 		let editedDateArrayinReverseOrder = editedDateArray.sort(date_descending);
 
 		let arr = [];
@@ -709,6 +707,7 @@ function showSelectbox(layer) {
 	};
 
 	let sortedArray = sortingArray();
+	console.log("sortedArray = ", sortedArray);
 
 	// <option> 만들어서, Array 넣기
 	for (let i = 0; i < sortedArray.length; i++) {
@@ -725,6 +724,7 @@ function showSelectbox(layer) {
 			option.appendChild(txt);
 		};
 		option.setAttribute("value", sortedArray[i].id);
+		console.log("sortedArray[i].id = ", sortedArray[i].id);
 		option.setAttribute("innerHTML", sortedArray[i][layer]);
 		selectbox.insertBefore(option, selectbox.lastChild);
 	};
@@ -884,16 +884,14 @@ function getCardId(layerHere) {
 
 function indexId(idHere) {
 	let characterArray = Object.keys(bigPicture.children);
-	console.log('characterArray >', characterArray)
 	for(let i = 0; i < characterArray.length; i++) {
 		if(characterArray[i] == idHere) {
 			return {"layer": "character", "id": idHere};
 		} else {
-			console.log("characterArray[i] = ", characterArray[i]);
 			let directionArray = Object.keys(bigPicture.children[characterArray[i]].children);
 			for(let j = 0; j < directionArray.length; j++) {
 				if(directionArray[j] == idHere) {
-					return {"layer": "direction", "id": idHere, "parentsid": characterArray[i]};
+					return {"layer": "direction", "id": idHere, "parentsId": characterArray[i]};
 				};
 			};
 		};
