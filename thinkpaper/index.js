@@ -88,10 +88,20 @@ function requestReadBigPicture(user) {
 			//	showItOnUI(mainId);
 			// } else {
 				showItOnUI("character", getLastestEditedId('character'));
-				showItOnUI("direction", getLastestEditedId('direction'));
 			// };
 			showSelectbox("character");
-			showSelectbox("direction");
+
+			let parentsOfDirection = bigPicture.children[getLastestEditedId('character')];
+			let idArray = Object.keys(parentsOfDirection.children);
+
+			if(idArray.length < 1) {
+				console.log("there's no direction - 1");
+				btnShowHideHandlerByClassName("direction","readCard");
+				return null;
+			} else {
+				showItOnUI("direction", getLastestEditedId('direction'));
+				showSelectbox("direction");
+			};
 		} else {
 		showItIfNoBpData();
 		};
@@ -134,8 +144,8 @@ function requestSetCard(layer, packagedDataHere) {
 			.child(packagedDataHere.id)
 			.set(packagedDataHere);
 			break;
-		case "navi" :
-			console.log("navi");
+		case "roadmap" :
+			console.log("roadmap");
 			break;
 		case "actionPlan" :
 			console.log("actionPlan");
@@ -145,39 +155,100 @@ function requestSetCard(layer, packagedDataHere) {
 	};
 };
 
-function requestUpdateCard_character(packagedDataHere) {
+function requestUpdateCard(layerHere, packagedDataHere) {
 
-	let cardId = selectorById("cardId_character").value;
-
-	db.ref("users")
+	const characterRef = db.ref("users")
 	.child(userData.uid)
 	.child("bigPicture")
-	.child("children")
-	.child(cardId)
-	.update(packagedDataHere, (e) => {
-		console.log("** update completed = ", e);
-		});
+	.child("children");
+
+	console.log("packagedDataHere =", packagedDataHere);
+
+	switch(layerHere){
+		case "character" :
+			characterRef
+			.child(packagedDataHere.id)
+			.update(packagedDataHere, (e) => {
+				console.log("** update completed = ", e);
+				});			
+			break;
+		case "direction" :
+			characterRef
+			.child(packagedDataHere.parentsId)
+			.child("children")
+			.child(packagedDataHere.id)
+			.update(packagedDataHere, (e) => {
+				console.log("** update completed = ", e);
+				});
+			break;
+		case "roadmap" :
+			console.log("roadmap");
+			break;
+		case "actionPlan" :
+			console.log("actionPlan");
+			break;
+		default: 
+			let layerHere = null;
+	};
 
 };
 
-function requestRemoveCard_character(characterId) {
+function requestRemoveCard(layerHere, idHere) {
 
-	let characterArray = Object.keys(bigPicture.children);
+	console.log("layerHere = ", layerHere);
+	console.log("idHere = ", idHere);
 
-	if (characterArray.length != 1) {
-		db.ref("users")
-		.child(userData.uid)
-		.child("bigPicture")
-		.child("children")
-		.child(characterId)
-		.remove();
-	} else {
-		let emptyData = {children: ""};
-		db.ref("users")
-		.child(userData.uid)
-		.child("bigPicture")
-		.set(emptyData);
-	}
+	let keyArray = "";
+
+	const characterRef = db.ref("users")
+	.child(userData.uid)
+	.child("bigPicture")
+	.child("children");
+
+	let emptyData = {children: ""};
+
+	switch(layerHere){
+		case "character" :
+			keyArray = Object.keys(bigPicture.children);
+			if (keyArray.length != 1) {
+				characterRef
+				.child(idHere)
+				.remove();
+			} else {
+				db.ref("users")
+				.child(userData.uid)
+				.child("bigPicture")
+				.set(emptyData);
+			};		
+			break;
+
+		case "direction" :
+			let parentsOfDirection = bigPicture.children[getLastestEditedId('character')];
+			keyArray = Object.keys(parentsOfDirection.children);
+			if (keyArray.length != 1) {
+
+				characterRef
+				.child(getParentsIdfromChildId(idHere))
+				.child("children")
+				.child(idHere)
+				.remove();
+				
+			} else {
+				characterRef
+				.child(packagedDataHere.parentsId)
+				.set(emptyData);
+			};		
+			break;
+
+		case "roadmap" :
+			console.log("roadmap");
+			break;
+		case "actionPlan" :
+			console.log("actionPlan");
+			break;
+		default: 
+			let layer = null;
+	};
 };
 
 function requestUpdateMainCard_character(characterId) {
@@ -225,9 +296,7 @@ function showUserData(userData) {
 
 function packageNewCard(layer) {
 
-	// let moniterResult = monitorCardBlankOrDuplicates_character();
-
-	let moniterResult = true;
+	let moniterResult = monitorCardBlankOrDuplicates(layer);
 
 	if (moniterResult == true) {
 		let idNew = uuidv4();
@@ -253,10 +322,10 @@ function packageNewCard(layer) {
 				packagedData["parentsId"] = getCardId("character");
 				contents["direction"] = selectorById("direction").value.trim();
 				break;
-			case "navi" :
-				contents["naviArea"] = selectorById("naviArea").value.trim();
-				contents["naviA"] = selectorById("naviA").value.trim();
-				contents["naviB"] = selectorById("naviArea").value.trim();
+			case "roadmap" :
+				contents["roadmapArea"] = selectorById("roadmapArea").value.trim();
+				contents["roadmapA"] = selectorById("roadmapA").value.trim();
+				contents["roadmapB"] = selectorById("roadmapArea").value.trim();
 				break;
 			case "actionPlan" :
 				contents["actionPlan"] = selectorById("actionPlan").value.trim();
@@ -270,56 +339,58 @@ function packageNewCard(layer) {
 		
 };
 
-function packageEditedCard(layer) {
+function packageEditedCard(layerHere) {
 
-	function moniterIfCardChanged_character() {
+	function moniterIfCardChanged(layerHere2) {
 
 		// 현재 UI에 띄워진 값 포착하기
-		let characterId = selectorById("cardId_character").value;
-		let characterValue = selectorById("character").value.trim();
-		let characterObject = {"id": characterId, "character": characterValue};
+		let id = selectorById("cardId_"+layerHere2).value;
+		let value = selectorById(layerHere2).value.trim();
+		let object = {"id": id, [layerHere2]: value};
 
 		// 로컬 데이터에 있는 값 포착하기
-		let characterArrayWithId = getIdArrayByMap("character","contents", "character");
+		let arrayWithId = getIdArrayByMap(layerHere, "contents", layerHere);
 	
 		// 위 두가지가 같은 경우의 수라면, 수정이 이뤄지지 않은 상태
-		for(let i = 0; i < characterArrayWithId.length; i++) {
-			if(JSON.stringify(characterObject) === JSON.stringify(characterArrayWithId[i])) {
+		for(let i = 0; i < arrayWithId.length; i++) {
+			if(JSON.stringify(object) === JSON.stringify(arrayWithId[i])) {
 				return false;
 			};
 		};
 		return true;
 	};
 	
-	function getMoniterResult(isChanged) {
+	function getMoniterResult(layerHere3, isChanged) {
 		if (isChanged == true) {
-			let moniterResultInFunction = monitorCardBlankOrDuplicates_character();
+			let moniterResultInFunction = monitorCardBlankOrDuplicates(layerHere3);
 			return moniterResultInFunction;
 		} else {
 			return true;
 		};
 	};
 
-	let moniterResult = getMoniterResult(moniterIfCardChanged_character());
-	// 파라미터 direction, navi, actionPlan 가능할것으로 보임
+	let moniterResult = getMoniterResult(layerHere, moniterIfCardChanged(layerHere));
 	
 	if (moniterResult == true) {
 		let packagedData = {};
+		packagedData["id"] = getCardId(layerHere);
+		packagedData["parentsId"] = getCardParentsId(layerHere);
+		console.log("getCardParentsId(layerHere) = ", getCardParentsId(layerHere));
 		packagedData["editedDate"] = timeStamp();
 		packagedData["contents"] = {};
 
 		let contents = packagedData["contents"];
-		switch(layer){
+		switch(layerHere){
 			case "character" :
 				contents["character"] = selectorById("character").value.trim();
 				break;
 			case "direction" :
 				contents["direction"] = selectorById("direction").value.trim();
 				break;
-			case "navi" :
-				contents["naviArea"] = selectorById("naviArea").value.trim();
-				contents["naviA"] = selectorById("naviA").value.trim();
-				contents["naviB"] = selectorById("naviArea").value.trim();
+			case "roadmap" :
+				contents["roadmapArea"] = selectorById("roadmapArea").value.trim();
+				contents["roadmapA"] = selectorById("roadmapA").value.trim();
+				contents["roadmapB"] = selectorById("roadmapArea").value.trim();
 				break;
 			case "actionPlan" :
 				contents["actionPlan"] = selectorById("actionPlan").value.trim();
@@ -327,13 +398,19 @@ function packageEditedCard(layer) {
 			default: 
 				let layer = null;
 		};
+		console.log("packagedData = ", packagedData);
 		return packagedData;
 	};
 };
 
 function getLastestEditedId(layer) {
-	let latestEditedId = sortEditedDateArrayWithId(layer)[0].id;
-	return latestEditedId;
+	let sortedArray = sortEditedDateArrayWithId(layer);
+	if (sortedArray != null) {
+		let latestEditedId = sortedArray[0];
+		return latestEditedId.id;
+	} else {
+		return null;
+	};
 };
 
 function sortEditedDateArrayWithId2(keysArrayHere){
@@ -365,20 +442,25 @@ function sortEditedDateArrayWithId2(keysArrayHere){
 function sortEditedDateArrayWithId(layerHere) {
 
 	let idEditedDateArray = getIdArrayByMap(layerHere, "general", "editedDate");
-	let editedDateArray = idEditedDateArray.map(element => element.editedDate);
-	let editedDateArrayinReverseOrder = editedDateArray.sort(date_descending);
-	let arr2 = [];
-	for(let i = 0; i < editedDateArrayinReverseOrder.length; i++) {
-		let datesAfterSorting = editedDateArrayinReverseOrder[i];
-		for (let j = 0; j < editedDateArray.length; j++) {
-			let datesBeforeSorting = idEditedDateArray[j].editedDate;
-			let id = idEditedDateArray[j].id
-			if (datesAfterSorting == datesBeforeSorting) {
-				arr2.push({"id": id, "editedDate": datesAfterSorting});
+	if (idEditedDateArray != null) {
+		let editedDateArray = idEditedDateArray.map(element => element.editedDate);
+		let editedDateArrayinReverseOrder = editedDateArray.sort(date_descending);
+		let arr2 = [];
+		for(let i = 0; i < editedDateArrayinReverseOrder.length; i++) {
+			let datesAfterSorting = editedDateArrayinReverseOrder[i];
+			for (let j = 0; j < editedDateArray.length; j++) {
+				let datesBeforeSorting = idEditedDateArray[j].editedDate;
+				let id = idEditedDateArray[j].id
+				if (datesAfterSorting == datesBeforeSorting) {
+					arr2.push({"id": id, "editedDate": datesAfterSorting});
+				};
 			};
 		};
-	};
-	return arr2;
+		return arr2;
+	} else {
+		return null;
+	}
+	
 };
 
 function getIdArrayByMap(layer, scope1, key1, scope2, key2) {		
@@ -409,64 +491,73 @@ function getIdArrayByMap(layer, scope1, key1, scope2, key2) {
 	} else {
 		let parentsOfDirection = bigPicture.children[getLastestEditedId('character')];
 		let idArray = Object.keys(parentsOfDirection.children);
-		let mappedArray = idArray.map( id => {
-			let obj = {"id":id};
-
-			if (scope1 == "contents") {
-				obj[key1] =  parentsOfDirection.children[id].contents[key1];
-			} else {
-				obj[key1] =  parentsOfDirection.children[id][key1];
-			};
-			if (scope2 == "contents") {
-				obj[key2] =  parentsOfDirection.children[id].contents[key2];
-			} else {
-				obj[key2] =  parentsOfDirection[key2];
-			};
-
-			return obj;
-			
-			});
-		return mappedArray;
+		if(idArray.length < 1) {
+			console.log("there's no direction - 2");
+			return null;
+		} else {
+			let mappedArray = idArray.map( id => {
+				let obj = {"id":id};
+	
+				if (scope1 == "contents") {
+					obj[key1] =  parentsOfDirection.children[id].contents[key1];
+				} else {
+					obj[key1] =  parentsOfDirection.children[id][key1];
+				};
+				if (scope2 == "contents") {
+					obj[key2] =  parentsOfDirection.children[id].contents[key2];
+				} else {
+					obj[key2] =  parentsOfDirection[key2];
+				};
+	
+				return obj;
+				
+				});
+			return mappedArray;
+		};
 	};
 
 };
 
 ///// UI manager
 
-function showEmptyCard() {
-	selectorById("character").value = "";
-	selectorById("direction").value = "";
-	// selectorById("naviArea").value = "";
-	// selectorById("naviB").value = "";
-	// selectorById("naviA").value = "";
+function showEmptyCard(layerHere) {
+	selectorById(layerHere).value = "";
+	// selectorById("direction").value = "";
+	// selectorById("roadmapArea").value = "";
+	// selectorById("roadmapB").value = "";
+	// selectorById("roadmapA").value = "";
 	// selectorById("actionPlan").value = "";
-	btnShowHideHandlerByClassName("character","createFirstCard");
+	btnShowHideHandlerByClassName(layerHere,"createFirstCard");
+	// btnShowHideHandlerByClassName("direction","readCard");
 };
 
-function showItOnUI(layer, id) {
-	let parentsOfCharacter = bigPicture.children[id];
+function showItOnUI(layerHere, idHere) {
+	if (idHere != null) {
+		let parentsOfCharacter = bigPicture.children[idHere];
 
-	if(layer == "character") {
-		selectorById("character").value = parentsOfCharacter.contents.character;
-		selectorById("cardId_character").value = parentsOfCharacter.id;
-		btnShowHideHandlerByClassName("character","readCard");
-	} else {
-		let everyKeysArray = Object.keys(objectById);
-		let characterCardId = selectorById("cardId_character").value;
-
-		for(let i = 0; i < everyKeysArray.length; i++) {
-
-			let eachParentsIdOfDirection = objectById[everyKeysArray[i]].parentsId;
-
-			if(eachParentsIdOfDirection == characterCardId){
-				let keyOfDirection = getLastestEditedId("direction");
-				selectorById("direction").value = objectById[keyOfDirection].contents.direction;
-				selectorById("cardId_direction").value = keyOfDirection.id;
-				btnShowHideHandlerByClassName("direction","readCard");
+		if(layerHere == "character") {
+			selectorById("character").value = parentsOfCharacter.contents.character;
+			selectorById("cardId_character").value = parentsOfCharacter.id;
+			selectorById("cardParentsId_character").value = parentsOfCharacter.parentsId;
+		} else {
+			let everyKeysArray = Object.keys(objectById);
+			let characterCardId = selectorById("cardId_character").value;
+	
+			for(let i = 0; i < everyKeysArray.length; i++) {
+	
+				let eachParentsIdOfDirection = objectById[everyKeysArray[i]].parentsId;
+	
+				if(eachParentsIdOfDirection == characterCardId){
+					let keyOfDirection = getLastestEditedId("direction");
+					selectorById("direction").value = objectById[keyOfDirection].contents.direction;
+					selectorById("cardId_direction").value = objectById[keyOfDirection].id;
+					selectorById("cardParentsId_direction").value = objectById[keyOfDirection].parentsId;
+					btnShowHideHandlerByClassName("direction","readCard");
+				};
 			};
 		};
 	};
-
+	btnShowHideHandlerByClassName(layerHere,"readCard");
 };
 
 function showItOnUIWithLayer(layer, id) {
@@ -580,18 +671,18 @@ function editModeHandler(cardMode) {
 		selectorById("gridMainFrame").style.color = "#9CC0E7";
 		textareaReadOnly("character", false);
 		textareaReadOnly("direction", false);
-		textareaReadOnly("naviArea", false);
-		textareaReadOnly("naviB", false);
-		textareaReadOnly("naviA", false);
+		textareaReadOnly("roadmapArea", false);
+		textareaReadOnly("roadmapB", false);
+		textareaReadOnly("roadmapA", false);
 		textareaReadOnly("actionPlan", false);
 		textareaBorderColorHandler("2px", "#9CC0E7");
 	} else {
 		selectorById("gridMainFrame").style.color = "#424242";
 		textareaReadOnly("character", true);
 		textareaReadOnly("direction", true);
-		textareaReadOnly("naviArea", true);
-		textareaReadOnly("naviB", true);
-		textareaReadOnly("naviA", true);
+		textareaReadOnly("roadmapArea", true);
+		textareaReadOnly("roadmapB", true);
+		textareaReadOnly("roadmapA", true);
 		textareaReadOnly("actionPlan", true);
 		textareaBorderColorHandler("1px", "#c8c8c8");
 	};
@@ -630,7 +721,8 @@ function resizeTextarea() {
 };
 
 function showItIfNoBpData() {
-	showEmptyCard();
+	showEmptyCard("character");
+	showEmptyCard("direction");
 	selectorById("guideMessage").innerHTML = "'파란색으로 쓰여진 곳의 네모칸에 내용을 작성해보세요~!'"
 };
 
@@ -712,11 +804,18 @@ function selectBySelectbox(layerHere) {
 	showItOnUIWithLayer(layerHere, id);
 
 	if(layerHere == "character") {
-		console.log("test");
-		console.log("objectById = ",objectById);
-		console.log("getLastestEditedId('direction') =", getLastestEditedId('direction'));
-		showItOnUI("direction", getLastestEditedId('direction'));
-		showSelectbox("direction");
+
+		let parentsOfDirection = bigPicture.children[getLastestEditedId('character')];
+		let idArray = Object.keys(parentsOfDirection.children);
+
+		if(idArray.length < 1) {
+			console.log("there's no direction - 3");
+			return null;
+		} else {
+			showItOnUI("direction", getLastestEditedId('direction'));
+			showSelectbox("direction");
+			btnShowHideHandlerByClassName("direction","readCard");
+		};
 	};
 };
 
@@ -751,26 +850,25 @@ function saveNewCard(layer) {
 	};
 };
 
-function saveEditedCard() {
-	let packagedData = packageEditedCard("character");
+function saveEditedCard(layer) {
+	let packagedData = packageEditedCard(layer);
 	if (packagedData != null) {
-		requestUpdateCard_character(packagedData);
+		requestUpdateCard(layer, packagedData);
 		alert("저장되었습니다.");
 	};
 };
 
-function removeCard() {
-	let removeId = selectorById("cardId_character").value;
+function removeCard(layerHere) {
+	let removeId = selectorById("cardId_"+layerHere).value;
 	if (confirm("정말 삭제하시겠습니까? 삭제가 완료되면, 해당 내용은 다시 복구될 수 없습니다.")) {
-		requestRemoveCard_character(removeId);
+		requestRemoveCard(layerHere,removeId);
 		alert("삭제되었습니다.");
 	};
 };
 
-function openNewCard() {
-	showEmptyCard();
-	btnShowHideHandlerByClassName("character","openNewCard");
-	btnShowHideHandlerByClassName("direction","openNewCard");
+function openNewCard(layerHere) {
+	showEmptyCard(layerHere);
+	btnShowHideHandlerByClassName(layerHere,"openNewCard");
 };
 
 function openEditCardByDbclick() {
@@ -785,33 +883,29 @@ function openEditCardByDbclick() {
 	};
 };
 
-function openEditCard() {
-	btnShowHideHandlerByClassName("character","editCard");
+function openEditCard(layerHere) {
+	btnShowHideHandlerByClassName(layerHere,"editCard");
 };
 
-function openEditCard_direction() {
-	btnShowHideHandlerByClassName("direction","editCard");
-};
-
-function cancelEditCard() {
-	let cardId = selectorById("cardId_character").value;
-	showItOnUI(cardId);
+function cancelEditCard(layerHere) {
+	let cardId = selectorById("cardId_"+layerHere).value;
+	showItOnUI(layerHere, cardId);
 };
 
 ///// monitor manager
 
-function monitorCardBlankOrDuplicates_character() {
-	let cardValue = selectorById("character").value.trim();
+function monitorCardBlankOrDuplicates(layerHere) {
+	let cardValue = selectorById(layerHere).value.trim();
 	if (cardValue != "") {
 		let sameTextArray = getSameTextArray(cardValue);
 		if (sameTextArray == undefined) {
 			return true;
 		} else {
-			highLightBorder("character", "red");
+			highLightBorder(layerHere, "red");
 			alert("중복된 카드가 있습니다. 내용을 수정해주시기 바랍니다.");
 		};
 	} else {
-		highLightBorder("character", "red");
+		highLightBorder(layerHere, "red");
 		alert("카드가 비어있습니다. 내용을 입력해주시기 바랍니다.");
 	};
 	return false;
@@ -865,6 +959,10 @@ function getCardId(layerHere) {
 	return selectorById("cardId_"+layerHere).value;
 };
 
+function getCardParentsId(layerHere) {
+	return selectorById("cardParentsId_"+layerHere).value;
+};
+
 function indexId(idHere) {
 	let characterArray = Object.keys(bigPicture.children);
 	for(let i = 0; i < characterArray.length; i++) {
@@ -880,4 +978,19 @@ function indexId(idHere) {
 		};
 	};
 	return console.log("There's any same id");
-}
+};
+
+function getParentsIdfromChildId(childIdHere) {
+	
+	let everyKeysArray = Object.keys(objectById);
+	console.log("childIdHere =", childIdHere);
+	console.log("everyKeysArray = ", everyKeysArray);
+	console.log("objectById = ", objectById);
+
+	for(let i = 0; i < everyKeysArray.length; i++) {
+		if(everyKeysArray[i] == childIdHere) {
+			console.log("objectById[childIdHere].parentsId = ", objectById[childIdHere].parentsId);
+			return objectById[childIdHere].parentsId;
+		};
+	};
+};

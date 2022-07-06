@@ -50,15 +50,16 @@
     
                         <div>
                             <input type="hidden" id="cardId_character"></input>
+                            <input type="hidden" id="cardParentsId_character"></input>
                             <textarea id="character" placeholder="예)개인으로서의 나" readonly></textarea>
                         </div>
                         <div style="margin: 1rem 0">
-                            <input id="openEditCard_btn_character" onClick="openEditCard()" type="button" value="수정하기">
-                            <input id="cancelEditCard_btn_character" onClick="cancelEditCard()" type="button" value="작성(수정) 취소하기">
-                            <input id="saveEditedCard_btn_character" onClick="saveEditedCard()" type="button" value="저장하기">
+                            <input id="openEditCard_btn_character" onClick="openEditCard('character')" type="button" value="수정하기">
+                            <input id="cancelEditCard_btn_character" onClick="cancelEditCard('character')" type="button" value="작성(수정) 취소하기">
+                            <input id="saveEditedCard_btn_character" onClick="saveEditedCard('character')" type="button" value="저장하기">
                             <input id="saveNewCard_btn_character" onClick="saveNewCard('character')" type="button" value="새 카드로 저장하기">
-                            <input id="removeCard_btn_character" onClick="removeCard()" type="button" value="삭제하기">
-                            <input id="openNewCard_btn_character" onClick="openNewCard()" type="button" value="새 카드 작성하기">
+                            <input id="removeCard_btn_character" onClick="removeCard('character')" type="button" value="삭제하기">
+                            <input id="openNewCard_btn_character" onClick="openNewCard('character')" type="button" value="새 카드 작성하기">
                         </div>
                         <div id = "gridMainEdit">
                             <input id="setMainCard_btn_character" onClick="setMainCard()" type="button" value="메인 카드로 설정하기">
@@ -86,42 +87,43 @@
     
                         <div>
                             <input type="hidden" id="cardId_direction"></input>
+                            <input type="hidden" id="cardParentsId_direction"></input>
                             <textarea id="direction" placeholder="예)건강한 삶 살기" readonly></textarea>
                         </div>
                         <div style="margin: 1rem 0">
-                            <input id="openEditCard_btn_direction" onClick="openEditCard_direction()" type="button" value="수정하기">
-                            <input id="cancelEditCard_btn_direction" onClick="cancelEditCard()" type="button" value="작성(수정) 취소하기">
-                            <input id="saveEditedCard_btn_direction" onClick="saveEditedCard()" type="button" value="저장하기">
+                            <input id="openEditCard_btn_direction" onClick="openEditCard('direction')" type="button" value="수정하기">
+                            <input id="cancelEditCard_btn_direction" onClick="cancelEditCard('direction')" type="button" value="작성(수정) 취소하기">
+                            <input id="saveEditedCard_btn_direction" onClick="saveEditedCard('direction')" type="button" value="저장하기">
                             <input id="saveNewCard_btn_direction" onClick="saveNewCard('direction')" type="button" value="새 카드로 저장하기">
-                            <input id="removeCard_btn_direction" onClick="removeCard()" type="button" value="삭제하기">
-                            <input id="openNewCard_btn_direction" onClick="openNewCard()" type="button" value="새 카드 작성하기">
+                            <input id="removeCard_btn_direction" onClick="removeCard('direction')" type="button" value="삭제하기">
+                            <input id="openNewCard_btn_direction" onClick="openNewCard('direction')" type="button" value="새 카드 작성하기">
                         </div>
                     </div>
                 </div>
                 <!-- 
                     <div id="gridMainContents">
                         <div>
-                            <h2>[N] 네비게이션</h2>
+                            <h2>로드맵</h2>
                             <h3>그 방향 아래, 내가 나아가는 '도달 지점'은 어디인가? 그리고 지금 나는 어디에 있는가?</h3>
                         </div>
-                        <div id="gridNavi">
+                        <div id="gridRoadmap">
                             <div>
                                 <h4>분야</h4>
-                                <textarea id="naviArea" placeholder="예)지덕체 관리" readonly></textarea>
+                                <textarea id="roadmapArea" placeholder="예)지덕체 관리" readonly></textarea>
                             </div>
                             <div>
                                 <h4>도달지점</h4>
-                                <textarea id="naviB" placeholder="예)규칙적인 식습관" readonly></textarea>
+                                <textarea id="roadmapB" placeholder="예)규칙적인 식습관" readonly></textarea>
                             </div>
                             <div>
                                 <h4>현재위치</h4>
-                                <textarea id="naviA" placeholder="예)불규칙한 식습관" readonly></textarea>
+                                <textarea id="roadmapA" placeholder="예)불규칙한 식습관" readonly></textarea>
                             </div>
                         </div>
                     </div>
                     <div id="gridMainContents">
                         <div>
-                            <h2>[A] 액션플랜</h2>
+                            <h2>액션플랜</h2>
                             <h3>'도달 지점'까지 가기위한 '구체적인 행동'은 어떤 것들이 있는가?</h3>
                         </div>
                         <div>

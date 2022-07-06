@@ -30,18 +30,18 @@
                         "layer": "direction",
                         "contents": {"direction":""},
                         "children": {
-                            "#$naviId": {
+                            "#$roadmapId": {
                                 "id": "",
                                 "parentsId": "",
                                 "createdDate": "",
                                 "editedDate": "",
                                 "readDate": "",
                                 "main": "",
-                                "layer": "navi",
+                                "layer": "roadmap",
                                 "contents": {
-                                    "navi":"",
-                                    "naviA":"",
-                                    "naviB":""},
+                                    "roadmap":"",
+                                    "roadmapA":"",
+                                    "roadmapB":""},
                                 "children": {
                                     "#$actionPlanId": {
                                         "id": "",
