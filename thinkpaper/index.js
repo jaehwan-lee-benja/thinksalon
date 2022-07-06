@@ -235,7 +235,7 @@ function requestRemoveCard(layerHere, idHere) {
 				
 			} else {
 				characterRef
-				.child(packagedDataHere.parentsId)
+				.child(idHere)
 				.set(emptyData);
 			};		
 			break;
@@ -465,8 +465,13 @@ function sortEditedDateArrayWithId(layerHere) {
 
 function getIdArrayByMap(layer, scope1, key1, scope2, key2) {		
 	
+	console.log(layer, scope1, key1, scope2, key2);
+
 	if(layer == "character"){
 		let idArray = Object.keys(bigPicture.children);
+		
+		console.log("idArray = ", idArray);
+
 		let mappedArray = idArray.map( id => {
 
 			let obj = {"id":id};
@@ -747,6 +752,8 @@ function showSelectbox(layerHere) {
 		let mappedArray = getIdArrayByMap(layerHere2,"general", "editedDate", "contents", layerHere2);
 		return mappedArray;
 	};
+
+	console.log("layerHere = ", layerHere);
 	let mappedArray = getMappedArray(layerHere);
 	  
 	// selectbox option list 순서 잡기(최근 편집 순서)
@@ -810,6 +817,7 @@ function selectBySelectbox(layerHere) {
 
 		if(idArray.length < 1) {
 			console.log("there's no direction - 3");
+			btnShowHideHandlerByClassName("direction","readCard");
 			return null;
 		} else {
 			showItOnUI("direction", getLastestEditedId('direction'));
