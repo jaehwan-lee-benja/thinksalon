@@ -79,19 +79,19 @@ function requestReadBigPicture(user) {
 
 		});
 
-		let characterKeysArray = Object.keys(bigPicture.children);
+		const characterIdArray = Object.keys(bigPicture.children);
 
-		if (characterKeysArray.length > 0) {
+		if (characterIdArray.length > 0) {
 			// let mainId = getMainId();
 			// if(mainId != null && isMainShown == false) {
 			//	isMainShown = true;
 			//	showItOnUI(mainId);
 			// } else {
-				showItOnUI("character", getLastestEditedId('character'));
+				showItOnUI("character", getLastestEditedId(characterIdArray));
 			// };
 			showSelectbox("character");
 
-			let parentsOfDirection = bigPicture.children[getLastestEditedId('character')];
+			let parentsOfDirection = bigPicture.children[getLastestEditedId(characterIdArray)];
 			let idArray = Object.keys(parentsOfDirection.children);
 
 			if(idArray.length < 1) {
@@ -99,7 +99,7 @@ function requestReadBigPicture(user) {
 				btnShowHideHandlerByClassName("direction","readCard");
 				return null;
 			} else {
-				showItOnUI("direction", getLastestEditedId('direction'));
+				showItOnUI("direction", getLastestEditedId(getDirectionIdArray()));
 				showSelectbox("direction");
 			};
 		} else {
@@ -110,17 +110,6 @@ function requestReadBigPicture(user) {
 };
 
 ///// LtoS manager
-
-function requestSetCard_character(packagedDataHere) {
-
-		db.ref("users")
-		.child(userData.uid)
-		.child("bigPicture")
-		.child("children")
-		.child(packagedDataHere.id)
-		.set(packagedDataHere);
-
-};
 
 function requestSetCard(layer, packagedDataHere) {
 
@@ -195,10 +184,10 @@ function requestUpdateCard(layerHere, packagedDataHere) {
 
 function requestRemoveCard(layerHere, idHere) {
 
+	const characterIdArray = Object.keys(bigPicture.children);
+
 	console.log("layerHere = ", layerHere);
 	console.log("idHere = ", idHere);
-
-	let keyArray = "";
 
 	const characterRef = db.ref("users")
 	.child(userData.uid)
@@ -209,8 +198,8 @@ function requestRemoveCard(layerHere, idHere) {
 
 	switch(layerHere){
 		case "character" :
-			keyArray = Object.keys(bigPicture.children);
-			if (keyArray.length != 1) {
+
+			if (characterIdArray.length != 1) {
 				characterRef
 				.child(idHere)
 				.remove();
@@ -223,9 +212,8 @@ function requestRemoveCard(layerHere, idHere) {
 			break;
 
 		case "direction" :
-			let parentsOfDirection = bigPicture.children[getLastestEditedId('character')];
-			keyArray = Object.keys(parentsOfDirection.children);
-			if (keyArray.length != 1) {
+
+			if (getDirectionIdArray().length != 1) {
 
 				characterRef
 				.child(getParentsIdfromChildId(idHere))
@@ -252,9 +240,9 @@ function requestRemoveCard(layerHere, idHere) {
 };
 
 function requestUpdateMainCard_character(characterId) {
-
-	let characterIdArray = Object.keys(bigPicture.children);
 	
+	const characterIdArray = Object.keys(bigPicture.children);
+
 	characterIdArray.forEach(eachId => {
 
 		let setMainValue = {};
@@ -403,43 +391,33 @@ function packageEditedCard(layerHere) {
 	};
 };
 
-function getLastestEditedId(layer) {
-	let sortedArray = sortEditedDateArrayWithId(layer);
-	if (sortedArray != null) {
-		let latestEditedId = sortedArray[0];
+function getLastestEditedId(keysArrayHere) {
+	
+	console.log("keysArrayHere = ", keysArrayHere);
+
+	console.log("bigPicture1 =", bigPicture);
+
+	const mappedArray = keysArrayHere.map( id => {
+		console.log("bigPicture2 =", bigPicture);
+		console.log("bigPicture.children =", bigPicture.children);
+		console.log("id =", id);
+		let c = bigPicture.children[id]; //direction과 character의 구분이 필요한 포인트
+		console.log("c =", c);
+		return {"id": id, "editedDate": c.editedDate};
+	}).sort(
+		(a,b) => new Date(b.date) - new Date(a.date)
+	);
+
+	if (mappedArray != null) {
+		let latestEditedId = mappedArray[0];
 		return latestEditedId.id;
 	} else {
 		return null;
 	};
+
 };
 
-function sortEditedDateArrayWithId2(keysArrayHere){
-
-	function getKeysArray(keysArrayHere){
-		console.log("keysArrayHere = ", keysArrayHere);
-		if (keysArrayHere == null) {
-			let keysArrayReturn = Object.keys(bigPicture.children);
-			return keysArrayReturn;
-		} else {
-			return keysArrayHere;
-		};
-	};
-
-	let keysArray = getKeysArray(keysArrayHere);
-
-	let editedDateArray = keysArray.map( id => {
-		let c = bigPicture.children[id];
-		return {"id": id, "date": c.editedDate};
-	  });
-
-	editedDateArray.sort(
-		(a,b) => new Date(b.date) - new Date(a.date)
-	);
-
-	return editedDateArray;
-};
-
-function sortEditedDateArrayWithId(layerHere) {
+function sortEditedDateArrayWithId2(layerHere) {
 
 	let idEditedDateArray = getIdArrayByMap(layerHere, "general", "editedDate");
 	if (idEditedDateArray != null) {
@@ -464,11 +442,13 @@ function sortEditedDateArrayWithId(layerHere) {
 };
 
 function getIdArrayByMap(layer, scope1, key1, scope2, key2, characterIdHere) {		
-	
+
+	const characterIdArray = Object.keys(bigPicture.children);
+
 	if(layer == "character"){
-		let idArray = Object.keys(bigPicture.children);
 		
-		let mappedArray = idArray.map( id => {
+
+		let mappedArray = characterIdArray.map( id => {
 
 			let obj = {"id":id};
 
@@ -479,12 +459,6 @@ function getIdArrayByMap(layer, scope1, key1, scope2, key2, characterIdHere) {
 			};
 
 			if (scope2 == "contents") {
-				console.log("obj =", key2);
-				console.log("obj =", obj);
-				console.log("obj =", obj[key2]);
-				console.log("bigPicture.children = ", id);
-				console.log("bigPicture.children = ", bigPicture.children[id]);
-				console.log("bigPicture.children = ", bigPicture.children[id].contents);
 				obj[key2] =  bigPicture.children[id].contents[key2];
 			} else {
 				obj[key2] =  bigPicture.children[id][key2];
@@ -500,11 +474,10 @@ function getIdArrayByMap(layer, scope1, key1, scope2, key2, characterIdHere) {
 			if (characterIdHere2 != undefined) {
 				return characterIdHere2;
 			} else {
-				return getLastestEditedId("character");
+				return getLastestEditedId(characterIdArray);
 			}
 		};
 		let characterId = getCharacterId(characterIdHere);
-		console.log("characterId = ", characterId);
 		let parentsOfDirection = bigPicture.children[characterId];
 		let idArray = Object.keys(parentsOfDirection.children);
 
@@ -550,7 +523,6 @@ function showEmptyCard(layerHere) {
 
 function showItOnUI(layerHere, idHere) {
 	if (idHere != null) {
-		console.log("id is NOT null");
 		let parentsOfCharacter = bigPicture.children[idHere];
 
 		if(layerHere == "character") {
@@ -566,7 +538,7 @@ function showItOnUI(layerHere, idHere) {
 				let eachParentsIdOfDirection = objectById[everyKeysArray[i]].parentsId;
 	
 				if(eachParentsIdOfDirection == characterCardId){
-					let keyOfDirection = getLastestEditedId("direction");
+					let keyOfDirection = getLastestEditedId(getDirectionIdArray());
 					selectorById("direction").value = objectById[keyOfDirection].contents.direction;
 					selectorById("cardId_direction").value = objectById[keyOfDirection].id;
 					selectorById("cardParentsId_direction").value = objectById[keyOfDirection].parentsId;
@@ -575,7 +547,6 @@ function showItOnUI(layerHere, idHere) {
 			};
 		};
 	} else {
-		console.log("id is null");
 		selectorById(layerHere).value = "";
 	};
 	btnShowHideHandlerByClassName(layerHere,"readCard");
@@ -755,8 +726,6 @@ function highLightBorder(id, color) {
 
 function showSelectbox(layerHere, idHere) {
 
-	console.log(layerHere, "showSelectbox start here");
-
 	let selectboxId = "selectbox_"+layerHere;
 	let selectbox = selectorById(selectboxId);
 
@@ -836,12 +805,13 @@ function selectBySelectbox(layerHere) {
 		if(idArray.length < 1) {
 			console.log("there's no direction - 3");
 			console.log("getLastestEditedId('direction') =", getLastestEditedId('direction'));
-			showItOnUI("direction", getLastestEditedId('direction'));
+
+			showItOnUI("direction", getLastestEditedId(getDirectionIdArray()));
 			showSelectbox("direction");			
 			btnShowHideHandlerByClassName("direction","readCard");
 			return null;
 		} else {
-			showItOnUI("direction", getLastestEditedId('direction'));
+			showItOnUI("direction", getLastestEditedId(getDirectionIdArray()));
 			showSelectbox("direction", id);
 			btnShowHideHandlerByClassName("direction","readCard");
 		};
@@ -901,10 +871,11 @@ function openNewCard(layerHere) {
 };
 
 function openEditCardByDbclick() {
-	const TextareaOnCard = document.getElementsByTagName("textarea");
-	for (let i = 0; i < TextareaOnCard.length; i++) {
-		TextareaOnCard[i].addEventListener("dblclick", function (e) {
-			let characterIdArray = Object.keys(bigPicture.children);
+	const textareaOnCard = document.getElementsByTagName("textarea");
+	const characterIdArray = Object.keys(bigPicture.children);
+
+	for (let i = 0; i < textareaOnCard.length; i++) {
+		textareaOnCard[i].addEventListener("dblclick", function (e) {
 			if(characterIdArray.length > 0){
 				openEditCard();
 			};
@@ -993,15 +964,15 @@ function getCardParentsId(layerHere) {
 };
 
 function indexId(idHere) {
-	let characterArray = Object.keys(bigPicture.children);
-	for(let i = 0; i < characterArray.length; i++) {
-		if(characterArray[i] == idHere) {
+	const characterIdArray = Object.keys(bigPicture.children);
+	for(let i = 0; i < characterIdArray.length; i++) {
+		if(characterIdArray[i] == idHere) {
 			return {"layer": "character", "id": idHere};
 		} else {
-			let directionArray = Object.keys(bigPicture.children[characterArray[i]].children);
+			let directionArray = Object.keys(bigPicture.children[characterIdArray[i]].children);
 			for(let j = 0; j < directionArray.length; j++) {
 				if(directionArray[j] == idHere) {
-					return {"layer": "direction", "id": idHere, "parentsId": characterArray[i]};
+					return {"layer": "direction", "id": idHere, "parentsId": characterIdArray[i]};
 				};
 			};
 		};
@@ -1022,4 +993,10 @@ function getParentsIdfromChildId(childIdHere) {
 			return objectById[childIdHere].parentsId;
 		};
 	};
+};
+
+function getDirectionIdArray() {
+	const characterIdArray = Object.keys(bigPicture.children);
+	const parentsOfDirection = bigPicture.children[getLastestEditedId(characterIdArray)];
+	return Object.keys(parentsOfDirection.children);
 };
