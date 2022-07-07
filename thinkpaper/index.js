@@ -44,7 +44,7 @@ function requestReadUserData(user) {
 };
 
 function getIdAndObjectFromChildren(o){
-	// console.log('getIdAndObjectFromChildren >>',o)
+	// console.log('**getIdAndObjectFromChildren >>',o)
 	const c = o.children
 	if(!c) return;
 
@@ -65,17 +65,17 @@ function requestReadBigPicture(user) {
 	
 	userRef.on("value", (snapshot) => {
 
-		console.log("===== .on is here =====");
+		console.log("**===== .on is here =====");
 
 		const v = snapshot.val()
 		getIdAndObjectFromChildren(v)
-		// console.log('objectById >>',objectById)
+		// console.log('**objectById >>',objectById)
 
 		snapshot.forEach(childSnap => {
 			let key_id = childSnap.key;
 			let value_data = childSnap.val();
 			bigPicture[key_id] = value_data;
-			// console.log('>>>> ',bigPicture);
+			// console.log('**>>>> ',bigPicture);
 
 		});
 
@@ -95,7 +95,6 @@ function requestReadBigPicture(user) {
 			let idArray = Object.keys(parentsOfDirection.children);
 
 			if(idArray.length < 1) {
-				console.log("there's no direction - 1");
 				btnShowHideHandlerByClassName("direction","readCard");
 				return null;
 			} else {
@@ -134,10 +133,10 @@ function requestSetCard(layer, packagedDataHere) {
 			.set(packagedDataHere);
 			break;
 		case "roadmap" :
-			console.log("roadmap");
+			console.log("**roadmap");
 			break;
 		case "actionPlan" :
-			console.log("actionPlan");
+			console.log("**actionPlan");
 			break;
 		default: 
 			let layer = null;
@@ -150,8 +149,6 @@ function requestUpdateCard(layerHere, packagedDataHere) {
 	.child(userData.uid)
 	.child("bigPicture")
 	.child("children");
-
-	console.log("packagedDataHere =", packagedDataHere);
 
 	switch(layerHere){
 		case "character" :
@@ -171,10 +168,10 @@ function requestUpdateCard(layerHere, packagedDataHere) {
 				});
 			break;
 		case "roadmap" :
-			console.log("roadmap");
+			console.log("**roadmap");
 			break;
 		case "actionPlan" :
-			console.log("actionPlan");
+			console.log("**actionPlan");
 			break;
 		default: 
 			let layerHere = null;
@@ -185,9 +182,6 @@ function requestUpdateCard(layerHere, packagedDataHere) {
 function requestRemoveCard(layerHere, idHere) {
 
 	const characterIdArray = Object.keys(bigPicture.children);
-
-	console.log("layerHere = ", layerHere);
-	console.log("idHere = ", idHere);
 
 	const characterRef = db.ref("users")
 	.child(userData.uid)
@@ -229,10 +223,10 @@ function requestRemoveCard(layerHere, idHere) {
 			break;
 
 		case "roadmap" :
-			console.log("roadmap");
+			console.log("**roadmap");
 			break;
 		case "actionPlan" :
-			console.log("actionPlan");
+			console.log("**actionPlan");
 			break;
 		default: 
 			let layer = null;
@@ -306,7 +300,6 @@ function packageNewCard(layer) {
 				contents["character"] = selectorById("character").value.trim();
 				break;
 			case "direction" :
-				console.log("getCardId('character') = ", getCardId("character"));
 				packagedData["parentsId"] = getCardId("character");
 				contents["direction"] = selectorById("direction").value.trim();
 				break;
@@ -363,7 +356,6 @@ function packageEditedCard(layerHere) {
 		let packagedData = {};
 		packagedData["id"] = getCardId(layerHere);
 		packagedData["parentsId"] = getCardParentsId(layerHere);
-		console.log("getCardParentsId(layerHere) = ", getCardParentsId(layerHere));
 		packagedData["editedDate"] = timeStamp();
 		packagedData["contents"] = {};
 
@@ -386,7 +378,6 @@ function packageEditedCard(layerHere) {
 			default: 
 				let layer = null;
 		};
-		console.log("packagedData = ", packagedData);
 		return packagedData;
 	};
 };
@@ -495,7 +486,6 @@ function getIdArrayByMap(layer, scope1, key1, scope2, key2, characterIdHere) {
 		let idArray = Object.keys(parentsOfDirection.children);
 
 		if(idArray.length < 1) {
-			console.log("there's no direction - 2");
 			return null;
 		} else {
 			let mappedArray = idArray.map( id => {
@@ -589,8 +579,6 @@ function uiShow(id) {
 };
 
 function btnShowHideHandlerByClassName(className, state) {
-
-	// console.log("cardState = ", state);
 
 	uiHide("openEditCard_btn_"+className);
 	uiHide("cancelEditCard_btn_"+className);
@@ -806,19 +794,13 @@ function showSelectbox(layerHere, idHere) {
 function selectBySelectbox(layerHere) {
 	let selectboxId = "selectbox_"+layerHere
 	let id = selectorById(selectboxId).value;
-	console.log("id = ", id);
 	showItOnUIWithLayer(layerHere, id);
 
 	if(layerHere == "character") {
-		console.log("test");
 		let parentsOfDirection = bigPicture.children[id];
 		let idArray = Object.keys(parentsOfDirection.children);
-		console.log("idArray = ", idArray);
 
 		if(idArray.length < 1) {
-			console.log("there's no direction - 3");
-			console.log("getLastestEditedId('direction') =", getLastestEditedId_direction(getDirectionIdArray()));
-
 			showItOnUI("direction", getLastestEditedId_direction(getDirectionIdArray()));
 			showSelectbox("direction");			
 			btnShowHideHandlerByClassName("direction","readCard");
@@ -990,19 +972,15 @@ function indexId(idHere) {
 			};
 		};
 	};
-	return console.log("There's any same id");
+	return console.log("**There's any same id");
 };
 
 function getParentsIdfromChildId(childIdHere) {
 	
 	let everyKeysArray = Object.keys(objectById);
-	console.log("childIdHere =", childIdHere);
-	console.log("everyKeysArray = ", everyKeysArray);
-	console.log("objectById = ", objectById);
 
 	for(let i = 0; i < everyKeysArray.length; i++) {
 		if(everyKeysArray[i] == childIdHere) {
-			console.log("objectById[childIdHere].parentsId = ", objectById[childIdHere].parentsId);
 			return objectById[childIdHere].parentsId;
 		};
 	};
