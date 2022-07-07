@@ -43,8 +43,8 @@ function requestReadUserData(user) {
 	});
 };
 
-function getIdAndObjectFromChildren(o){
-	// console.log('**getIdAndObjectFromChildren >>',o)
+function requestReadIdAndObjectFromChildren(o){
+	// console.log('**requestReadIdAndObjectFromChildren >>',o)
 	const c = o.children
 	if(!c) return;
 
@@ -54,7 +54,7 @@ function getIdAndObjectFromChildren(o){
 	ids.forEach( id => {
 		const v = c[id]
 		objectById[id] = v
-		getIdAndObjectFromChildren(v)
+		requestReadIdAndObjectFromChildren(v)
 	});
 	
 }
@@ -68,7 +68,7 @@ function requestReadBigPicture(user) {
 		console.log("**===== .on is here =====");
 
 		const v = snapshot.val()
-		getIdAndObjectFromChildren(v)
+		requestReadIdAndObjectFromChildren(v)
 		// console.log('**objectById >>',objectById)
 
 		snapshot.forEach(childSnap => {
@@ -95,7 +95,7 @@ function requestReadBigPicture(user) {
 			let idArray = Object.keys(parentsOfDirection.children);
 
 			if(idArray.length < 1) {
-				btnShowHideHandlerByClassName("direction","readCard");
+				setupBtnShowOrHideByClassName("direction","readCard");
 				return null;
 			} else {
 				showItOnUI("direction", getLastestEditedId_direction(getDirectionIdArray()));
@@ -110,7 +110,7 @@ function requestReadBigPicture(user) {
 
 ///// LtoS manager
 
-function requestSetCard(layer, packagedDataHere) {
+function requestSetCard(layerHere, packagedDataHere) {
 
 	let cardId_character = getCardId("character");
 
@@ -119,7 +119,7 @@ function requestSetCard(layer, packagedDataHere) {
 		.child("bigPicture")
 		.child("children");
 
-	switch(layer){
+	switch(layerHere){
 		case "character" :
 			characterRef
 			.child(packagedDataHere.id)
@@ -139,7 +139,7 @@ function requestSetCard(layer, packagedDataHere) {
 			console.log("**actionPlan");
 			break;
 		default: 
-			let layer = null;
+			let layerHere = null;
 	};
 };
 
@@ -233,7 +233,7 @@ function requestRemoveCard(layerHere, idHere) {
 	};
 };
 
-function requestUpdateMainCard_character(characterId) {
+function requestUpdateMainCard(idHere) {
 	
 	const characterIdArray = Object.keys(bigPicture.children);
 
@@ -241,10 +241,10 @@ function requestUpdateMainCard_character(characterId) {
 
 		let setMainValue = {};
 
-		if (eachId == characterId) {
+		if (eachId == idHere) {
 			setMainValue = {
 				"main": "main",
-				"editedDate": timeStamp()
+				"editedDate": getTimeStamp()
 			};
 		} else {
 			setMainValue = {
@@ -267,52 +267,52 @@ function requestUpdateMainCard_character(characterId) {
 
 ///// user data manager
 
-function showUserData(userData) {
-	let userName = userData.name;
-	let userEmail = userData.email;
-	selectorById("nameChecked").innerHTML = "방문자: " + userName + " 대표";
-	selectorById("emailChecked").innerHTML = "(" + userEmail + ")"+"		";
+function showUserData(userDataHere) {
+	const userName = userDataHere.name;
+	const userEmail = userDataHere.email;
+	getSelectorById("nameChecked").innerHTML = "방문자: " + userName + " 대표";
+	getSelectorById("emailChecked").innerHTML = "(" + userEmail + ")"+"		";
 };
 
 ///// local data manager
 
-function packageNewCard(layer) {
+function packageNewCard(layerHere) {
 
-	let moniterResult = monitorCardBlankOrDuplicates(layer);
+	let moniterResult = monitorCardBlankOrDuplicates(layerHere);
 
 	if (moniterResult == true) {
-		let idNew = uuidv4();
+		let idNew = getUuidv4();
 
 		let packagedData = {};
 		packagedData["id"] = idNew;
 		packagedData["parentsId"] = "";
 		packagedData["children"] = "";
 
-		packagedData["createdDate"] = timeStamp();
-		packagedData["editedDate"] = timeStamp();
+		packagedData["createdDate"] = getTimeStamp();
+		packagedData["editedDate"] = getTimeStamp();
 		packagedData["main"] = "";
-		packagedData["layer"] = layer;
+		packagedData["layer"] = layerHere;
 		packagedData["contents"] = {};
 
 		let contents = packagedData["contents"];
-		switch(layer){
+		switch(layerHere){
 			case "character" :
-				contents["character"] = selectorById("character").value.trim();
+				contents["character"] = getSelectorById("character").value.trim();
 				break;
 			case "direction" :
 				packagedData["parentsId"] = getCardId("character");
-				contents["direction"] = selectorById("direction").value.trim();
+				contents["direction"] = getSelectorById("direction").value.trim();
 				break;
 			case "roadmap" :
-				contents["roadmapArea"] = selectorById("roadmapArea").value.trim();
-				contents["roadmapA"] = selectorById("roadmapA").value.trim();
-				contents["roadmapB"] = selectorById("roadmapArea").value.trim();
+				contents["roadmapArea"] = getSelectorById("roadmapArea").value.trim();
+				contents["roadmapA"] = getSelectorById("roadmapA").value.trim();
+				contents["roadmapB"] = getSelectorById("roadmapArea").value.trim();
 				break;
 			case "actionPlan" :
-				contents["actionPlan"] = selectorById("actionPlan").value.trim();
+				contents["actionPlan"] = getSelectorById("actionPlan").value.trim();
 				break;
 			default: 
-				let layer = null;
+				let layerHere = null;
 		};
 
 		return packagedData;
@@ -325,8 +325,8 @@ function packageEditedCard(layerHere) {
 	function moniterIfCardChanged(layerHere2) {
 
 		// 현재 UI에 띄워진 값 포착하기
-		let id = selectorById("cardId_"+layerHere2).value;
-		let value = selectorById(layerHere2).value.trim();
+		let id = getSelectorById("cardId_"+layerHere2).value;
+		let value = getSelectorById(layerHere2).value.trim();
 		let object = {"id": id, [layerHere2]: value};
 
 		// 로컬 데이터에 있는 값 포착하기
@@ -356,30 +356,477 @@ function packageEditedCard(layerHere) {
 		let packagedData = {};
 		packagedData["id"] = getCardId(layerHere);
 		packagedData["parentsId"] = getCardParentsId(layerHere);
-		packagedData["editedDate"] = timeStamp();
+		packagedData["editedDate"] = getTimeStamp();
 		packagedData["contents"] = {};
 
 		let contents = packagedData["contents"];
 		switch(layerHere){
 			case "character" :
-				contents["character"] = selectorById("character").value.trim();
+				contents["character"] = getSelectorById("character").value.trim();
 				break;
 			case "direction" :
-				contents["direction"] = selectorById("direction").value.trim();
+				contents["direction"] = getSelectorById("direction").value.trim();
 				break;
 			case "roadmap" :
-				contents["roadmapArea"] = selectorById("roadmapArea").value.trim();
-				contents["roadmapA"] = selectorById("roadmapA").value.trim();
-				contents["roadmapB"] = selectorById("roadmapArea").value.trim();
+				contents["roadmapArea"] = getSelectorById("roadmapArea").value.trim();
+				contents["roadmapA"] = getSelectorById("roadmapA").value.trim();
+				contents["roadmapB"] = getSelectorById("roadmapArea").value.trim();
 				break;
 			case "actionPlan" :
-				contents["actionPlan"] = selectorById("actionPlan").value.trim();
+				contents["actionPlan"] = getSelectorById("actionPlan").value.trim();
 				break;
 			default: 
 				let layer = null;
 		};
 		return packagedData;
 	};
+};
+
+///// UI manager
+
+function showEmptyCard(layerHere) {
+	getSelectorById(layerHere).value = "";
+	// getSelectorById("direction").value = "";
+	// getSelectorById("roadmapArea").value = "";
+	// getSelectorById("roadmapB").value = "";
+	// getSelectorById("roadmapA").value = "";
+	// getSelectorById("actionPlan").value = "";
+	setupBtnShowOrHideByClassName(layerHere,"createFirstCard");
+	// setupBtnShowOrHideByClassName("direction","readCard");
+};
+
+function showItOnUI(layerHere, idHere) {
+	if (idHere != null) {
+		let parentsOfCharacter = bigPicture.children[idHere];
+
+		if(layerHere == "character") {
+			getSelectorById("character").value = parentsOfCharacter.contents.character;
+			getSelectorById("cardId_character").value = parentsOfCharacter.id;
+			getSelectorById("cardParentsId_character").value = parentsOfCharacter.parentsId;
+		} else {
+			let everyKeysArray = Object.keys(objectById);
+			let characterCardId = getSelectorById("cardId_character").value;
+	
+			for(let i = 0; i < everyKeysArray.length; i++) {
+	
+				let eachParentsIdOfDirection = objectById[everyKeysArray[i]].parentsId;
+	
+				if(eachParentsIdOfDirection == characterCardId){
+					let keyOfDirection = getLastestEditedId_direction(getDirectionIdArray());
+					getSelectorById("direction").value = objectById[keyOfDirection].contents.direction;
+					getSelectorById("cardId_direction").value = objectById[keyOfDirection].id;
+					getSelectorById("cardParentsId_direction").value = objectById[keyOfDirection].parentsId;
+					setupBtnShowOrHideByClassName("direction","readCard");
+				};
+			};
+		};
+	} else {
+		getSelectorById(layerHere).value = "";
+	};
+	setupBtnShowOrHideByClassName(layerHere,"readCard");
+};
+
+function showItOnUIWithLayer(layerHere, id) {
+	if (layerHere == "character") {
+		let parentsOfCharacter = bigPicture.children[id]
+		getSelectorById("character").value = parentsOfCharacter.contents.character;
+		getSelectorById("cardId_character").value = parentsOfCharacter.id;
+		setupBtnShowOrHideByClassName("character","readCard");
+	} else {
+		let parentsIdOfDirection = indexId(id).parentsId;
+		let parentsOfDirection = bigPicture.children[parentsIdOfDirection].children[id];
+		getSelectorById("direction").value = parentsOfDirection.contents.direction;
+		getSelectorById("cardId_direction").value = parentsOfDirection.id;
+		setupBtnShowOrHideByClassName("direction","readCard");
+	};
+};
+
+function hideUI(id) {
+	getSelectorById(id).style.display = "none";
+};
+
+function showUI(id) {
+	getSelectorById(id).style.display = "initial";
+};
+
+function setupBtnShowOrHideByClassName(className, state) {
+
+	hideUI("openEditCard_btn_"+className);
+	hideUI("cancelEditCard_btn_"+className);
+	hideUI("saveEditedCard_btn_"+className);
+	hideUI("saveNewCard_btn_"+className);
+	hideUI("removeCard_btn_"+className);
+	hideUI("openNewCard_btn_"+className);
+
+	switch(state){
+		case "createFirstCard" :
+			showUI("saveNewCard_btn_"+className);
+			setupEditModeByClassName(className, "editing");
+			break;
+		case "openNewCard" :
+			showUI("saveNewCard_btn_"+className);
+			showUI("cancelEditCard_btn_"+className)
+			setupEditModeByClassName(className, "editing");
+			break;
+		case "readCard" :
+			hideUI("guideMessage");
+			showUI("openEditCard_btn_"+className);
+			showUI("openNewCard_btn_"+className);
+			showUI("removeCard_btn_"+className);
+			setupEditModeByClassName(className, "reading");
+			break;
+		case "editCard" :
+			showUI("saveEditedCard_btn_"+className);
+			showUI("cancelEditCard_btn_"+className);
+			showUI("saveNewCard_btn_"+className);
+			showUI("removeCard_btn_"+className);
+			setupEditModeByClassName(className, "editing");
+			break;
+		default:
+			let state = null;
+	}
+	if(className == "character") {
+		setupBtnShowOrHideByClassName_main(className, state);
+	};
+	resizeTextarea();
+};
+
+function setupBtnShowOrHideByClassName_main(className) {
+	hideUI("gotoMainCard_btn_"+className);
+	hideUI("setMainCard_btn_"+className);
+	hideUI("setMainCard_txt_"+className);
+
+	let cardId = getSelectorById("cardId_character").value;
+	let mainId = getMainId();
+	if(cardId == mainId) {
+		showUI("setMainCard_txt_"+className);
+	} else {
+		if (mainId != null) {
+			showUI("gotoMainCard_btn_"+className);
+			showUI("setMainCard_btn_"+className);
+		} else {
+			showUI("setMainCard_btn_"+className);
+		};
+	};
+};
+
+function setupEditModeByClassName(className, cardMode) {
+	function textareaReadOnly(id, check){
+		getSelectorById(id).readOnly = check;
+	};
+	if (cardMode == "editing") {
+		document.getElementsByClassName(className)[0].style.color = "#9CC0E7";
+		document.getElementsByClassName(className)[0].style.borderColor = "#9CC0E7";
+		setupTextareaBorderColorByClass(className, "3px", "#9CC0E7");
+		textareaReadOnly(className, false);
+	} else {
+		document.getElementsByClassName(className)[0].style.color = "#424242";
+		document.getElementsByClassName(className)[0].style.borderColor = "#424242";
+		setupTextareaBorderColorByClass(className, "1px", "#c8c8c8");
+		textareaReadOnly(className, true);
+	};
+};
+
+function setupTextareaBorderColorByClass(className, px, color) {
+    setTimeout(()=>{
+		const selectorTextareaOnCard = document.getElementsByClassName(className);
+		for (let i = 0; i < selectorTextareaOnCard.length; i++) {
+			selectorTextareaOnCard[i].style.border = "solid " + px + color;
+		};
+	},1);
+};
+
+function resizeTextarea() {
+	// 참고: https://stackoverflow.com/questions/454202/creating-a-textarea-with-auto-resize
+	const tx = document.getElementsByTagName("textarea");
+	for (let i = 0; i < tx.length; i++) {
+		tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
+		tx[i].addEventListener("input", OnInput, false);
+	};
+
+	function OnInput() {
+		this.style.height = "auto";
+		this.style.height = (this.scrollHeight) + "px";
+	};
+};
+
+function showItIfNoBpData() {
+	showEmptyCard("character");
+	showEmptyCard("direction");
+	getSelectorById("guideMessage").innerHTML = "'파란색으로 쓰여진 곳의 네모칸에 내용을 작성해보세요~!'"
+};
+
+function highLightBorder(id, color) {
+	return getSelectorById(id).style.borderColor = color;
+};
+
+///// selectbox manager
+
+function showSelectbox(layerHere, idHere) {
+
+	let selectboxId = "selectbox_"+layerHere;
+	let selectbox = getSelectorById(selectboxId);
+
+	// selectbox 초기화하기
+	for (let i = selectbox.options.length - 1; i >= 0; i--) {
+		selectbox.remove(i + 1);
+	};
+
+	// Array 만들기
+	function getMappedArray(layerHere2){
+		let mappedArray = getIdArrayByMap(layerHere2,"general", "editedDate", "contents", layerHere2, idHere);
+		return mappedArray;
+	};
+
+	let mappedArray = getMappedArray(layerHere);
+	  
+	// selectbox option list 순서 잡기(최근 편집 순서)
+	function sortingArray(mappedArrayHere) {
+
+		let editedDateArray = mappedArrayHere.map(element => element.editedDate);
+		let editedDateArrayinReverseOrder = editedDateArray.sort(date_descending);
+
+		let arr = [];
+
+		for(let i = 0; i < editedDateArrayinReverseOrder.length; i++) {
+
+			let datesAfterSorting = editedDateArrayinReverseOrder[i];
+
+			for (let j = 0; j < editedDateArray.length; j++) {
+
+				let id = mappedArrayHere[j].id;
+				let datesBeforeSorting = mappedArrayHere[j].editedDate;
+
+				if (datesAfterSorting == datesBeforeSorting) {
+					let value = mappedArrayHere[j][layerHere];
+					arr.push({"id": id, "editedDate": datesBeforeSorting, [layerHere]: value});
+				};
+			};
+		};
+		return arr;
+	};
+
+	let sortedArray = sortingArray(mappedArray);
+
+	// <option> 만들어서, Array 넣기
+	for (let i = 0; i < sortedArray.length; i++) {
+		let option = document.createElement("OPTION");
+		let txt = document.createTextNode(sortedArray[i][layerHere]);
+		let optionId = sortedArray[i].id;
+		let optionValue = sortedArray[i][layerHere];
+		let mainId = getMainId();
+		if(optionId == mainId) {
+			let mainOptionMark = optionValue + " ★";
+			let mainTxt = document.createTextNode(mainOptionMark);
+			option.appendChild(mainTxt);
+		} else {
+			option.appendChild(txt);
+		};
+		option.setAttribute("value", sortedArray[i].id);
+		option.setAttribute("innerHTML", sortedArray[i][layerHere]);
+		selectbox.insertBefore(option, selectbox.lastChild);
+	};
+};
+
+function selectBySelectbox(layerHere) {
+	let selectboxId = "selectbox_"+layerHere
+	let id = getSelectorById(selectboxId).value;
+	showItOnUIWithLayer(layerHere, id);
+
+	if(layerHere == "character") {
+		let parentsOfDirection = bigPicture.children[id];
+		let idArray = Object.keys(parentsOfDirection.children);
+
+		if(idArray.length < 1) {
+			showItOnUI("direction", getLastestEditedId_direction(getDirectionIdArray()));
+			showSelectbox("direction");			
+			setupBtnShowOrHideByClassName("direction","readCard");
+			return null;
+		} else {
+			showItOnUI("direction", getLastestEditedId_direction(getDirectionIdArray()));
+			showSelectbox("direction", id);
+			setupBtnShowOrHideByClassName("direction","readCard");
+		};
+	};
+};
+
+///// mainCard mananger
+
+function setMainCard() {
+	let characterId = getSelectorById("cardId_character").value;
+	requestUpdateMainCard(characterId);
+};
+
+function gotoMainCard_character() {
+	showItOnUI(getMainId());
+	showSelectbox("selectbox_character");
+};
+
+function getMainId() {
+	let idMainArray = getIdArrayByMap("character","general", "main");
+	for(let i = 0; i < idMainArray.length; i++) {
+		if(idMainArray[i].main == "main"){
+			return idMainArray[i].id;
+		};
+	};
+};
+
+///// CRUD manager
+
+function saveNewCard(layerHere) {
+	let packagedBpData = packageNewCard(layerHere);
+	if (packagedBpData != null) {
+		requestSetCard(layerHere, packagedBpData);
+		alert("저장되었습니다.");
+	};
+};
+
+function saveEditedCard(layerHere) {
+	let packagedData = packageEditedCard(layerHere);
+	if (packagedData != null) {
+		requestUpdateCard(layerHere, packagedData);
+		alert("저장되었습니다.");
+	};
+};
+
+function removeCard(layerHere) {
+	let removeId = getSelectorById("cardId_"+layerHere).value;
+	if (confirm("정말 삭제하시겠습니까? 삭제가 완료되면, 해당 내용은 다시 복구될 수 없습니다.")) {
+		requestRemoveCard(layerHere,removeId);
+		alert("삭제되었습니다.");
+	};
+};
+
+function openNewCard(layerHere) {
+	showEmptyCard(layerHere);
+	setupBtnShowOrHideByClassName(layerHere,"openNewCard");
+};
+
+function openEditCardByDbclick() {
+	const textareaOnCard = document.getElementsByTagName("textarea");
+	const characterIdArray = Object.keys(bigPicture.children);
+
+	for (let i = 0; i < textareaOnCard.length; i++) {
+		textareaOnCard[i].addEventListener("dblclick", function (e) {
+			if(characterIdArray.length > 0){
+				openEditCard();
+			};
+		});
+	};
+};
+
+function openEditCard(layerHere) {
+	setupBtnShowOrHideByClassName(layerHere,"editCard");
+};
+
+function cancelEditCard(layerHere) {
+	let cardId = getSelectorById("cardId_"+layerHere).value;
+	showItOnUI(layerHere, cardId);
+};
+
+///// monitor manager
+
+function monitorCardBlankOrDuplicates(layerHere) {
+	let cardValue = getSelectorById(layerHere).value.trim();
+	if (cardValue != "") {
+		let sameTextArray = getSameTextArray(cardValue);
+		if (sameTextArray == undefined) {
+			return true;
+		} else {
+			highLightBorder(layerHere, "red");
+			alert("중복된 카드가 있습니다. 내용을 수정해주시기 바랍니다.");
+		};
+	} else {
+		highLightBorder(layerHere, "red");
+		alert("카드가 비어있습니다. 내용을 입력해주시기 바랍니다.");
+	};
+	return false;
+};
+
+function getSameTextArray(text) {
+	
+	let IdArray_character = getIdArrayByMap("character","contents", "character");
+	
+	let textArray = [];
+	for(let i = 0; i < IdArray_character.length; i++) {
+		textArray.push(IdArray_character[i].character);
+	};
+
+	let filterSameTextArray = (query) => {
+		return textArray.find(text => query == text);
+	};
+
+	let sameTextArray = filterSameTextArray(text);
+
+	return sameTextArray;
+};
+
+///// general supporter
+
+function getSelectorById(id) {
+	return document.getElementById(id);
+};
+
+function getTimeStamp() {
+	let now = new Date();
+	let nowString = now.toISOString();
+	return nowString;
+};
+
+function getUuidv4() {
+	return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+	  (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+	);
+};
+
+function date_ascending(a, b) { // 오름차순    
+	return Date.parse(a) - Date.parse(b);
+};
+	
+function date_descending(a, b) { // 내림차순    
+	return Date.parse(b) - Date.parse(a);
+};
+
+function getCardId(layerHere) {
+	return getSelectorById("cardId_"+layerHere).value;
+};
+
+function getCardParentsId(layerHere) {
+	return getSelectorById("cardParentsId_"+layerHere).value;
+};
+
+function indexId(idHere) {
+	const characterIdArray = Object.keys(bigPicture.children);
+	for(let i = 0; i < characterIdArray.length; i++) {
+		if(characterIdArray[i] == idHere) {
+			return {"layer": "character", "id": idHere};
+		} else {
+			let directionArray = Object.keys(bigPicture.children[characterIdArray[i]].children);
+			for(let j = 0; j < directionArray.length; j++) {
+				if(directionArray[j] == idHere) {
+					return {"layer": "direction", "id": idHere, "parentsId": characterIdArray[i]};
+				};
+			};
+		};
+	};
+	return console.log("**There's any same id");
+};
+
+function getParentsIdfromChildId(childIdHere) {
+	
+	let everyKeysArray = Object.keys(objectById);
+
+	for(let i = 0; i < everyKeysArray.length; i++) {
+		if(everyKeysArray[i] == childIdHere) {
+			return objectById[childIdHere].parentsId;
+		};
+	};
+};
+
+function getDirectionIdArray() {
+	const characterIdArray = Object.keys(bigPicture.children);
+	const parentsOfDirection = bigPicture.children[getLastestEditedId(characterIdArray)];
+	return [getLastestEditedId(characterIdArray), Object.keys(parentsOfDirection.children)];
 };
 
 function getLastestEditedId(keysArrayHere) {
@@ -400,10 +847,10 @@ function getLastestEditedId(keysArrayHere) {
 
 };
 
-function getLastestEditedId_direction(arr) {
+function getLastestEditedId_direction(arrHere) {
 
-	let characterId = arr[0];
-	let keysArrayHere = arr[1];
+	let characterId = arrHere[0];
+	let keysArrayHere = arrHere[1];
 
 	const mappedArray = keysArrayHere.map( id => {
 		let c = bigPicture.children[characterId].children[id];
@@ -419,30 +866,6 @@ function getLastestEditedId_direction(arr) {
 		return null;
 	};
 
-};
-
-function sortEditedDateArrayWithId2(layerHere) {
-
-	let idEditedDateArray = getIdArrayByMap(layerHere, "general", "editedDate");
-	if (idEditedDateArray != null) {
-		let editedDateArray = idEditedDateArray.map(element => element.editedDate);
-		let editedDateArrayinReverseOrder = editedDateArray.sort(date_descending);
-		let arr2 = [];
-		for(let i = 0; i < editedDateArrayinReverseOrder.length; i++) {
-			let datesAfterSorting = editedDateArrayinReverseOrder[i];
-			for (let j = 0; j < editedDateArray.length; j++) {
-				let datesBeforeSorting = idEditedDateArray[j].editedDate;
-				let id = idEditedDateArray[j].id
-				if (datesAfterSorting == datesBeforeSorting) {
-					arr2.push({"id": id, "editedDate": datesAfterSorting});
-				};
-			};
-		};
-		return arr2;
-	} else {
-		return null;
-	}
-	
 };
 
 function getIdArrayByMap(layer, scope1, key1, scope2, key2, characterIdHere) {		
@@ -509,485 +932,4 @@ function getIdArrayByMap(layer, scope1, key1, scope2, key2, characterIdHere) {
 		};
 	};
 
-};
-
-///// UI manager
-
-function showEmptyCard(layerHere) {
-	selectorById(layerHere).value = "";
-	// selectorById("direction").value = "";
-	// selectorById("roadmapArea").value = "";
-	// selectorById("roadmapB").value = "";
-	// selectorById("roadmapA").value = "";
-	// selectorById("actionPlan").value = "";
-	btnShowHideHandlerByClassName(layerHere,"createFirstCard");
-	// btnShowHideHandlerByClassName("direction","readCard");
-};
-
-function showItOnUI(layerHere, idHere) {
-	if (idHere != null) {
-		let parentsOfCharacter = bigPicture.children[idHere];
-
-		if(layerHere == "character") {
-			selectorById("character").value = parentsOfCharacter.contents.character;
-			selectorById("cardId_character").value = parentsOfCharacter.id;
-			selectorById("cardParentsId_character").value = parentsOfCharacter.parentsId;
-		} else {
-			let everyKeysArray = Object.keys(objectById);
-			let characterCardId = selectorById("cardId_character").value;
-	
-			for(let i = 0; i < everyKeysArray.length; i++) {
-	
-				let eachParentsIdOfDirection = objectById[everyKeysArray[i]].parentsId;
-	
-				if(eachParentsIdOfDirection == characterCardId){
-					let keyOfDirection = getLastestEditedId_direction(getDirectionIdArray());
-					selectorById("direction").value = objectById[keyOfDirection].contents.direction;
-					selectorById("cardId_direction").value = objectById[keyOfDirection].id;
-					selectorById("cardParentsId_direction").value = objectById[keyOfDirection].parentsId;
-					btnShowHideHandlerByClassName("direction","readCard");
-				};
-			};
-		};
-	} else {
-		selectorById(layerHere).value = "";
-	};
-	btnShowHideHandlerByClassName(layerHere,"readCard");
-};
-
-function showItOnUIWithLayer(layer, id) {
-	if (layer == "character") {
-		let parentsOfCharacter = bigPicture.children[id]
-		selectorById("character").value = parentsOfCharacter.contents.character;
-		selectorById("cardId_character").value = parentsOfCharacter.id;
-		btnShowHideHandlerByClassName("character","readCard");
-	} else {
-		let parentsIdOfDirection = indexId(id).parentsId;
-		let parentsOfDirection = bigPicture.children[parentsIdOfDirection].children[id];
-		selectorById("direction").value = parentsOfDirection.contents.direction;
-		selectorById("cardId_direction").value = parentsOfDirection.id;
-		btnShowHideHandlerByClassName("direction","readCard");
-	};
-};
-
-function uiHide(id) {
-	selectorById(id).style.display = "none";
-};
-
-function uiShow(id) {
-	selectorById(id).style.display = "initial";
-};
-
-function btnShowHideHandlerByClassName(className, state) {
-
-	uiHide("openEditCard_btn_"+className);
-	uiHide("cancelEditCard_btn_"+className);
-	uiHide("saveEditedCard_btn_"+className);
-	uiHide("saveNewCard_btn_"+className);
-	uiHide("removeCard_btn_"+className);
-	uiHide("openNewCard_btn_"+className);
-
-	switch(state){
-		case "createFirstCard" :
-			uiShow("saveNewCard_btn_"+className);
-			editModeHandlerByClassName(className, "editing");
-			break;
-		case "openNewCard" :
-			uiShow("saveNewCard_btn_"+className);
-			uiShow("cancelEditCard_btn_"+className)
-			editModeHandlerByClassName(className, "editing");
-			break;
-		case "readCard" :
-			uiHide("guideMessage");
-			uiShow("openEditCard_btn_"+className);
-			uiShow("openNewCard_btn_"+className);
-			uiShow("removeCard_btn_"+className);
-			editModeHandlerByClassName(className, "reading");
-			break;
-		case "editCard" :
-			uiShow("saveEditedCard_btn_"+className);
-			uiShow("cancelEditCard_btn_"+className);
-			uiShow("saveNewCard_btn_"+className);
-			uiShow("removeCard_btn_"+className);
-			editModeHandlerByClassName(className, "editing");
-			break;
-		default:
-			let state = null;
-	}
-	if(className == "character") {
-		btnShowHideHandlerByClassName_main(className, state);
-	};
-	resizeTextarea();
-};
-
-function btnShowHideHandlerByClassName_main(className) {
-	uiHide("gotoMainCard_btn_"+className);
-	uiHide("setMainCard_btn_"+className);
-	uiHide("setMainCard_txt_"+className);
-
-	let cardId = selectorById("cardId_character").value;
-	let mainId = getMainId();
-	if(cardId == mainId) {
-		uiShow("setMainCard_txt_"+className);
-	} else {
-		if (mainId != null) {
-			uiShow("gotoMainCard_btn_"+className);
-			uiShow("setMainCard_btn_"+className);
-		} else {
-			uiShow("setMainCard_btn_"+className);
-		};
-	};
-};
-
-function editModeHandlerByClassName(className, cardMode) {
-	function textareaReadOnly(id, check){
-		selectorById(id).readOnly = check;
-	};
-	if (cardMode == "editing") {
-		document.getElementsByClassName(className)[0].style.color = "#9CC0E7";
-		document.getElementsByClassName(className)[0].style.borderColor = "#9CC0E7";
-		textareaBorderColorHandlerByClass(className, "3px", "#9CC0E7");
-		textareaReadOnly(className, false);
-	} else {
-		document.getElementsByClassName(className)[0].style.color = "#424242";
-		document.getElementsByClassName(className)[0].style.borderColor = "#424242";
-		textareaBorderColorHandlerByClass(className, "1px", "#c8c8c8");
-		textareaReadOnly(className, true);
-	};
-};
-
-function editModeHandler(cardMode) {
-	function textareaReadOnly(id, trueOrFalse){
-		selectorById(id).readOnly = trueOrFalse;
-	};
-	if (cardMode == "editing") {
-		selectorById("gridMainFrame").style.color = "#9CC0E7";
-		textareaReadOnly("character", false);
-		textareaReadOnly("direction", false);
-		textareaReadOnly("roadmapArea", false);
-		textareaReadOnly("roadmapB", false);
-		textareaReadOnly("roadmapA", false);
-		textareaReadOnly("actionPlan", false);
-		textareaBorderColorHandler("2px", "#9CC0E7");
-	} else {
-		selectorById("gridMainFrame").style.color = "#424242";
-		textareaReadOnly("character", true);
-		textareaReadOnly("direction", true);
-		textareaReadOnly("roadmapArea", true);
-		textareaReadOnly("roadmapB", true);
-		textareaReadOnly("roadmapA", true);
-		textareaReadOnly("actionPlan", true);
-		textareaBorderColorHandler("1px", "#c8c8c8");
-	};
-};
-
-function textareaBorderColorHandler(px, color) {
-    setTimeout(()=>{
-		const selectorTextareaOnCard = document.getElementsByTagName("textarea");
-		for (let i = 0; i < selectorTextareaOnCard.length; i++) {
-			selectorTextareaOnCard[i].style.border = "solid " + px + color;
-		};
-	},1);
-};
-
-function textareaBorderColorHandlerByClass(className, px, color) {
-    setTimeout(()=>{
-		const selectorTextareaOnCard = document.getElementsByClassName(className);
-		for (let i = 0; i < selectorTextareaOnCard.length; i++) {
-			selectorTextareaOnCard[i].style.border = "solid " + px + color;
-		};
-	},1);
-};
-
-function resizeTextarea() {
-	// 참고: https://stackoverflow.com/questions/454202/creating-a-textarea-with-auto-resize
-	const tx = document.getElementsByTagName("textarea");
-	for (let i = 0; i < tx.length; i++) {
-		tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
-		tx[i].addEventListener("input", OnInput, false);
-	};
-
-	function OnInput() {
-		this.style.height = "auto";
-		this.style.height = (this.scrollHeight) + "px";
-	};
-};
-
-function showItIfNoBpData() {
-	showEmptyCard("character");
-	showEmptyCard("direction");
-	selectorById("guideMessage").innerHTML = "'파란색으로 쓰여진 곳의 네모칸에 내용을 작성해보세요~!'"
-};
-
-function highLightBorder(id, color) {
-	return selectorById(id).style.borderColor = color;
-};
-
-///// selectbox manager
-
-function showSelectbox(layerHere, idHere) {
-
-	let selectboxId = "selectbox_"+layerHere;
-	let selectbox = selectorById(selectboxId);
-
-	// selectbox 초기화하기
-	for (let i = selectbox.options.length - 1; i >= 0; i--) {
-		selectbox.remove(i + 1);
-	};
-
-	// Array 만들기
-	function getMappedArray(layerHere2){
-		let mappedArray = getIdArrayByMap(layerHere2,"general", "editedDate", "contents", layerHere2, idHere);
-		return mappedArray;
-	};
-
-	let mappedArray = getMappedArray(layerHere);
-	  
-	// selectbox option list 순서 잡기(최근 편집 순서)
-	function sortingArray(mappedArrayHere) {
-
-		let editedDateArray = mappedArrayHere.map(element => element.editedDate);
-		let editedDateArrayinReverseOrder = editedDateArray.sort(date_descending);
-
-		let arr = [];
-
-		for(let i = 0; i < editedDateArrayinReverseOrder.length; i++) {
-
-			let datesAfterSorting = editedDateArrayinReverseOrder[i];
-
-			for (let j = 0; j < editedDateArray.length; j++) {
-
-				let id = mappedArrayHere[j].id;
-				let datesBeforeSorting = mappedArrayHere[j].editedDate;
-
-				if (datesAfterSorting == datesBeforeSorting) {
-					let value = mappedArrayHere[j][layerHere];
-					arr.push({"id": id, "editedDate": datesBeforeSorting, [layerHere]: value});
-				};
-			};
-		};
-		return arr;
-	};
-
-	let sortedArray = sortingArray(mappedArray);
-
-	// <option> 만들어서, Array 넣기
-	for (let i = 0; i < sortedArray.length; i++) {
-		let option = document.createElement("OPTION");
-		let txt = document.createTextNode(sortedArray[i][layerHere]);
-		let optionId = sortedArray[i].id;
-		let optionValue = sortedArray[i][layerHere];
-		let mainId = getMainId();
-		if(optionId == mainId) {
-			let mainOptionMark = optionValue + " ★";
-			let mainTxt = document.createTextNode(mainOptionMark);
-			option.appendChild(mainTxt);
-		} else {
-			option.appendChild(txt);
-		};
-		option.setAttribute("value", sortedArray[i].id);
-		option.setAttribute("innerHTML", sortedArray[i][layerHere]);
-		selectbox.insertBefore(option, selectbox.lastChild);
-	};
-};
-
-function selectBySelectbox(layerHere) {
-	let selectboxId = "selectbox_"+layerHere
-	let id = selectorById(selectboxId).value;
-	showItOnUIWithLayer(layerHere, id);
-
-	if(layerHere == "character") {
-		let parentsOfDirection = bigPicture.children[id];
-		let idArray = Object.keys(parentsOfDirection.children);
-
-		if(idArray.length < 1) {
-			showItOnUI("direction", getLastestEditedId_direction(getDirectionIdArray()));
-			showSelectbox("direction");			
-			btnShowHideHandlerByClassName("direction","readCard");
-			return null;
-		} else {
-			showItOnUI("direction", getLastestEditedId_direction(getDirectionIdArray()));
-			showSelectbox("direction", id);
-			btnShowHideHandlerByClassName("direction","readCard");
-		};
-	};
-};
-
-///// mainCard mananger
-
-function setMainCard() {
-	let characterId = selectorById("cardId_character").value;
-	requestUpdateMainCard_character(characterId);
-};
-
-function gotoMainCard_character() {
-	showItOnUI(getMainId());
-	showSelectbox("selectbox_character");
-};
-
-function getMainId() {
-	let idMainArray = getIdArrayByMap("character","general", "main");
-	for(let i = 0; i < idMainArray.length; i++) {
-		if(idMainArray[i].main == "main"){
-			return idMainArray[i].id;
-		};
-	};
-};
-
-///// CRUD manager
-
-function saveNewCard(layer) {
-	let packagedBpData = packageNewCard(layer);
-	if (packagedBpData != null) {
-		requestSetCard(layer, packagedBpData);
-		alert("저장되었습니다.");
-	};
-};
-
-function saveEditedCard(layer) {
-	let packagedData = packageEditedCard(layer);
-	if (packagedData != null) {
-		requestUpdateCard(layer, packagedData);
-		alert("저장되었습니다.");
-	};
-};
-
-function removeCard(layerHere) {
-	let removeId = selectorById("cardId_"+layerHere).value;
-	if (confirm("정말 삭제하시겠습니까? 삭제가 완료되면, 해당 내용은 다시 복구될 수 없습니다.")) {
-		requestRemoveCard(layerHere,removeId);
-		alert("삭제되었습니다.");
-	};
-};
-
-function openNewCard(layerHere) {
-	showEmptyCard(layerHere);
-	btnShowHideHandlerByClassName(layerHere,"openNewCard");
-};
-
-function openEditCardByDbclick() {
-	const textareaOnCard = document.getElementsByTagName("textarea");
-	const characterIdArray = Object.keys(bigPicture.children);
-
-	for (let i = 0; i < textareaOnCard.length; i++) {
-		textareaOnCard[i].addEventListener("dblclick", function (e) {
-			if(characterIdArray.length > 0){
-				openEditCard();
-			};
-		});
-	};
-};
-
-function openEditCard(layerHere) {
-	btnShowHideHandlerByClassName(layerHere,"editCard");
-};
-
-function cancelEditCard(layerHere) {
-	let cardId = selectorById("cardId_"+layerHere).value;
-	showItOnUI(layerHere, cardId);
-};
-
-///// monitor manager
-
-function monitorCardBlankOrDuplicates(layerHere) {
-	let cardValue = selectorById(layerHere).value.trim();
-	if (cardValue != "") {
-		let sameTextArray = getSameTextArray(cardValue);
-		if (sameTextArray == undefined) {
-			return true;
-		} else {
-			highLightBorder(layerHere, "red");
-			alert("중복된 카드가 있습니다. 내용을 수정해주시기 바랍니다.");
-		};
-	} else {
-		highLightBorder(layerHere, "red");
-		alert("카드가 비어있습니다. 내용을 입력해주시기 바랍니다.");
-	};
-	return false;
-};
-
-function getSameTextArray(text) {
-	
-	let IdArray_character = getIdArrayByMap("character","contents", "character");
-	
-	let textArray = [];
-	for(let i = 0; i < IdArray_character.length; i++) {
-		textArray.push(IdArray_character[i].character);
-	};
-
-	let filterSameTextArray = (query) => {
-		return textArray.find(text => query == text);
-	};
-
-	let sameTextArray = filterSameTextArray(text);
-
-	return sameTextArray;
-};
-
-///// general supporter
-
-function selectorById(id) {
-	return document.getElementById(id);
-};
-
-function timeStamp() {
-	let now = new Date();
-	let nowString = now.toISOString();
-	return nowString;
-};
-
-function uuidv4() {
-	return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
-	  (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
-	);
-};
-
-function date_ascending(a, b) { // 오름차순    
-	return Date.parse(a) - Date.parse(b);
-};
-	
-function date_descending(a, b) { // 내림차순    
-	return Date.parse(b) - Date.parse(a);
-};
-
-function getCardId(layerHere) {
-	return selectorById("cardId_"+layerHere).value;
-};
-
-function getCardParentsId(layerHere) {
-	return selectorById("cardParentsId_"+layerHere).value;
-};
-
-function indexId(idHere) {
-	const characterIdArray = Object.keys(bigPicture.children);
-	for(let i = 0; i < characterIdArray.length; i++) {
-		if(characterIdArray[i] == idHere) {
-			return {"layer": "character", "id": idHere};
-		} else {
-			let directionArray = Object.keys(bigPicture.children[characterIdArray[i]].children);
-			for(let j = 0; j < directionArray.length; j++) {
-				if(directionArray[j] == idHere) {
-					return {"layer": "direction", "id": idHere, "parentsId": characterIdArray[i]};
-				};
-			};
-		};
-	};
-	return console.log("**There's any same id");
-};
-
-function getParentsIdfromChildId(childIdHere) {
-	
-	let everyKeysArray = Object.keys(objectById);
-
-	for(let i = 0; i < everyKeysArray.length; i++) {
-		if(everyKeysArray[i] == childIdHere) {
-			return objectById[childIdHere].parentsId;
-		};
-	};
-};
-
-function getDirectionIdArray() {
-	const characterIdArray = Object.keys(bigPicture.children);
-	const parentsOfDirection = bigPicture.children[getLastestEditedId(characterIdArray)];
-	return [getLastestEditedId(characterIdArray), Object.keys(parentsOfDirection.children)];
 };
