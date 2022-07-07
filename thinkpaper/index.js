@@ -82,13 +82,13 @@ function requestReadBigPicture(user) {
 		const characterIdArray = Object.keys(bigPicture.children);
 
 		if (characterIdArray.length > 0) {
-			// let mainId = getMainId();
-			// if(mainId != null && isMainShown == false) {
-			//	isMainShown = true;
-			//	showItOnUI(mainId);
-			// } else {
+			let mainId = getMainId();
+			if(mainId != null && isMainShown == false) {
+				isMainShown = true;
+				showItOnUI(mainId);
+			} else {
 				showItOnUI("character", getLastestEditedId(characterIdArray));
-			// };
+			};
 			showSelectbox("character");
 
 			let parentsOfDirection = bigPicture.children[getLastestEditedId(characterIdArray)];
@@ -99,7 +99,7 @@ function requestReadBigPicture(user) {
 				btnShowHideHandlerByClassName("direction","readCard");
 				return null;
 			} else {
-				showItOnUI("direction", getLastestEditedId(getDirectionIdArray()));
+				showItOnUI("direction", getLastestEditedId_direction(getDirectionIdArray()));
 				showSelectbox("direction");
 			};
 		} else {
@@ -392,17 +392,30 @@ function packageEditedCard(layerHere) {
 };
 
 function getLastestEditedId(keysArrayHere) {
-	
-	console.log("keysArrayHere = ", keysArrayHere);
-
-	console.log("bigPicture1 =", bigPicture);
 
 	const mappedArray = keysArrayHere.map( id => {
-		console.log("bigPicture2 =", bigPicture);
-		console.log("bigPicture.children =", bigPicture.children);
-		console.log("id =", id);
-		let c = bigPicture.children[id]; //direction과 character의 구분이 필요한 포인트
-		console.log("c =", c);
+		let c = bigPicture.children[id];
+		return {"id": id, "editedDate": c.editedDate};
+	}).sort(
+		(a,b) => new Date(b.date) - new Date(a.date)
+	);
+
+	if (mappedArray != null) {
+		let latestEditedId = mappedArray[0];
+		return latestEditedId.id;
+	} else {
+		return null;
+	};
+
+};
+
+function getLastestEditedId_direction(arr) {
+
+	let characterId = arr[0];
+	let keysArrayHere = arr[1];
+
+	const mappedArray = keysArrayHere.map( id => {
+		let c = bigPicture.children[characterId].children[id];
 		return {"id": id, "editedDate": c.editedDate};
 	}).sort(
 		(a,b) => new Date(b.date) - new Date(a.date)
@@ -538,7 +551,7 @@ function showItOnUI(layerHere, idHere) {
 				let eachParentsIdOfDirection = objectById[everyKeysArray[i]].parentsId;
 	
 				if(eachParentsIdOfDirection == characterCardId){
-					let keyOfDirection = getLastestEditedId(getDirectionIdArray());
+					let keyOfDirection = getLastestEditedId_direction(getDirectionIdArray());
 					selectorById("direction").value = objectById[keyOfDirection].contents.direction;
 					selectorById("cardId_direction").value = objectById[keyOfDirection].id;
 					selectorById("cardParentsId_direction").value = objectById[keyOfDirection].parentsId;
@@ -804,14 +817,14 @@ function selectBySelectbox(layerHere) {
 
 		if(idArray.length < 1) {
 			console.log("there's no direction - 3");
-			console.log("getLastestEditedId('direction') =", getLastestEditedId('direction'));
+			console.log("getLastestEditedId('direction') =", getLastestEditedId_direction(getDirectionIdArray()));
 
-			showItOnUI("direction", getLastestEditedId(getDirectionIdArray()));
+			showItOnUI("direction", getLastestEditedId_direction(getDirectionIdArray()));
 			showSelectbox("direction");			
 			btnShowHideHandlerByClassName("direction","readCard");
 			return null;
 		} else {
-			showItOnUI("direction", getLastestEditedId(getDirectionIdArray()));
+			showItOnUI("direction", getLastestEditedId_direction(getDirectionIdArray()));
 			showSelectbox("direction", id);
 			btnShowHideHandlerByClassName("direction","readCard");
 		};
@@ -998,5 +1011,5 @@ function getParentsIdfromChildId(childIdHere) {
 function getDirectionIdArray() {
 	const characterIdArray = Object.keys(bigPicture.children);
 	const parentsOfDirection = bigPicture.children[getLastestEditedId(characterIdArray)];
-	return Object.keys(parentsOfDirection.children);
+	return [getLastestEditedId(characterIdArray), Object.keys(parentsOfDirection.children)];
 };
