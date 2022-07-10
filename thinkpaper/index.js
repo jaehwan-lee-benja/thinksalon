@@ -953,13 +953,14 @@ function getIdThreadObjectById(inputIdhere) {
 
 	if (resultIsNewId == true) {
 		// [질문] Boolean으로 하면 왜 false로 가는가?
-		// *console.log("true");
+		console.log("true");
 		return null;
 	} else {
-		// *console.log("false");
+		console.log("false");
 		let unitObject = objectById[inputIdhere];
 		let inputLayer = unitObject.layer;
 		let returnObject = switchForIdThreadObject(inputLayer);
+		console.log("returnObject =", returnObject);
 		return returnObject;
 	};
 };
@@ -1127,6 +1128,8 @@ function switchForGetSameTextArray(layerHere) {
 		let mappingObject = {"id":id};
 		let position = "";
 		let idThreadObject = getIdThreadObjectById(id);
+		// 진행중: 이 위의 값이 '새카드 저장의 중복체크'인 경우, null이 되어 idThread 생성이 되지 않는다 
+		console.log("idThreadObject =", idThreadObject);
 
 		switch(layerHere){
 			case "character" : 
