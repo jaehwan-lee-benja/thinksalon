@@ -112,6 +112,10 @@ function requestReadBigPicture(user) {
 
 function requestSetCard(layerHere, packagedDataHere) {
 
+	// const coreId = packagedDataHere.id;
+	// const switchedRef = switchRef(layerHere, coreId);
+	// switchedRef.child(coreId).set(packagedDataHere);
+
 	let cardId_character = getCardId("character");
 
 	const characterRef = db.ref("users")
@@ -145,37 +149,43 @@ function requestSetCard(layerHere, packagedDataHere) {
 
 function requestUpdateCard(layerHere, packagedDataHere) {
 
-	const characterRef = db.ref("users")
-	.child(userData.uid)
-	.child("bigPicture")
-	.child("children");
+	const coreId = packagedDataHere.id;
+	let idThreadObject = getIdThreadObjectById(coreId);
 
-	switch(layerHere){
-		case "character" :
-			characterRef
-			.child(packagedDataHere.id)
-			.update(packagedDataHere, (e) => {
-				console.log("** update completed = ", e);
-				});			
-			break;
-		case "direction" :
-			characterRef
-			.child(packagedDataHere.parentsId)
-			.child("children")
-			.child(packagedDataHere.id)
-			.update(packagedDataHere, (e) => {
-				console.log("** update completed = ", e);
-				});
-			break;
-		case "roadmap" :
-			console.log("**roadmap");
-			break;
-		case "actionPlan" :
-			console.log("**actionPlan");
-			break;
-		default: 
-			let layerHere = null;
-	};
+	const switchedRef = switchRef(layerHere, coreId);
+	switchedRef.child(coreId).set(packagedDataHere);
+
+	// const characterRef = db.ref("users")
+	// .child(userData.uid)
+	// .child("bigPicture")
+	// .child("children");
+
+	// switch(layerHere){
+	// 	case "character" :
+	// 		characterRef
+	// 		.child(packagedDataHere.id)
+	// 		.update(packagedDataHere, (e) => {
+	// 			console.log("** update completed = ", e);
+	// 			});			
+	// 		break;
+	// 	case "direction" :
+	// 		characterRef
+	// 		.child(packagedDataHere.parentsId)
+	// 		.child("children")
+	// 		.child(packagedDataHere.id)
+	// 		.update(packagedDataHere, (e) => {
+	// 			console.log("** update completed = ", e);
+	// 			});
+	// 		break;
+	// 	case "roadmap" :
+	// 		console.log("**roadmap");
+	// 		break;
+	// 	case "actionPlan" :
+	// 		console.log("**actionPlan");
+	// 		break;
+	// 	default: 
+	// 		let layerHere = null;
+	// };
 
 };
 
@@ -812,16 +822,7 @@ function indexId(idHere) {
 	return console.log("**There's any same id");
 };
 
-function getParentsIdfromChildId(childIdHere) {
-	
-	let everyKeysArray = Object.keys(objectById);
 
-	for(let i = 0; i < everyKeysArray.length; i++) {
-		if(everyKeysArray[i] == childIdHere) {
-			return objectById[childIdHere].parentsId;
-		};
-	};
-};
 
 function getDirectionIdArray() {
 	const characterIdArray = Object.keys(bigPicture.children);
@@ -932,4 +933,103 @@ function getIdArrayByMap(layer, scope1, key1, scope2, key2, characterIdHere) {
 		};
 	};
 
+};
+
+function switchRef(layerHere, coreIdHere) {
+
+	console.log("**=====switchRef() start=====");
+
+	const userRef = db.ref("users").child(userData.uid);
+	const bigPictureRef = userRef.child("bigPicture");
+
+	let idThreadObject = getIdThreadObjectById(coreIdHere);
+
+	const characterRef = bigPictureRef.child("children");
+	const directionRef = characterRef[getParentsIdfromChildId(idThreadObject.characterId)].child("children");
+	const roadmapRef = directionRef[getParentsIdfromChildId(idThreadObject.directionId)].child("children");
+	const actionPlanRef = roadmapRef[getParentsIdfromChildId(idThreadObject.roadmapId)].child("children");
+
+	switch(layerHere){
+		case "character" : 
+			return characterRef;
+		case "direction" : 
+			return directionRef;
+		case "roadmap" : 
+			return roadmapRef;
+		case "actionPlan" : 
+			return actionPlanRef;
+		default: 
+			return null;
+	};
+};
+
+// id manger
+
+function getIdThreadObjectById(coreIdHere) {
+	
+	let unitObject = objectById[coreIdHere];
+	let coreLayer = unitObject.layer;
+	let returnObject = {};
+	returnObject["coreLayer"] = coreLayer;
+
+	switch(coreLayer){
+		case "character" : 
+			returnObject["characterId"] = coreIdHere;
+			returnObject["directionId"] = "";
+			returnObject["roadmapId"] = "";
+			returnObject["actionPlanId"] = "";
+			break;
+		case "direction" :
+			returnObject["characterId"] = getParentsIdfromChildId(coreIdHere);
+			returnObject["directionId"] = coreIdHere;
+			returnObject["roadmapId"] = "";
+			returnObject["actionPlanId"] = "";
+			break;
+		case "roadmap" :
+			let directionId = getParentsIdfromChildId(coreIdHere);
+			let characterId = getParentsIdfromChildId(directionId);
+			returnObject["characterId"] = characterId;
+			returnObject["directionId"] = directionId;
+			returnObject["roadmapId"] = coreIdHere;
+			returnObject["actionPlanId"] = "";
+			break;
+		case "actionPlan" :
+			let roadmapId = getParentsIdfromChildId(coreIdHere);
+			let direcitonId2 = getParentsIdfromChildId(roadmapId);
+			let characterId2 = getParentsIdfromChildId(direcitonId2);
+			returnObject["characterId"] = characterId2;
+			returnObject["directionId"] = direcitonId2;
+			returnObject["roadmapId"] = roadmapId;
+			returnObject["actionPlanId"] = coreIdHere;
+			break;
+		default: null;	
+	};
+	return returnObject;
+};
+
+function getParentsIdfromChildId(childIdHere) {
+
+	console.log("**=====getParentsIdfromChildId start=====");
+
+	let everyKeysArray = Object.keys(objectById);
+
+	let parentsId = "";
+
+	for(let i = 0; i < everyKeysArray.length; i++) {
+		if(everyKeysArray[i] == childIdHere) {
+			parentsId = objectById[childIdHere].parentsId;
+			return parentsId;
+		};
+	};
+	return parentsId;
+};
+
+function getEveryIdArray() {
+	return Object.keys(objectById);
+};
+
+function isNewId(idHere) {
+	let everyIdArray = getEveryIdArray();
+	let result = everyIdArray.includes(idHere);
+	return result;
 };
