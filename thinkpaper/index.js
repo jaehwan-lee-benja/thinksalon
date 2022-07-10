@@ -966,22 +966,18 @@ function getParentsIdfromChildId(childIdHere) {
 
 function getIdThreadObjectById(inputIdhere) {
 	
-	console.log("inputIdhere =", inputIdhere);
-
 	let resultIsNewId = isNewId(inputIdhere);
-	console.log("resultIsNewId = ", resultIsNewId);
+	// *console.log("resultIsNewId = ", resultIsNewId);
 
 	if (resultIsNewId == true) {
 		// [질문] Boolean으로 하면 왜 false로 가는가?
-		console.log("true");
+		// *console.log("true");
 		return null;
 	} else {
-		console.log("false");
+		// *console.log("false");
 		let unitObject = objectById[inputIdhere];
-		console.log("unitObject =", unitObject);
 		let inputLayer = unitObject.layer;
 		let returnObject = switchForIdThreadObject(inputLayer);
-		returnObject["coreLayer"] = inputLayer;
 		return returnObject;
 	};
 };
@@ -1063,16 +1059,17 @@ function switchForRef(inputIdHere, layerHere) {
 			case "character" :
 				return characterRef;
 			case "direction" : 
-				const characterId = getCardId("character");
-				const directionRef = characterRef[characterId].child("children");
+				let characterId = getCardId("character");
+				// [질문] 여기있는 모든 let을 const로 하면 안되는가?
+				let directionRef = characterRef.child(characterId).child("children");
 				return directionRef;
 			case "roadmap" : 
-				const directionId = getCardId("direction");
-				const roadmapRef = directionRef[directionId].child("children");
+				let directionId = getCardId("direction");
+				let roadmapRef = directionRef.child(directionId).child("children");
 				return roadmapRef;
 			case "actionPlan" : 
-				const roadmapId = getCardId("roadmap");
-				const actionPlanRef = roadmapRef[roadmapId].child("children");
+				let roadmapId = getCardId("roadmap");
+				let actionPlanRef = roadmapRef.child(roadmapId).child("children");
 				return actionPlanRef;
 			default: 
 				return null;
