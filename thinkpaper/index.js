@@ -110,50 +110,51 @@ function requestReadBigPicture(user) {
 
 ///// LtoS manager
 
-function requestSetCard(layerHere, packagedDataHere) {
+function requestSetCard(packagedDataHere) {
 
-	// const coreId = packagedDataHere.id;
-	// const switchedRef = switchRef(layerHere, coreId);
-	// switchedRef.child(coreId).set(packagedDataHere);
+	const inputId = packagedDataHere.id;
+	const inputLayer = packagedDataHere.layer;
+	const switchedRef = switchForRef(inputId, inputLayer);
+	switchedRef.child(inputId).set(packagedDataHere);
 
-	let cardId_character = getCardId("character");
+	// let cardId_character = getCardId("character");
 
-	const characterRef = db.ref("users")
-		.child(userData.uid)
-		.child("bigPicture")
-		.child("children");
+	// const characterRef = db.ref("users")
+	// 	.child(userData.uid)
+	// 	.child("bigPicture")
+	// 	.child("children");
 
-	switch(layerHere){
-		case "character" :
-			characterRef
-			.child(packagedDataHere.id)
-			.set(packagedDataHere);
-			break;
-		case "direction" :
-			characterRef
-			.child(cardId_character)
-			.child("children")
-			.child(packagedDataHere.id)
-			.set(packagedDataHere);
-			break;
-		case "roadmap" :
-			console.log("**roadmap");
-			break;
-		case "actionPlan" :
-			console.log("**actionPlan");
-			break;
-		default: 
-			let layerHere = null;
-	};
+	// switch(layerHere){
+	// 	case "character" :
+	// 		characterRef
+	// 		.child(packagedDataHere.id)
+	// 		.set(packagedDataHere);
+	// 		break;
+	// 	case "direction" :
+	// 		characterRef
+	// 		.child(cardId_character)
+	// 		.child("children")
+	// 		.child(packagedDataHere.id)
+	// 		.set(packagedDataHere);
+	// 		break;
+	// 	case "roadmap" :
+	// 		console.log("**roadmap");
+	// 		break;
+	// 	case "actionPlan" :
+	// 		console.log("**actionPlan");
+	// 		break;
+	// 	default: 
+	// 		let layerHere = null;
+	// };
 };
 
 function requestUpdateCard(layerHere, packagedDataHere) {
 
-	const coreId = packagedDataHere.id;
-	let idThreadObject = getIdThreadObjectById(coreId);
+	const inputId = packagedDataHere.id;
+	let idThreadObject = getIdThreadObjectById(inputId);
 
-	const switchedRef = switchRef(layerHere, coreId);
-	switchedRef.child(coreId).set(packagedDataHere);
+	const switchedRef = switchForRef(inputId);
+	switchedRef.child(inputId).set(packagedDataHere);
 
 	// const characterRef = db.ref("users")
 	// .child(userData.uid)
@@ -686,7 +687,7 @@ function getMainId() {
 function saveNewCard(layerHere) {
 	let packagedBpData = packageNewCard(layerHere);
 	if (packagedBpData != null) {
-		requestSetCard(layerHere, packagedBpData);
+		requestSetCard(packagedBpData);
 		alert("저장되었습니다.");
 	};
 };
@@ -935,94 +936,57 @@ function getIdArrayByMap(layer, scope1, key1, scope2, key2, characterIdHere) {
 
 };
 
-function switchRef(layerHere, coreIdHere) {
 
-	console.log("**=====switchRef() start=====");
 
-	const userRef = db.ref("users").child(userData.uid);
-	const bigPictureRef = userRef.child("bigPicture");
-
-	let idThreadObject = getIdThreadObjectById(coreIdHere);
-
-	const characterRef = bigPictureRef.child("children");
-	const directionRef = characterRef[getParentsIdfromChildId(idThreadObject.characterId)].child("children");
-	const roadmapRef = directionRef[getParentsIdfromChildId(idThreadObject.directionId)].child("children");
-	const actionPlanRef = roadmapRef[getParentsIdfromChildId(idThreadObject.roadmapId)].child("children");
-
-	switch(layerHere){
-		case "character" : 
-			return characterRef;
-		case "direction" : 
-			return directionRef;
-		case "roadmap" : 
-			return roadmapRef;
-		case "actionPlan" : 
-			return actionPlanRef;
-		default: 
-			return null;
-	};
-};
-
-// id manger
-
-function getIdThreadObjectById(coreIdHere) {
-	
-	let unitObject = objectById[coreIdHere];
-	let coreLayer = unitObject.layer;
-	let returnObject = {};
-	returnObject["coreLayer"] = coreLayer;
-
-	switch(coreLayer){
-		case "character" : 
-			returnObject["characterId"] = coreIdHere;
-			returnObject["directionId"] = "";
-			returnObject["roadmapId"] = "";
-			returnObject["actionPlanId"] = "";
-			break;
-		case "direction" :
-			returnObject["characterId"] = getParentsIdfromChildId(coreIdHere);
-			returnObject["directionId"] = coreIdHere;
-			returnObject["roadmapId"] = "";
-			returnObject["actionPlanId"] = "";
-			break;
-		case "roadmap" :
-			let directionId = getParentsIdfromChildId(coreIdHere);
-			let characterId = getParentsIdfromChildId(directionId);
-			returnObject["characterId"] = characterId;
-			returnObject["directionId"] = directionId;
-			returnObject["roadmapId"] = coreIdHere;
-			returnObject["actionPlanId"] = "";
-			break;
-		case "actionPlan" :
-			let roadmapId = getParentsIdfromChildId(coreIdHere);
-			let direcitonId2 = getParentsIdfromChildId(roadmapId);
-			let characterId2 = getParentsIdfromChildId(direcitonId2);
-			returnObject["characterId"] = characterId2;
-			returnObject["directionId"] = direcitonId2;
-			returnObject["roadmapId"] = roadmapId;
-			returnObject["actionPlanId"] = coreIdHere;
-			break;
-		default: null;	
-	};
-	return returnObject;
-};
+// id manager
+// **id manager에서는 필요한 id값을 가져온다.
+// **id 값은 대표적으로 parentsId, idTread로 해당한다.
 
 function getParentsIdfromChildId(childIdHere) {
 
 	console.log("**=====getParentsIdfromChildId start=====");
 
 	let everyKeysArray = Object.keys(objectById);
-
+	let layer = getLayerById(childIdHere);
 	let parentsId = "";
 
-	for(let i = 0; i < everyKeysArray.length; i++) {
-		if(everyKeysArray[i] == childIdHere) {
-			parentsId = objectById[childIdHere].parentsId;
-			return parentsId;
+	if(layer == "character") {
+		parentsId = "bigPicture";
+		return parentsId;
+	} else {
+		for(let i = 0; i < everyKeysArray.length; i++) {
+			if(everyKeysArray[i] == childIdHere) {
+				parentsId = objectById[childIdHere].parentsId;
+				return parentsId;
+			};
 		};
+		return parentsId;
 	};
-	return parentsId;
 };
+
+function getIdThreadObjectById(inputIdhere) {
+	
+	console.log("inputIdhere =", inputIdhere);
+
+	let resultIsNewId = isNewId(inputIdhere);
+	console.log("resultIsNewId = ", resultIsNewId);
+
+	if (resultIsNewId == true) {
+		// [질문] Boolean으로 하면 왜 false로 가는가?
+		console.log("true");
+		return null;
+	} else {
+		console.log("false");
+		let unitObject = objectById[inputIdhere];
+		console.log("unitObject =", unitObject);
+		let inputLayer = unitObject.layer;
+		let returnObject = switchForIdThreadObject(inputLayer);
+		returnObject["coreLayer"] = inputLayer;
+		return returnObject;
+	};
+};
+
+
 
 function getEveryIdArray() {
 	return Object.keys(objectById);
@@ -1030,6 +994,110 @@ function getEveryIdArray() {
 
 function isNewId(idHere) {
 	let everyIdArray = getEveryIdArray();
-	let result = everyIdArray.includes(idHere);
-	return result;
+	let checkpoint = everyIdArray.includes(idHere);
+	if (checkpoint == Boolean) {
+		return false;
+	} else {
+		return true;
+	};
+};
+
+function getLayerById(idHere) {
+	let layer = objectById[idHere].layer;
+	return layer;
+};
+
+// switch manager
+// switch 기능이 필요할때 작용한다.
+
+function switchForIdThreadObject(layerHere) {
+	let returnObject = {};
+	switch(layerHere){
+		case "character" : 
+			returnObject["characterId"] = inputIdhere;
+			returnObject["directionId"] = "";
+			returnObject["roadmapId"] = "";
+			returnObject["actionPlanId"] = "";
+			break;
+		case "direction" :
+			returnObject["characterId"] = getParentsIdfromChildId(inputIdhere);
+			returnObject["directionId"] = inputIdhere;
+			returnObject["roadmapId"] = "";
+			returnObject["actionPlanId"] = "";
+			break;
+		case "roadmap" :
+			let directionId = getParentsIdfromChildId(inputIdhere);
+			let characterId = getParentsIdfromChildId(directionId);
+			returnObject["characterId"] = characterId;
+			returnObject["directionId"] = directionId;
+			returnObject["roadmapId"] = inputIdhere;
+			returnObject["actionPlanId"] = "";
+			break;
+		case "actionPlan" :
+			let roadmapId = getParentsIdfromChildId(inputIdhere);
+			let direcitonId2 = getParentsIdfromChildId(roadmapId);
+			let characterId2 = getParentsIdfromChildId(direcitonId2);
+			returnObject["characterId"] = characterId2;
+			returnObject["directionId"] = direcitonId2;
+			returnObject["roadmapId"] = roadmapId;
+			returnObject["actionPlanId"] = inputIdhere;
+			break;
+		default: null;	
+	};
+	return returnObject;
+};
+
+function switchForRef(inputIdHere, layerHere) {
+
+	console.log("**=====switchForRef() start=====");
+
+	const userRef = db.ref("users").child(userData.uid);
+	const bigPictureRef = userRef.child("bigPicture");
+	const characterRef = bigPictureRef.child("children");
+
+	let resultIsNewId = isNewId(inputIdHere);
+
+	if (resultIsNewId == true) {
+
+		switch(layerHere){
+			case "character" :
+				return characterRef;
+			case "direction" : 
+				const characterId = getCardId("character");
+				const directionRef = characterRef[characterId].child("children");
+				return directionRef;
+			case "roadmap" : 
+				const directionId = getCardId("direction");
+				const roadmapRef = directionRef[directionId].child("children");
+				return roadmapRef;
+			case "actionPlan" : 
+				const roadmapId = getCardId("roadmap");
+				const actionPlanRef = roadmapRef[roadmapId].child("children");
+				return actionPlanRef;
+			default: 
+				return null;
+		};
+
+	} else {
+
+		const idThreadObject = getIdThreadObjectById(inputIdHere);
+		const layer = getLayerById(inputIdHere);
+
+		const directionRef = characterRef[getParentsIdfromChildId(idThreadObject.characterId)].child("children");
+		const roadmapRef = directionRef[getParentsIdfromChildId(idThreadObject.directionId)].child("children");
+		const actionPlanRef = roadmapRef[getParentsIdfromChildId(idThreadObject.roadmapId)].child("children");
+
+		switch(layer){
+			case "character" : 
+				return characterRef;
+			case "direction" : 
+				return directionRef;
+			case "roadmap" : 
+				return roadmapRef;
+			case "actionPlan" : 
+				return actionPlanRef;
+			default: 
+				return null;
+		};
+	};
 };
