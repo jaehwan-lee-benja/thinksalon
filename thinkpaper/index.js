@@ -734,12 +734,10 @@ function monitorCardBlankOrDuplicates(layerHere) {
 };
 
 function getSameTextArray(layerHere, cardValueHere) {
-	
-	let IdArray_character2 = getIdArrayByMap("character","contents", "character");
-	console.log("IdArray_character2 =", IdArray_character2);
 
 	let IdArray_character = switchForGetSameTextArray(layerHere);
 	console.log("IdArray_character =", IdArray_character);
+	// 중복이 걸러지지 않고 있음
 
 	let valueArray = [];
 	for(let i = 0; i < IdArray_character.length; i++) {
@@ -950,16 +948,21 @@ function getIdThreadObjectById(inputIdhere) {
 	
 	let resultIsNewId = isNewId(inputIdhere);
 	// *console.log("resultIsNewId = ", resultIsNewId);
+	let returnObject = {};
 
 	if (resultIsNewId == true) {
 		// [질문] Boolean으로 하면 왜 false로 가는가?
+		returnObject["characterId"] = getCardId("character");
+		returnObject["directionId"] = getCardId("direction");
+		// returnObject["roadmapId"] = getCardId("raodmap");
+		// returnObject["actionPlanId"] = getCardId("actionPlan");
 		console.log("true");
-		return null;
+		return returnObject;
 	} else {
 		console.log("false");
 		let unitObject = objectById[inputIdhere];
 		let inputLayer = unitObject.layer;
-		let returnObject = switchForIdThreadObject(inputLayer);
+		returnObject = switchForIdThreadObject(inputLayer);
 		console.log("returnObject =", returnObject);
 		return returnObject;
 	};
@@ -1122,14 +1125,14 @@ function switchForPackageNewCard(layerHere) {
 
 function switchForGetSameTextArray(layerHere) {
 
+	console.log("layerHere =", layerHere);
+
 	const idArray = getEveryIdArrayOfLayer(layerHere);
 
 	let mappedObject = idArray.map( id => {
 		let mappingObject = {"id":id};
 		let position = "";
 		let idThreadObject = getIdThreadObjectById(id);
-		// 진행중: 이 위의 값이 '새카드 저장의 중복체크'인 경우, null이 되어 idThread 생성이 되지 않는다 
-		console.log("idThreadObject =", idThreadObject);
 
 		switch(layerHere){
 			case "character" : 
@@ -1157,6 +1160,8 @@ function switchForGetSameTextArray(layerHere) {
 			default : null; 
 		};
 
+		position[id] = {};
+		position[id].contents = {};
 		mappingObject[layerHere] = position[id].contents[layerHere];
 
 		return mappingObject;
