@@ -79,7 +79,17 @@ function requestReadBigPicture(user) {
 
 		});
 
-		const characterIdArray = Object.keys(bigPicture.children);
+		function getLatestIdBySwitchLayer() {
+			let returnObject = {};
+			returnObject["characterId"] = inputIdhere;
+			returnObject["directionId"] = "";
+			returnObject["roadmapId"] = "";
+			returnObject["actionPlanId"] = "";
+			return returnObject;
+		};
+		// layer넣어서 ForEach로 처리하여서, 최신 Id값을 받도록 작업하기
+
+		const characterIdArray = getEveryIdArrayOfLayer("character");
 
 		if (characterIdArray.length > 0) {
 			let mainId = getMainId();
@@ -113,14 +123,14 @@ function requestReadBigPicture(user) {
 function requestSetCard(packagedDataHere) {
 	const inputId = packagedDataHere.id;
 	const inputLayer = packagedDataHere.layer;
-	const switchedRef = getRefByLayerSwitch(inputId, inputLayer);
+	const switchedRef = getRefBySwitchLayer(inputId, inputLayer);
 	switchedRef.child(inputId).set(packagedDataHere);
 };
 
 function requestUpdateCard(layerHere, packagedDataHere) {
 	const inputId = packagedDataHere.id;
 	let idThreadObject = getIdThreadObjectById(inputId);
-	const switchedRef = getRefByLayerSwitch(inputId);
+	const switchedRef = getRefBySwitchLayer(inputId);
 	switchedRef.child(inputId).set(packagedDataHere);
 
 	// const characterRef = db.ref("users")
@@ -260,7 +270,7 @@ function packageNewCard(layerHere) {
 
 	if (moniterResult == true) {
 
-		function catchValueByLayerSwitch(layerHere2) {
+		function catchValueBySwitchLayer(layerHere2) {
 
 			let packagedData = {};
 			packagedData["contents"] = {};
@@ -291,7 +301,7 @@ function packageNewCard(layerHere) {
 			return packagedData;
 		};
 
-		let packagedData = catchValueByLayerSwitch(layerHere);
+		let packagedData = catchValueBySwitchLayer(layerHere);
 		let idNew = getUuidv4();
 		packagedData["id"] = idNew;
 		packagedData["children"] = "";
@@ -641,7 +651,7 @@ function setMainCard() {
 	requestUpdateMainCard(characterId);
 };
 
-function gotoMainCard_character() {
+function gotoMainCard() {
 	showItOnUI(getMainId());
 	showSelectbox("selectbox_character");
 };
@@ -1005,7 +1015,7 @@ function getIdThreadObjectById(inputIdhere) {
 		let unitObject = objectById[inputIdhere];
 		let inputLayer = unitObject.layer;
 
-		function getIdByLayerSwitch(layerHere) {
+		function getIdBySwitchLayer(layerHere) {
 			let returnObject = {};
 			switch(layerHere){
 				case "character" : 
@@ -1042,7 +1052,7 @@ function getIdThreadObjectById(inputIdhere) {
 			return returnObject;
 		};
 		
-		returnObject = getIdByLayerSwitch(inputLayer);
+		returnObject = getIdBySwitchLayer(inputLayer);
 		console.log("returnObject =", returnObject);
 		return returnObject;
 	};
@@ -1066,7 +1076,7 @@ function getEveryIdArrayOfLayer(layerHere) {
 	if(layerHere != "character") {
 		let everyIdArrayOfLayerFromSameParents = [];
 		for(let j = 0; j < everyIdArrayOfLayer.length; j++) {
-			let parentsLayer = getParentsLayerByLayerSwitch(layerHere);
+			let parentsLayer = getParentsLayerBySwitchLayer(layerHere);
 			if (objectById[everyIdArrayOfLayer[j]].parentsId == getCardId(parentsLayer)){
 				everyIdArrayOfLayerFromSameParents.push(everyIdArrayOfLayer[j]);
 			};
@@ -1095,9 +1105,9 @@ function getLayerById(idHere) {
 // switch manager
 // switch 기능이 필요할때 작용한다.
 
-function getRefByLayerSwitch(inputIdHere, layerHere) {
+function getRefBySwitchLayer(inputIdHere, layerHere) {
 
-	console.log("**=====getRefByLayerSwitch() start=====");
+	console.log("**=====getRefBySwitchLayer() start=====");
 
 	const userRef = db.ref("users").child(userData.uid);
 	const bigPictureRef = userRef.child("bigPicture");
@@ -1151,7 +1161,7 @@ function getRefByLayerSwitch(inputIdHere, layerHere) {
 	};
 };
 
-function getParentsLayerByLayerSwitch(layerHere) {
+function getParentsLayerBySwitchLayer(layerHere) {
 	switch(layerHere){
 		case "character" : 
 			return null;
