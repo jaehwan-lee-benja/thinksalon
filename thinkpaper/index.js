@@ -259,17 +259,14 @@ function packageNewCard(layerHere) {
 	let moniterResult = monitorCardBlankOrDuplicates(layerHere);
 
 	if (moniterResult == true) {
-		let idNew = getUuidv4();
-
 		let packagedData = switchForPackageNewCard(layerHere);
-
+		let idNew = getUuidv4();
 		packagedData["id"] = idNew;
 		packagedData["children"] = "";
 		packagedData["createdDate"] = getTimeStamp();
 		packagedData["editedDate"] = getTimeStamp();
 		packagedData["main"] = "";
 		packagedData["layer"] = layerHere;
-
 		return packagedData;
 	};
 		
@@ -684,6 +681,74 @@ function cancelEditCard(layerHere) {
 function monitorCardBlankOrDuplicates(layerHere) {
 	let cardValue = getSelectorById(layerHere).value.trim();
 	if (cardValue != "") {
+
+		function getSameTextArray(layerHere2, cardValueHere) {
+
+			function switchForGetSameTextArray(layerHere3) {
+
+				// console.log("layerHere =", layerHere);
+			
+				const idArray = getEveryIdArrayOfLayer(layerHere3);
+				// console.log("idArray = ", idArray);
+			
+				let mappedObject = idArray.map( id => {
+					let mappingObject = {"id":id};
+					let position = "";
+					let idThreadObject = getIdThreadObjectById(id);
+			
+					switch(layerHere3){
+						case "character" : 
+							let positionOfCharacter = bigPicture.children;
+							position = positionOfCharacter;
+							break;
+						case "direction" :
+							let positionOfCharacter2 = bigPicture.children;
+							let positionOfDirection = positionOfCharacter2[idThreadObject.characterId].children;
+							position = positionOfDirection;
+							break;
+						case "roadmap" :
+							let positionOfCharacter3 = bigPicture.children;
+							let positionOfDirection2 = positionOfCharacter3[idThreadObject.characterId].children;
+							let positionOfRoadmap = positionOfDirection2[idThreadObject.directionId].children;
+							position = positionOfRoadmap;
+							break;
+						case "actionPlan" :
+							let positionOfCharacter4 = bigPicture.children;
+							let positionOfDirection3 = positionOfCharacter4[idThreadObject.characterId].children;
+							let positionOfRoadmap2 = positionOfDirection3[idThreadObject.directionId].children;
+							let positionOfActionPlan = positionOfRoadmap2[idThreadObject.directionId].children;
+							position = positionOfActionPlan;
+							break;
+						default : null; 
+					};
+			
+					mappingObject[layerHere3] = position[id].contents[layerHere3];
+			
+					return mappingObject;
+			
+					});
+			
+				return mappedObject;
+			};
+
+			let mappedIdArray = switchForGetSameTextArray(layerHere2);
+			console.log("mappedIdArray =", mappedIdArray);
+		
+			let valueArray = [];
+			for(let i = 0; i < mappedIdArray.length; i++) {
+				valueArray.push(mappedIdArray[i][layerHere2]);
+			};
+			console.log("valueArray =", valueArray);
+		
+			let filterSameTextArray = (query) => {
+				return valueArray.find(value => query == value);
+			};
+		
+			let sameTextArray = filterSameTextArray(cardValueHere);
+		
+			return sameTextArray;
+		};
+
 		let sameTextArray = getSameTextArray(layerHere, cardValue);
 		if (sameTextArray == undefined) {
 			return true;
@@ -696,26 +761,6 @@ function monitorCardBlankOrDuplicates(layerHere) {
 		alert("카드가 비어있습니다. 내용을 입력해주시기 바랍니다.");
 	};
 	return false;
-};
-
-function getSameTextArray(layerHere, cardValueHere) {
-
-	let mappedIdArray = switchForGetSameTextArray(layerHere);
-	console.log("mappedIdArray =", mappedIdArray);
-
-	let valueArray = [];
-	for(let i = 0; i < mappedIdArray.length; i++) {
-		valueArray.push(mappedIdArray[i][layerHere]);
-	};
-	console.log("valueArray =", valueArray);
-
-	let filterSameTextArray = (query) => {
-		return valueArray.find(value => query == value);
-	};
-
-	let sameTextArray = filterSameTextArray(cardValueHere);
-
-	return sameTextArray;
 };
 
 ///// general supporter
@@ -1107,54 +1152,7 @@ function switchForPackageNewCard(layerHere) {
 	return packagedData;
 };
 
-function switchForGetSameTextArray(layerHere) {
 
-	// console.log("layerHere =", layerHere);
-
-	const idArray = getEveryIdArrayOfLayer(layerHere);
-	// console.log("idArray = ", idArray);
-
-	let mappedObject = idArray.map( id => {
-		let mappingObject = {"id":id};
-		let position = "";
-		let idThreadObject = getIdThreadObjectById(id);
-
-		switch(layerHere){
-			case "character" : 
-				let positionOfCharacter = bigPicture.children;
-				position = positionOfCharacter;
-				break;
-			case "direction" :
-				let positionOfCharacter2 = bigPicture.children;
-				let positionOfDirection = positionOfCharacter2[idThreadObject.characterId].children;
-				position = positionOfDirection;
-				break;
-			case "roadmap" :
-				let positionOfCharacter3 = bigPicture.children;
-				let positionOfDirection2 = positionOfCharacter3[idThreadObject.characterId].children;
-				let positionOfRoadmap = positionOfDirection2[idThreadObject.directionId].children;
-				position = positionOfRoadmap;
-				break;
-			case "actionPlan" :
-				let positionOfCharacter4 = bigPicture.children;
-				let positionOfDirection3 = positionOfCharacter4[idThreadObject.characterId].children;
-				let positionOfRoadmap2 = positionOfDirection3[idThreadObject.directionId].children;
-				let positionOfActionPlan = positionOfRoadmap2[idThreadObject.directionId].children;
-				position = positionOfActionPlan;
-				break;
-			default : null; 
-		};
-
-		console.log("position[id].contents = ", position[id].contents);
-		console.log("position[id].contents.direction = ", position[id].contents.direction);
-		mappingObject[layerHere] = position[id].contents[layerHere];
-
-		return mappingObject;
-
-		});
-
-	return mappedObject;
-};
 
 function switchForGetParentsLayer(layerHere) {
 	switch(layerHere){
