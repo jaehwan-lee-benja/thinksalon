@@ -113,14 +113,14 @@ function requestReadBigPicture(user) {
 function requestSetCard(packagedDataHere) {
 	const inputId = packagedDataHere.id;
 	const inputLayer = packagedDataHere.layer;
-	const switchedRef = switchForRef(inputId, inputLayer);
+	const switchedRef = getRefByLayerSwitch(inputId, inputLayer);
 	switchedRef.child(inputId).set(packagedDataHere);
 };
 
 function requestUpdateCard(layerHere, packagedDataHere) {
 	const inputId = packagedDataHere.id;
 	let idThreadObject = getIdThreadObjectById(inputId);
-	const switchedRef = switchForRef(inputId);
+	const switchedRef = getRefByLayerSwitch(inputId);
 	switchedRef.child(inputId).set(packagedDataHere);
 
 	// const characterRef = db.ref("users")
@@ -259,7 +259,39 @@ function packageNewCard(layerHere) {
 	let moniterResult = monitorCardBlankOrDuplicates(layerHere);
 
 	if (moniterResult == true) {
-		let packagedData = switchForPackageNewCard(layerHere);
+
+		function catchValueByLayerSwitch(layerHere2) {
+
+			let packagedData = {};
+			packagedData["contents"] = {};
+			let contents = packagedData["contents"];
+		
+			switch(layerHere2){
+				case "character" :
+					packagedData["parentsId"] = "";
+					contents["character"] = getSelectorById("character").value.trim();
+					break;
+				case "direction" :
+					packagedData["parentsId"] = getCardId("character");
+					contents["direction"] = getSelectorById("direction").value.trim();
+					break;
+				case "roadmap" :
+					packagedData["parentsId"] = getCardId("direction");
+					contents["roadmapArea"] = getSelectorById("roadmapArea").value.trim();
+					contents["roadmapA"] = getSelectorById("roadmapA").value.trim();
+					contents["roadmapB"] = getSelectorById("roadmapArea").value.trim();
+					break;
+				case "actionPlan" :
+					packagedData["parentsId"] = getCardId("roadmap");
+					contents["actionPlan"] = getSelectorById("actionPlan").value.trim();
+					break;
+				default:
+					let layerHere2 = null;
+			};
+			return packagedData;
+		};
+
+		let packagedData = catchValueByLayerSwitch(layerHere);
 		let idNew = getUuidv4();
 		packagedData["id"] = idNew;
 		packagedData["children"] = "";
@@ -972,7 +1004,45 @@ function getIdThreadObjectById(inputIdhere) {
 		// console.log("false");
 		let unitObject = objectById[inputIdhere];
 		let inputLayer = unitObject.layer;
-		returnObject = switchForIdThreadObject(inputLayer);
+
+		function getIdByLayerSwitch(layerHere) {
+			let returnObject = {};
+			switch(layerHere){
+				case "character" : 
+					returnObject["characterId"] = inputIdhere;
+					returnObject["directionId"] = "";
+					returnObject["roadmapId"] = "";
+					returnObject["actionPlanId"] = "";
+					break;
+				case "direction" :
+					returnObject["characterId"] = getParentsIdfromChildId(inputIdhere);
+					returnObject["directionId"] = inputIdhere;
+					returnObject["roadmapId"] = "";
+					returnObject["actionPlanId"] = "";
+					break;
+				case "roadmap" :
+					let directionId = getParentsIdfromChildId(inputIdhere);
+					let characterId = getParentsIdfromChildId(directionId);
+					returnObject["characterId"] = characterId;
+					returnObject["directionId"] = directionId;
+					returnObject["roadmapId"] = inputIdhere;
+					returnObject["actionPlanId"] = "";
+					break;
+				case "actionPlan" :
+					let roadmapId = getParentsIdfromChildId(inputIdhere);
+					let direcitonId2 = getParentsIdfromChildId(roadmapId);
+					let characterId2 = getParentsIdfromChildId(direcitonId2);
+					returnObject["characterId"] = characterId2;
+					returnObject["directionId"] = direcitonId2;
+					returnObject["roadmapId"] = roadmapId;
+					returnObject["actionPlanId"] = inputIdhere;
+					break;
+				default: null;	
+			};
+			return returnObject;
+		};
+		
+		returnObject = getIdByLayerSwitch(inputLayer);
 		console.log("returnObject =", returnObject);
 		return returnObject;
 	};
@@ -996,7 +1066,7 @@ function getEveryIdArrayOfLayer(layerHere) {
 	if(layerHere != "character") {
 		let everyIdArrayOfLayerFromSameParents = [];
 		for(let j = 0; j < everyIdArrayOfLayer.length; j++) {
-			let parentsLayer = getParentsLayer(layerHere);
+			let parentsLayer = getParentsLayerByLayerSwitch(layerHere);
 			if (objectById[everyIdArrayOfLayer[j]].parentsId == getCardId(parentsLayer)){
 				everyIdArrayOfLayerFromSameParents.push(everyIdArrayOfLayer[j]);
 			};
@@ -1022,53 +1092,12 @@ function getLayerById(idHere) {
 	return layer;
 };
 
-function getParentsLayer(layerHere) {
-	return switchForGetParentsLayer(layerHere);
-};
-
 // switch manager
 // switch 기능이 필요할때 작용한다.
 
-function switchForIdThreadObject(layerHere) {
-	let returnObject = {};
-	switch(layerHere){
-		case "character" : 
-			returnObject["characterId"] = inputIdhere;
-			returnObject["directionId"] = "";
-			returnObject["roadmapId"] = "";
-			returnObject["actionPlanId"] = "";
-			break;
-		case "direction" :
-			returnObject["characterId"] = getParentsIdfromChildId(inputIdhere);
-			returnObject["directionId"] = inputIdhere;
-			returnObject["roadmapId"] = "";
-			returnObject["actionPlanId"] = "";
-			break;
-		case "roadmap" :
-			let directionId = getParentsIdfromChildId(inputIdhere);
-			let characterId = getParentsIdfromChildId(directionId);
-			returnObject["characterId"] = characterId;
-			returnObject["directionId"] = directionId;
-			returnObject["roadmapId"] = inputIdhere;
-			returnObject["actionPlanId"] = "";
-			break;
-		case "actionPlan" :
-			let roadmapId = getParentsIdfromChildId(inputIdhere);
-			let direcitonId2 = getParentsIdfromChildId(roadmapId);
-			let characterId2 = getParentsIdfromChildId(direcitonId2);
-			returnObject["characterId"] = characterId2;
-			returnObject["directionId"] = direcitonId2;
-			returnObject["roadmapId"] = roadmapId;
-			returnObject["actionPlanId"] = inputIdhere;
-			break;
-		default: null;	
-	};
-	return returnObject;
-};
+function getRefByLayerSwitch(inputIdHere, layerHere) {
 
-function switchForRef(inputIdHere, layerHere) {
-
-	console.log("**=====switchForRef() start=====");
+	console.log("**=====getRefByLayerSwitch() start=====");
 
 	const userRef = db.ref("users").child(userData.uid);
 	const bigPictureRef = userRef.child("bigPicture");
@@ -1122,39 +1151,7 @@ function switchForRef(inputIdHere, layerHere) {
 	};
 };
 
-function switchForPackageNewCard(layerHere) {
-
-	let packagedData = {};
-	packagedData["contents"] = {};
-	let contents = packagedData["contents"];
-
-	switch(layerHere){
-		case "character" :
-			packagedData["parentsId"] = "";
-			contents["character"] = getSelectorById("character").value.trim();
-			break;
-		case "direction" :
-			console.log("getCardId('character') =", getCardId("character"));
-			packagedData["parentsId"] = getCardId("character");
-			contents["direction"] = getSelectorById("direction").value.trim();
-			break;
-		case "roadmap" :
-			contents["roadmapArea"] = getSelectorById("roadmapArea").value.trim();
-			contents["roadmapA"] = getSelectorById("roadmapA").value.trim();
-			contents["roadmapB"] = getSelectorById("roadmapArea").value.trim();
-			break;
-		case "actionPlan" :
-			contents["actionPlan"] = getSelectorById("actionPlan").value.trim();
-			break;
-		default: 
-			let layerHere = null;
-	};
-	return packagedData;
-};
-
-
-
-function switchForGetParentsLayer(layerHere) {
+function getParentsLayerByLayerSwitch(layerHere) {
 	switch(layerHere){
 		case "character" : 
 			return null;
