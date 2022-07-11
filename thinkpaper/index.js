@@ -111,48 +111,15 @@ function requestReadBigPicture(user) {
 ///// LtoS manager
 
 function requestSetCard(packagedDataHere) {
-
 	const inputId = packagedDataHere.id;
 	const inputLayer = packagedDataHere.layer;
 	const switchedRef = switchForRef(inputId, inputLayer);
 	switchedRef.child(inputId).set(packagedDataHere);
-
-	// let cardId_character = getCardId("character");
-
-	// const characterRef = db.ref("users")
-	// 	.child(userData.uid)
-	// 	.child("bigPicture")
-	// 	.child("children");
-
-	// switch(layerHere){
-	// 	case "character" :
-	// 		characterRef
-	// 		.child(packagedDataHere.id)
-	// 		.set(packagedDataHere);
-	// 		break;
-	// 	case "direction" :
-	// 		characterRef
-	// 		.child(cardId_character)
-	// 		.child("children")
-	// 		.child(packagedDataHere.id)
-	// 		.set(packagedDataHere);
-	// 		break;
-	// 	case "roadmap" :
-	// 		console.log("**roadmap");
-	// 		break;
-	// 	case "actionPlan" :
-	// 		console.log("**actionPlan");
-	// 		break;
-	// 	default: 
-	// 		let layerHere = null;
-	// };
 };
 
 function requestUpdateCard(layerHere, packagedDataHere) {
-
 	const inputId = packagedDataHere.id;
 	let idThreadObject = getIdThreadObjectById(inputId);
-
 	const switchedRef = switchForRef(inputId);
 	switchedRef.child(inputId).set(packagedDataHere);
 
@@ -297,14 +264,12 @@ function packageNewCard(layerHere) {
 		let packagedData = switchForPackageNewCard(layerHere);
 
 		packagedData["id"] = idNew;
-		packagedData["parentsId"] = "";
 		packagedData["children"] = "";
 		packagedData["createdDate"] = getTimeStamp();
 		packagedData["editedDate"] = getTimeStamp();
 		packagedData["main"] = "";
 		packagedData["layer"] = layerHere;
 
-		console.log("packagedData =", packagedData);
 		return packagedData;
 	};
 		
@@ -735,14 +700,14 @@ function monitorCardBlankOrDuplicates(layerHere) {
 
 function getSameTextArray(layerHere, cardValueHere) {
 
-	let IdArray_character = switchForGetSameTextArray(layerHere);
-	console.log("IdArray_character =", IdArray_character);
-	// 중복이 걸러지지 않고 있음
+	let mappedIdArray = switchForGetSameTextArray(layerHere);
+	console.log("mappedIdArray =", mappedIdArray);
 
 	let valueArray = [];
-	for(let i = 0; i < IdArray_character.length; i++) {
-		valueArray.push(IdArray_character[i].character);
+	for(let i = 0; i < mappedIdArray.length; i++) {
+		valueArray.push(mappedIdArray[i][layerHere]);
 	};
+	console.log("valueArray =", valueArray);
 
 	let filterSameTextArray = (query) => {
 		return valueArray.find(value => query == value);
@@ -951,15 +916,15 @@ function getIdThreadObjectById(inputIdhere) {
 	let returnObject = {};
 
 	if (resultIsNewId == true) {
+		// console.log("true");
 		// [질문] Boolean으로 하면 왜 false로 가는가?
 		returnObject["characterId"] = getCardId("character");
 		returnObject["directionId"] = getCardId("direction");
 		// returnObject["roadmapId"] = getCardId("raodmap");
 		// returnObject["actionPlanId"] = getCardId("actionPlan");
-		console.log("true");
 		return returnObject;
 	} else {
-		console.log("false");
+		// console.log("false");
 		let unitObject = objectById[inputIdhere];
 		let inputLayer = unitObject.layer;
 		returnObject = switchForIdThreadObject(inputLayer);
@@ -975,11 +940,25 @@ function getEveryIdArray() {
 function getEveryIdArrayOfLayer(layerHere) {
 	let everyIdArray = getEveryIdArray();
 	let everyIdArrayOfLayer = [];
+	
 	for(let i = 0; i < everyIdArray.length; i++) {
-		if(objectById[everyIdArray[i]].layer == layerHere) {
+		if(objectById[everyIdArray[i]].layer == layerHere ) {
 			everyIdArrayOfLayer.push(everyIdArray[i]);
 		};
 	};
+
+	// character 레이어를 제외하고, 부모에 해당하는 것들 중에서만 중복을 검토하기
+	if(layerHere != "character") {
+		let everyIdArrayOfLayerFromSameParents = [];
+		for(let j = 0; j < everyIdArrayOfLayer.length; j++) {
+			let parentsLayer = getParentsLayer(layerHere);
+			if (objectById[everyIdArrayOfLayer[j]].parentsId == getCardId(parentsLayer)){
+				everyIdArrayOfLayerFromSameParents.push(everyIdArrayOfLayer[j]);
+			};
+		};
+		return everyIdArrayOfLayerFromSameParents;
+	};
+	
 	return everyIdArrayOfLayer;
 };
 
@@ -996,6 +975,10 @@ function isNewId(idHere) {
 function getLayerById(idHere) {
 	let layer = objectById[idHere].layer;
 	return layer;
+};
+
+function getParentsLayer(layerHere) {
+	return switchForGetParentsLayer(layerHere);
 };
 
 // switch manager
@@ -1102,9 +1085,11 @@ function switchForPackageNewCard(layerHere) {
 
 	switch(layerHere){
 		case "character" :
+			packagedData["parentsId"] = "";
 			contents["character"] = getSelectorById("character").value.trim();
 			break;
 		case "direction" :
+			console.log("getCardId('character') =", getCardId("character"));
 			packagedData["parentsId"] = getCardId("character");
 			contents["direction"] = getSelectorById("direction").value.trim();
 			break;
@@ -1119,15 +1104,15 @@ function switchForPackageNewCard(layerHere) {
 		default: 
 			let layerHere = null;
 	};
-
 	return packagedData;
 };
 
 function switchForGetSameTextArray(layerHere) {
 
-	console.log("layerHere =", layerHere);
+	// console.log("layerHere =", layerHere);
 
 	const idArray = getEveryIdArrayOfLayer(layerHere);
+	// console.log("idArray = ", idArray);
 
 	let mappedObject = idArray.map( id => {
 		let mappingObject = {"id":id};
@@ -1160,8 +1145,8 @@ function switchForGetSameTextArray(layerHere) {
 			default : null; 
 		};
 
-		position[id] = {};
-		position[id].contents = {};
+		console.log("position[id].contents = ", position[id].contents);
+		console.log("position[id].contents.direction = ", position[id].contents.direction);
 		mappingObject[layerHere] = position[id].contents[layerHere];
 
 		return mappingObject;
@@ -1169,4 +1154,18 @@ function switchForGetSameTextArray(layerHere) {
 		});
 
 	return mappedObject;
+};
+
+function switchForGetParentsLayer(layerHere) {
+	switch(layerHere){
+		case "character" : 
+			return null;
+		case "direction" :
+			return "character";
+		case "roadmap" :
+			return "direction";
+		case "actionPlan" :
+			return "roadmap";
+		default : return null; 
+	};
 };
