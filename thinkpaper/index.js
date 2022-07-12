@@ -67,71 +67,80 @@ function requestReadBigPicture(user) {
 
 		console.log("**===== .on is here =====");
 
-		const v = snapshot.val()
-		requestReadIdAndObjectFromChildren(v)
+		const v = snapshot.val();
+		requestReadIdAndObjectFromChildren(v);
 		// console.log('**objectById >>',objectById)
+
+		function showItOnUI_latest() {
+
+			let idThreadObjectKeysArray = ["character", "direction", "roadmap", "actionPlan"];
+	
+			function getLatestIdByLayer(layerHere) {
+				let eachIdArrayByLayer = getEveryIdArrayOfLayer(layerHere);
+				if(eachIdArrayByLayer > 0){
+					let latestId = getLastestEditedId(eachIdArrayByLayer);
+					return latestId;
+				} else {
+					return null;
+				}
+			};
+
+			idThreadObjectKeysArray.forEach(EachLayer => {
+				let latestIdOfEachLayer = getLatestIdByLayer(EachLayer);
+				if(latestIdOfEachLayer != null) {
+					if(EachLayer == "character") {
+						let mainId = getMainId();
+						if(mainId != null && isMainShown == false) {
+							isMainShown = true;
+							showItOnUI("character", mainId);
+						};
+					} else {
+						showItOnUI(EachLayer, latestIdOfEachLayer);
+					}
+					setupBtnShowOrHideByClassName(EachLayer, "readCard");
+					showSelectbox(EachLayer);
+				} else {
+					showItIfNoBpData(EachLayer);
+				}
+			});
+		};
+
+		showItOnUI_latest();
+		
+		// 카드가 비어있으면 idArray를 체크해서, 만약 값이 없으면, empty를 보여주고, 값이 있으면, 최선것을 보여주는 함수 만들기
 
 		snapshot.forEach(childSnap => {
 			let key_id = childSnap.key;
 			let value_data = childSnap.val();
 			bigPicture[key_id] = value_data;
 			// console.log('**>>>> ',bigPicture);
-
 		});
 
-		function getLatestIdThreadObject() {
-			let returnObject = {};
-			let eachLayer = objectById;
+		// const characterIdArray = getEveryIdArrayOfLayer("character");
 
-			function getLatestIdByLayer(layerHere) {
-				let eachIdArrayByLayer = getEveryIdArrayOfLayer(layerHere);
-				let latestId = getLastestEditedId(eachIdArrayByLayer);
-				return latestId;
-			};
+		// if (characterIdArray.length > 0) {
+		// 	let mainId = getMainId();
+		// 	if(mainId != null && isMainShown == false) {
+		// 		isMainShown = true;
+		// 		showItOnUI(mainId);
+		// 	} else {
+		// 		showItOnUI("character", getLastestEditedId(characterIdArray));
+		// 	};
+		// 	showSelectbox("character");
 
-			getLatestIdByLayer(eachLayer);
-		
-			switch(layerHere) {
-				case "character" : 
-				case "direction" :
-				case "roadmap" :
-				case "actionPlan" :
-				default :
-			};
-			returnObject["characterId"] = inputIdhere;
-			returnObject["directionId"] = "";
-			returnObject["roadmapId"] = "";
-			returnObject["actionPlanId"] = "";
-			return returnObject;
-		};
-		// layer넣어서 ForEach로 처리하여서, 최신 Id값을 받도록 작업하기
-		// 카드가 비어있으면 idArray를 체크해서, 만약 값이 없으면, empty를 보여주고, 값이 있으면, 최선것을 보여주는 함수 만들기
+		// 	let parentsOfDirection = bigPicture.children[getLastestEditedId(characterIdArray)];
+		// 	let idArray = Object.keys(parentsOfDirection.children);
 
-		const characterIdArray = getEveryIdArrayOfLayer("character");
-
-		if (characterIdArray.length > 0) {
-			let mainId = getMainId();
-			if(mainId != null && isMainShown == false) {
-				isMainShown = true;
-				showItOnUI(mainId);
-			} else {
-				showItOnUI("character", getLastestEditedId(characterIdArray));
-			};
-			showSelectbox("character");
-
-			let parentsOfDirection = bigPicture.children[getLastestEditedId(characterIdArray)];
-			let idArray = Object.keys(parentsOfDirection.children);
-
-			if(idArray.length < 1) {
-				setupBtnShowOrHideByClassName("direction","readCard");
-				return null;
-			} else {
-				showItOnUI("direction", getLastestEditedId_direction(getDirectionIdArray()));
-				showSelectbox("direction");
-			};
-		} else {
-		showItIfNoBpData();
-		};
+		// 	if(idArray.length < 1) {
+		// 		setupBtnShowOrHideByClassName("direction","readCard");
+		// 		return null;
+		// 	} else {
+		// 		showItOnUI("direction", getLastestEditedId_direction(getDirectionIdArray()));
+		// 		showSelectbox("direction");
+		// 	};
+		// } else {
+		// showItIfNoBpData();
+		// };
 
 	});
 };
@@ -618,10 +627,12 @@ function resizeTextarea() {
 	};
 };
 
-function showItIfNoBpData() {
-	showEmptyCard("character");
-	showEmptyCard("direction");
-	getSelectorById("guideMessage").innerHTML = "'파란색으로 쓰여진 곳의 네모칸에 내용을 작성해보세요~!'"
+function showItIfNoBpData(layerHere) {
+	showEmptyCard(layerHere);
+	let guideMessage = getSelectorById("guideMessage").innerHTML;
+	if (guideMessage == "") {
+		guideMessage = "'파란색으로 쓰여진 곳의 네모칸에 내용을 작성해보세요~!'"
+	};
 };
 
 function highLightBorder(id, color) {
@@ -941,7 +952,7 @@ function getDirectionIdArray() {
 function getLastestEditedId(keysArrayHere) {
 
 	const mappedArray = keysArrayHere.map( id => {
-		let c = bigPicture.children[id];
+		let c = objectById[id];
 		return {"id": id, "editedDate": c.editedDate};
 	}).sort(
 		(a,b) => new Date(b.date) - new Date(a.date)
