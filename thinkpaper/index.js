@@ -79,8 +79,25 @@ function requestReadBigPicture(user) {
 
 		});
 
-		function getLatestIdBySwitchLayer() {
+		function getLatestIdThreadObject() {
 			let returnObject = {};
+			let eachLayer = objectById;
+
+			function getLatestIdByLayer(layerHere) {
+				let eachIdArrayByLayer = getEveryIdArrayOfLayer(layerHere);
+				let latestId = getLastestEditedId(eachIdArrayByLayer);
+				return latestId;
+			};
+
+			getLatestIdByLayer(eachLayer);
+		
+			switch(layerHere) {
+				case "character" : 
+				case "direction" :
+				case "roadmap" :
+				case "actionPlan" :
+				default :
+			};
 			returnObject["characterId"] = inputIdhere;
 			returnObject["directionId"] = "";
 			returnObject["roadmapId"] = "";
@@ -88,6 +105,7 @@ function requestReadBigPicture(user) {
 			return returnObject;
 		};
 		// layer넣어서 ForEach로 처리하여서, 최신 Id값을 받도록 작업하기
+		// 카드가 비어있으면 idArray를 체크해서, 만약 값이 없으면, empty를 보여주고, 값이 있으면, 최선것을 보여주는 함수 만들기
 
 		const characterIdArray = getEveryIdArrayOfLayer("character");
 
@@ -251,6 +269,62 @@ function requestUpdateMainCard(idHere) {
 
 	});
 	
+};
+
+function getRefBySwitchLayer(inputIdHere, layerHere) {
+
+	console.log("**=====getRefBySwitchLayer() start=====");
+
+	const userRef = db.ref("users").child(userData.uid);
+	const bigPictureRef = userRef.child("bigPicture");
+	const characterRef = bigPictureRef.child("children");
+
+	let resultIsNewId = isNewId(inputIdHere);
+
+	if (resultIsNewId == true) {
+
+		switch(layerHere){
+			case "character" :
+				return characterRef;
+			case "direction" : 
+				let characterId = getCardId("character");
+				// [질문] 여기있는 모든 let을 const로 하면 안되는가?
+				let directionRef = characterRef.child(characterId).child("children");
+				return directionRef;
+			case "roadmap" : 
+				let directionId = getCardId("direction");
+				let roadmapRef = directionRef.child(directionId).child("children");
+				return roadmapRef;
+			case "actionPlan" : 
+				let roadmapId = getCardId("roadmap");
+				let actionPlanRef = roadmapRef.child(roadmapId).child("children");
+				return actionPlanRef;
+			default: 
+				return null;
+		};
+
+	} else {
+
+		const idThreadObject = getIdThreadObjectById(inputIdHere);
+		const layer = getLayerById(inputIdHere);
+
+		const directionRef = characterRef[getParentsIdfromChildId(idThreadObject.characterId)].child("children");
+		const roadmapRef = directionRef[getParentsIdfromChildId(idThreadObject.directionId)].child("children");
+		const actionPlanRef = roadmapRef[getParentsIdfromChildId(idThreadObject.roadmapId)].child("children");
+
+		switch(layer){
+			case "character" : 
+				return characterRef;
+			case "direction" : 
+				return directionRef;
+			case "roadmap" : 
+				return roadmapRef;
+			case "actionPlan" : 
+				return actionPlanRef;
+			default: 
+				return null;
+		};
+	};
 };
 
 ///// user data manager
@@ -1105,61 +1179,16 @@ function getLayerById(idHere) {
 // switch manager
 // switch 기능이 필요할때 작용한다.
 
-function getRefBySwitchLayer(inputIdHere, layerHere) {
-
-	console.log("**=====getRefBySwitchLayer() start=====");
-
-	const userRef = db.ref("users").child(userData.uid);
-	const bigPictureRef = userRef.child("bigPicture");
-	const characterRef = bigPictureRef.child("children");
-
-	let resultIsNewId = isNewId(inputIdHere);
-
-	if (resultIsNewId == true) {
-
-		switch(layerHere){
-			case "character" :
-				return characterRef;
-			case "direction" : 
-				let characterId = getCardId("character");
-				// [질문] 여기있는 모든 let을 const로 하면 안되는가?
-				let directionRef = characterRef.child(characterId).child("children");
-				return directionRef;
-			case "roadmap" : 
-				let directionId = getCardId("direction");
-				let roadmapRef = directionRef.child(directionId).child("children");
-				return roadmapRef;
-			case "actionPlan" : 
-				let roadmapId = getCardId("roadmap");
-				let actionPlanRef = roadmapRef.child(roadmapId).child("children");
-				return actionPlanRef;
-			default: 
-				return null;
-		};
-
-	} else {
-
-		const idThreadObject = getIdThreadObjectById(inputIdHere);
-		const layer = getLayerById(inputIdHere);
-
-		const directionRef = characterRef[getParentsIdfromChildId(idThreadObject.characterId)].child("children");
-		const roadmapRef = directionRef[getParentsIdfromChildId(idThreadObject.directionId)].child("children");
-		const actionPlanRef = roadmapRef[getParentsIdfromChildId(idThreadObject.roadmapId)].child("children");
-
-		switch(layer){
-			case "character" : 
-				return characterRef;
-			case "direction" : 
-				return directionRef;
-			case "roadmap" : 
-				return roadmapRef;
-			case "actionPlan" : 
-				return actionPlanRef;
-			default: 
-				return null;
-		};
+function copyAndPastSwitch() {
+	//자주 쓰는 텍스트의 복붙을 위한 자료, 의미없는 함수
+	switch(layerHere) {
+		case "character" :
+		case "direction" :
+		case "roadmap" :
+		case "actionPlan" :
+		default :
 	};
-};
+}
 
 function getParentsLayerBySwitchLayer(layerHere) {
 	switch(layerHere){
