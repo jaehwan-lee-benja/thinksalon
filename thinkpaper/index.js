@@ -94,12 +94,12 @@ function requestReadBigPicture(user) {
 						showItOnUI("character", mainId);
 					} else {
 						showItOnUI(EachLayer, latestIdOfEachLayer);
-					}
+					};
 					setupBtnShowOrHideByClassName(EachLayer, "readCard");
-					showSelectbox(EachLayer);
+					updateSelectbox(EachLayer);
 				} else {
 					showItIfNoBpData(EachLayer);
-				}
+				};
 			});
 		};
 
@@ -375,12 +375,8 @@ function packageEditedCard(layerHere) {
 ///// UI manager
 
 function showEmptyCard(layerHere) {
+	console.log("layerHere @showEmptyCard =", layerHere);
 	getSelectorById(layerHere).value = "";
-	// getSelectorById("direction").value = "";
-	// getSelectorById("roadmapArea").value = "";
-	// getSelectorById("roadmapB").value = "";
-	// getSelectorById("roadmapA").value = "";
-	// getSelectorById("actionPlan").value = "";
 	setupBtnShowOrHideByClassName(layerHere,"createFirstCard");
 	// setupBtnShowOrHideByClassName("direction","readCard");
 };
@@ -391,25 +387,10 @@ function showItOnUI(layerHere, idHere) {
 		getSelectorById("cardId_"+layerHere).value = objectById[idHere].id;
 		getSelectorById("cardParentsId_"+layerHere).value = objectById[idHere].parentsId;
 	} else {
-		console.log("showItOnUI with no Id parameter");
+		console.log("Id = null @showItOnUI");
 		getSelectorById(layerHere).value = "";
 	};
 	setupBtnShowOrHideByClassName(layerHere,"readCard");
-};
-
-function showItOnUIWithLayer(layerHere, id) {
-	if (layerHere == "character") {
-		let parentsOfCharacter = bigPicture.children[id]
-		getSelectorById("character").value = parentsOfCharacter.contents.character;
-		getSelectorById("cardId_character").value = parentsOfCharacter.id;
-		setupBtnShowOrHideByClassName("character","readCard");
-	} else {
-		let parentsIdOfDirection = indexId(id).parentsId;
-		let parentsOfDirection = bigPicture.children[parentsIdOfDirection].children[id];
-		getSelectorById("direction").value = parentsOfDirection.contents.direction;
-		getSelectorById("cardId_direction").value = parentsOfDirection.id;
-		setupBtnShowOrHideByClassName("direction","readCard");
-	};
 };
 
 function hideUI(id) {
@@ -522,6 +503,7 @@ function resizeTextarea() {
 };
 
 function showItIfNoBpData(layerHere) {
+	console.log("layerHere @showItIfNoBpData", layerHere);
 	showEmptyCard(layerHere);
 	let guideMessage = getSelectorById("guideMessage").innerHTML;
 	if (guideMessage == "") {
@@ -535,7 +517,7 @@ function highLightBorder(id, color) {
 
 ///// selectbox manager
 
-function showSelectbox(layerHere, idHere) {
+function updateSelectbox(layerHere) {
 
 	let selectboxId = "selectbox_"+layerHere;
 	let selectbox = getSelectorById(selectboxId);
@@ -596,25 +578,72 @@ function showSelectbox(layerHere, idHere) {
 };
 
 function selectBySelectbox(layerHere) {
-	let selectboxId = "selectbox_"+layerHere
+	let selectboxId = "selectbox_"+layerHere;
 	let id = getSelectorById(selectboxId).value;
-	showItOnUIWithLayer(layerHere, id);
+	showItOnUI(layerHere, id);
 
-	if(layerHere == "character") {
-		let parentsOfDirection = bigPicture.children[id];
-		let idArray = Object.keys(parentsOfDirection.children);
+	function showItOnUI_latest_byLayerCondition(layer1, layer2, layer3, layer4) {
 
-		if(idArray.length < 1) {
-			showItOnUI("direction", getLastestEditedId_direction(getDirectionIdArray()));
-			showSelectbox("direction");			
-			setupBtnShowOrHideByClassName("direction","readCard");
-			return null;
-		} else {
-			showItOnUI("direction", getLastestEditedId_direction(getDirectionIdArray()));
-			showSelectbox("direction", id);
-			setupBtnShowOrHideByClassName("direction","readCard");
+		let idThreadObjectKeysArray = [layer1, layer2, layer3, layer4];
+
+		console.log("idThreadObjectKeysArray = ", idThreadObjectKeysArray);
+
+		function getLatestIdByLayer(layerHere) {
+			let eachIdArrayByLayer = getEveryIdArrayOfLayer(layerHere);
+			if(eachIdArrayByLayer.length > 0){
+				let latestId = getLastestEditedId(eachIdArrayByLayer);
+				return latestId;
+			} else {
+				return null;
+			};
 		};
+
+		idThreadObjectKeysArray.forEach(eachLayer => {
+			if (eachLayer != undefined) {
+				let latestIdOfEachLayer = getLatestIdByLayer(eachLayer);
+				console.log("latestIdOfEachLayer =", latestIdOfEachLayer);
+				if(latestIdOfEachLayer != null) {
+					showItOnUI(eachLayer, latestIdOfEachLayer);
+					setupBtnShowOrHideByClassName(eachLayer, "readCard");
+				} else {
+					console.log("EachLayer =", eachLayer);
+					showItIfNoBpData(eachLayer);
+				};
+				updateSelectbox(eachLayer);
+			};
+		});
 	};
+
+	switch(layerHere) {
+		case "character" :
+			showItOnUI_latest_byLayerCondition("direction");
+			// 리팩토링 후 "roadmap", "actionPlan" 넣기
+			break;
+		case "direction" :
+			// showItOnUI_latest_byLayerCondition("roadmap", "actionPlan");
+			break;
+		case "roadmap" :
+			showItOnUI_latest_byLayerCondition("actionPlan");
+		case "actionPlan" :
+			// 해당없음
+		default : null;
+	};
+
+	// if(layerHere == "character") {
+	// 	let parentsOfDirection = bigPicture.children[id];
+	// 	let idArray = Object.keys(parentsOfDirection.children);
+
+	// 	if(idArray.length < 1) {
+	// 		showItOnUI("direction", getLastestEditedId_direction(getDirectionIdArray()));
+	// 		updateSelectbox("direction");			
+	// 		setupBtnShowOrHideByClassName("direction","readCard");
+	// 		return null;
+	// 	} else {
+	// 		showItOnUI("direction", getLastestEditedId_direction(getDirectionIdArray()));
+	// 		updateSelectbox("direction");
+	// 		setupBtnShowOrHideByClassName("direction","readCard");
+	// 	};
+	// };
 };
 
 ///// mainCard mananger
@@ -626,7 +655,7 @@ function setMainCard() {
 
 function gotoMainCard() {
 	showItOnUI("character", getMainId());
-	showSelectbox("selectbox_character");
+	updateSelectbox("selectbox_character");
 };
 
 function getMainId() {
@@ -876,74 +905,6 @@ function getLastestEditedId_direction(arrHere) {
 	};
 
 };
-
-function getIdArrayByMap(layer, scope1, key1, scope2, key2, characterIdHere) {		
-
-	const characterIdArray = getEveryIdArrayOfLayer("character");
-	console.log("characterIdArray =", characterIdArray);
-
-	if(layer == "character"){
-		
-		let mappedArray = characterIdArray.map( id => {
-
-			let obj = {"id":id};
-
-			if (scope1 == "contents") {
-				obj[key1] =  bigPicture.children[id].contents[key1];
-			} else {
-				obj[key1] =  bigPicture.children[id][key1];
-			};
-
-			if (scope2 == "contents") {
-				obj[key2] =  bigPicture.children[id].contents[key2];
-			} else {
-				obj[key2] =  bigPicture.children[id][key2];
-			};
-
-			return obj;
-
-			});
-		return mappedArray;
-
-	} else {
-		function getCharacterId(characterIdHere2) {
-			if (characterIdHere2 != undefined) {
-				return characterIdHere2;
-			} else {
-				return getLastestEditedId(characterIdArray);
-			}
-		};
-		let characterId = getCharacterId(characterIdHere);
-		let parentsOfDirection = bigPicture.children[characterId];
-		let idArray = Object.keys(parentsOfDirection.children);
-
-		if(idArray.length < 1) {
-			return null;
-		} else {
-			let mappedArray = idArray.map( id => {
-				let obj = {"id":id};
-	
-				if (scope1 == "contents") {
-					obj[key1] =  parentsOfDirection.children[id].contents[key1];
-				} else {
-					obj[key1] =  parentsOfDirection.children[id][key1];
-				};
-				if (scope2 == "contents") {
-					obj[key2] =  parentsOfDirection.children[id].contents[key2];
-				} else {
-					obj[key2] =  parentsOfDirection[key2];
-				};
-	
-				return obj;
-				
-				});
-			return mappedArray;
-		};
-	};
-
-};
-
-
 
 // id manager
 // **id manager에서는 필요한 id값을 가져온다.
