@@ -90,13 +90,12 @@ function requestReadBigPicture(user) {
 				let latestIdOfEachLayer = getLatestIdByLayer(EachLayer);
 				console.log("latestIdOfEachLayer = ", latestIdOfEachLayer);
 				if(latestIdOfEachLayer != null) {
-					if(EachLayer == "character") {
-						let mainId = getMainId();
-						if(mainId != null && isMainShown == false) {
-							isMainShown = true;
-							showItOnUI("character", mainId);
-						};
+					let mainId = getMainId();
+					if(EachLayer == "character" && mainId != null && isMainShown == false) {
+						isMainShown = true;
+						showItOnUI("character", mainId);
 					} else {
+						console.log(EachLayer, "|", latestIdOfEachLayer);
 						showItOnUI(EachLayer, latestIdOfEachLayer);
 					}
 					setupBtnShowOrHideByClassName(EachLayer, "readCard");
@@ -476,31 +475,14 @@ function showEmptyCard(layerHere) {
 };
 
 function showItOnUI(layerHere, idHere) {
-	if (idHere != null) {
-		let parentsOfCharacter = bigPicture.children[idHere];
+	console.log("idHere =", idHere);
 
-		if(layerHere == "character") {
-			getSelectorById("character").value = parentsOfCharacter.contents.character;
-			getSelectorById("cardId_character").value = parentsOfCharacter.id;
-			getSelectorById("cardParentsId_character").value = parentsOfCharacter.parentsId;
-		} else {
-			let everyIdArray = Object.keys(objectById);
-			let characterCardId = getSelectorById("cardId_character").value;
-	
-			for(let i = 0; i < everyIdArray.length; i++) {
-	
-				let eachParentsIdOfDirection = objectById[everyIdArray[i]].parentsId;
-	
-				if(eachParentsIdOfDirection == characterCardId){
-					let keyOfDirection = getLastestEditedId_direction(getDirectionIdArray());
-					getSelectorById("direction").value = objectById[keyOfDirection].contents.direction;
-					getSelectorById("cardId_direction").value = objectById[keyOfDirection].id;
-					getSelectorById("cardParentsId_direction").value = objectById[keyOfDirection].parentsId;
-					setupBtnShowOrHideByClassName("direction","readCard");
-				};
-			};
-		};
+	if (idHere != null) {
+		getSelectorById(layerHere).value = objectById[idHere].contents[layerHere];
+		getSelectorById("cardId_"+layerHere).value = objectById[idHere].id;
+		getSelectorById("cardParentsId_"+layerHere).value = objectById[idHere].parentsId;
 	} else {
+		console.log("showItOnUI with no Id parameter");
 		getSelectorById(layerHere).value = "";
 	};
 	setupBtnShowOrHideByClassName(layerHere,"readCard");
@@ -735,7 +717,7 @@ function setMainCard() {
 };
 
 function gotoMainCard() {
-	showItOnUI(getMainId());
+	showItOnUI("character", getMainId());
 	showSelectbox("selectbox_character");
 };
 
