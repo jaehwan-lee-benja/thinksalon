@@ -125,48 +125,52 @@ function requestSetCard(layerHere, packagedDataHere) {
 	const inputId = packagedDataHere.id;
 	const switchedRef = getRefBySwitchLayer(inputId, layerHere);
 	switchedRef.child(inputId).set(packagedDataHere);
+	request_followUpEditedDate(layerHere, packagedDataHere);
 };
 
 function requestUpdateCard(layerHere, packagedDataHere) {
 	const inputId = packagedDataHere.id;
-	const editedDateForParents = {"editedDate": packagedDataHere.editedDate};
 	const switchedRef = getRefBySwitchLayer(inputId, layerHere);
 	switchedRef.child(inputId).update(packagedDataHere, (e) => {
 		console.log("** update completed = ", e);
 		});
+	request_followUpEditedDate(layerHere, packagedDataHere);
+};
 
-	function requestUpdateCard_followUp(layerHere) {
+function request_followUpEditedDate(layerHere, packagedDataHere) {
+
+	const inputId = packagedDataHere.id;
+	const switchedRef = getRefBySwitchLayer(inputId, layerHere);
+	const switchedRefForEmptyData = switchedRef.parent;
+	const editedDateForParents = {"editedDate": packagedDataHere.editedDate};
 		
-		function requestUpdateCard_byLayerCondition(layer1, layer2, layer3, layer4) {
-		
-			let idThreadObjectKeysArray = [layer1, layer2, layer3, layer4];
-		
-			idThreadObjectKeysArray.forEach(eachLayer => {
-				if (eachLayer != undefined) {
-					const switchedRefForEmptyData = switchedRef.parent;
-					switchedRefForEmptyData.update(editedDateForParents, (e) => {
-					console.log("** update completed = ", e);
-					});
-				};
-			});
-		};
-		
-		switch(layerHere) {
-			case "character" :
-				// 해당없음
-				break;
-			case "direction" :
-				requestUpdateCard_byLayerCondition("character");
-				break;
-			case "roadmap" :
-				requestUpdateCard_byLayerCondition("character", "direction");
-			case "actionPlan" :
-				requestUpdateCard_byLayerCondition("character", "direction", "roadmap");
-				// 리팩토링 후 "roadmap", "actionPlan" 넣기
-			default : null;
-		};
+	function requestUpdateEditedDate(layer1, layer2, layer3, layer4) {
+	
+		let idThreadObjectKeysArray = [layer1, layer2, layer3, layer4];
+	
+		idThreadObjectKeysArray.forEach(eachLayer => {
+			if (eachLayer != undefined) {
+				console.log("request_followUpEditedDate test");
+				switchedRefForEmptyData.update(editedDateForParents, (e) => {
+				console.log("** update completed = ", e);
+				});
+			};
+		});
 	};
-	requestUpdateCard_followUp(layerHere);
+	switch(layerHere) {
+		case "character" :
+			// 해당없음
+			break;
+		case "direction" :
+			requestUpdateEditedDate("character");
+			break;
+		case "roadmap" :
+			requestUpdateEditedDate("character", "direction");
+		case "actionPlan" :
+			requestUpdateEditedDate("character", "direction", "roadmap");
+			// 리팩토링 후 "roadmap", "actionPlan" 넣기
+		default : null;
+	};
 };
 
 function requestRemoveCard(layerHere, idHere) {
@@ -180,11 +184,13 @@ function requestRemoveCard(layerHere, idHere) {
 			// [질문] (e)의 역할?
 	} else {
 		let emptyData = {children: ""};
+		console.log("requestRemoveCard test");
 		const switchedRefForEmptyData = switchedRef.parent;
 		switchedRefForEmptyData.set(emptyData);
 	};
 	location.reload();
 };
+	
 
 function requestUpdateMainCard(idHere) {
 	
@@ -234,8 +240,9 @@ function getRefBySwitchLayer(inputIdHere, layerHere) {
 			case "character" :
 				return characterRef;
 			case "direction" : 
-				let characterId = getCardId("character");
+				let characterId = getParentsIdfromChildId("direction", inputIdHere);
 				// [질문] 여기있는 모든 let을 const로 하면 안되는가?
+				console.log("characterId = ", characterId);
 				let directionRef = characterRef.child(characterId).child("children");
 				return directionRef;
 			case "roadmap" : 
@@ -255,9 +262,9 @@ function getRefBySwitchLayer(inputIdHere, layerHere) {
 		const idThreadObject = getIdThreadObjectById(inputIdHere);
 		const layer = getLayerById(inputIdHere);
 
-		const directionRef = characterRef[getParentsIdfromChildId(idThreadObject.characterId)].child("children");
-		const roadmapRef = directionRef[getParentsIdfromChildId(idThreadObject.directionId)].child("children");
-		const actionPlanRef = roadmapRef[getParentsIdfromChildId(idThreadObject.roadmapId)].child("children");
+		const directionRef = characterRef[getParentsIdfromChildId("character", idThreadObject.characterId)].child("children");
+		const roadmapRef = directionRef[getParentsIdfromChildId("direction", idThreadObject.directionId)].child("children");
+		const actionPlanRef = roadmapRef[getParentsIdfromChildId("roadmap", idThreadObject.roadmapId)].child("children");
 
 		switch(layer){
 			case "character" : 
@@ -478,7 +485,7 @@ function showItOnUI_followUp(layerHere) {
 	};
 };
 
-//[질문] 카드 상태가 바뀌면, 작동하도록하기 - 어떻게 인지하는게 좋을까?
+//[질문] 카드 상태가 바뀌면, 통일성을 점검하기? 필요할까? 방법이 있을까?
 
 function hideUI(id) {
 	getSelectorById(id).style.display = "none";
@@ -865,7 +872,8 @@ function date_descending(a, b) { // 내림차순
 };
 
 function getCardId(layerHere) {
-	return getSelectorById("cardId_"+layerHere).value;
+	let result = getSelectorById("cardId_"+layerHere).value;
+	return result;
 };
 
 function getCardParentsId(layerHere) {
@@ -896,15 +904,16 @@ function getLastestEditedId(keysArrayHere) {
 // **id manager에서는 필요한 id값을 가져온다.
 // **id 값은 대표적으로 parentsId, idTread로 해당한다.
 
-function getParentsIdfromChildId(childIdHere) {
-
+function getParentsIdfromChildId(layerHere, childIdHere) {
 	console.log("**=====getParentsIdfromChildId start=====");
 
-	let everyIdArray = getEveryIdArray();
-	let layer = getLayerById(childIdHere);
+	console.log("layerHere =", layerHere);
+	console.log("childIdHere =", childIdHere);
+
+	let everyIdArray = getEveryIdArrayOfLayer(layerHere);
 	let parentsId = "";
 
-	if(layer == "character") {
+	if(layerHere == "character") {
 		parentsId = "bigPicture";
 		return parentsId;
 	} else {
@@ -914,6 +923,8 @@ function getParentsIdfromChildId(childIdHere) {
 				return parentsId;
 			};
 		};
+		parentsId = getCardId(getParentsLayerBySwitchLayer(layerHere));
+		// [질문] 신규 id가 떴을 때, 어떤 레이어인지 알 수 있는 방법
 		return parentsId;
 	};
 };
@@ -947,23 +958,23 @@ function getIdThreadObjectById(inputIdhere) {
 					returnObject["actionPlanId"] = "";
 					break;
 				case "direction" :
-					returnObject["characterId"] = getParentsIdfromChildId(inputIdhere);
+					returnObject["characterId"] = getParentsIdfromChildId("character", inputIdhere);
 					returnObject["directionId"] = inputIdhere;
 					returnObject["roadmapId"] = "";
 					returnObject["actionPlanId"] = "";
 					break;
 				case "roadmap" :
-					let directionId = getParentsIdfromChildId(inputIdhere);
-					let characterId = getParentsIdfromChildId(directionId);
+					let directionId = getParentsIdfromChildId("direction", inputIdhere);
+					let characterId = getParentsIdfromChildId("character", directionId);
 					returnObject["characterId"] = characterId;
 					returnObject["directionId"] = directionId;
 					returnObject["roadmapId"] = inputIdhere;
 					returnObject["actionPlanId"] = "";
 					break;
 				case "actionPlan" :
-					let roadmapId = getParentsIdfromChildId(inputIdhere);
-					let direcitonId2 = getParentsIdfromChildId(roadmapId);
-					let characterId2 = getParentsIdfromChildId(direcitonId2);
+					let roadmapId = getParentsIdfromChildId("roadmap", inputIdhere);
+					let direcitonId2 = getParentsIdfromChildId("direction", roadmapId);
+					let characterId2 = getParentsIdfromChildId("character", direcitonId2);
 					returnObject["characterId"] = characterId2;
 					returnObject["directionId"] = direcitonId2;
 					returnObject["roadmapId"] = roadmapId;
