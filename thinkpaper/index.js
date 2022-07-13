@@ -88,8 +88,20 @@ function requestReadBigPicture(user) {
 			idThreadObjectKeysArray.forEach(EachLayer => {
 				let latestIdOfEachLayer = getLatestIdByLayer(EachLayer);
 				if(latestIdOfEachLayer != null) {
+
+					// let mainId = null;
+
+					// let characterIdArray = getEveryIdArrayOfLayer("character");
+					// characterIdArray.forEach(eachId => {
+					// 	// console.log("objectById[eachId].main =", objectById[eachId].main);
+					// 	if(objectById[eachId].main == "main") {
+					// 		mainId = eachId;
+					// 	};
+					// });
+
 					let mainId = getMainId();
-					if(EachLayer == "character" && mainId != null && isMainShown == false) {
+				
+					if(mainId != null && isMainShown == false) {
 						isMainShown = true;
 						showItOnUI("character", mainId);
 					} else {
@@ -452,6 +464,7 @@ function setupBtnShowOrHideByClassName_main(className) {
 
 	let cardId = getSelectorById("cardId_character").value;
 	let mainId = getMainId();
+
 	if(cardId == mainId) {
 		showUI("setMainCard_txt_"+className);
 	} else {
@@ -557,7 +570,7 @@ function updateSelectbox(layerHere) {
 	};
 
 	let sortedArray = sortingArray(mappedArray);
-	console.log(layerHere, "|", sortedArray);
+	// console.log(layerHere, "|", sortedArray);
 
 	// <option> 만들어서, Array 넣기
 	for (let i = 0; i < sortedArray.length; i++) {
@@ -582,66 +595,53 @@ function updateSelectbox(layerHere) {
 function selectBySelectbox(layerHere) {
 	let selectboxId = "selectbox_"+layerHere;
 	let id = getSelectorById(selectboxId).value;
-	showItOnUI(layerHere, id);
+	console.log("id =", id);
+	if(id != SELECTBOX_BPTITLE_VALUE_INIT) {
+		showItOnUI(layerHere, id);
 
-	function showItOnUI_latest_byLayerCondition(layer1, layer2, layer3, layer4) {
-
-		let idThreadObjectKeysArray = [layer1, layer2, layer3, layer4];
-
-		function getLatestIdByLayer(layerHere) {
-			let eachIdArrayByLayer = getEveryIdArrayOfLayer(layerHere);
-			if(eachIdArrayByLayer.length > 0){
-				let latestId = getLastestEditedId(eachIdArrayByLayer);
-				return latestId;
-			} else {
-				return null;
-			};
-		};
-
-		idThreadObjectKeysArray.forEach(eachLayer => {
-			if (eachLayer != undefined) {
-				let latestIdOfEachLayer = getLatestIdByLayer(eachLayer);
-				if(latestIdOfEachLayer != null) {
-					showItOnUI(eachLayer, latestIdOfEachLayer);
-					setupBtnShowOrHideByClassName(eachLayer, "readCard");
+		function showItOnUI_latest_byLayerCondition(layer1, layer2, layer3, layer4) {
+	
+			let idThreadObjectKeysArray = [layer1, layer2, layer3, layer4];
+	
+			function getLatestIdByLayer(layerHere) {
+				let eachIdArrayByLayer = getEveryIdArrayOfLayer(layerHere);
+				if(eachIdArrayByLayer.length > 0){
+					let latestId = getLastestEditedId(eachIdArrayByLayer);
+					return latestId;
 				} else {
-					showItIfNoBpData(eachLayer);
+					return null;
 				};
-				updateSelectbox(eachLayer);
 			};
-		});
+	
+			idThreadObjectKeysArray.forEach(eachLayer => {
+				if (eachLayer != undefined) {
+					let latestIdOfEachLayer = getLatestIdByLayer(eachLayer);
+					if(latestIdOfEachLayer != null) {
+						showItOnUI(eachLayer, latestIdOfEachLayer);
+						setupBtnShowOrHideByClassName(eachLayer, "readCard");
+					} else {
+						showItIfNoBpData(eachLayer);
+					};
+					updateSelectbox(eachLayer);
+				};
+			});
+		};
+	
+		switch(layerHere) {
+			case "character" :
+				showItOnUI_latest_byLayerCondition("direction");
+				// 리팩토링 후 "roadmap", "actionPlan" 넣기
+				break;
+			case "direction" :
+				// showItOnUI_latest_byLayerCondition("roadmap", "actionPlan");
+				break;
+			case "roadmap" :
+				showItOnUI_latest_byLayerCondition("actionPlan");
+			case "actionPlan" :
+				// 해당없음
+			default : null;
+		};
 	};
-
-	switch(layerHere) {
-		case "character" :
-			showItOnUI_latest_byLayerCondition("direction");
-			// 리팩토링 후 "roadmap", "actionPlan" 넣기
-			break;
-		case "direction" :
-			// showItOnUI_latest_byLayerCondition("roadmap", "actionPlan");
-			break;
-		case "roadmap" :
-			showItOnUI_latest_byLayerCondition("actionPlan");
-		case "actionPlan" :
-			// 해당없음
-		default : null;
-	};
-
-	// if(layerHere == "character") {
-	// 	let parentsOfDirection = bigPicture.children[id];
-	// 	let idArray = Object.keys(parentsOfDirection.children);
-
-	// 	if(idArray.length < 1) {
-	// 		showItOnUI("direction", getLastestEditedId_direction(getDirectionIdArray()));
-	// 		updateSelectbox("direction");			
-	// 		setupBtnShowOrHideByClassName("direction","readCard");
-	// 		return null;
-	// 	} else {
-	// 		showItOnUI("direction", getLastestEditedId_direction(getDirectionIdArray()));
-	// 		updateSelectbox("direction");
-	// 		setupBtnShowOrHideByClassName("direction","readCard");
-	// 	};
-	// };
 };
 
 ///// mainCard mananger
@@ -652,17 +652,21 @@ function setMainCard() {
 };
 
 function gotoMainCard() {
-	showItOnUI("character", getMainId());
-	updateSelectbox("selectbox_character");
+	let mainId = getMainId();
+	showItOnUI("character", mainId);
+	updateSelectbox("character");
 };
 
 function getMainId() {
 	let characterIdArray = getEveryIdArrayOfLayer("character");
+	let mainId = "";
 	characterIdArray.forEach(eachId => {
+		// console.log("objectById[eachId].main =", objectById[eachId].main);
 		if(objectById[eachId].main == "main") {
-			return eachId;
+			mainId = eachId;
 		};
 	});
+	return mainId;
 };
 
 ///// CRUD manager
@@ -770,7 +774,7 @@ function monitorCardBlankOrDuplicates(layerHere) {
 					return mappingObject;
 			
 					});
-			
+				console.log("mappedObject =", mappedObject);
 				return mappedObject;
 			};
 
