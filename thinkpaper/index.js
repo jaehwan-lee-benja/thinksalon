@@ -73,11 +73,12 @@ function requestReadBigPicture(user) {
 
 		function showItOnUI_latest() {
 
-			let idThreadObjectKeysArray = ["character", "direction", "roadmap", "actionPlan"];
+			let idThreadObjectKeysArray = ["character", "direction"];
+			// 리팩토링 후 "roadmap", "actionPlan" 넣기
 	
 			function getLatestIdByLayer(layerHere) {
 				let eachIdArrayByLayer = getEveryIdArrayOfLayer(layerHere);
-				if(eachIdArrayByLayer > 0){
+				if(eachIdArrayByLayer.length > 0){
 					let latestId = getLastestEditedId(eachIdArrayByLayer);
 					return latestId;
 				} else {
@@ -87,6 +88,7 @@ function requestReadBigPicture(user) {
 
 			idThreadObjectKeysArray.forEach(EachLayer => {
 				let latestIdOfEachLayer = getLatestIdByLayer(EachLayer);
+				console.log("latestIdOfEachLayer = ", latestIdOfEachLayer);
 				if(latestIdOfEachLayer != null) {
 					if(EachLayer == "character") {
 						let mainId = getMainId();
@@ -148,6 +150,7 @@ function requestReadBigPicture(user) {
 ///// LtoS manager
 
 function requestSetCard(packagedDataHere) {
+	console.log("=====requestSetCard start here=====")
 	const inputId = packagedDataHere.id;
 	const inputLayer = packagedDataHere.layer;
 	const switchedRef = getRefBySwitchLayer(inputId, inputLayer);
@@ -652,40 +655,35 @@ function showSelectbox(layerHere, idHere) {
 	};
 
 	// Array 만들기
-	function getMappedArray(layerHere2){
-		let mappedArray = getIdArrayByMap(layerHere2,"general", "editedDate", "contents", layerHere2, idHere);
-		return mappedArray;
+
+	function getMappedObject_IdEditedDateContents(layerHere3) {		
+
+		let returnArray = [];
+
+		let eachIdArrayByLayer = getEveryIdArrayOfLayer(layerHere3);
+		eachIdArrayByLayer.forEach(EachId => {
+			let returnObject = {};
+			returnObject["id"] = objectById[EachId].id;
+			returnObject["editedDate"] = objectById[EachId].editedDate;
+			returnObject[layerHere3] = objectById[EachId].contents[layerHere3];
+			returnArray.push(returnObject);
+		});
+
+		return returnArray;
 	};
 
-	let mappedArray = getMappedArray(layerHere);
-	  
+	let mappedArray = getMappedObject_IdEditedDateContents(layerHere);
+
 	// selectbox option list 순서 잡기(최근 편집 순서)
-	function sortingArray(mappedArrayHere) {
-
-		let editedDateArray = mappedArrayHere.map(element => element.editedDate);
-		let editedDateArrayinReverseOrder = editedDateArray.sort(date_descending);
-
-		let arr = [];
-
-		for(let i = 0; i < editedDateArrayinReverseOrder.length; i++) {
-
-			let datesAfterSorting = editedDateArrayinReverseOrder[i];
-
-			for (let j = 0; j < editedDateArray.length; j++) {
-
-				let id = mappedArrayHere[j].id;
-				let datesBeforeSorting = mappedArrayHere[j].editedDate;
-
-				if (datesAfterSorting == datesBeforeSorting) {
-					let value = mappedArrayHere[j][layerHere];
-					arr.push({"id": id, "editedDate": datesBeforeSorting, [layerHere]: value});
-				};
-			};
-		};
-		return arr;
+	function sortingArray(mappedArrayHere){
+		mappedArrayHere.sort(
+			(a,b) => new Date(b.editedDate) - new Date(a.editedDate)
+		);
+		return mappedArrayHere;
 	};
 
 	let sortedArray = sortingArray(mappedArray);
+	console.log("sortedArray =", sortedArray);
 
 	// <option> 만들어서, Array 넣기
 	for (let i = 0; i < sortedArray.length; i++) {
@@ -742,12 +740,12 @@ function gotoMainCard() {
 };
 
 function getMainId() {
-	let idMainArray = getIdArrayByMap("character","general", "main");
-	for(let i = 0; i < idMainArray.length; i++) {
-		if(idMainArray[i].main == "main"){
-			return idMainArray[i].id;
+	let characterIdArray = getEveryIdArrayOfLayer("character");
+	characterIdArray.forEach(eachId => {
+		if(objectById[eachId].main == "main") {
+			return eachId;
 		};
-	};
+	});
 };
 
 ///// CRUD manager
@@ -955,7 +953,7 @@ function getLastestEditedId(keysArrayHere) {
 		let c = objectById[id];
 		return {"id": id, "editedDate": c.editedDate};
 	}).sort(
-		(a,b) => new Date(b.date) - new Date(a.date)
+		(a,b) => new Date(b.editedDate) - new Date(a.editedDate)
 	);
 
 	if (mappedArray != null) {
@@ -990,7 +988,8 @@ function getLastestEditedId_direction(arrHere) {
 
 function getIdArrayByMap(layer, scope1, key1, scope2, key2, characterIdHere) {		
 
-	const characterIdArray = Object.keys(bigPicture.children);
+	const characterIdArray = getEveryIdArrayOfLayer("character");
+	console.log("characterIdArray =", characterIdArray);
 
 	if(layer == "character"){
 		
