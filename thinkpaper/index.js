@@ -64,7 +64,6 @@ function requestReadBigPicture(user) {
 	const userRef = db.ref("users").child(user.uid).child("bigPicture");
 	
 	userRef.on("value", (snapshot) => {
-
 		console.log("**===== .on is here =====");
 
 		const v = snapshot.val();
@@ -88,14 +87,12 @@ function requestReadBigPicture(user) {
 
 			idThreadObjectKeysArray.forEach(EachLayer => {
 				let latestIdOfEachLayer = getLatestIdByLayer(EachLayer);
-				console.log("latestIdOfEachLayer = ", latestIdOfEachLayer);
 				if(latestIdOfEachLayer != null) {
 					let mainId = getMainId();
 					if(EachLayer == "character" && mainId != null && isMainShown == false) {
 						isMainShown = true;
 						showItOnUI("character", mainId);
 					} else {
-						console.log(EachLayer, "|", latestIdOfEachLayer);
 						showItOnUI(EachLayer, latestIdOfEachLayer);
 					}
 					setupBtnShowOrHideByClassName(EachLayer, "readCard");
@@ -107,9 +104,7 @@ function requestReadBigPicture(user) {
 		};
 
 		showItOnUI_latest();
-		
-		// 카드가 비어있으면 idArray를 체크해서, 만약 값이 없으면, empty를 보여주고, 값이 있으면, 최선것을 보여주는 함수 만들기
-
+	
 		snapshot.forEach(childSnap => {
 			let key_id = childSnap.key;
 			let value_data = childSnap.val();
@@ -117,136 +112,35 @@ function requestReadBigPicture(user) {
 			// console.log('**>>>> ',bigPicture);
 		});
 
-		// const characterIdArray = getEveryIdArrayOfLayer("character");
-
-		// if (characterIdArray.length > 0) {
-		// 	let mainId = getMainId();
-		// 	if(mainId != null && isMainShown == false) {
-		// 		isMainShown = true;
-		// 		showItOnUI(mainId);
-		// 	} else {
-		// 		showItOnUI("character", getLastestEditedId(characterIdArray));
-		// 	};
-		// 	showSelectbox("character");
-
-		// 	let parentsOfDirection = bigPicture.children[getLastestEditedId(characterIdArray)];
-		// 	let idArray = Object.keys(parentsOfDirection.children);
-
-		// 	if(idArray.length < 1) {
-		// 		setupBtnShowOrHideByClassName("direction","readCard");
-		// 		return null;
-		// 	} else {
-		// 		showItOnUI("direction", getLastestEditedId_direction(getDirectionIdArray()));
-		// 		showSelectbox("direction");
-		// 	};
-		// } else {
-		// showItIfNoBpData();
-		// };
-
 	});
 };
 
 ///// LtoS manager
 
-function requestSetCard(packagedDataHere) {
-	console.log("=====requestSetCard start here=====")
+function requestSetCard(layerHere, packagedDataHere) {
 	const inputId = packagedDataHere.id;
-	const inputLayer = packagedDataHere.layer;
-	const switchedRef = getRefBySwitchLayer(inputId, inputLayer);
+	const switchedRef = getRefBySwitchLayer(inputId, layerHere);
 	switchedRef.child(inputId).set(packagedDataHere);
 };
 
 function requestUpdateCard(layerHere, packagedDataHere) {
 	const inputId = packagedDataHere.id;
-	let idThreadObject = getIdThreadObjectById(inputId);
-	const switchedRef = getRefBySwitchLayer(inputId);
-	switchedRef.child(inputId).set(packagedDataHere);
-
-	// const characterRef = db.ref("users")
-	// .child(userData.uid)
-	// .child("bigPicture")
-	// .child("children");
-
-	// switch(layerHere){
-	// 	case "character" :
-	// 		characterRef
-	// 		.child(packagedDataHere.id)
-	// 		.update(packagedDataHere, (e) => {
-	// 			console.log("** update completed = ", e);
-	// 			});			
-	// 		break;
-	// 	case "direction" :
-	// 		characterRef
-	// 		.child(packagedDataHere.parentsId)
-	// 		.child("children")
-	// 		.child(packagedDataHere.id)
-	// 		.update(packagedDataHere, (e) => {
-	// 			console.log("** update completed = ", e);
-	// 			});
-	// 		break;
-	// 	case "roadmap" :
-	// 		console.log("**roadmap");
-	// 		break;
-	// 	case "actionPlan" :
-	// 		console.log("**actionPlan");
-	// 		break;
-	// 	default: 
-	// 		let layerHere = null;
-	// };
-
+	const switchedRef = getRefBySwitchLayer(inputId, layerHere);
+	switchedRef.child(inputId).update(packagedDataHere, (e) => {
+		console.log("** update completed = ", e);
+		});
 };
 
 function requestRemoveCard(layerHere, idHere) {
-
-	const characterIdArray = Object.keys(bigPicture.children);
-
-	const characterRef = db.ref("users")
-	.child(userData.uid)
-	.child("bigPicture")
-	.child("children");
-
-	let emptyData = {children: ""};
-
-	switch(layerHere){
-		case "character" :
-
-			if (characterIdArray.length != 1) {
-				characterRef
-				.child(idHere)
-				.remove();
-			} else {
-				db.ref("users")
-				.child(userData.uid)
-				.child("bigPicture")
-				.set(emptyData);
-			};		
-			break;
-
-		case "direction" :
-
-			if (getDirectionIdArray().length != 1) {
-
-				characterRef
-				.child(getParentsIdfromChildId(idHere))
-				.child("children")
-				.child(idHere)
-				.remove();
-				
-			} else {
-				characterRef
-				.child(idHere)
-				.set(emptyData);
-			};		
-			break;
-
-		case "roadmap" :
-			console.log("**roadmap");
-			break;
-		case "actionPlan" :
-			console.log("**actionPlan");
-			break;
-		default: 
-			let layer = null;
+	const inputId = idHere;
+	const switchedRef = getRefBySwitchLayer(inputId, layerHere);
+	const idArrayLength = getEveryIdArrayOfLayer(layerHere).length;
+	if(idArrayLength != 1){
+		switchedRef.child(inputId).remove();
+	} else {
+		let emptyData = {children: ""};
+		const switchedRefForEmptyData = switchedRef.parent;
+		switchedRefForEmptyData.set(emptyData);
 	};
 };
 
@@ -409,7 +303,24 @@ function packageEditedCard(layerHere) {
 		let object = {"id": id, [layerHere2]: value};
 
 		// 로컬 데이터에 있는 값 포착하기
-		let arrayWithId = getIdArrayByMap(layerHere, "contents", layerHere);
+
+		function getMappedObject_IdContents(layerHere2) {		
+
+			let returnArray = [];
+	
+			let eachIdArrayByLayer = getEveryIdArrayOfLayer(layerHere2);
+			eachIdArrayByLayer.forEach(EachId => {
+				let returnObject = {};
+				returnObject["id"] = objectById[EachId].id;
+				returnObject[layerHere2] = objectById[EachId].contents[layerHere2];
+				returnArray.push(returnObject);
+			});
+	
+			return returnArray;
+		};
+
+		let arrayWithId = getMappedObject_IdContents(layerHere);
+		// let arrayWithId = getIdArrayByMap(layerHere, "contents", layerHere);
 	
 		// 위 두가지가 같은 경우의 수라면, 수정이 이뤄지지 않은 상태
 		for(let i = 0; i < arrayWithId.length; i++) {
@@ -475,8 +386,6 @@ function showEmptyCard(layerHere) {
 };
 
 function showItOnUI(layerHere, idHere) {
-	console.log("idHere =", idHere);
-
 	if (idHere != null) {
 		getSelectorById(layerHere).value = objectById[idHere].contents[layerHere];
 		getSelectorById("cardId_"+layerHere).value = objectById[idHere].id;
@@ -665,7 +574,6 @@ function showSelectbox(layerHere, idHere) {
 	};
 
 	let sortedArray = sortingArray(mappedArray);
-	console.log("sortedArray =", sortedArray);
 
 	// <option> 만들어서, Array 넣기
 	for (let i = 0; i < sortedArray.length; i++) {
@@ -735,7 +643,7 @@ function getMainId() {
 function saveNewCard(layerHere) {
 	let packagedBpData = packageNewCard(layerHere);
 	if (packagedBpData != null) {
-		requestSetCard(packagedBpData);
+		requestSetCard(layerHere,packagedBpData);
 		alert("저장되었습니다.");
 	};
 };
@@ -743,6 +651,7 @@ function saveNewCard(layerHere) {
 function saveEditedCard(layerHere) {
 	let packagedData = packageEditedCard(layerHere);
 	if (packagedData != null) {
+		console.log("packagedData =", packagedData);
 		requestUpdateCard(layerHere, packagedData);
 		alert("저장되었습니다.");
 	};
@@ -839,13 +748,11 @@ function monitorCardBlankOrDuplicates(layerHere) {
 			};
 
 			let mappedIdArray = switchForGetSameTextArray(layerHere2);
-			console.log("mappedIdArray =", mappedIdArray);
 		
 			let valueArray = [];
 			for(let i = 0; i < mappedIdArray.length; i++) {
 				valueArray.push(mappedIdArray[i][layerHere2]);
 			};
-			console.log("valueArray =", valueArray);
 		
 			let filterSameTextArray = (query) => {
 				return valueArray.find(value => query == value);
@@ -901,7 +808,9 @@ function getCardId(layerHere) {
 };
 
 function getCardParentsId(layerHere) {
-	return getSelectorById("cardParentsId_"+layerHere).value;
+	let result = getSelectorById("cardParentsId_"+layerHere).value;
+	console.log("result =", result);
+	return result;
 };
 
 function indexId(idHere) {
