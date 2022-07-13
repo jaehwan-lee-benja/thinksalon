@@ -57,7 +57,7 @@ function requestReadIdAndObjectFromChildren(o){
 		requestReadIdAndObjectFromChildren(v)
 	});
 	
-}
+};
 
 function requestReadBigPicture(user) {
 
@@ -67,6 +67,8 @@ function requestReadBigPicture(user) {
 		console.log("**===== .on is here =====");
 
 		const v = snapshot.val();
+		console.log("v =", v);
+		objectById = {};
 		requestReadIdAndObjectFromChildren(v);
 		// console.log('**objectById >>',objectById)
 
@@ -124,7 +126,7 @@ function requestReadBigPicture(user) {
 function requestSetCard(layerHere, packagedDataHere) {
 	const inputId = packagedDataHere.id;
 	const switchedRef = getRefBySwitchLayer(inputId, layerHere);
-	switchedRef.child(inputId).set(packagedDataHere);
+	switchedRef.child(inputId).set(packagedDataHere, (e) => {alert("저장되었습니다.");});
 	request_followUpEditedDate(layerHere, packagedDataHere);
 };
 
@@ -152,6 +154,7 @@ function request_followUpEditedDate(layerHere, packagedDataHere) {
 			if (eachLayer != undefined) {
 				console.log("request_followUpEditedDate test");
 				switchedRefForEmptyData.update(editedDateForParents, (e) => {
+				// [시도하기] *문서 확인하기
 				console.log("** update completed = ", e);
 				});
 			};
@@ -178,17 +181,17 @@ function requestRemoveCard(layerHere, idHere) {
 	const switchedRef = getRefBySwitchLayer(inputId, layerHere);
 	const idArrayLength = getEveryIdArrayOfLayer(layerHere).length;
 	if(idArrayLength != 1){
-		switchedRef.child(inputId).remove( (e) => {
+		console.log("test @requestRemoveCard");
+		switchedRef.child(inputId).remove((e) => {
 			console.log("** remove completed = ", e);
 			});
-			// [질문] (e)의 역할?
 	} else {
 		let emptyData = {children: ""};
 		console.log("requestRemoveCard test");
 		const switchedRefForEmptyData = switchedRef.parent;
 		switchedRefForEmptyData.set(emptyData);
 	};
-	location.reload();
+	// location.reload();
 };
 	
 
@@ -241,7 +244,7 @@ function getRefBySwitchLayer(inputIdHere, layerHere) {
 				return characterRef;
 			case "direction" : 
 				let characterId = getParentsIdfromChildId("direction", inputIdHere);
-				// [질문] 여기있는 모든 let을 const로 하면 안되는가?
+				// [시도] 여기있는 모든 let을 const로 하면 안되는가?
 				console.log("characterId = ", characterId);
 				let directionRef = characterRef.child(characterId).child("children");
 				return directionRef;
@@ -485,7 +488,7 @@ function showItOnUI_followUp(layerHere) {
 	};
 };
 
-//[질문] 카드 상태가 바뀌면, 통일성을 점검하기? 필요할까? 방법이 있을까?
+//[질문 보류] 카드 상태가 바뀌면, 통일성을 점검하기? 필요할까? 방법이 있을까?
 
 function hideUI(id) {
 	getSelectorById(id).style.display = "none";
@@ -650,7 +653,7 @@ function updateSelectbox(layerHere) {
 	};
 
 	let sortedArray = sortingArray(mappedArray);
-	// console.log(layerHere, "|", sortedArray);
+	console.log(layerHere, "|", sortedArray);
 
 	// <option> 만들어서, Array 넣기
 	for (let i = 0; i < sortedArray.length; i++) {
@@ -721,7 +724,7 @@ function saveNewCard(layerHere) {
 	if (packagedBpData != null) {
 		requestSetCard(layerHere, packagedBpData);
 		showItOnUI_followUp(layerHere);
-		alert("저장되었습니다.");
+		
 	};
 };
 
@@ -781,10 +784,14 @@ function openNewCard(layerHere) {
 function openEditCardByDbclick() {
 	const textareaOnCard = document.getElementsByTagName("textarea");
 	const characterIdArray = getEveryIdArrayOfLayer("character");
-	//[질문] 클릭된 카드 layer를 고르는 방법
+	//[스터디] 클릭된 카드 layer를 고르는 방법
 
 	for (let i = 0; i < textareaOnCard.length; i++) {
 		textareaOnCard[i].addEventListener("dblclick", function (e) {
+			console.log("e=", e);
+			console.log("e.id=", e.id);
+			console.log("e.target=", e.target);
+			console.log("e.target.id=", e.target.id);
 			if(characterIdArray.length > 0){
 				openEditCard();
 			};
@@ -824,7 +831,11 @@ function monitorCardBlankOrDuplicates(layerHere) {
 		
 			let filterSameTextArray = (query) => {
 				return valueArray.find(value => query == value);
-			}; //[질문] 문법 형태의 이해
+			}; //문법 형태의 이해
+
+			// function filterSameTextArray(query) {
+			// 	return valueArray.find(value => query == value);
+			// }; //한번더 보기
 		
 			let sameTextArray = filterSameTextArray(cardValueHere);
 		
@@ -924,7 +935,7 @@ function getParentsIdfromChildId(layerHere, childIdHere) {
 			};
 		};
 		parentsId = getCardId(getParentsLayerBySwitchLayer(layerHere));
-		// [질문] 신규 id가 떴을 때, 어떤 레이어인지 알 수 있는 방법
+		// [다시 시도] 신규 id가 떴을 때, 어떤 레이어인지 알 수 있는 방법
 		return parentsId;
 	};
 };
@@ -935,9 +946,9 @@ function getIdThreadObjectById(inputIdhere) {
 	// *console.log("resultIsNewId = ", resultIsNewId);
 	let returnObject = {};
 
-	if (resultIsNewId == true) {
+	if (resultIsNewId) {
 		// console.log("true");
-		// [질문] Boolean으로 하면 왜 false로 가는가?
+		// [전체 다시 보기] Boolean으로 하면 왜 false로 가는가?
 		returnObject["characterId"] = getCardId("character");
 		returnObject["directionId"] = getCardId("direction");
 		// returnObject["roadmapId"] = getCardId("raodmap");
@@ -1023,7 +1034,7 @@ function getEveryIdArrayOfLayer(layerHere) {
 function isNewId(idHere) {
 	let everyIdArray = getEveryIdArray();
 	let checkpoint = everyIdArray.includes(idHere);
-	if (checkpoint == Boolean) {
+	if (checkpoint) {
 		return false;
 	} else {
 		return true;
