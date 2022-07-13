@@ -136,12 +136,16 @@ function requestRemoveCard(layerHere, idHere) {
 	const switchedRef = getRefBySwitchLayer(inputId, layerHere);
 	const idArrayLength = getEveryIdArrayOfLayer(layerHere).length;
 	if(idArrayLength != 1){
-		switchedRef.child(inputId).remove();
+		switchedRef.child(inputId).remove( (e) => {
+			console.log("** remove completed = ", e);
+			});
+			// [질문] (e)의 역할?
 	} else {
 		let emptyData = {children: ""};
 		const switchedRefForEmptyData = switchedRef.parent;
 		switchedRefForEmptyData.set(emptyData);
 	};
+	location.reload();
 };
 
 function requestUpdateMainCard(idHere) {
@@ -375,10 +379,8 @@ function packageEditedCard(layerHere) {
 ///// UI manager
 
 function showEmptyCard(layerHere) {
-	console.log("layerHere @showEmptyCard =", layerHere);
 	getSelectorById(layerHere).value = "";
 	setupBtnShowOrHideByClassName(layerHere,"createFirstCard");
-	// setupBtnShowOrHideByClassName("direction","readCard");
 };
 
 function showItOnUI(layerHere, idHere) {
@@ -503,7 +505,6 @@ function resizeTextarea() {
 };
 
 function showItIfNoBpData(layerHere) {
-	console.log("layerHere @showItIfNoBpData", layerHere);
 	showEmptyCard(layerHere);
 	let guideMessage = getSelectorById("guideMessage").innerHTML;
 	if (guideMessage == "") {
@@ -556,6 +557,7 @@ function updateSelectbox(layerHere) {
 	};
 
 	let sortedArray = sortingArray(mappedArray);
+	console.log(layerHere, "|", sortedArray);
 
 	// <option> 만들어서, Array 넣기
 	for (let i = 0; i < sortedArray.length; i++) {
@@ -586,8 +588,6 @@ function selectBySelectbox(layerHere) {
 
 		let idThreadObjectKeysArray = [layer1, layer2, layer3, layer4];
 
-		console.log("idThreadObjectKeysArray = ", idThreadObjectKeysArray);
-
 		function getLatestIdByLayer(layerHere) {
 			let eachIdArrayByLayer = getEveryIdArrayOfLayer(layerHere);
 			if(eachIdArrayByLayer.length > 0){
@@ -601,12 +601,10 @@ function selectBySelectbox(layerHere) {
 		idThreadObjectKeysArray.forEach(eachLayer => {
 			if (eachLayer != undefined) {
 				let latestIdOfEachLayer = getLatestIdByLayer(eachLayer);
-				console.log("latestIdOfEachLayer =", latestIdOfEachLayer);
 				if(latestIdOfEachLayer != null) {
 					showItOnUI(eachLayer, latestIdOfEachLayer);
 					setupBtnShowOrHideByClassName(eachLayer, "readCard");
 				} else {
-					console.log("EachLayer =", eachLayer);
 					showItIfNoBpData(eachLayer);
 				};
 				updateSelectbox(eachLayer);
