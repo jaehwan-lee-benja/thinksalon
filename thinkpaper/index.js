@@ -731,54 +731,13 @@ function monitorCardBlankOrDuplicates(layerHere) {
 
 		function getSameTextArray(layerHere2, cardValueHere) {
 
-			function switchForGetSameTextArray(layerHere3) {
+			const idArray = getEveryIdArrayOfLayer(layerHere2);
 
-				// console.log("layerHere =", layerHere);
-			
-				const idArray = getEveryIdArrayOfLayer(layerHere3);
-				// console.log("idArray = ", idArray);
-			
-				let mappedObject = idArray.map( id => {
-					let mappingObject = {"id":id};
-					let position = "";
-					let idThreadObject = getIdThreadObjectById(id);
-			
-					switch(layerHere3){
-						case "character" : 
-							let positionOfCharacter = bigPicture.children;
-							position = positionOfCharacter;
-							break;
-						case "direction" :
-							let positionOfCharacter2 = bigPicture.children;
-							let positionOfDirection = positionOfCharacter2[idThreadObject.characterId].children;
-							position = positionOfDirection;
-							break;
-						case "roadmap" :
-							let positionOfCharacter3 = bigPicture.children;
-							let positionOfDirection2 = positionOfCharacter3[idThreadObject.characterId].children;
-							let positionOfRoadmap = positionOfDirection2[idThreadObject.directionId].children;
-							position = positionOfRoadmap;
-							break;
-						case "actionPlan" :
-							let positionOfCharacter4 = bigPicture.children;
-							let positionOfDirection3 = positionOfCharacter4[idThreadObject.characterId].children;
-							let positionOfRoadmap2 = positionOfDirection3[idThreadObject.directionId].children;
-							let positionOfActionPlan = positionOfRoadmap2[idThreadObject.directionId].children;
-							position = positionOfActionPlan;
-							break;
-						default : null; 
-					};
-			
-					mappingObject[layerHere3] = position[id].contents[layerHere3];
-			
-					return mappingObject;
-			
-					});
-				console.log("mappedObject =", mappedObject);
-				return mappedObject;
-			};
-
-			let mappedIdArray = switchForGetSameTextArray(layerHere2);
+			let mappedIdArray = idArray.map( id => {
+				let mappingObject = {"id":id};
+				mappingObject[layerHere2] = objectById[id].contents[layerHere2];	
+				return mappingObject;
+				});
 		
 			let valueArray = [];
 			for(let i = 0; i < mappedIdArray.length; i++) {
@@ -787,7 +746,7 @@ function monitorCardBlankOrDuplicates(layerHere) {
 		
 			let filterSameTextArray = (query) => {
 				return valueArray.find(value => query == value);
-			};
+			}; //[질문] 문법 형태의 이해
 		
 			let sameTextArray = filterSameTextArray(cardValueHere);
 		
