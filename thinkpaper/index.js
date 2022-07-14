@@ -134,9 +134,11 @@ function requestUpdateCard(layerHere, packagedDataHere) {
 	const inputId = packagedDataHere.id;
 	const switchedRef = getRefBySwitchLayer(layerHere, inputId);
 	switchedRef.child(inputId).update(packagedDataHere, (e) => {
-		console.log("** update completed = ", e);
+		console.log("test1 @requestUpdateCard");
 		request_followUpEditedDate(layerHere, packagedDataHere);
-		alert("저장되었습니다.");
+		console.log("** update completed = ", e);
+		console.log("test2 @requestUpdateCard");
+		alert("수정되었습니다.");
 		});
 };
 
@@ -234,6 +236,7 @@ function getRefBySwitchLayer(layerHere, inputIdHere) {
 	const characterRef = bigPictureRef.child("children");
 
 	let resultIsNewId = isNewId(inputIdHere);
+	console.log("resultIsNewId @getRefBySwitchLayer=", resultIsNewId);
 
 	if (resultIsNewId) {
 
@@ -259,22 +262,21 @@ function getRefBySwitchLayer(layerHere, inputIdHere) {
 	} else {
 
 		const idThreadObject = getIdThreadObjectById(inputIdHere);
+		const directionRef = characterRef.child(idThreadObject.characterId).child("children");
+		// const roadmapRef = directionRef.child(idThreadObject.directionId).child("children");
+		// const actionPlanRef = roadmapRef.child(idThreadObject.roadmapId).child("children");
+		// [기록] 위 두가지는 향후 사용하기
+		
 		// const layer = eventListenerResult; //[질문] eventLister를 이렇게 활용하는게 맞을까? global의 사용
 
 		switch(layerHere){
 			case "character" : 
 				return characterRef;
 			case "direction" : 
-				const directionRef = characterRef[getParentsIdfromChildId("character", idThreadObject.characterId)].child("children");
 				return directionRef;
 			case "roadmap" : 
-				const directionRef2 = characterRef[getParentsIdfromChildId("character", idThreadObject.characterId)].child("children");
-				const roadmapRef = directionRef2[getParentsIdfromChildId("direction", idThreadObject.directionId)].child("children");
 				return roadmapRef;
 			case "actionPlan" : 
-				const directionRef3 = characterRef[getParentsIdfromChildId("character", idThreadObject.characterId)].child("children");
-				const roadmapRef2 = directionRef3[getParentsIdfromChildId("direction", idThreadObject.directionId)].child("children");
-				const actionPlanRef = roadmapRef2[getParentsIdfromChildId("roadmap", idThreadObject.roadmapId)].child("children");
 				return actionPlanRef;
 			default: 
 				return null;
@@ -732,9 +734,7 @@ function saveEditedCard(layerHere) {
 
 	let packagedData = packageEditedCard(layerHere);
 	if (packagedData != null) {
-		console.log("packagedData =", packagedData);
 		requestUpdateCard(layerHere, packagedData);
-		alert("저장되었습니다.");
 	};
 };
 
@@ -940,7 +940,8 @@ function getParentsIdfromChildId(layerHere, childIdHere) {
 function getIdThreadObjectById(inputIdhere) {
 	
 	let resultIsNewId = isNewId(inputIdhere);
-	// *console.log("resultIsNewId = ", resultIsNewId);
+	console.log("resultIsNewId @getIdThreadObjectById =", resultIsNewId);
+
 	let returnObject = {};
 
 	if (resultIsNewId) {
@@ -966,23 +967,23 @@ function getIdThreadObjectById(inputIdhere) {
 					returnObject["actionPlanId"] = "";
 					break;
 				case "direction" :
-					returnObject["characterId"] = getParentsIdfromChildId("character", inputIdhere);
+					returnObject["characterId"] = getParentsIdfromChildId("direction", inputIdhere);
 					returnObject["directionId"] = inputIdhere;
 					returnObject["roadmapId"] = "";
 					returnObject["actionPlanId"] = "";
 					break;
 				case "roadmap" :
-					let directionId = getParentsIdfromChildId("direction", inputIdhere);
-					let characterId = getParentsIdfromChildId("character", directionId);
+					let directionId = getParentsIdfromChildId("roadmap", inputIdhere);
+					let characterId = getParentsIdfromChildId("direction", directionId);
 					returnObject["characterId"] = characterId;
 					returnObject["directionId"] = directionId;
 					returnObject["roadmapId"] = inputIdhere;
 					returnObject["actionPlanId"] = "";
 					break;
 				case "actionPlan" :
-					let roadmapId = getParentsIdfromChildId("roadmap", inputIdhere);
-					let direcitonId2 = getParentsIdfromChildId("direction", roadmapId);
-					let characterId2 = getParentsIdfromChildId("character", direcitonId2);
+					let roadmapId = getParentsIdfromChildId("actionPlan", inputIdhere);
+					let direcitonId2 = getParentsIdfromChildId("roadmap", roadmapId);
+					let characterId2 = getParentsIdfromChildId("direction", direcitonId2);
 					returnObject["characterId"] = characterId2;
 					returnObject["directionId"] = direcitonId2;
 					returnObject["roadmapId"] = roadmapId;
@@ -994,6 +995,7 @@ function getIdThreadObjectById(inputIdhere) {
 		};
 		
 		returnObject = getIdBySwitchLayer(inputLayer);
+		console.log("returnObject =", returnObject);
 		return returnObject;
 	};
 };
