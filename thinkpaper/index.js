@@ -76,16 +76,6 @@ function requestReadBigPicture(user) {
 
 			const idThreadObjectKeysArray = ["character", "direction"];
 			// 리팩토링 후 "roadmap", "actionPlan" 넣기
-	
-			function getLatestIdByLayer(layerHere) {
-				const eachIdArrayByLayer = getEveryIdArrayOfLayer(layerHere);
-				if(eachIdArrayByLayer.length > 0){
-					const latestId = getLastestEditedId(eachIdArrayByLayer);
-					return latestId;
-				} else {
-					return null;
-				};
-			};
 
 			idThreadObjectKeysArray.forEach(eachLayer => {
 				const latestIdOfEachLayer = getLatestIdByLayer(eachLayer);
@@ -402,10 +392,17 @@ function setupBtnShowOrHideByClassName(layerHere, state) {
 			setupEditModeByClassName(layerHere, "editing");
 			// children카드가 0개일 시, inactive 처리하기
 			const childrenLayer = getchildrenLayerBySwitchLayer(layerHere);
-			const childrenIdArray = getEveryIdArrayOfLayer(childrenLayer);
-			if(childrenIdArray.length == 0) {
-				console.log("childrenIdArray.length == 0");
-				setupBtnShowOrHideByClassName(childrenLayer, "inactiveCard");
+			if (childrenLayer != null) {
+				const childrenIdArray = getEveryIdArrayOfLayer(childrenLayer);
+				if(childrenIdArray.length == 0) {
+					setupBtnShowOrHideByClassName(childrenLayer, "inactiveCard");
+				} else {
+					setupEditModeByClassName(childrenLayer, "reading");
+				};
+			};
+			if (layerHere != "character") {
+				const parentsLayer = getParentsLayerBySwitchLayer(layerHere);
+				setupEditModeByClassName(parentsLayer, "reading");
 			};
 			break;
 		case "inactiveCard" :
@@ -816,7 +813,14 @@ function openEditCard(layerHere) {
 
 function cancelEditCard(layerHere) {
 	let cardId = getSelectorById("cardId_"+layerHere).value;
-	showItOnUI(layerHere, cardId);
+	if(cardId != ""){
+		showItOnUI(layerHere, cardId);
+	} else {
+		// 기존 카드가 있는 상태에서, 새 카드 만들기 후, 편집 취소를 할 때의 경우, 최신 lastest 카드를 보여주기
+		// 기존 카드가 없는 경우에는 cancelEditCard 버튼이 나타나지 않음.
+		const id = getLatestIdByLayer(layerHere);
+		showItOnUI(layerHere, id);
+	};
 };
 
 ///// monitor manager
@@ -1044,6 +1048,16 @@ function isNewId(idHere) {
 	};
 };
 
+function getLatestIdByLayer(layerHere) {
+	const eachIdArrayByLayer = getEveryIdArrayOfLayer(layerHere);
+	if(eachIdArrayByLayer.length > 0){
+		const latestId = getLastestEditedId(eachIdArrayByLayer);
+		return latestId;
+	} else {
+		return null;
+	};
+};
+
 // switch manager
 // switch 기능이 필요할때 작용한다.
 
@@ -1066,11 +1080,13 @@ function getchildrenLayerBySwitchLayer(layerHere) {
 		case "character" : 
 			return "direction";
 		case "direction" :
-			return "roadmap";
-		case "roadmap" :
-			return "actionPlan";
-		case "actionPlan" :
 			return null;
+		// 	return "roadmap";
+		// case "roadmap" :
+		// 	return "actionPlan";
+		// case "actionPlan" :
+		// 	return null;
+		// 리팩토링 후 개선하기
 		default : return null; 
 	};
 };
