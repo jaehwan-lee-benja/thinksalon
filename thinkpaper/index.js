@@ -86,9 +86,11 @@ function requestReadBigPicture(user) {
 					if(mainId != null && isMainShown == false) {
 						isMainShown = true;
 						showItOnUI("character", mainId);
-					} else {
+					} else {		
 						showItOnUI(eachLayer, latestIdOfEachLayer);
 					};
+					// cancelEditCard(layerHere);
+					// 새 카드 1개 있는 상태에서, 삭제 후, 리로드하면, direction 카드의 버그 발생.
 					setupBtnShowOrHideByClassName(eachLayer, "readCard");
 					updateSelectbox(eachLayer);
 
@@ -165,18 +167,34 @@ function request_followUpEditedDate(layerHere, packagedDataHere) {
 };
 
 function requestRemoveCard(layerHere, idHere) {
+
 	const inputId = idHere;
+	let packagedData = objectById[inputId];
+	packagedData.editedDate = getTimeStamp();
+
 	const switchedRef = getRefBySwitchLayer(layerHere, inputId);
 	const idArrayLength = getEveryIdArrayOfLayer(layerHere).length;
-	if(idArrayLength != 1){
+	console.log("idArrayLength =", idArrayLength);
+
+	if(layerHere != "character"){
+		console.log("inputId =", inputId);
+		console.log("packagedData.id =", packagedData.id);
+		console.log("packagedData.parentsId =", packagedData.parentsId);
 		switchedRef.child(inputId).remove((e) => {
-			alert("삭제되었습니다.");
+			request_followUpEditedDate(layerHere, packagedData);
 			console.log("**remove completed = ", e);
+			alert("삭제되었습니다.");
 			});
-	} else {
+	} else if(layerHere == "character" && idArrayLength == 1) {
+		// character레이어에서 remove진행시, firebase의 bigPicture 자체가 사라져, 로딩 로직에서 버그가 남.
+		// 그래서 예외 처리
 		let emptyData = {children: ""};
 		const switchedRefForEmptyData = switchedRef.parent;
-		switchedRefForEmptyData.set(emptyData);
+		switchedRefForEmptyData.set(emptyData, (e) => {
+			console.log("YES!");
+			console.log("**remove completed = ", e);
+			alert("삭제되었습니다.");
+			});
 	};
 };
 	
@@ -390,20 +408,7 @@ function setupBtnShowOrHideByClassName(layerHere, state) {
 			showUI("saveNewCard_btn_"+layerHere);
 			showUI("removeCard_btn_"+layerHere);
 			setupEditModeByClassName(layerHere, "editing");
-			// children카드가 0개일 시, inactive 처리하기
-			const childrenLayer = getchildrenLayerBySwitchLayer(layerHere);
-			if (childrenLayer != null) {
-				const childrenIdArray = getEveryIdArrayOfLayer(childrenLayer);
-				if(childrenIdArray.length == 0) {
-					setupBtnShowOrHideByClassName(childrenLayer, "inactiveCard");
-				} else {
-					setupEditModeByClassName(childrenLayer, "reading");
-				};
-			};
-			if (layerHere != "character") {
-				const parentsLayer = getParentsLayerBySwitchLayer(layerHere);
-				setupEditModeByClassName(parentsLayer, "reading");
-			};
+			editCard_followUp(layerHere);
 			break;
 		case "inactiveCard" :
 			setupEditModeByClassName(layerHere, "reading");
@@ -454,6 +459,23 @@ function setupEditModeByClassName(layerHere, cardMode) {
 	};
 };
 
+function editCard_followUp(layerHere) {
+	// children카드가 0개일 시, inactive 처리하기
+	const childrenLayer = getchildrenLayerBySwitchLayer(layerHere);
+	if (childrenLayer != null) {
+	const childrenIdArray = getEveryIdArrayOfLayer(childrenLayer);
+	if(childrenIdArray.length == 0) {
+		setupBtnShowOrHideByClassName(childrenLayer, "inactiveCard");
+	} else {
+		setupBtnShowOrHideByClassName(childrenLayer, "readCard");
+	};
+	};
+	if (layerHere != "character") {
+	const parentsLayer = getParentsLayerBySwitchLayer(layerHere);
+	setupEditModeByClassName(parentsLayer, "reading");
+	};
+};
+
 function setupTextareaBorderColorByClass(layerHere, px, color) {
     setTimeout(()=>{
 		const selectorTextareaOnCard = document.getElementsByClassName(layerHere);
@@ -478,10 +500,14 @@ function resizeTextarea() {
 };
 
 function showItIfNoBpData(layerHere) {
-	showEmptyCard(layerHere);
-	let guideMessage = getSelectorById("guideMessage").innerHTML;
-	if (guideMessage == "") {
-		guideMessage = "'파란색으로 쓰여진 곳의 네모칸에 내용을 작성해보세요~!'"
+	if(layerHere == "character") {
+		showEmptyCard(layerHere);
+		editCard_followUp(layerHere);
+	};
+	let guideMessage = getSelectorById("guideMessage");
+	let guideMessageValue = getSelectorById("guideMessage").innerText;
+	if (guideMessageValue == "") {
+		guideMessage.innerHTML = "'파란색 네모칸에 내용을 작성해보세요~!'"
 	};
 };
 
@@ -747,7 +773,7 @@ function saveEditedCard(layerHere) {
 function removeCard(layerHere) {
 	let removeId = getSelectorById("cardId_"+layerHere).value;
 	if (confirm("정말 삭제하시겠습니까? 삭제가 완료되면, 해당 내용은 다시 복구될 수 없습니다.")) {
-		requestRemoveCard(layerHere,removeId);
+		requestRemoveCard(layerHere, removeId);
 	};
 };
 
@@ -812,9 +838,18 @@ function openEditCard(layerHere) {
 };
 
 function cancelEditCard(layerHere) {
-	let cardId = getSelectorById("cardId_"+layerHere).value;
+	const cardId = getSelectorById("cardId_"+layerHere).value;
 	if(cardId != ""){
+		console.log("check1");
 		showItOnUI(layerHere, cardId);
+		const childrenLayer = getchildrenLayerBySwitchLayer(layerHere);
+		if (childrenLayer != null) {
+			const idArray = getEveryIdArrayOfLayer(childrenLayer);
+			if(idArray.length == 0) {
+				console.log("check2");
+				setupBtnShowOrHideByClassName(childrenLayer, "createFirstCard");
+			};
+		};
 	} else {
 		// 기존 카드가 있는 상태에서, 새 카드 만들기 후, 편집 취소를 할 때의 경우, 최신 lastest 카드를 보여주기
 		// 기존 카드가 없는 경우에는 cancelEditCard 버튼이 나타나지 않음.
@@ -949,7 +984,10 @@ function getParentsIdfromChildId(layerHere, childIdHere) {
 				return parentsId;
 			};
 		};
-		parentsId = getCardId(getParentsLayerBySwitchLayer(layerHere));
+		console.log("layerHere @getParentsIdfromChildId =", layerHere);
+		const parentsLayer = getParentsLayerBySwitchLayer(layerHere);
+		console.log("parentsLayer @getParentsIdfromChildId =", parentsLayer);
+		parentsId = getCardId(parentsLayer);
 		// [다시 시도] 신규 id가 떴을 때, 어떤 레이어인지 알 수 있는 방법
 		return parentsId;
 	};
