@@ -182,8 +182,8 @@ function requestRemoveCard(layerHere, idHere) {
 	const switchedRef = getRefBySwitchLayer(layerHere, inputId);
 	const idArrayLength = getEveryIdArrayOfLayer(layerHere).length;
 	if(idArrayLength != 1){
-		console.log("test @requestRemoveCard");
 		switchedRef.child(inputId).remove((e) => {
+			alert("삭제되었습니다.");
 			console.log("** remove completed = ", e);
 			});
 	} else {
@@ -192,7 +192,6 @@ function requestRemoveCard(layerHere, idHere) {
 		const switchedRefForEmptyData = switchedRef.parent;
 		switchedRefForEmptyData.set(emptyData);
 	};
-	// location.reload();
 };
 	
 function requestUpdateMainCard(idHere) {
@@ -742,7 +741,6 @@ function removeCard(layerHere) {
 	let removeId = getSelectorById("cardId_"+layerHere).value;
 	if (confirm("정말 삭제하시겠습니까? 삭제가 완료되면, 해당 내용은 다시 복구될 수 없습니다.")) {
 		requestRemoveCard(layerHere,removeId);
-		alert("삭제되었습니다.");
 	};
 };
 
