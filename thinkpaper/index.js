@@ -1,9 +1,10 @@
 const db = firebase.database();
 const SELECTBOX_BPTITLE_VALUE_INIT = "INIT";
 
-let userData = {};
+const userData = {}; //[질문] const or let 오브젝트에 키를 추가하는데, 이것은 데이터에 변화를 주는 것이 아닌가?
 let objectById = {};
 let isMainShown = false;
+let eventListenerResult = "";
 
 (function() {
 	logIn();
@@ -17,6 +18,7 @@ function logIn() {
 			requestReadUserData(user);
 			requestReadBigPicture(user);
 			openEditCardByDbclick();
+			getLayerByEventListener();
 		} else {
 			window.location.replace("login.html");
 		};
@@ -33,8 +35,8 @@ function requestReadUserData(user) {
 	const userRef = db.ref("users").child(user.uid).child("user");
 	userRef.on("value", (snapshot) => {
 		snapshot.forEach(childSnap => {
-			let key = childSnap.key;
-			let value = childSnap.val();
+			const key = childSnap.key;
+			const value = childSnap.val();
 			value["uid"] = childSnap.key;
 			userData[key] = value;
 		});
@@ -44,16 +46,16 @@ function requestReadUserData(user) {
 
 function requestReadIdAndObjectFromChildren(o){
 	// console.log('**requestReadIdAndObjectFromChildren >>',o)
-	const c = o.children
+	const c = o.children;
 	if(!c) return;
 
-	const ids = Object.keys(c)
+	const ids = Object.keys(c);
 	if(ids.length == undefined) return;
 
 	ids.forEach( id => {
-		const v = c[id]
-		objectById[id] = v
-		requestReadIdAndObjectFromChildren(v)
+		const v = c[id];
+		objectById[id] = v;
+		requestReadIdAndObjectFromChildren(v);
 	});
 	
 };
@@ -66,21 +68,20 @@ function requestReadBigPicture(user) {
 		console.log("**===== .on is here =====");
 
 		const v = snapshot.val();
-		console.log("v =", v);
 		objectById = {};
 		requestReadIdAndObjectFromChildren(v);
 		// console.log('**objectById >>',objectById)
 
 		function showItOnUI_latest() {
 
-			let idThreadObjectKeysArray = ["character", "direction"];
+			const idThreadObjectKeysArray = ["character", "direction"];
 			// 리팩토링 후 "roadmap", "actionPlan" 넣기
 	
 			function getLatestIdByLayer(layerHere) {
-				let eachIdArrayByLayer = getEveryIdArrayOfLayer(layerHere);
+				const eachIdArrayByLayer = getEveryIdArrayOfLayer(layerHere);
 				if(eachIdArrayByLayer.length > 0){
-					let latestId = getLastestEditedId(eachIdArrayByLayer);
-					console.log("latest =", layerHere, "|", latestId, "| value =", objectById[latestId].contents[layerHere]);
+					const latestId = getLastestEditedId(eachIdArrayByLayer);
+					// console.log("latest =", layerHere, "|", latestId, "| value =", objectById[latestId].contents[layerHere]);
 					return latestId;
 				} else {
 					return null;
@@ -88,10 +89,10 @@ function requestReadBigPicture(user) {
 			};
 
 			idThreadObjectKeysArray.forEach(eachLayer => {
-				let latestIdOfEachLayer = getLatestIdByLayer(eachLayer);
+				const latestIdOfEachLayer = getLatestIdByLayer(eachLayer);
 				if(latestIdOfEachLayer != null) {
 
-					let mainId = getMainId();
+					const mainId = getMainId();
 				
 					if(mainId != null && isMainShown == false) {
 						isMainShown = true;
@@ -117,41 +118,54 @@ function requestReadBigPicture(user) {
 
 function requestSetCard(layerHere, packagedDataHere) {
 	const inputId = packagedDataHere.id;
-	const switchedRef = getRefBySwitchLayer(inputId, layerHere);
-	switchedRef.child(inputId).set(packagedDataHere, (e) => {alert("저장되었습니다.");});
-	request_followUpEditedDate(layerHere, packagedDataHere);
+	const switchedRef = getRefBySwitchLayer(layerHere, inputId);
+	switchedRef.child(inputId).set(packagedDataHere, (e) => {
+		request_followUpEditedDate(layerHere, packagedDataHere);
+		// [질문] 이 위의 것은 forEach로 request가 자주 일어남.
+		// forEach 안에서 콜백함수로 하게되면, alert가 계속 반복적으로 일어날것으로 보임.
+		// 때문에, forEach 밖에서 alert를 배치하는 것이 좋을듯함. 
+		// 위의 함수가 끝난 다음에 alert를 할 수 있는 방법이 있을까?
+		alert("저장되었습니다.");});
+		// [질문] 문서에서는 then(), catch()를 씀. 차이점?
+		// 참조: https://firebase.google.com/docs/database/web/read-and-write?hl=ko
 };
 
 function requestUpdateCard(layerHere, packagedDataHere) {
 	const inputId = packagedDataHere.id;
-	const switchedRef = getRefBySwitchLayer(inputId, layerHere);
+	const switchedRef = getRefBySwitchLayer(layerHere, inputId);
 	switchedRef.child(inputId).update(packagedDataHere, (e) => {
 		console.log("** update completed = ", e);
+		request_followUpEditedDate(layerHere, packagedDataHere);
+		alert("저장되었습니다.");
 		});
-	request_followUpEditedDate(layerHere, packagedDataHere);
 };
 
 function request_followUpEditedDate(layerHere, packagedDataHere) {
 
-	const inputId = packagedDataHere.id;
-	const switchedRef = getRefBySwitchLayer(inputId, layerHere);
-	const switchedRefForEmptyData = switchedRef.parent;
+	console.log("=====request_followUpEditedDate start here=====");
+
+	const parentsId = packagedDataHere.parentsId;
+	console.log("parentsId =", parentsId);
+	const parentsLayer = getParentsLayerBySwitchLayer(layerHere);
+	console.log("parentsLayer =", parentsLayer);
+	const switchedRef = getRefBySwitchLayer(parentsLayer, parentsId);
+	console.log("switchedRef =", switchedRef);
+	console.log("switchedRef.child([parentsId]) =", switchedRef.child(parentsId));
 	const editedDateForParents = {"editedDate": packagedDataHere.editedDate};
 		
 	function requestUpdateEditedDate(layer1, layer2, layer3, layer4) {
 	
-		let idThreadObjectKeysArray = [layer1, layer2, layer3, layer4];
+		const idThreadObjectKeysArray = [layer1, layer2, layer3, layer4];
 	
 		idThreadObjectKeysArray.forEach(eachLayer => {
 			if (eachLayer != undefined) {
-				console.log("request_followUpEditedDate test");
-				switchedRefForEmptyData.update(editedDateForParents, (e) => {
-				// [시도하기] *문서 확인하기
+				switchedRef.child(parentsId).update(editedDateForParents, (e) => {
 				console.log("** update completed = ", e);
 				});
 			};
 		});
 	};
+
 	switch(layerHere) {
 		case "character" :
 			// 해당없음
@@ -170,7 +184,7 @@ function request_followUpEditedDate(layerHere, packagedDataHere) {
 
 function requestRemoveCard(layerHere, idHere) {
 	const inputId = idHere;
-	const switchedRef = getRefBySwitchLayer(inputId, layerHere);
+	const switchedRef = getRefBySwitchLayer(layerHere, inputId);
 	const idArrayLength = getEveryIdArrayOfLayer(layerHere).length;
 	if(idArrayLength != 1){
 		console.log("test @requestRemoveCard");
@@ -218,7 +232,7 @@ function requestUpdateMainCard(idHere) {
 	
 };
 
-function getRefBySwitchLayer(inputIdHere, layerHere) {
+function getRefBySwitchLayer(layerHere, inputIdHere) {
 
 	console.log("**=====getRefBySwitchLayer() start=====");
 
@@ -227,6 +241,7 @@ function getRefBySwitchLayer(inputIdHere, layerHere) {
 	const characterRef = bigPictureRef.child("children");
 
 	let resultIsNewId = isNewId(inputIdHere);
+	console.log(layerHere, " | resultIsNewId =", resultIsNewId);
 
 	if (resultIsNewId) {
 
@@ -235,8 +250,7 @@ function getRefBySwitchLayer(inputIdHere, layerHere) {
 				return characterRef;
 			case "direction" : 
 				let characterId = getParentsIdfromChildId("direction", inputIdHere);
-				// [시도] 여기있는 모든 let을 const로 하면 안되는가?
-				console.log("characterId = ", characterId);
+				// console.log("characterId =", characterId);
 				let directionRef = characterRef.child(characterId).child("children");
 				return directionRef;
 			case "roadmap" : 
@@ -254,20 +268,24 @@ function getRefBySwitchLayer(inputIdHere, layerHere) {
 	} else {
 
 		const idThreadObject = getIdThreadObjectById(inputIdHere);
-		const layer = objectById[idHere].layer;
+		console.log("idThreadObject =", idThreadObject);
+		// const layer = eventListenerResult; //[질문] eventLister를 이렇게 활용하는게 맞을까? global의 사용
+		// console.log("layer =", layer);
 
-		const directionRef = characterRef[getParentsIdfromChildId("character", idThreadObject.characterId)].child("children");
-		const roadmapRef = directionRef[getParentsIdfromChildId("direction", idThreadObject.directionId)].child("children");
-		const actionPlanRef = roadmapRef[getParentsIdfromChildId("roadmap", idThreadObject.roadmapId)].child("children");
-
-		switch(layer){
+		switch(layerHere){
 			case "character" : 
 				return characterRef;
 			case "direction" : 
+				const directionRef = characterRef[getParentsIdfromChildId("character", idThreadObject.characterId)].child("children");
 				return directionRef;
 			case "roadmap" : 
+				const directionRef2 = characterRef[getParentsIdfromChildId("character", idThreadObject.characterId)].child("children");
+				const roadmapRef = directionRef2[getParentsIdfromChildId("direction", idThreadObject.directionId)].child("children");
 				return roadmapRef;
 			case "actionPlan" : 
+				const directionRef3 = characterRef[getParentsIdfromChildId("character", idThreadObject.characterId)].child("children");
+				const roadmapRef2 = directionRef3[getParentsIdfromChildId("direction", idThreadObject.directionId)].child("children");
+				const actionPlanRef = roadmapRef2[getParentsIdfromChildId("roadmap", idThreadObject.roadmapId)].child("children");
 				return actionPlanRef;
 			default: 
 				return null;
@@ -510,7 +528,6 @@ function updateSelectbox(layerHere) {
 	};
 
 	let sortedArray = sortingArray(mappedArray);
-	console.log(layerHere, "|", sortedArray);
 
 	// <option> 만들어서, Array 넣기
 	for (let i = 0; i < sortedArray.length; i++) {
@@ -579,41 +596,43 @@ function saveNewCard(layerHere) {
 	function packageNewCard(layerHere) {
 
 		let moniterResult = monitorCardBlankOrDuplicates(layerHere);
+		// console.log("moniterResult =", moniterResult);
 	
-		if (moniterResult == true) {
+		if (moniterResult) {
 	
-			function catchValueBySwitchLayer(layerHere2) {
+			function catchContentsDataBySwitchLayer(layerHere2) {
 	
-				let packagedData = {};
-				packagedData["contents"] = {};
-				let contents = packagedData["contents"];
+				let catchContentsData = {};
+				catchContentsData["contents"] = {};
+				let contents = catchContentsData["contents"];
 			
 				switch(layerHere2){
 					case "character" :
-						packagedData["parentsId"] = "";
+						catchContentsData["parentsId"] = "";
 						contents["character"] = getSelectorById("character").value.trim();
 						break;
 					case "direction" :
-						packagedData["parentsId"] = getCardId("character");
+						catchContentsData["parentsId"] = getCardId("character");
 						contents["direction"] = getSelectorById("direction").value.trim();
 						break;
 					case "roadmap" :
-						packagedData["parentsId"] = getCardId("direction");
+						catchContentsData["parentsId"] = getCardId("direction");
 						contents["roadmapArea"] = getSelectorById("roadmapArea").value.trim();
 						contents["roadmapA"] = getSelectorById("roadmapA").value.trim();
 						contents["roadmapB"] = getSelectorById("roadmapArea").value.trim();
 						break;
 					case "actionPlan" :
-						packagedData["parentsId"] = getCardId("roadmap");
+						catchContentsData["parentsId"] = getCardId("roadmap");
 						contents["actionPlan"] = getSelectorById("actionPlan").value.trim();
 						break;
 					default:
 						let layerHere2 = null;
 				};
-				return packagedData;
+				return catchContentsData;
 			};
 	
-			let packagedData = catchValueBySwitchLayer(layerHere);
+			let catchedData = catchContentsDataBySwitchLayer(layerHere);
+			// console.log("catchedData1 = ", catchedData);
 	
 			function getUuidv4() {
 				return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
@@ -622,22 +641,25 @@ function saveNewCard(layerHere) {
 			};
 	
 			let idNew = getUuidv4();
-			packagedData["id"] = idNew;
-			packagedData["children"] = "";
-			packagedData["createdDate"] = getTimeStamp();
-			packagedData["editedDate"] = getTimeStamp();
-			packagedData["main"] = "";
-			packagedData["layer"] = layerHere;
-			return packagedData;
+			catchedData["id"] = idNew;
+			catchedData["children"] = "";
+			catchedData["createdDate"] = getTimeStamp();
+			catchedData["editedDate"] = getTimeStamp();
+			catchedData["main"] = "";
+			catchedData["layer"] = layerHere;
+
+			// console.log("catchedData2 = ", catchedData);
+			return catchedData;
 		};
 			
 	};
 
-	let packagedBpData = packageNewCard(layerHere);
-	if (packagedBpData != null) {
-		requestSetCard(layerHere, packagedBpData);
+	let packagedData = packageNewCard(layerHere);
+	// console.log("packagedData =", packagedData);
+
+	if (packagedData != null) {
+		requestSetCard(layerHere, packagedData);
 		showItOnUI_followUp(layerHere);
-		
 	};
 };
 
@@ -786,7 +808,6 @@ function openEditCardByDbclick() {
 };
 
 function openEditCard(layerHere) {
-	console.log("test");
 	setupBtnShowOrHideByClassName(layerHere,"editCard");
 };
 
@@ -889,15 +910,24 @@ function copyAndPast() {
 	};
 }
 
+// 작업중
+function getLayerByEventListener() {
+	const inputButtonSelector = document.getElementsByTagName("input");
+	for (let i = 0; i < inputButtonSelector.length; i++) {
+		inputButtonSelector[i].addEventListener("click", function (e) {
+			eventListenerResult = "";
+			returnClassName = e.target.parentNode.parentNode.className;
+			eventListenerResult = returnClassName;
+		});
+	};
+};
+
 // id manager
 // **id manager에서는 필요한 id값을 가져온다.
 // **id 값은 대표적으로 parentsId, idTread로 해당한다.
 
 function getParentsIdfromChildId(layerHere, childIdHere) {
 	console.log("**=====getParentsIdfromChildId start=====");
-
-	console.log("layerHere =", layerHere);
-	console.log("childIdHere =", childIdHere);
 
 	let everyIdArray = getEveryIdArrayOfLayer(layerHere);
 	let parentsId = "";
@@ -975,7 +1005,6 @@ function getIdThreadObjectById(inputIdhere) {
 		};
 		
 		returnObject = getIdBySwitchLayer(inputLayer);
-		console.log("returnObject =", returnObject);
 		return returnObject;
 	};
 };
