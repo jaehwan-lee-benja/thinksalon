@@ -358,91 +358,108 @@ function showUI(id) {
 	getSelectorById(id).style.display = "initial";
 };
 
-function setupBtnShowOrHideByClassName(className, state) {
+function setupBtnShowOrHideByClassName(layerHere, state) {
 
-	hideUI("openEditCard_btn_"+className);
-	hideUI("cancelEditCard_btn_"+className);
-	hideUI("saveEditedCard_btn_"+className);
-	hideUI("saveNewCard_btn_"+className);
-	hideUI("removeCard_btn_"+className);
-	hideUI("openNewCard_btn_"+className);
+	// 카드 안내 글씨 지우기
+	if(layerHere != "character") {
+		const parentsLayer = getParentsLayerBySwitchLayer(layerHere);
+		const parentsCardValue = getSelectorById(parentsLayer).value;
+		const alertTextElement = getSelectorById("alert_txt_"+layerHere);
+		if(parentsCardValue != "" && alertTextElement.innerText != "") {
+			alertTextElement.innerHTML = "";
+		};
+	};
+
+	hideUI("openEditCard_btn_"+layerHere);
+	hideUI("cancelEditCard_btn_"+layerHere);
+	hideUI("saveEditedCard_btn_"+layerHere);
+	hideUI("saveNewCard_btn_"+layerHere);
+	hideUI("removeCard_btn_"+layerHere);
+	hideUI("openNewCard_btn_"+layerHere);
 
 	switch(state){
 		case "createFirstCard" :
-			showUI("saveNewCard_btn_"+className);
-			setupEditModeByClassName(className, "editing");
+			showUI("saveNewCard_btn_"+layerHere);
+			setupEditModeByClassName(layerHere, "editing");
 			break;
 		case "openNewCard" :
-			showUI("saveNewCard_btn_"+className);
-			showUI("cancelEditCard_btn_"+className)
-			setupEditModeByClassName(className, "editing");
+			showUI("saveNewCard_btn_"+layerHere);
+			showUI("cancelEditCard_btn_"+layerHere)
+			setupEditModeByClassName(layerHere, "editing");
 			break;
 		case "readCard" :
 			hideUI("guideMessage");
-			showUI("openEditCard_btn_"+className);
-			showUI("openNewCard_btn_"+className);
-			showUI("removeCard_btn_"+className);
-			setupEditModeByClassName(className, "reading");
+			showUI("openEditCard_btn_"+layerHere);
+			showUI("openNewCard_btn_"+layerHere);
+			showUI("removeCard_btn_"+layerHere);
+			setupEditModeByClassName(layerHere, "reading");
 			break;
 		case "editCard" :
-			showUI("saveEditedCard_btn_"+className);
-			showUI("cancelEditCard_btn_"+className);
-			showUI("saveNewCard_btn_"+className);
-			showUI("removeCard_btn_"+className);
-			setupEditModeByClassName(className, "editing");
+			showUI("saveEditedCard_btn_"+layerHere);
+			showUI("cancelEditCard_btn_"+layerHere);
+			showUI("saveNewCard_btn_"+layerHere);
+			showUI("removeCard_btn_"+layerHere);
+			setupEditModeByClassName(layerHere, "editing");
+			// children카드가 0개일 시, inactive 처리하기
+			const childrenLayer = getchildrenLayerBySwitchLayer(layerHere);
+			const childrenIdArray = getEveryIdArrayOfLayer(childrenLayer);
+			if(childrenIdArray.length == 0) {
+				console.log("childrenIdArray.length == 0");
+				setupBtnShowOrHideByClassName(childrenLayer, "inactiveCard");
+			};
 			break;
 		case "inactiveCard" :
-			setupEditModeByClassName(className, "reading");
-			getSelectorById("alert_txt_"+className).innerHTML = "(상위 카드 작성 후, 작성 가능)";
+			setupEditModeByClassName(layerHere, "reading");
+			getSelectorById("alert_txt_"+layerHere).innerHTML = "(상위 카드 작성 후, 작성 가능)";
 			break;
 		default:
 			let state = null;
 	}
-	if(className == "character") {
-		function setupBtnShowOrHideByClassName_main(className) {
-			hideUI("gotoMainCard_btn_"+className);
-			hideUI("setMainCard_btn_"+className);
-			hideUI("setMainCard_txt_"+className);
+	if(layerHere == "character") {
+		function setupBtnShowOrHideByClassName_main(layerHere) {
+			hideUI("gotoMainCard_btn_"+layerHere);
+			hideUI("setMainCard_btn_"+layerHere);
+			hideUI("setMainCard_txt_"+layerHere);
 		
 			let cardId = getSelectorById("cardId_character").value;
 			let mainId = getMainId();
 		
 			if(cardId == mainId) {
-				showUI("setMainCard_txt_"+className);
+				showUI("setMainCard_txt_"+layerHere);
 			} else {
 				if (mainId != null) {
-					showUI("gotoMainCard_btn_"+className);
-					showUI("setMainCard_btn_"+className);
+					showUI("gotoMainCard_btn_"+layerHere);
+					showUI("setMainCard_btn_"+layerHere);
 				} else {
-					showUI("setMainCard_btn_"+className);
+					showUI("setMainCard_btn_"+layerHere);
 				};
 			};
 		};
-		setupBtnShowOrHideByClassName_main(className, state);
+		setupBtnShowOrHideByClassName_main(layerHere, state);
 	};
 	resizeTextarea();
 };
 
-function setupEditModeByClassName(className, cardMode) {
+function setupEditModeByClassName(layerHere, cardMode) {
 	function textareaReadOnly(id, check){
 		getSelectorById(id).readOnly = check;
 	};
 	if (cardMode == "editing") {
-		document.getElementsByClassName(className)[0].style.color = "#9CC0E7";
-		document.getElementsByClassName(className)[0].style.borderColor = "#9CC0E7";
-		setupTextareaBorderColorByClass(className, "3px", "#9CC0E7");
-		textareaReadOnly(className, false);
+		document.getElementsByClassName(layerHere)[0].style.color = "#9CC0E7";
+		document.getElementsByClassName(layerHere)[0].style.borderColor = "#9CC0E7";
+		setupTextareaBorderColorByClass(layerHere, "3px", "#9CC0E7");
+		textareaReadOnly(layerHere, false);
 	} else {
-		document.getElementsByClassName(className)[0].style.color = "#424242";
-		document.getElementsByClassName(className)[0].style.borderColor = "#424242";
-		setupTextareaBorderColorByClass(className, "1px", "#c8c8c8");
-		textareaReadOnly(className, true);
+		document.getElementsByClassName(layerHere)[0].style.color = "#424242";
+		document.getElementsByClassName(layerHere)[0].style.borderColor = "#424242";
+		setupTextareaBorderColorByClass(layerHere, "1px", "#c8c8c8");
+		textareaReadOnly(layerHere, true);
 	};
 };
 
-function setupTextareaBorderColorByClass(className, px, color) {
+function setupTextareaBorderColorByClass(layerHere, px, color) {
     setTimeout(()=>{
-		const selectorTextareaOnCard = document.getElementsByClassName(className);
+		const selectorTextareaOnCard = document.getElementsByClassName(layerHere);
 		for (let i = 0; i < selectorTextareaOnCard.length; i++) {
 			selectorTextareaOnCard[i].style.border = "solid " + px + color;
 		};
@@ -1040,6 +1057,20 @@ function getParentsLayerBySwitchLayer(layerHere) {
 			return "direction";
 		case "actionPlan" :
 			return "roadmap";
+		default : return null; 
+	};
+};
+
+function getchildrenLayerBySwitchLayer(layerHere) {
+	switch(layerHere){
+		case "character" : 
+			return "direction";
+		case "direction" :
+			return "roadmap";
+		case "roadmap" :
+			return "actionPlan";
+		case "actionPlan" :
+			return null;
 		default : return null; 
 	};
 };
