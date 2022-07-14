@@ -393,6 +393,7 @@ function setupBtnShowOrHideByClassName(className, state) {
 			break;
 		case "inactiveCard" :
 			setupEditModeByClassName(className, "reading");
+			getSelectorById("alert_txt_"+className).innerHTML = "(상위 카드 작성 후, 작성 가능)";
 			break;
 		default:
 			let state = null;
