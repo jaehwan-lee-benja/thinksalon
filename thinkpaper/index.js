@@ -141,16 +141,9 @@ function requestUpdateCard(layerHere, packagedDataHere) {
 };
 
 function request_followUpEditedDate(layerHere, packagedDataHere) {
-
-	console.log("=====request_followUpEditedDate start here=====");
-
 	const parentsId = packagedDataHere.parentsId;
-	console.log("parentsId =", parentsId);
 	const parentsLayer = getParentsLayerBySwitchLayer(layerHere);
-	console.log("parentsLayer =", parentsLayer);
 	const switchedRef = getRefBySwitchLayer(parentsLayer, parentsId);
-	console.log("switchedRef =", switchedRef);
-	console.log("switchedRef.child([parentsId]) =", switchedRef.child(parentsId));
 	const editedDateForParents = {"editedDate": packagedDataHere.editedDate};
 		
 	function requestUpdateEditedDate(layer1, layer2, layer3, layer4) {
@@ -241,7 +234,6 @@ function getRefBySwitchLayer(layerHere, inputIdHere) {
 	const characterRef = bigPictureRef.child("children");
 
 	let resultIsNewId = isNewId(inputIdHere);
-	console.log(layerHere, " | resultIsNewId =", resultIsNewId);
 
 	if (resultIsNewId) {
 
@@ -250,7 +242,6 @@ function getRefBySwitchLayer(layerHere, inputIdHere) {
 				return characterRef;
 			case "direction" : 
 				let characterId = getParentsIdfromChildId("direction", inputIdHere);
-				// console.log("characterId =", characterId);
 				let directionRef = characterRef.child(characterId).child("children");
 				return directionRef;
 			case "roadmap" : 
@@ -268,9 +259,7 @@ function getRefBySwitchLayer(layerHere, inputIdHere) {
 	} else {
 
 		const idThreadObject = getIdThreadObjectById(inputIdHere);
-		console.log("idThreadObject =", idThreadObject);
 		// const layer = eventListenerResult; //[질문] eventLister를 이렇게 활용하는게 맞을까? global의 사용
-		// console.log("layer =", layer);
 
 		switch(layerHere){
 			case "character" : 
@@ -552,7 +541,6 @@ function updateSelectbox(layerHere) {
 function selectBySelectbox(layerHere) {
 	let selectboxId = "selectbox_"+layerHere;
 	let id = getSelectorById(selectboxId).value;
-	console.log("id =", id);
 	if(id != SELECTBOX_BPTITLE_VALUE_INIT) {
 		showItOnUI(layerHere, id);
 		showItOnUI_followUp(layerHere);
@@ -800,7 +788,8 @@ function openEditCardByDbclick() {
 		textareaOnCard[i].addEventListener("dblclick", function (e) {
 			const layer = e.target.id;
 			const idArray = getEveryIdArrayOfLayer(layer);
-			if(idArray.length > 0){
+			const readOnlyCondition = textareaOnCard[i].readOnly;
+			if(idArray.length > 0 && readOnlyCondition){
 				openEditCard(layer);
 			};
 		});
