@@ -87,8 +87,8 @@ function requestReadBigPicture(user) {
 				};
 			};
 
-			idThreadObjectKeysArray.forEach(EachLayer => {
-				let latestIdOfEachLayer = getLatestIdByLayer(EachLayer);
+			idThreadObjectKeysArray.forEach(eachLayer => {
+				let latestIdOfEachLayer = getLatestIdByLayer(eachLayer);
 				if(latestIdOfEachLayer != null) {
 
 					let mainId = getMainId();
@@ -97,13 +97,13 @@ function requestReadBigPicture(user) {
 						isMainShown = true;
 						showItOnUI("character", mainId);
 					} else {
-						showItOnUI(EachLayer, latestIdOfEachLayer);
+						showItOnUI(eachLayer, latestIdOfEachLayer);
 					};
-					setupBtnShowOrHideByClassName(EachLayer, "readCard");
-					updateSelectbox(EachLayer);
+					setupBtnShowOrHideByClassName(eachLayer, "readCard");
+					updateSelectbox(eachLayer);
 
 				} else {
-					showItIfNoBpData(EachLayer);
+					showItIfNoBpData(eachLayer);
 				};
 			});
 		};
@@ -186,7 +186,6 @@ function requestRemoveCard(layerHere, idHere) {
 	// location.reload();
 };
 	
-
 function requestUpdateMainCard(idHere) {
 	
 	const characterIdArray = getEveryIdArrayOfLayer("character");
@@ -276,151 +275,13 @@ function getRefBySwitchLayer(inputIdHere, layerHere) {
 	};
 };
 
-///// user data manager
+///// user manager
 
 function showUserData(userDataHere) {
 	const userName = userDataHere.name;
 	const userEmail = userDataHere.email;
 	getSelectorById("nameChecked").innerHTML = "방문자: " + userName + " 대표";
 	getSelectorById("emailChecked").innerHTML = "(" + userEmail + ")"+"		";
-};
-
-///// local data manager
-
-function packageNewCard(layerHere) {
-
-	let moniterResult = monitorCardBlankOrDuplicates(layerHere);
-
-	if (moniterResult == true) {
-
-		function catchValueBySwitchLayer(layerHere2) {
-
-			let packagedData = {};
-			packagedData["contents"] = {};
-			let contents = packagedData["contents"];
-		
-			switch(layerHere2){
-				case "character" :
-					packagedData["parentsId"] = "";
-					contents["character"] = getSelectorById("character").value.trim();
-					break;
-				case "direction" :
-					packagedData["parentsId"] = getCardId("character");
-					contents["direction"] = getSelectorById("direction").value.trim();
-					break;
-				case "roadmap" :
-					packagedData["parentsId"] = getCardId("direction");
-					contents["roadmapArea"] = getSelectorById("roadmapArea").value.trim();
-					contents["roadmapA"] = getSelectorById("roadmapA").value.trim();
-					contents["roadmapB"] = getSelectorById("roadmapArea").value.trim();
-					break;
-				case "actionPlan" :
-					packagedData["parentsId"] = getCardId("roadmap");
-					contents["actionPlan"] = getSelectorById("actionPlan").value.trim();
-					break;
-				default:
-					let layerHere2 = null;
-			};
-			return packagedData;
-		};
-
-		let packagedData = catchValueBySwitchLayer(layerHere);
-
-		function getUuidv4() {
-			return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
-			  (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
-			);
-		};
-
-		let idNew = getUuidv4();
-		packagedData["id"] = idNew;
-		packagedData["children"] = "";
-		packagedData["createdDate"] = getTimeStamp();
-		packagedData["editedDate"] = getTimeStamp();
-		packagedData["main"] = "";
-		packagedData["layer"] = layerHere;
-		return packagedData;
-	};
-		
-};
-
-function packageEditedCard(layerHere) {
-
-	function moniterIfCardChanged(layerHere2) {
-
-		// 현재 UI에 띄워진 값 포착하기
-		let id = getSelectorById("cardId_"+layerHere2).value;
-		let value = getSelectorById(layerHere2).value.trim();
-		let object = {"id": id, [layerHere2]: value};
-
-		// 로컬 데이터에 있는 값 포착하기
-
-		function getMappedObject_IdContents(layerHere2) {		
-
-			let returnArray = [];
-	
-			let eachIdArrayByLayer = getEveryIdArrayOfLayer(layerHere2);
-			eachIdArrayByLayer.forEach(EachId => {
-				let returnObject = {};
-				returnObject["id"] = objectById[EachId].id;
-				returnObject[layerHere2] = objectById[EachId].contents[layerHere2];
-				returnArray.push(returnObject);
-			});
-	
-			return returnArray;
-		};
-
-		let arrayWithId = getMappedObject_IdContents(layerHere);
-		// let arrayWithId = getIdArrayByMap(layerHere, "contents", layerHere);
-	
-		// 위 두가지가 같은 경우의 수라면, 수정이 이뤄지지 않은 상태
-		for(let i = 0; i < arrayWithId.length; i++) {
-			if(JSON.stringify(object) === JSON.stringify(arrayWithId[i])) {
-				return false;
-			};
-		};
-		return true;
-	};
-	
-	function getMoniterResult(layerHere3, isChanged) {
-		if (isChanged == true) {
-			let moniterResultInFunction = monitorCardBlankOrDuplicates(layerHere3);
-			return moniterResultInFunction;
-		} else {
-			return true;
-		};
-	};
-
-	let moniterResult = getMoniterResult(layerHere, moniterIfCardChanged(layerHere));
-	
-	if (moniterResult == true) {
-		let packagedData = {};
-		packagedData["id"] = getCardId(layerHere);
-		packagedData["parentsId"] = getSelectorById("cardParentsId_"+layerHere).value;
-		packagedData["editedDate"] = getTimeStamp();
-		packagedData["contents"] = {};
-
-		let contents = packagedData["contents"];
-		switch(layerHere){
-			case "character" :
-				contents["character"] = getSelectorById("character").value.trim();
-				break;
-			case "direction" :
-				contents["direction"] = getSelectorById("direction").value.trim();
-				break;
-			case "roadmap" :
-				contents["roadmapArea"] = getSelectorById("roadmapArea").value.trim();
-				contents["roadmapA"] = getSelectorById("roadmapA").value.trim();
-				contents["roadmapB"] = getSelectorById("roadmapArea").value.trim();
-				break;
-			case "actionPlan" :
-				contents["actionPlan"] = getSelectorById("actionPlan").value.trim();
-				break;
-			default: 
-				let layer = null;
-		};
-		return packagedData;
-	};
 };
 
 ///// UI manager
@@ -532,29 +393,28 @@ function setupBtnShowOrHideByClassName(className, state) {
 			let state = null;
 	}
 	if(className == "character") {
+		function setupBtnShowOrHideByClassName_main(className) {
+			hideUI("gotoMainCard_btn_"+className);
+			hideUI("setMainCard_btn_"+className);
+			hideUI("setMainCard_txt_"+className);
+		
+			let cardId = getSelectorById("cardId_character").value;
+			let mainId = getMainId();
+		
+			if(cardId == mainId) {
+				showUI("setMainCard_txt_"+className);
+			} else {
+				if (mainId != null) {
+					showUI("gotoMainCard_btn_"+className);
+					showUI("setMainCard_btn_"+className);
+				} else {
+					showUI("setMainCard_btn_"+className);
+				};
+			};
+		};
 		setupBtnShowOrHideByClassName_main(className, state);
 	};
 	resizeTextarea();
-};
-
-function setupBtnShowOrHideByClassName_main(className) {
-	hideUI("gotoMainCard_btn_"+className);
-	hideUI("setMainCard_btn_"+className);
-	hideUI("setMainCard_txt_"+className);
-
-	let cardId = getSelectorById("cardId_character").value;
-	let mainId = getMainId();
-
-	if(cardId == mainId) {
-		showUI("setMainCard_txt_"+className);
-	} else {
-		if (mainId != null) {
-			showUI("gotoMainCard_btn_"+className);
-			showUI("setMainCard_btn_"+className);
-		} else {
-			showUI("setMainCard_btn_"+className);
-		};
-	};
 };
 
 function setupEditModeByClassName(className, cardMode) {
@@ -683,8 +543,6 @@ function selectBySelectbox(layerHere) {
 	};
 };
 
-
-
 ///// mainCard mananger
 
 function setMainCard() {
@@ -717,6 +575,64 @@ function getMainId() {
 ///// CRUD manager
 
 function saveNewCard(layerHere) {
+
+	function packageNewCard(layerHere) {
+
+		let moniterResult = monitorCardBlankOrDuplicates(layerHere);
+	
+		if (moniterResult == true) {
+	
+			function catchValueBySwitchLayer(layerHere2) {
+	
+				let packagedData = {};
+				packagedData["contents"] = {};
+				let contents = packagedData["contents"];
+			
+				switch(layerHere2){
+					case "character" :
+						packagedData["parentsId"] = "";
+						contents["character"] = getSelectorById("character").value.trim();
+						break;
+					case "direction" :
+						packagedData["parentsId"] = getCardId("character");
+						contents["direction"] = getSelectorById("direction").value.trim();
+						break;
+					case "roadmap" :
+						packagedData["parentsId"] = getCardId("direction");
+						contents["roadmapArea"] = getSelectorById("roadmapArea").value.trim();
+						contents["roadmapA"] = getSelectorById("roadmapA").value.trim();
+						contents["roadmapB"] = getSelectorById("roadmapArea").value.trim();
+						break;
+					case "actionPlan" :
+						packagedData["parentsId"] = getCardId("roadmap");
+						contents["actionPlan"] = getSelectorById("actionPlan").value.trim();
+						break;
+					default:
+						let layerHere2 = null;
+				};
+				return packagedData;
+			};
+	
+			let packagedData = catchValueBySwitchLayer(layerHere);
+	
+			function getUuidv4() {
+				return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+				  (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+				);
+			};
+	
+			let idNew = getUuidv4();
+			packagedData["id"] = idNew;
+			packagedData["children"] = "";
+			packagedData["createdDate"] = getTimeStamp();
+			packagedData["editedDate"] = getTimeStamp();
+			packagedData["main"] = "";
+			packagedData["layer"] = layerHere;
+			return packagedData;
+		};
+			
+	};
+
 	let packagedBpData = packageNewCard(layerHere);
 	if (packagedBpData != null) {
 		requestSetCard(layerHere, packagedBpData);
@@ -726,6 +642,84 @@ function saveNewCard(layerHere) {
 };
 
 function saveEditedCard(layerHere) {
+	function packageEditedCard(layerHere) {
+
+		function moniterIfCardChanged(layerHere2) {
+	
+			// 현재 UI에 띄워진 값 포착하기
+			let id = getSelectorById("cardId_"+layerHere2).value;
+			let value = getSelectorById(layerHere2).value.trim();
+			let object = {"id": id, [layerHere2]: value};
+	
+			// 로컬 데이터에 있는 값 포착하기
+	
+			function getMappedObject_IdContents(layerHere2) {		
+	
+				let returnArray = [];
+		
+				let eachIdArrayByLayer = getEveryIdArrayOfLayer(layerHere2);
+				eachIdArrayByLayer.forEach(EachId => {
+					let returnObject = {};
+					returnObject["id"] = objectById[EachId].id;
+					returnObject[layerHere2] = objectById[EachId].contents[layerHere2];
+					returnArray.push(returnObject);
+				});
+		
+				return returnArray;
+			};
+	
+			let arrayWithId = getMappedObject_IdContents(layerHere);
+		
+			// 위 두가지가 같은 경우의 수라면, 수정이 이뤄지지 않은 상태
+			for(let i = 0; i < arrayWithId.length; i++) {
+				if(JSON.stringify(object) === JSON.stringify(arrayWithId[i])) {
+					return false;
+				};
+			};
+			return true;
+		};
+		
+		function getMoniterResult(layerHere3, isChanged) {
+			if (isChanged == true) {
+				let moniterResultInFunction = monitorCardBlankOrDuplicates(layerHere3);
+				return moniterResultInFunction;
+			} else {
+				return true;
+			};
+		};
+	
+		let moniterResult = getMoniterResult(layerHere, moniterIfCardChanged(layerHere));
+		
+		if (moniterResult) {
+			let packagedData = {};
+			packagedData["id"] = getCardId(layerHere);
+			packagedData["parentsId"] = getSelectorById("cardParentsId_"+layerHere).value;
+			packagedData["editedDate"] = getTimeStamp();
+			packagedData["contents"] = {};
+	
+			let contents = packagedData["contents"];
+			switch(layerHere){
+				case "character" :
+					contents["character"] = getSelectorById("character").value.trim();
+					break;
+				case "direction" :
+					contents["direction"] = getSelectorById("direction").value.trim();
+					break;
+				case "roadmap" :
+					contents["roadmapArea"] = getSelectorById("roadmapArea").value.trim();
+					contents["roadmapA"] = getSelectorById("roadmapA").value.trim();
+					contents["roadmapB"] = getSelectorById("roadmapArea").value.trim();
+					break;
+				case "actionPlan" :
+					contents["actionPlan"] = getSelectorById("actionPlan").value.trim();
+					break;
+				default: 
+					let layer = null;
+			};
+			return packagedData;
+		};
+	};
+
 	let packagedData = packageEditedCard(layerHere);
 	if (packagedData != null) {
 		console.log("packagedData =", packagedData);
