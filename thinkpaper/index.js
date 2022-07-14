@@ -2,7 +2,6 @@ const db = firebase.database();
 const SELECTBOX_BPTITLE_VALUE_INIT = "INIT";
 
 let userData = {};
-// let bigPicture = {};
 let objectById = {};
 let isMainShown = false;
 
@@ -110,13 +109,6 @@ function requestReadBigPicture(user) {
 		};
 
 		showItOnUI_latest();
-	
-		// snapshot.forEach(childSnap => {
-		// 	let key_id = childSnap.key;
-		// 	let value_data = childSnap.val();
-		// 	bigPicture[key_id] = value_data;
-		// 	// console.log('**>>>> ',bigPicture);
-		// });
 
 	});
 };
@@ -237,7 +229,7 @@ function getRefBySwitchLayer(inputIdHere, layerHere) {
 
 	let resultIsNewId = isNewId(inputIdHere);
 
-	if (resultIsNewId == true) {
+	if (resultIsNewId) {
 
 		switch(layerHere){
 			case "character" :
@@ -263,7 +255,7 @@ function getRefBySwitchLayer(inputIdHere, layerHere) {
 	} else {
 
 		const idThreadObject = getIdThreadObjectById(inputIdHere);
-		const layer = getLayerById(inputIdHere);
+		const layer = objectById[idHere].layer;
 
 		const directionRef = characterRef[getParentsIdfromChildId("character", idThreadObject.characterId)].child("children");
 		const roadmapRef = directionRef[getParentsIdfromChildId("direction", idThreadObject.directionId)].child("children");
@@ -333,6 +325,13 @@ function packageNewCard(layerHere) {
 		};
 
 		let packagedData = catchValueBySwitchLayer(layerHere);
+
+		function getUuidv4() {
+			return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+			  (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+			);
+		};
+
 		let idNew = getUuidv4();
 		packagedData["id"] = idNew;
 		packagedData["children"] = "";
@@ -397,7 +396,7 @@ function packageEditedCard(layerHere) {
 	if (moniterResult == true) {
 		let packagedData = {};
 		packagedData["id"] = getCardId(layerHere);
-		packagedData["parentsId"] = getCardParentsId(layerHere);
+		packagedData["parentsId"] = getSelectorById("cardParentsId_"+layerHere).value;
 		packagedData["editedDate"] = getTimeStamp();
 		packagedData["contents"] = {};
 
@@ -487,8 +486,6 @@ function showItOnUI_followUp(layerHere) {
 		default : null;
 	};
 };
-
-//[질문 보류] 카드 상태가 바뀌면, 통일성을 점검하기? 필요할까? 방법이 있을까?
 
 function hideUI(id) {
 	getSelectorById(id).style.display = "none";
@@ -783,23 +780,19 @@ function openNewCard(layerHere) {
 
 function openEditCardByDbclick() {
 	const textareaOnCard = document.getElementsByTagName("textarea");
-	const characterIdArray = getEveryIdArrayOfLayer("character");
-	//[스터디] 클릭된 카드 layer를 고르는 방법
-
 	for (let i = 0; i < textareaOnCard.length; i++) {
 		textareaOnCard[i].addEventListener("dblclick", function (e) {
-			console.log("e=", e);
-			console.log("e.id=", e.id);
-			console.log("e.target=", e.target);
-			console.log("e.target.id=", e.target.id);
-			if(characterIdArray.length > 0){
-				openEditCard();
+			const layer = e.target.id;
+			const idArray = getEveryIdArrayOfLayer(layer);
+			if(idArray.length > 0){
+				openEditCard(layer);
 			};
 		});
 	};
 };
 
 function openEditCard(layerHere) {
+	console.log("test");
 	setupBtnShowOrHideByClassName(layerHere,"editCard");
 };
 
@@ -868,28 +861,8 @@ function getTimeStamp() {
 	return nowString;
 };
 
-function getUuidv4() {
-	return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
-	  (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
-	);
-};
-
-function date_ascending(a, b) { // 오름차순    
-	return Date.parse(a) - Date.parse(b);
-};
-	
-function date_descending(a, b) { // 내림차순    
-	return Date.parse(b) - Date.parse(a);
-};
-
 function getCardId(layerHere) {
 	let result = getSelectorById("cardId_"+layerHere).value;
-	return result;
-};
-
-function getCardParentsId(layerHere) {
-	let result = getSelectorById("cardParentsId_"+layerHere).value;
-	console.log("result =", result);
 	return result;
 };
 
@@ -910,6 +883,17 @@ function getLastestEditedId(keysArrayHere) {
 	};
 
 };
+
+function copyAndPast() {
+	//자주 쓰는 텍스트의 복붙을 위한 자료, 의미없는 함수
+	switch(layerHere) {
+		case "character" :
+		case "direction" :
+		case "roadmap" :
+		case "actionPlan" :
+		default :
+	};
+}
 
 // id manager
 // **id manager에서는 필요한 id값을 가져온다.
@@ -1002,12 +986,8 @@ function getIdThreadObjectById(inputIdhere) {
 	};
 };
 
-function getEveryIdArray() {
-	return Object.keys(objectById);
-};
-
 function getEveryIdArrayOfLayer(layerHere) {
-	let everyIdArray = getEveryIdArray();
+	let everyIdArray = Object.keys(objectById);
 	let everyIdArrayOfLayer = [];
 	
 	for(let i = 0; i < everyIdArray.length; i++) {
@@ -1032,7 +1012,7 @@ function getEveryIdArrayOfLayer(layerHere) {
 };
 
 function isNewId(idHere) {
-	let everyIdArray = getEveryIdArray();
+	let everyIdArray = Object.keys(objectById);
 	let checkpoint = everyIdArray.includes(idHere);
 	if (checkpoint) {
 		return false;
@@ -1041,24 +1021,8 @@ function isNewId(idHere) {
 	};
 };
 
-function getLayerById(idHere) {
-	let layer = objectById[idHere].layer;
-	return layer;
-};
-
 // switch manager
 // switch 기능이 필요할때 작용한다.
-
-function copyAndPastSwitch() {
-	//자주 쓰는 텍스트의 복붙을 위한 자료, 의미없는 함수
-	switch(layerHere) {
-		case "character" :
-		case "direction" :
-		case "roadmap" :
-		case "actionPlan" :
-		default :
-	};
-}
 
 function getParentsLayerBySwitchLayer(layerHere) {
 	switch(layerHere){
