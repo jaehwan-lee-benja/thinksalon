@@ -235,7 +235,6 @@ function getRefBySwitchLayer(layerHere, inputIdHere) {
 	const characterRef = bigPictureRef.child("children");
 
 	let resultIsNewId = isNewId(inputIdHere);
-	console.log("resultIsNewId @getRefBySwitchLayer=", resultIsNewId);
 
 	if (resultIsNewId) {
 
@@ -691,7 +690,7 @@ function saveEditedCard(layerHere) {
 		};
 		
 		function getMoniterResult(layerHere3, isChanged) {
-			if (isChanged == true) {
+			if (isChanged) {
 				let moniterResultInFunction = monitorCardBlankOrDuplicates(layerHere3);
 				return moniterResultInFunction;
 			} else {
@@ -938,20 +937,16 @@ function getParentsIdfromChildId(layerHere, childIdHere) {
 function getIdThreadObjectById(inputIdhere) {
 	
 	let resultIsNewId = isNewId(inputIdhere);
-	console.log("resultIsNewId @getIdThreadObjectById =", resultIsNewId);
 
 	let returnObject = {};
 
 	if (resultIsNewId) {
-		// console.log("true");
-		// [전체 다시 보기] Boolean으로 하면 왜 false로 가는가?
 		returnObject["characterId"] = getCardId("character");
 		returnObject["directionId"] = getCardId("direction");
 		// returnObject["roadmapId"] = getCardId("raodmap");
 		// returnObject["actionPlanId"] = getCardId("actionPlan");
 		return returnObject;
 	} else {
-		// console.log("false");
 		let unitObject = objectById[inputIdhere];
 		let inputLayer = unitObject.layer;
 
