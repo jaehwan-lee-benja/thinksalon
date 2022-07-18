@@ -78,7 +78,9 @@ function requestReadBigPicture(user) {
 			// 리팩토링 후 "roadmap", "actionPlan" 넣기
 
 			idThreadObjectKeysArray.forEach(eachLayer => {
+
 				const latestIdOfEachLayer = getLatestIdByLayer(eachLayer);
+				
 				if(latestIdOfEachLayer != null) {
 
 					const mainId = getMainId();
@@ -86,16 +88,15 @@ function requestReadBigPicture(user) {
 					if(mainId != null && isMainShown == false) {
 						isMainShown = true;
 						showItOnUI("character", mainId);
-					} else {		
+					} else {	
 						showItOnUI(eachLayer, latestIdOfEachLayer);
 					};
-					// cancelEditCard(layerHere);
-					// 새 카드 1개 있는 상태에서, 삭제 후, 리로드하면, direction 카드의 버그 발생.
 					setupBtnShowOrHideByClassName(eachLayer, "readCard");
 					updateSelectbox(eachLayer);
 
 				} else {
 					showItIfNoBpData(eachLayer);
+					updateSelectbox(eachLayer);
 				};
 			});
 		};
@@ -176,22 +177,23 @@ function requestRemoveCard(layerHere, idHere) {
 	const idArrayLength = getEveryIdArrayOfLayer(layerHere).length;
 	console.log("idArrayLength =", idArrayLength);
 
-	if(layerHere != "character"){
-		console.log("inputId =", inputId);
-		console.log("packagedData.id =", packagedData.id);
-		console.log("packagedData.parentsId =", packagedData.parentsId);
-		switchedRef.child(inputId).remove((e) => {
-			request_followUpEditedDate(layerHere, packagedData);
-			console.log("**remove completed = ", e);
-			alert("삭제되었습니다.");
-			});
-	} else if(layerHere == "character" && idArrayLength == 1) {
-		// character레이어에서 remove진행시, firebase의 bigPicture 자체가 사라져, 로딩 로직에서 버그가 남.
+	if(layerHere == "character" && idArrayLength == 1) {
+		// character레이어에서 remove진행시, 
+		// firebase의 bigPicture 자체가 사라져, 로딩 로직에서 버그가 남.
 		// 그래서 예외 처리
 		let emptyData = {children: ""};
 		const switchedRefForEmptyData = switchedRef.parent;
 		switchedRefForEmptyData.set(emptyData, (e) => {
 			console.log("YES!");
+			console.log("**remove completed = ", e);
+			alert("삭제되었습니다.");
+			});
+	} else {
+		console.log("inputId =", inputId);
+		console.log("packagedData.id =", packagedData.id);
+		console.log("packagedData.parentsId =", packagedData.parentsId);
+		switchedRef.child(inputId).remove((e) => {
+			request_followUpEditedDate(layerHere, packagedData);
 			console.log("**remove completed = ", e);
 			alert("삭제되었습니다.");
 			});
@@ -463,12 +465,13 @@ function editCard_followUp(layerHere) {
 	// children카드가 0개일 시, inactive 처리하기
 	const childrenLayer = getchildrenLayerBySwitchLayer(layerHere);
 	if (childrenLayer != null) {
-	const childrenIdArray = getEveryIdArrayOfLayer(childrenLayer);
-	if(childrenIdArray.length == 0) {
-		setupBtnShowOrHideByClassName(childrenLayer, "inactiveCard");
-	} else {
-		setupBtnShowOrHideByClassName(childrenLayer, "readCard");
-	};
+		const childrenIdArray = getEveryIdArrayOfLayer(childrenLayer);
+		// children 카드에 아무것도 없으면, inactive 있으면, read로 읽기
+		if(childrenIdArray.length == 0) {
+			setupBtnShowOrHideByClassName(childrenLayer, "inactiveCard");
+		} else {
+			setupBtnShowOrHideByClassName(childrenLayer, "readCard");
+		};
 	};
 	if (layerHere != "character") {
 	const parentsLayer = getParentsLayerBySwitchLayer(layerHere);
@@ -500,14 +503,28 @@ function resizeTextarea() {
 };
 
 function showItIfNoBpData(layerHere) {
+	
+	function showMessage() {
+		const guideMessage = getSelectorById("guideMessage");
+		const guideMessageValue = getSelectorById("guideMessage").innerText;
+		if (guideMessageValue == "") {
+			guideMessage.innerHTML = "'파란색 네모칸에 내용을 작성해보세요~!'"
+		};
+	};
+
 	if(layerHere == "character") {
 		showEmptyCard(layerHere);
 		editCard_followUp(layerHere);
-	};
-	let guideMessage = getSelectorById("guideMessage");
-	let guideMessageValue = getSelectorById("guideMessage").innerText;
-	if (guideMessageValue == "") {
-		guideMessage.innerHTML = "'파란색 네모칸에 내용을 작성해보세요~!'"
+		showMessage();
+	} else {
+		// direction 카드부터는 부모 레이어가 0이 아닌 경우에만, showEmptyCard(=createFirstCard)를 진행한다.
+		const parentLayer = getParentsLayerBySwitchLayer(layerHere);
+		const parentsIdArrayLength = getEveryIdArrayOfLayer(parentLayer).length;
+		if(parentsIdArrayLength != 0) {
+			showEmptyCard(layerHere);
+			editCard_followUp(layerHere);
+			showMessage();
+		};
 	};
 };
 
