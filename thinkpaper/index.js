@@ -74,7 +74,7 @@ function requestReadBigPicture(user) {
 
 		function showItOnUI_latest() {
 
-			const idThreadObjectKeysArray = ["character", "direction"];
+			const idThreadObjectKeysArray = ["character", "direction", "roadmap"];
 			// 리팩토링 후 "roadmap", "actionPlan" 넣기
 
 			idThreadObjectKeysArray.forEach(eachLayer => {
@@ -162,7 +162,6 @@ function request_followUpEditedDate(layerHere, packagedDataHere) {
 			requestUpdateEditedDate("character", "direction");
 		case "actionPlan" :
 			requestUpdateEditedDate("character", "direction", "roadmap");
-			// 리팩토링 후 "roadmap", "actionPlan" 넣기
 		default : null;
 	};
 };
@@ -267,7 +266,7 @@ function getRefBySwitchLayer(layerHere, inputIdHere) {
 
 		const idThreadObject = getIdThreadObjectById(inputIdHere);
 		const directionRef = characterRef.child(idThreadObject.characterId).child("children");
-		// const roadmapRef = directionRef.child(idThreadObject.directionId).child("children");
+		const roadmapRef = directionRef.child(idThreadObject.directionId).child("children");
 		// const actionPlanRef = roadmapRef.child(idThreadObject.roadmapId).child("children");
 		// [기록] 위 두가지는 향후 사용하기
 		
@@ -345,11 +344,12 @@ function showItOnUI_followUp(layerHere) {
 	
 	switch(layerHere) {
 		case "character" :
-			showItOnUI_latest_byLayerCondition("direction");
+			showItOnUI_latest_byLayerCondition("direction", "roadmap");
 			// 리팩토링 후 showItOnUI_latest_byLayerCondition("direction", "roadmap", "actionPlan");
 			break;
 		case "direction" :
-			// showItOnUI_latest_byLayerCondition("roadmap", "actionPlan");
+			showItOnUI_latest_byLayerCondition("roadmap");
+			// 리팩토링 후 showItOnUI_latest_byLayerCondition("roadmap", "actionPlan");
 			break;
 		case "roadmap" :
 			showItOnUI_latest_byLayerCondition("actionPlan");
@@ -819,10 +819,11 @@ function openNewCard(layerHere) {
 		
 		switch(layerHere) {
 			case "character" :
-				openNewCard_byLayerCondition("direction");
+				openNewCard_byLayerCondition("direction", "roadmap");
 				// 리팩토링 후 openNewCard_byLayerCondition("direction", "roadmap", "actionPlan");
 				break;
 			case "direction" :
+				openNewCard_byLayerCondition("roadmap");
 				// openNewCard_byLayerCondition("roadmap", "actionPlan");
 				break;
 			case "roadmap" :
@@ -1021,7 +1022,7 @@ function getIdThreadObjectById(inputIdhere) {
 	if (resultIsNewId) {
 		returnObject["characterId"] = getCardId("character");
 		returnObject["directionId"] = getCardId("direction");
-		// returnObject["roadmapId"] = getCardId("raodmap");
+		returnObject["roadmapId"] = getCardId("raodmap");
 		// returnObject["actionPlanId"] = getCardId("actionPlan");
 		return returnObject;
 	} else {
@@ -1137,10 +1138,11 @@ function getchildrenLayerBySwitchLayer(layerHere) {
 		case "character" : 
 			return "direction";
 		case "direction" :
+			// return null;
+			return "roadmap";
+		case "roadmap" :
 			return null;
-		// 	return "roadmap";
-		// case "roadmap" :
-		// 	return "actionPlan";
+			// return "actionPlan";
 		// case "actionPlan" :
 		// 	return null;
 		// 리팩토링 후 개선하기
