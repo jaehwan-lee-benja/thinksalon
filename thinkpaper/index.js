@@ -301,7 +301,6 @@ function showUserData(userDataHere) {
 
 function showEmptyCard(layerHere) {
 	getSelectorById(layerHere).value = "";
-	setupBtnShowOrHideByClassName(layerHere,"createFirstCard");
 };
 
 function showItOnUI(layerHere, idHere) {
@@ -512,16 +511,19 @@ function showItIfNoBpData(layerHere) {
 		};
 	};
 
+	showEmptyCard(layerHere);
+
 	if(layerHere == "character") {
-		showEmptyCard(layerHere);
+		setupBtnShowOrHideByClassName(layerHere,"createFirstCard");
 		editCard_followUp(layerHere);
 		showMessage();
 	} else {
 		// direction 카드부터는 부모 레이어가 0이 아닌 경우에만, showEmptyCard(=createFirstCard)를 진행한다.
 		const parentLayer = getParentsLayerBySwitchLayer(layerHere);
 		const parentsIdArrayLength = getEveryIdArrayOfLayer(parentLayer).length;
+
 		if(parentsIdArrayLength != 0) {
-			showEmptyCard(layerHere);
+			setupBtnShowOrHideByClassName(layerHere,"createFirstCard");
 			editCard_followUp(layerHere);
 			showMessage();
 		};
