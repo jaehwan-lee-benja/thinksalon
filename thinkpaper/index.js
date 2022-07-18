@@ -1,4 +1,4 @@
-const db = firebase.database();
+const db = firebase.database(); // test_220718
 const SELECTBOX_BPTITLE_VALUE_INIT = "INIT";
 
 const userData = {}; //[질문] const or let 오브젝트에 키를 추가하는데, 이것은 데이터에 변화를 주는 것이 아닌가?
