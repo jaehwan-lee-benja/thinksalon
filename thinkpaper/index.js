@@ -4,7 +4,7 @@ const SELECTBOX_BPTITLE_VALUE_INIT = "INIT";
 const userData = {}; //[질문] const or let 오브젝트에 키를 추가하는데, 이것은 데이터에 변화를 주는 것이 아닌가?
 let objectById = {};
 let isMainShown = false;
-let eventListenerResult = "";
+let eventListenerResult = ""; //[질문] 이런것이 필요한가?
 
 (function() {
 	logIn();
@@ -18,7 +18,7 @@ function logIn() {
 			requestReadUserData(user);
 			requestReadBigPicture(user);
 			openEditCardByDbclick();
-			getLayerByEventListener();
+			// getLayerByEventListener(); // eventListener가 필요할 때 진행
 		} else {
 			window.location.replace("login.html");
 		};
@@ -175,7 +175,6 @@ function requestRemoveCard(layerHere, idHere) {
 
 	const switchedRef = getRefBySwitchLayer(layerHere, inputId);
 	const idArrayLength = getEveryIdArrayOfLayer(layerHere).length;
-	console.log("idArrayLength =", idArrayLength);
 
 	if(layerHere == "character" && idArrayLength == 1) {
 		// character레이어에서 remove진행시, 
@@ -184,14 +183,10 @@ function requestRemoveCard(layerHere, idHere) {
 		let emptyData = {children: ""};
 		const switchedRefForEmptyData = switchedRef.parent;
 		switchedRefForEmptyData.set(emptyData, (e) => {
-			console.log("YES!");
 			console.log("**remove completed = ", e);
 			alert("삭제되었습니다.");
 			});
 	} else {
-		console.log("inputId =", inputId);
-		console.log("packagedData.id =", packagedData.id);
-		console.log("packagedData.parentsId =", packagedData.parentsId);
 		switchedRef.child(inputId).remove((e) => {
 			request_followUpEditedDate(layerHere, packagedData);
 			console.log("**remove completed = ", e);
@@ -227,9 +222,8 @@ function requestUpdateMainCard(idHere) {
 		.update(setMainValue, (e) => {
 			console.log("**updateMainCard completed = ", e);
 			});
-
 	});
-	
+
 };
 
 function getRefBySwitchLayer(layerHere, inputIdHere) {
@@ -309,7 +303,7 @@ function showItOnUI(layerHere, idHere) {
 		getSelectorById("cardId_"+layerHere).value = objectById[idHere].id;
 		getSelectorById("cardParentsId_"+layerHere).value = objectById[idHere].parentsId;
 	} else {
-		getSelectorById(layerHere).value = "";
+		showEmptyCard(layerHere);
 	};
 	setupBtnShowOrHideByClassName(layerHere,"readCard");
 };
@@ -379,6 +373,7 @@ function setupBtnShowOrHideByClassName(layerHere, state) {
 		};
 	};
 
+	// 일단 모두 가리기
 	hideUI("openEditCard_btn_"+layerHere);
 	hideUI("cancelEditCard_btn_"+layerHere);
 	hideUI("saveEditedCard_btn_"+layerHere);
@@ -386,6 +381,7 @@ function setupBtnShowOrHideByClassName(layerHere, state) {
 	hideUI("removeCard_btn_"+layerHere);
 	hideUI("openNewCard_btn_"+layerHere);
 
+	// 모드에 따라 설정하기
 	switch(state){
 		case "createFirstCard" :
 			showUI("saveNewCard_btn_"+layerHere);
@@ -416,16 +412,17 @@ function setupBtnShowOrHideByClassName(layerHere, state) {
 			getSelectorById("alert_txt_"+layerHere).innerHTML = "(상위 카드 작성 후, 작성 가능)";
 			break;
 		default:
-			let state = null;
+			const state = null;
 	}
 	if(layerHere == "character") {
 		function setupBtnShowOrHideByClassName_main(layerHere) {
+
 			hideUI("gotoMainCard_btn_"+layerHere);
 			hideUI("setMainCard_btn_"+layerHere);
 			hideUI("setMainCard_txt_"+layerHere);
 		
-			let cardId = getSelectorById("cardId_character").value;
-			let mainId = getMainId();
+			const cardId = getSelectorById("cardId_character").value;
+			const mainId = getMainId();
 		
 			if(cardId == mainId) {
 				showUI("setMainCard_txt_"+layerHere);
@@ -444,19 +441,19 @@ function setupBtnShowOrHideByClassName(layerHere, state) {
 };
 
 function setupEditModeByClassName(layerHere, cardMode) {
-	function textareaReadOnly(id, check){
-		getSelectorById(id).readOnly = check;
+	function setupTextareaReadOnly(id, trueOrFalse){
+		getSelectorById(id).readOnly = trueOrFalse;
 	};
 	if (cardMode == "editing") {
 		document.getElementsByClassName(layerHere)[0].style.color = "#9CC0E7";
 		document.getElementsByClassName(layerHere)[0].style.borderColor = "#9CC0E7";
 		setupTextareaBorderColorByClass(layerHere, "3px", "#9CC0E7");
-		textareaReadOnly(layerHere, false);
+		setupTextareaReadOnly(layerHere, false);
 	} else {
 		document.getElementsByClassName(layerHere)[0].style.color = "#424242";
 		document.getElementsByClassName(layerHere)[0].style.borderColor = "#424242";
 		setupTextareaBorderColorByClass(layerHere, "1px", "#c8c8c8");
-		textareaReadOnly(layerHere, true);
+		setupTextareaReadOnly(layerHere, true);
 	};
 };
 
@@ -491,6 +488,7 @@ function resizeTextarea() {
 	// 참고: https://stackoverflow.com/questions/454202/creating-a-textarea-with-auto-resize
 	const tx = document.getElementsByTagName("textarea");
 	for (let i = 0; i < tx.length; i++) {
+		// [질문] i는 const로 하면 안될것 같다. i++이 i를 다시 정의하는 과정이기 때문에. 그럴까?
 		tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
 		tx[i].addEventListener("input", OnInput, false);
 	};
@@ -538,8 +536,8 @@ function highLightBorder(id, color) {
 
 function updateSelectbox(layerHere) {
 
-	let selectboxId = "selectbox_"+layerHere;
-	let selectbox = getSelectorById(selectboxId);
+	const selectboxId = "selectbox_"+layerHere;
+	const selectbox = getSelectorById(selectboxId);
 
 	// selectbox 초기화하기
 	for (let i = selectbox.options.length - 1; i >= 0; i--) {
@@ -550,9 +548,9 @@ function updateSelectbox(layerHere) {
 
 	function getMappedObject_IdEditedDateContents(layerHere3) {		
 
-		let returnArray = [];
+		const returnArray = [];
 
-		let eachIdArrayByLayer = getEveryIdArrayOfLayer(layerHere3);
+		const eachIdArrayByLayer = getEveryIdArrayOfLayer(layerHere3);
 		eachIdArrayByLayer.forEach(EachId => {
 			let returnObject = {};
 			returnObject["id"] = objectById[EachId].id;
@@ -564,7 +562,7 @@ function updateSelectbox(layerHere) {
 		return returnArray;
 	};
 
-	let mappedArray = getMappedObject_IdEditedDateContents(layerHere);
+	const mappedArray = getMappedObject_IdEditedDateContents(layerHere);
 
 	// selectbox option list 순서 잡기(최근 편집 순서)
 	function sortingArray(mappedArrayHere){
@@ -578,14 +576,14 @@ function updateSelectbox(layerHere) {
 
 	// <option> 만들어서, Array 넣기
 	for (let i = 0; i < sortedArray.length; i++) {
-		let option = document.createElement("OPTION");
-		let txt = document.createTextNode(sortedArray[i][layerHere]);
-		let optionId = sortedArray[i].id;
-		let optionValue = sortedArray[i][layerHere];
-		let mainId = getMainId();
+		const option = document.createElement("OPTION");
+		const txt = document.createTextNode(sortedArray[i][layerHere]);
+		const optionId = sortedArray[i].id;
+		const optionValue = sortedArray[i][layerHere];
+		const mainId = getMainId();
 		if(optionId == mainId) {
-			let mainOptionMark = optionValue + " ★";
-			let mainTxt = document.createTextNode(mainOptionMark);
+			const mainOptionMark = optionValue + " ★";
+			const mainTxt = document.createTextNode(mainOptionMark);
 			option.appendChild(mainTxt);
 		} else {
 			option.appendChild(txt);
@@ -597,30 +595,29 @@ function updateSelectbox(layerHere) {
 };
 
 function selectBySelectbox(layerHere) {
-	let selectboxId = "selectbox_"+layerHere;
-	let id = getSelectorById(selectboxId).value;
+	const selectboxId = "selectbox_"+layerHere;
+	const id = getSelectorById(selectboxId).value;
 	if(id != SELECTBOX_BPTITLE_VALUE_INIT) {
 		showItOnUI(layerHere, id);
 		showItOnUI_followUp(layerHere);
-		
 	};
 };
 
 ///// mainCard mananger
 
 function setMainCard() {
-	let characterId = getSelectorById("cardId_character").value;
+	const characterId = getSelectorById("cardId_character").value;
 	requestUpdateMainCard(characterId);
 };
 
 function gotoMainCard() {
-	let mainId = getMainId();
+	const mainId = getMainId();
 	showItOnUI("character", mainId);
 	updateSelectbox("character");
 };
 
 function getMainId() {
-	let characterIdArray = getEveryIdArrayOfLayer("character");
+	const characterIdArray = getEveryIdArrayOfLayer("character");
 	let mainId = "";
 	characterIdArray.forEach(eachId => {
 		if(objectById[eachId].main == "main") {
@@ -646,9 +643,9 @@ function saveNewCard(layerHere) {
 	
 			function catchContentsDataBySwitchLayer(layerHere2) {
 	
-				let catchContentsData = {};
+				const catchContentsData = {};
 				catchContentsData["contents"] = {};
-				let contents = catchContentsData["contents"];
+				const contents = catchContentsData["contents"];
 			
 				switch(layerHere2){
 					case "character" :
@@ -670,12 +667,12 @@ function saveNewCard(layerHere) {
 						contents["actionPlan"] = getSelectorById("actionPlan").value.trim();
 						break;
 					default:
-						let layerHere2 = null;
+						const layerHere2 = null;
 				};
 				return catchContentsData;
 			};
 	
-			let catchedData = catchContentsDataBySwitchLayer(layerHere);
+			const catchedData = catchContentsDataBySwitchLayer(layerHere);
 	
 			function getUuidv4() {
 				return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
@@ -683,7 +680,7 @@ function saveNewCard(layerHere) {
 				);
 			};
 	
-			let idNew = getUuidv4();
+			const idNew = getUuidv4();
 			catchedData["id"] = idNew;
 			catchedData["children"] = "";
 			catchedData["createdDate"] = getTimeStamp();
@@ -696,7 +693,7 @@ function saveNewCard(layerHere) {
 			
 	};
 
-	let packagedData = packageNewCard(layerHere);
+	const packagedData = packageNewCard(layerHere);
 
 	if (packagedData != null) {
 		requestSetCard(layerHere, packagedData);
@@ -710,19 +707,19 @@ function saveEditedCard(layerHere) {
 		function moniterIfCardChanged(layerHere2) {
 	
 			// 현재 UI에 띄워진 값 포착하기
-			let id = getSelectorById("cardId_"+layerHere2).value;
-			let value = getSelectorById(layerHere2).value.trim();
-			let object = {"id": id, [layerHere2]: value};
+			const id = getSelectorById("cardId_"+layerHere2).value;
+			const value = getSelectorById(layerHere2).value.trim();
+			const object = {"id": id, [layerHere2]: value};
 	
 			// 로컬 데이터에 있는 값 포착하기
 	
-			function getMappedObject_IdContents(layerHere2) {		
+			function getMappedObject_idContents(layerHere2) {		
 	
-				let returnArray = [];
+				const returnArray = [];
 		
-				let eachIdArrayByLayer = getEveryIdArrayOfLayer(layerHere2);
+				const eachIdArrayByLayer = getEveryIdArrayOfLayer(layerHere2);
 				eachIdArrayByLayer.forEach(EachId => {
-					let returnObject = {};
+					const returnObject = {};
 					returnObject["id"] = objectById[EachId].id;
 					returnObject[layerHere2] = objectById[EachId].contents[layerHere2];
 					returnArray.push(returnObject);
@@ -731,7 +728,7 @@ function saveEditedCard(layerHere) {
 				return returnArray;
 			};
 	
-			let arrayWithId = getMappedObject_IdContents(layerHere);
+			const arrayWithId = getMappedObject_idContents(layerHere);
 		
 			// 위 두가지가 같은 경우의 수라면, 수정이 이뤄지지 않은 상태
 			for(let i = 0; i < arrayWithId.length; i++) {
@@ -744,23 +741,23 @@ function saveEditedCard(layerHere) {
 		
 		function getMoniterResult(layerHere3, isChanged) {
 			if (isChanged) {
-				let moniterResultInFunction = monitorCardBlankOrDuplicates(layerHere3);
+				const moniterResultInFunction = monitorCardBlankOrDuplicates(layerHere3);
 				return moniterResultInFunction;
 			} else {
 				return true;
 			};
 		};
 	
-		let moniterResult = getMoniterResult(layerHere, moniterIfCardChanged(layerHere));
+		const moniterResult = getMoniterResult(layerHere, moniterIfCardChanged(layerHere));
 		
 		if (moniterResult) {
-			let packagedData = {};
+			const packagedData = {};
 			packagedData["id"] = getCardId(layerHere);
 			packagedData["parentsId"] = getSelectorById("cardParentsId_"+layerHere).value;
 			packagedData["editedDate"] = getTimeStamp();
 			packagedData["contents"] = {};
 	
-			let contents = packagedData["contents"];
+			const contents = packagedData["contents"];
 			switch(layerHere){
 				case "character" :
 					contents["character"] = getSelectorById("character").value.trim();
@@ -777,7 +774,7 @@ function saveEditedCard(layerHere) {
 					contents["actionPlan"] = getSelectorById("actionPlan").value.trim();
 					break;
 				default: 
-					let layer = null;
+					const layer = null;
 			};
 			return packagedData;
 		};
@@ -790,7 +787,7 @@ function saveEditedCard(layerHere) {
 };
 
 function removeCard(layerHere) {
-	let removeId = getSelectorById("cardId_"+layerHere).value;
+	const removeId = getSelectorById("cardId_"+layerHere).value;
 	if (confirm("정말 삭제하시겠습니까? 삭제가 완료되면, 해당 내용은 다시 복구될 수 없습니다.")) {
 		requestRemoveCard(layerHere, removeId);
 	};
@@ -804,14 +801,11 @@ function openNewCard(layerHere) {
 	function openNewCard_followUp(layerHere) {
 		function openNewCard_byLayerCondition(layer1, layer2, layer3, layer4) {
 		
-			let idThreadObjectKeysArray = [layer1, layer2, layer3, layer4];
+			const idThreadObjectKeysArray = [layer1, layer2, layer3, layer4];
 		
 			idThreadObjectKeysArray.forEach(eachLayer => {
 				if (eachLayer != undefined) {
-					// [삭제 예정] *이전 코드로서, 버그가 없는지 재검토하기
-					// showEmptyCard(eachLayer);
-					// setupBtnShowOrHideByClassName(eachLayer, "createFirstCard");
-					getSelectorById(eachLayer).value = "";
+					showEmptyCard(eachLayer);
 					setupBtnShowOrHideByClassName(eachLayer, "inactiveCard");
 				};
 			});
@@ -859,13 +853,11 @@ function openEditCard(layerHere) {
 function cancelEditCard(layerHere) {
 	const cardId = getSelectorById("cardId_"+layerHere).value;
 	if(cardId != ""){
-		console.log("check1");
 		showItOnUI(layerHere, cardId);
 		const childrenLayer = getchildrenLayerBySwitchLayer(layerHere);
 		if (childrenLayer != null) {
 			const idArray = getEveryIdArrayOfLayer(childrenLayer);
 			if(idArray.length == 0) {
-				console.log("check2");
 				setupBtnShowOrHideByClassName(childrenLayer, "createFirstCard");
 			};
 		};
@@ -880,25 +872,25 @@ function cancelEditCard(layerHere) {
 ///// monitor manager
 
 function monitorCardBlankOrDuplicates(layerHere) {
-	let cardValue = getSelectorById(layerHere).value.trim();
+	const cardValue = getSelectorById(layerHere).value.trim();
 	if (cardValue != "") {
 
 		function getSameTextArray(layerHere2, cardValueHere) {
 
 			const idArray = getEveryIdArrayOfLayer(layerHere2);
 
-			let mappedIdArray = idArray.map( id => {
-				let mappingObject = {"id":id};
+			const mappedIdArray = idArray.map( id => {
+				const mappingObject = {"id":id};
 				mappingObject[layerHere2] = objectById[id].contents[layerHere2];	
 				return mappingObject;
 				});
 		
-			let valueArray = [];
+			const valueArray = [];
 			for(let i = 0; i < mappedIdArray.length; i++) {
 				valueArray.push(mappedIdArray[i][layerHere2]);
 			};
 		
-			let filterSameTextArray = (query) => {
+			const filterSameTextArray = (query) => {
 				return valueArray.find(value => query == value);
 			}; //문법 형태의 이해
 
@@ -906,12 +898,12 @@ function monitorCardBlankOrDuplicates(layerHere) {
 			// 	return valueArray.find(value => query == value);
 			// }; //한번더 보기
 		
-			let sameTextArray = filterSameTextArray(cardValueHere);
+			const sameTextArray = filterSameTextArray(cardValueHere);
 		
 			return sameTextArray;
 		};
 
-		let sameTextArray = getSameTextArray(layerHere, cardValue);
+		const sameTextArray = getSameTextArray(layerHere, cardValue);
 		if (sameTextArray == undefined) {
 			return true;
 		} else {
@@ -932,27 +924,27 @@ function getSelectorById(id) {
 };
 
 function getTimeStamp() {
-	let now = new Date();
-	let nowString = now.toISOString();
+	const now = new Date();
+	const nowString = now.toISOString();
 	return nowString;
 };
 
 function getCardId(layerHere) {
-	let result = getSelectorById("cardId_"+layerHere).value;
+	const result = getSelectorById("cardId_"+layerHere).value;
 	return result;
 };
 
 function getLastestEditedId(keysArrayHere) {
 
 	const mappedArray = keysArrayHere.map( id => {
-		let c = objectById[id];
+		const c = objectById[id];
 		return {"id": id, "editedDate": c.editedDate};
 	}).sort(
 		(a,b) => new Date(b.editedDate) - new Date(a.editedDate)
 	);
 
 	if (mappedArray != null) {
-		let latestEditedId = mappedArray[0];
+		const latestEditedId = mappedArray[0];
 		return latestEditedId.id;
 	} else {
 		return null;
@@ -990,7 +982,7 @@ function getLayerByEventListener() {
 function getParentsIdfromChildId(layerHere, childIdHere) {
 	console.log("**=====getParentsIdfromChildId start=====");
 
-	let everyIdArray = getEveryIdArrayOfLayer(layerHere);
+	const everyIdArray = getEveryIdArrayOfLayer(layerHere);
 	let parentsId = "";
 
 	if(layerHere == "character") {
@@ -1003,18 +995,15 @@ function getParentsIdfromChildId(layerHere, childIdHere) {
 				return parentsId;
 			};
 		};
-		console.log("layerHere @getParentsIdfromChildId =", layerHere);
 		const parentsLayer = getParentsLayerBySwitchLayer(layerHere);
-		console.log("parentsLayer @getParentsIdfromChildId =", parentsLayer);
 		parentsId = getCardId(parentsLayer);
-		// [다시 시도] 신규 id가 떴을 때, 어떤 레이어인지 알 수 있는 방법
 		return parentsId;
 	};
 };
 
 function getIdThreadObjectById(inputIdhere) {
 	
-	let resultIsNewId = isNewId(inputIdhere);
+	const resultIsNewId = isNewId(inputIdhere);
 
 	let returnObject = {};
 
@@ -1025,44 +1014,44 @@ function getIdThreadObjectById(inputIdhere) {
 		// returnObject["actionPlanId"] = getCardId("actionPlan");
 		return returnObject;
 	} else {
-		let unitObject = objectById[inputIdhere];
-		let inputLayer = unitObject.layer;
+		const unitObject = objectById[inputIdhere];
+		const inputLayer = unitObject.layer;
 
 		function getIdBySwitchLayer(layerHere) {
-			let returnObject = {};
+			const returnObject2 = {};
 			switch(layerHere){
 				case "character" : 
-					returnObject["characterId"] = inputIdhere;
-					returnObject["directionId"] = "";
-					returnObject["roadmapId"] = "";
-					returnObject["actionPlanId"] = "";
+					returnObject2["characterId"] = inputIdhere;
+					returnObject2["directionId"] = "";
+					returnObject2["roadmapId"] = "";
+					returnObject2["actionPlanId"] = "";
 					break;
 				case "direction" :
-					returnObject["characterId"] = getParentsIdfromChildId("direction", inputIdhere);
-					returnObject["directionId"] = inputIdhere;
-					returnObject["roadmapId"] = "";
-					returnObject["actionPlanId"] = "";
+					returnObject2["characterId"] = getParentsIdfromChildId("direction", inputIdhere);
+					returnObject2["directionId"] = inputIdhere;
+					returnObject2["roadmapId"] = "";
+					returnObject2["actionPlanId"] = "";
 					break;
 				case "roadmap" :
-					let directionId = getParentsIdfromChildId("roadmap", inputIdhere);
-					let characterId = getParentsIdfromChildId("direction", directionId);
-					returnObject["characterId"] = characterId;
-					returnObject["directionId"] = directionId;
-					returnObject["roadmapId"] = inputIdhere;
-					returnObject["actionPlanId"] = "";
+					const directionId = getParentsIdfromChildId("roadmap", inputIdhere);
+					const characterId = getParentsIdfromChildId("direction", directionId);
+					returnObject2["characterId"] = characterId;
+					returnObject2["directionId"] = directionId;
+					returnObject2["roadmapId"] = inputIdhere;
+					returnObject2["actionPlanId"] = "";
 					break;
 				case "actionPlan" :
-					let roadmapId = getParentsIdfromChildId("actionPlan", inputIdhere);
-					let direcitonId2 = getParentsIdfromChildId("roadmap", roadmapId);
-					let characterId2 = getParentsIdfromChildId("direction", direcitonId2);
-					returnObject["characterId"] = characterId2;
-					returnObject["directionId"] = direcitonId2;
-					returnObject["roadmapId"] = roadmapId;
-					returnObject["actionPlanId"] = inputIdhere;
+					const roadmapId = getParentsIdfromChildId("actionPlan", inputIdhere);
+					const direcitonId2 = getParentsIdfromChildId("roadmap", roadmapId);
+					const characterId2 = getParentsIdfromChildId("direction", direcitonId2);
+					returnObject2["characterId"] = characterId2;
+					returnObject2["directionId"] = direcitonId2;
+					returnObject2["roadmapId"] = roadmapId;
+					returnObject2["actionPlanId"] = inputIdhere;
 					break;
 				default: null;	
 			};
-			return returnObject;
+			return returnObject2;
 		};
 		
 		returnObject = getIdBySwitchLayer(inputLayer);
@@ -1071,8 +1060,8 @@ function getIdThreadObjectById(inputIdhere) {
 };
 
 function getEveryIdArrayOfLayer(layerHere) {
-	let everyIdArray = Object.keys(objectById);
-	let everyIdArrayOfLayer = [];
+	const everyIdArray = Object.keys(objectById);
+	const everyIdArrayOfLayer = [];
 	
 	for(let i = 0; i < everyIdArray.length; i++) {
 		if(objectById[everyIdArray[i]].layer == layerHere ) {
@@ -1082,9 +1071,9 @@ function getEveryIdArrayOfLayer(layerHere) {
 
 	// character 레이어를 제외하고, 부모에 해당하는 것들 중에서만 중복을 검토하기
 	if(layerHere != "character") {
-		let everyIdArrayOfLayerFromSameParents = [];
+		const everyIdArrayOfLayerFromSameParents = [];
 		for(let j = 0; j < everyIdArrayOfLayer.length; j++) {
-			let parentsLayer = getParentsLayerBySwitchLayer(layerHere);
+			const parentsLayer = getParentsLayerBySwitchLayer(layerHere);
 			if (objectById[everyIdArrayOfLayer[j]].parentsId == getCardId(parentsLayer)){
 				everyIdArrayOfLayerFromSameParents.push(everyIdArrayOfLayer[j]);
 			};
@@ -1096,8 +1085,8 @@ function getEveryIdArrayOfLayer(layerHere) {
 };
 
 function isNewId(idHere) {
-	let everyIdArray = Object.keys(objectById);
-	let checkpoint = everyIdArray.includes(idHere);
+	const everyIdArray = Object.keys(objectById);
+	const checkpoint = everyIdArray.includes(idHere);
 	if (checkpoint) {
 		return false;
 	} else {
