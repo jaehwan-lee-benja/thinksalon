@@ -1,6 +1,8 @@
 const db = firebase.database();
 const SELECTBOX_BPTITLE_VALUE_INIT = "INIT";
 
+// [질문] github에서 branch로 main의 내용을 땡겨올 수 있을까?
+
 const userData = {}; //[질문] const or let 오브젝트에 키를 추가하는데, 이것은 데이터에 변화를 주는 것이 아닌가?
 let objectById = {};
 let isMainShown = false;
