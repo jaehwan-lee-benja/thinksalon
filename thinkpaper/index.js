@@ -6,7 +6,7 @@ const SELECTBOX_BPTITLE_VALUE_INIT = "INIT";
 const userData = {}; //[질문] const or let 오브젝트에 키를 추가하는데, 이것은 데이터에 변화를 주는 것이 아닌가?
 let objectById = {};
 let isMainShown = false;
-let eventListenerResult = ""; //[질문] 이런것이 필요한가?
+let eventListenerResult = ""; //[질문] 이런 것이 필요한가?
 
 (function() {
 	logIn();
@@ -110,18 +110,26 @@ function requestReadBigPicture(user) {
 
 ///// LtoS manager
 
+// function requestSetCard(layerHere, packagedDataHere) {
+// 	const inputId = packagedDataHere.id;
+// 	const switchedRef = getRefBySwitchLayer(layerHere, inputId);
+// 	switchedRef.child(inputId).set(packagedDataHere, (e) => {
+// 		request_followUpEditedDate(layerHere, packagedDataHere);
+// 		// [질문] 이 위의 것은 forEach로 서버 통신이 자주 일어남.
+// 		// forEach 안에서 콜백함수로 하게되면, alert가 계속 반복적으로 일어날것으로 보임.
+// 		// 때문에, forEach 밖에서 alert를 배치하는 것이 좋을듯함. 
+// 		// 위의 함수가 끝난 다음에 alert를 할 수 있는 방법이 있을까?
+// 		alert("저장되었습니다.");});
+// 		// [질문] 문서에서는 then(), catch()를 씀. 차이점?
+// 		// 참조: https://firebase.google.com/docs/database/web/read-and-write?hl=ko
+// };
+
 function requestSetCard(layerHere, packagedDataHere) {
 	const inputId = packagedDataHere.id;
 	const switchedRef = getRefBySwitchLayer(layerHere, inputId);
-	switchedRef.child(inputId).set(packagedDataHere, (e) => {
+	switchedRef.child(inputId).set(packagedDataHere).then((e) => {
 		request_followUpEditedDate(layerHere, packagedDataHere);
-		// [질문] 이 위의 것은 forEach로 request가 자주 일어남.
-		// forEach 안에서 콜백함수로 하게되면, alert가 계속 반복적으로 일어날것으로 보임.
-		// 때문에, forEach 밖에서 alert를 배치하는 것이 좋을듯함. 
-		// 위의 함수가 끝난 다음에 alert를 할 수 있는 방법이 있을까?
 		alert("저장되었습니다.");});
-		// [질문] 문서에서는 then(), catch()를 씀. 차이점?
-		// 참조: https://firebase.google.com/docs/database/web/read-and-write?hl=ko
 };
 
 function requestUpdateCard(layerHere, packagedDataHere) {
@@ -534,12 +542,46 @@ function highLightBorder(id, color) {
 	return getSelectorById(id).style.borderColor = color;
 };
 
+///// list manager
+
+function updateList(layerHere, sortedArray) {
+
+	const listId = "list_"+layerHere;
+	const list = getSelectorById(listId);
+
+	// list 초기화하기
+	console.log("layerHere =", layerHere);
+	console.log("list.getElementsByTagName(LI)", list.getElementsByTagName("LI"));
+
+	const listLength = list.getElementsByTagName("LI").length;
+	console.log("listLength =", listLength);
+	if (listLength != null) {
+		for (let i = listLength - 1; i >= 0; i--) {
+			list.remove(i + 1);
+		};
+	}
+
+	const listContainer = document.createElement('div');
+	const listElement = document.createElement('ul');
+	list.appendChild(listContainer);
+	listContainer.appendChild(listElement);
+
+	for (let i = 0; i < sortedArray.length; i++) {
+		const liValue = sortedArray[i][layerHere];
+        const listItem = document.createElement('li');
+		listItem.innerHTML = liValue;
+        listElement.appendChild(listItem);
+	};
+};
+
 ///// selectbox manager
 
 function updateSelectbox(layerHere) {
 
 	const selectboxId = "selectbox_"+layerHere;
 	const selectbox = getSelectorById(selectboxId);
+
+	// console.log("selectbox.options.length =", selectbox.options.length);
 
 	// selectbox 초기화하기
 	for (let i = selectbox.options.length - 1; i >= 0; i--) {
@@ -579,9 +621,9 @@ function updateSelectbox(layerHere) {
 	// <option> 만들어서, Array 넣기
 	for (let i = 0; i < sortedArray.length; i++) {
 		const option = document.createElement("OPTION");
-		const txt = document.createTextNode(sortedArray[i][layerHere]);
 		const optionId = sortedArray[i].id;
 		const optionValue = sortedArray[i][layerHere];
+		const txt = document.createTextNode(optionValue);
 		const mainId = getMainId();
 		if(optionId == mainId) {
 			const mainOptionMark = optionValue + " ★";
@@ -590,10 +632,13 @@ function updateSelectbox(layerHere) {
 		} else {
 			option.appendChild(txt);
 		};
-		option.setAttribute("value", sortedArray[i].id);
-		option.setAttribute("innerHTML", sortedArray[i][layerHere]);
+		option.setAttribute("value", optionId);
+		option.setAttribute("innerHTML", optionValue);
 		selectbox.insertBefore(option, selectbox.lastChild);
 	};
+
+	updateList(layerHere, sortedArray);
+
 };
 
 function selectBySelectbox(layerHere) {
