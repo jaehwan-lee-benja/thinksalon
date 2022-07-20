@@ -88,13 +88,21 @@ function requestReadBigPicture(user) {
 					if(mainId != null && isMainShown == false) {
 						isMainShown = true;
 						showItOnUI("character", mainId);
+<<<<<<< Updated upstream
 					} else {	
+=======
+					} else {
+						console.log("eachLayer1 =", eachLayer);
+						console.log("test1");		
+>>>>>>> Stashed changes
 						showItOnUI(eachLayer, latestIdOfEachLayer);
 					};
 					setupBtnShowOrHideByClassName(eachLayer, "readCard");
 					updateSelectbox(eachLayer);
 
 				} else {
+					console.log("eachLayer2 =", eachLayer);
+					console.log("test2");
 					showItIfNoBpData(eachLayer);
 					updateSelectbox(eachLayer);
 				};
@@ -502,6 +510,7 @@ function resizeTextarea() {
 };
 
 function showItIfNoBpData(layerHere) {
+<<<<<<< Updated upstream
 	
 	function showMessage() {
 		const guideMessage = getSelectorById("guideMessage");
@@ -527,6 +536,16 @@ function showItIfNoBpData(layerHere) {
 			editCard_followUp(layerHere);
 			showMessage();
 		};
+=======
+	// if(layerHere == "character") {
+		showEmptyCard(layerHere);
+		editCard_followUp(layerHere);
+	// };
+	let guideMessage = getSelectorById("guideMessage");
+	let guideMessageValue = getSelectorById("guideMessage").innerText;
+	if (guideMessageValue == "") {
+		guideMessage.innerHTML = "'파란색 네모칸에 내용을 작성해보세요~!'"
+>>>>>>> Stashed changes
 	};
 };
 
