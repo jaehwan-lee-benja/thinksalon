@@ -1,12 +1,12 @@
 const db = firebase.database();
 const SELECTBOX_BPTITLE_VALUE_INIT = "INIT";
 
-// [질문] github에서 branch로 main의 내용을 땡겨올 수 있을까?
+// [해결] github에서 branch로 main의 내용을 땡겨올 수 있을까?
 
-const userData = {}; //[질문] const or let 오브젝트에 키를 추가하는데, 이것은 데이터에 변화를 주는 것이 아닌가?
+const userData = {}; //[해결] const or let 오브젝트에 키를 추가하는데, 이것은 데이터에 변화를 주는 것이 아닌가?
 let objectById = {};
 let isMainShown = false;
-let eventListenerResult = ""; //[질문] 이런 것이 필요한가?
+let eventListenerResult = ""; //[해결] 이런 것이 필요한가?
 
 (function() {
 	logIn();
@@ -115,21 +115,25 @@ function requestReadBigPicture(user) {
 // 	const switchedRef = getRefBySwitchLayer(layerHere, inputId);
 // 	switchedRef.child(inputId).set(packagedDataHere, (e) => {
 // 		request_followUpEditedDate(layerHere, packagedDataHere);
-// 		// [질문] 이 위의 것은 forEach로 서버 통신이 자주 일어남.
+// 		// [해결] 이 위의 것은 forEach로 서버 통신이 자주 일어남.
 // 		// forEach 안에서 콜백함수로 하게되면, alert가 계속 반복적으로 일어날것으로 보임.
 // 		// 때문에, forEach 밖에서 alert를 배치하는 것이 좋을듯함. 
 // 		// 위의 함수가 끝난 다음에 alert를 할 수 있는 방법이 있을까?
 // 		alert("저장되었습니다.");});
-// 		// [질문] 문서에서는 then(), catch()를 씀. 차이점?
+// 		// [해결] 문서에서는 then(), catch()를 씀. 차이점? // 문서 버전을 함께 확인하기
 // 		// 참조: https://firebase.google.com/docs/database/web/read-and-write?hl=ko
 // };
 
 function requestSetCard(layerHere, packagedDataHere) {
 	const inputId = packagedDataHere.id;
 	const switchedRef = getRefBySwitchLayer(layerHere, inputId);
-	switchedRef.child(inputId).set(packagedDataHere).then((e) => {
-		request_followUpEditedDate(layerHere, packagedDataHere);
-		alert("저장되었습니다.");});
+	switchedRef.child(inputId)
+	.set(packagedDataHere)
+	.then((e) => {
+		request_followUpEditedDate(layerHere, packagedDataHere, function(){
+			alert("저장되었습니다.");
+		});
+	});
 };
 
 function requestUpdateCard(layerHere, packagedDataHere) {
@@ -142,7 +146,20 @@ function requestUpdateCard(layerHere, packagedDataHere) {
 		});
 };
 
-function request_followUpEditedDate(layerHere, packagedDataHere) {
+const o1 = {
+	fun1 : function(){
+
+	},
+	"fun2" : function(){
+
+	}
+}
+
+o1.fun1();
+o1.fun2();
+// 오브젝트 단위로 파일 쪼개기
+
+function request_followUpEditedDate(layerHere, packagedDataHere, cb) {
 	const parentsId = packagedDataHere.parentsId;
 	const parentsLayer = getParentsLayerBySwitchLayer(layerHere);
 	const switchedRef = getRefBySwitchLayer(parentsLayer, parentsId);
@@ -150,14 +167,22 @@ function request_followUpEditedDate(layerHere, packagedDataHere) {
 		
 	function requestUpdateEditedDate(layer1, layer2, layer3, layer4) {
 	
-		const idThreadObjectKeysArray = [layer1, layer2, layer3, layer4];
+		const idThreadObjectKeysArray = [layer1, layer2, layer3, layer4].filter((l)=> l != undefined );
+		// filter에 대해서 천천히 이해하기
 	
+		const last = idThreadObjectKeysArray.length;
+		let counter = 0;
 		idThreadObjectKeysArray.forEach(eachLayer => {
-			if (eachLayer != undefined) {
-				switchedRef.child(parentsId).update(editedDateForParents, (e) => {
+			switchedRef.child(parentsId)
+			// parentsId -> eachLayer 생각하기
+			.update(editedDateForParents, (e) => {
 				console.log("**followUpEditedDate completed = ", e);
-				});
-			};
+				console.log("last =", last);
+				console.log("counter =", counter);
+				if(++counter == last) {
+					cb();
+				}
+			});
 		});
 	};
 
@@ -275,7 +300,7 @@ function getRefBySwitchLayer(layerHere, inputIdHere) {
 		// const actionPlanRef = roadmapRef.child(idThreadObject.roadmapId).child("children");
 		// [기록] 위 두가지는 향후 사용하기
 		
-		// const layer = eventListenerResult; //[질문] eventLister를 이렇게 활용하는게 맞을까? global의 사용
+		// const layer = eventListenerResult; //[해결] eventLister를 이렇게 활용하는게 맞을까? global의 사용
 
 		switch(layerHere){
 			case "character" : 
@@ -498,7 +523,7 @@ function resizeTextarea() {
 	// 참고: https://stackoverflow.com/questions/454202/creating-a-textarea-with-auto-resize
 	const tx = document.getElementsByTagName("textarea");
 	for (let i = 0; i < tx.length; i++) {
-		// [질문] i는 const로 하면 안될것 같다. i++이 i를 다시 정의하는 과정이기 때문에. 그럴까?
+		// [해결] i는 const로 하면 안될것 같다. i++이 i를 다시 정의하는 과정이기 때문에. 그럴까?
 		tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
 		tx[i].addEventListener("input", OnInput, false);
 	};
@@ -550,27 +575,22 @@ function updateList(layerHere, sortedArray) {
 	const list = getSelectorById(listId);
 
 	// list 초기화하기
+	console.log("listId =", listId);
 	console.log("layerHere =", layerHere);
+	console.log("list =", list);
 	console.log("list.getElementsByTagName(LI)", list.getElementsByTagName("LI"));
 
-	const listLength = list.getElementsByTagName("LI").length;
-	console.log("listLength =", listLength);
-	if (listLength != null) {
-		for (let i = listLength - 1; i >= 0; i--) {
-			list.remove(i + 1);
-		};
+	const lis = list.getElementsByTagName("LI");
+	console.log("lis =", lis);
+	for(let i=lis.length-1; i>=0; i-- ){
+		lis[i].remove()
 	}
-
-	const listContainer = document.createElement('div');
-	const listElement = document.createElement('ul');
-	list.appendChild(listContainer);
-	listContainer.appendChild(listElement);
 
 	for (let i = 0; i < sortedArray.length; i++) {
 		const liValue = sortedArray[i][layerHere];
         const listItem = document.createElement('li');
 		listItem.innerHTML = liValue;
-        listElement.appendChild(listItem);
+        list.appendChild(listItem);
 	};
 };
 
