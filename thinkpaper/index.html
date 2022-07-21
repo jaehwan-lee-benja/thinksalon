@@ -37,7 +37,7 @@
                             <div>
                                 <span>[목록 선택하기]<br></span>
                                 <select style="width: 100%; font-size: 0.8rem;" id="selectbox_character"
-                                    onchange="selectBySelectbox('character');">
+                                    onchange="selectboxDept.selectBySelectbox('character');">
                                     <option value="INIT">클릭하여 이동</option>
                                 </select>
                             </div>
@@ -82,7 +82,7 @@
                             <div>
                                 <span>[목록 선택하기]<br></span>
                                 <select style="width: 100%; font-size: 0.8rem;" id="selectbox_direction"
-                                    onchange="selectBySelectbox('direction');">
+                                    onchange="selectboxDept.selectBySelectbox('direction');">
                                     <option value="INIT">클릭하여 이동</option>
                                 </select>
                             </div>
@@ -120,7 +120,7 @@
                             <div>
                                 <span>[목록 선택하기]<br></span>
                                 <select style="width: 100%; font-size: 0.8rem;" id="selectbox_roadmap"
-                                    onchange="selectBySelectbox('roadmap');">
+                                    onchange="selectboxDept.selectBySelectbox('roadmap');">
                                     <option value="INIT">클릭하여 이동</option>
                                 </select>
                             </div>
@@ -154,7 +154,7 @@
                             <div>
                                 <span>[목록 선택하기]<br></span>
                                 <select style="width: 100%; font-size: 0.8rem;" id="selectbox_actionPlan"
-                                    onchange="selectBySelectbox('actionPlan');">
+                                    onchange="selectboxDept.selectBySelectbox('actionPlan');">
                                     <option value="INIT">클릭하여 이동</option>
                                 </select>
                             </div>
@@ -233,7 +233,7 @@
                 <p>
                     <span type="text" id="nameChecked">로딩중...</span>
                     <span type="text" id="emailChecked"></span>
-                    <input style="width: 5rem;" onClick="logInDept.logOut()" type="button" value="로그아웃"></input>
+                    <input style="width: 5rem;" onClick="logOut()" type="button" value="로그아웃"></input>
                 </p>
             </div>
         </div>
