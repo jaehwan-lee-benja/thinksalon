@@ -4,88 +4,76 @@ const userData = {};
 let objectById = {};
 let isMainShown = false;
 
-// const logInDept = {
-// 	"logIn": function logIn() {
-// 		firebase.auth().onAuthStateChanged(function (user) {
-// 			if (user != null) {
-// 				requestReadUserData(user);
-// 				requestReadBigPicture(user);
-// 				openEditCardByDbclick();
-// 			} else {
-// 				window.location.replace("login.html");
-// 			};
-// 		});
-// 	},
-// 	"logOut": function logOut() {
-// 		firebase.auth().signOut();
-// 	}
-// }
-
-(function() {
-	logIn();
-})();
-
-function logIn() {
-	firebase.auth().onAuthStateChanged(function (user) {
-		if (user != null) {
-			requestReadUserData(user);
-			requestReadBigPicture(user);
-			openEditCardByDbclick();
-		} else {
-			window.location.replace("login.html");
-		};
-	});
-};
-
-function logOut() {
-	firebase.auth().signOut();
-}
-
-///// StoL manager
-
-function requestReadUserData(user) {
-	const userRef = db.ref("users").child(user.uid).child("user");
-	userRef.on("value", (snapshot) => {
-		snapshot.forEach(childSnap => {
-			const key = childSnap.key;
-			const value = childSnap.val();
-			value["uid"] = childSnap.key;
-			userData[key] = value;
+const logInDept = {
+	"logIn": function logIn() {
+		firebase.auth().onAuthStateChanged(function (user) {
+			if (user != null) {
+				StoLDept.requestReadUserData(user);
+				StoLDept.requestReadBigPicture(user);
+				openEditCardByDbclick();
+			} else {
+				window.location.replace("login.html");
+			};
 		});
-		showUserData(userData);
-	});
+	},
+	"logOut": function logOut() {
+		firebase.auth().signOut();
+	}
 };
 
-function requestReadIdAndObjectFromChildren(o){
-	// console.log('**requestReadIdAndObjectFromChildren >>',o)
-	const c = o.children;
-	if(!c) return;
+logInDept.logIn();
 
-	const ids = Object.keys(c);
-	if(ids.length == undefined) return;
+const StoLDept = {
+	"requestReadUserData": 
+		function requestReadUserData(user) {
+			const userRef = db.ref("users").child(user.uid).child("user");
+			userRef.on("value", (snapshot) => {
+				snapshot.forEach(childSnap => {
+					const key = childSnap.key;
+					const value = childSnap.val();
+					value["uid"] = childSnap.key;
+					userData[key] = value;
+				});
+				userDept.showUserData(userData);
+			});
+		},
+	"requestReadBigPicture":
+		function requestReadBigPicture(user) {
 
-	ids.forEach( id => {
-		const v = c[id];
-		objectById[id] = v;
-		requestReadIdAndObjectFromChildren(v);
-	});
-	
-};
+			const userRef = db.ref("users").child(user.uid).child("bigPicture");
+			
+			userRef.on("value", (snapshot) => {
+				console.log("**===== .on is here =====");
+		
+				const v = snapshot.val();
+				objectById = {};
 
-function requestReadBigPicture(user) {
+				// [질문] 재귀함수는 이 안에 넣어야 정리가 되는듯함, 괜찮을지?
+				function requestReadIdAndObjectFromChildren(o){
+					// console.log('**requestReadIdAndObjectFromChildren >>',o)
+					const c = o.children;
+					if(!c) return;
+				
+					const ids = Object.keys(c);
+					if(ids.length == undefined) return;
+				
+					ids.forEach( id => {
+						const v = c[id];
+						objectById[id] = v;
+						requestReadIdAndObjectFromChildren(v);
+					});
+				};
 
-	const userRef = db.ref("users").child(user.uid).child("bigPicture");
-	
-	userRef.on("value", (snapshot) => {
-		console.log("**===== .on is here =====");
-
-		const v = snapshot.val();
-		objectById = {};
-		requestReadIdAndObjectFromChildren(v);
-		// console.log('**objectById >>',objectById)
-
+				requestReadIdAndObjectFromChildren(v);
+				// console.log('**objectById >>',objectById)
+		
+				StoLDept.showItOnUI_latest();
+		
+			});
+		},
+	"showItOnUI_latest":
 		function showItOnUI_latest() {
-
+		
 			const idThreadObjectKeysArray = ["character", "direction", "roadmap", "actionPlan"];
 			// 리팩토링 후 "roadmap", "actionPlan" 넣기
 
@@ -106,248 +94,213 @@ function requestReadBigPicture(user) {
 					setupBtnShowOrHideByClassName(eachLayer, "readCard");
 					updateSelectbox(eachLayer);
 				} else {
-					console.log("eachLayer @requestReadBigPicture =", eachLayer);
 					showItIfNoBpData(eachLayer);
 					updateSelectbox(eachLayer);
 				};
 			});
-		};
-
-		showItOnUI_latest();
-
-	});
+		}
+	// function requestSetCard(layerHere, packagedDataHere) {
+	// 	const inputId = packagedDataHere.id;
+	// 	const switchedRef = getRefBySwitchLayer(layerHere, inputId);
+	// 	switchedRef.child(inputId).set(packagedDataHere, (e) => {
+	// 		request_followUpEditedDate(layerHere, packagedDataHere);
+	// 		alert("저장되었습니다.");});
+	// 		// [해결] 문서에서는 then(), catch()를 씀. 차이점? // 문서 버전을 함께 확인하기, 
+	//		// [질문] 버전확인 방법
+	// 		// 참조: https://firebase.google.com/docs/database/web/read-and-write?hl=ko
+	// };
 };
 
-///// LtoS manager
+const LtoSDept = {
+	"requestSetCard": 
+		function requestSetCard(layerHere, packagedDataHere) {
+			const inputId = packagedDataHere.id;
+			const switchedRef = LtoSDept.getRefBySwitchLayer(layerHere, inputId);
+			switchedRef.child(inputId)
+			.set(packagedDataHere)
+			.then((e) => {
+				LtoSDept.request_followUpEditedDate(layerHere, packagedDataHere, function(){
+					alert("저장되었습니다.");
+				});
+			});
+		},
+	"requestUpdateCard":
+		function requestUpdateCard(layerHere, packagedDataHere) {
+			const inputId = packagedDataHere.id;
+			const switchedRef = LtoSDept.getRefBySwitchLayer(layerHere, inputId);
+			switchedRef.child(inputId)
+			.update(packagedDataHere, (e) => {
+				LtoSDept.request_followUpEditedDate(layerHere, packagedDataHere);
+				console.log("**update completed = ", e);
+				alert("수정되었습니다.");
+			});
+		},
+	"requestRemoveCard":
+		function requestRemoveCard(layerHere, idHere) {
 
-// function requestSetCard(layerHere, packagedDataHere) {
-// 	const inputId = packagedDataHere.id;
-// 	const switchedRef = getRefBySwitchLayer(layerHere, inputId);
-// 	switchedRef.child(inputId).set(packagedDataHere, (e) => {
-// 		request_followUpEditedDate(layerHere, packagedDataHere);
-// 		// [해결] 이 위의 것은 forEach로 서버 통신이 자주 일어남.
-// 		// forEach 안에서 콜백함수로 하게되면, alert가 계속 반복적으로 일어날것으로 보임.
-// 		// 때문에, forEach 밖에서 alert를 배치하는 것이 좋을듯함. 
-// 		// 위의 함수가 끝난 다음에 alert를 할 수 있는 방법이 있을까?
-// 		alert("저장되었습니다.");});
-// 		// [해결] 문서에서는 then(), catch()를 씀. 차이점? // 문서 버전을 함께 확인하기
-// 		// 참조: https://firebase.google.com/docs/database/web/read-and-write?hl=ko
-// };
-
-function requestSetCard(layerHere, packagedDataHere) {
-	const inputId = packagedDataHere.id;
-	const switchedRef = getRefBySwitchLayer(layerHere, inputId);
-	switchedRef.child(inputId)
-	.set(packagedDataHere)
-	.then((e) => {
-		request_followUpEditedDate(layerHere, packagedDataHere, function(){
-			alert("저장되었습니다.");
-		});
-	});
+			const inputId = idHere;
+			const packagedData = objectById[inputId];
+			packagedData.editedDate = getTimeStamp();
+		
+			const switchedRef = LtoSDept.getRefBySwitchLayer(layerHere, inputId);
+			const idArrayLength = getEveryIdArrayOfLayer(layerHere).length;
+		
+			if(layerHere == "character" && idArrayLength == 1) {
+				// character레이어에서 remove진행시, 
+				// firebase의 bigPicture 자체가 사라져, 로딩 로직에서 버그가 남.
+				// 그래서 예외 처리
+				const emptyData = {children: ""};
+				const switchedRefForEmptyData = switchedRef.parent;
+				switchedRefForEmptyData.set(emptyData, (e) => {
+					console.log("**remove completed = ", e);
+					alert("삭제되었습니다.");
+					});
+			} else {
+				switchedRef.child(inputId).remove((e) => {
+					LtoSDept.request_followUpEditedDate(layerHere, packagedData);
+					console.log("**remove completed = ", e);
+					alert("삭제되었습니다.");
+					});
+			};
+		},
+	"request_followUpEditedDate":
+		function request_followUpEditedDate(layerHere, packagedDataHere, cb) {
+			const parentsId = packagedDataHere.parentsId;
+			const parentsLayer = getParentsLayerBySwitchLayer(layerHere);
+			const switchedRef = LtoSDept.getRefBySwitchLayer(parentsLayer, parentsId);
+			const editedDateForParents = {"editedDate": packagedDataHere.editedDate};
+				
+			function requestUpdateEditedDate(layer1, layer2, layer3, layer4) {
+			
+				const idThreadObjectKeysArray = [layer1, layer2, layer3, layer4].filter((l)=> l != undefined );
+				// filter에 대해서 천천히 이해하기
+			
+				const last = idThreadObjectKeysArray.length;
+				let counter = 0;
+				idThreadObjectKeysArray.forEach(eachLayer => {
+					switchedRef.child(parentsId)
+					// parentsId -> eachLayer 생각하기
+					.update(editedDateForParents, (e) => {
+						console.log("**followUpEditedDate completed = ", e);
+						if(++counter == last) {
+							cb();
+						}
+					});
+				});
+			};
+		
+			switch(layerHere) {
+				case "character" :
+					// 해당없음
+					break;
+				case "direction" :
+					requestUpdateEditedDate("character");
+					break;
+				case "roadmap" :
+					requestUpdateEditedDate("character", "direction");
+				case "actionPlan" :
+					requestUpdateEditedDate("character", "direction", "roadmap");
+				default : null;
+			};
+		},
+	"requestUpdateMainCard":
+		function requestUpdateMainCard(idHere) {
+			const characterIdArray = getEveryIdArrayOfLayer("character");
+			characterIdArray.forEach(eachId => {
+				let setMainValue = {};
+				if (eachId == idHere) {
+					setMainValue = {
+						"main": "main",
+						"editedDate": getTimeStamp()
+					};
+				} else {
+					setMainValue = {
+						"main": ""
+					};
+				};
+				db.ref("users")
+				.child(userData.uid)
+				.child("bigPicture")
+				.child("children")
+				.child(eachId)
+				.update(setMainValue, (e) => {
+					console.log("**updateMainCard completed = ", e);
+					});
+			});
+		},
+	"getRefBySwitchLayer":
+		function getRefBySwitchLayer(layerHere, inputIdHere) {
+			console.log("**=====getRefBySwitchLayer() start=====");
+			const userRef = db.ref("users").child(userData.uid);
+			const bigPictureRef = userRef.child("bigPicture");
+			const characterRef = bigPictureRef.child("children");
+			const resultIsNewId = isNewId(inputIdHere);
+			if (resultIsNewId) {
+				switch(layerHere){
+					case "character" :
+						return characterRef;
+					case "direction" : 
+						const characterId = getParentsIdfromChildId("direction", inputIdHere);
+						const directionRef = characterRef.child(characterId).child("children");
+						return directionRef;
+					case "roadmap" : 
+						const characterId2 = getParentsIdfromChildId("direction", inputIdHere);
+						const directionRef2 = characterRef.child(characterId2).child("children");
+						const directionId = getCardId("direction");
+						const roadmapRef = directionRef2.child(directionId).child("children");
+						return roadmapRef;
+					case "actionPlan" : 
+						const characterId3 = getParentsIdfromChildId("direction", inputIdHere);
+						const directionRef3 = characterRef.child(characterId3).child("children");
+						const directionId2 = getCardId("direction");
+						const roadmapRef2 = directionRef3.child(directionId2).child("children");
+						const roadmapId = getCardId("roadmap");
+						const actionPlanRef = roadmapRef2.child(roadmapId).child("children");
+						return actionPlanRef;
+					default: 
+						return null;
+				};
+			} else {
+				const idThreadObject = getIdThreadObjectById(inputIdHere);
+				const directionRef = characterRef.child(idThreadObject.characterId).child("children");	
+				switch(layerHere){
+					case "character" : 
+						return characterRef;
+					case "direction" : 
+						return directionRef;
+					case "roadmap" : 
+						const roadmapRef = directionRef.child(idThreadObject.directionId).child("children");
+						return roadmapRef;
+					case "actionPlan" : 
+						const roadmapRef2 = directionRef.child(idThreadObject.directionId).child("children");
+						const actionPlanRef = roadmapRef2.child(idThreadObject.roadmapId).child("children");
+						return actionPlanRef;
+					default: 
+						return null;
+				};
+			};
+		}
 };
-
-function requestUpdateCard(layerHere, packagedDataHere) {
-	const inputId = packagedDataHere.id;
-	const switchedRef = getRefBySwitchLayer(layerHere, inputId);
-	switchedRef.child(inputId).update(packagedDataHere, (e) => {
-		request_followUpEditedDate(layerHere, packagedDataHere);
-		console.log("**update completed = ", e);
-		alert("수정되었습니다.");
-		});
-};
-
-const o1 = {
-	"fun1" : function(){
-	},
-	"fun2" : function(){
+	
+const userDept = {
+	"showUserData":
+	function showUserData(userDataHere) {
+		const userName = userDataHere.name;
+		const userEmail = userDataHere.email;
+		getSelectorById("nameChecked").innerHTML = "방문자: " + userName + " 대표";
+		getSelectorById("emailChecked").innerHTML = "(" + userEmail + ")"+"		";
 	}
-};
-
-o1.fun1();
-o1.fun2();
-// 오브젝트 단위로 파일 쪼개기
-
-function request_followUpEditedDate(layerHere, packagedDataHere, cb) {
-	const parentsId = packagedDataHere.parentsId;
-	const parentsLayer = getParentsLayerBySwitchLayer(layerHere);
-	const switchedRef = getRefBySwitchLayer(parentsLayer, parentsId);
-	const editedDateForParents = {"editedDate": packagedDataHere.editedDate};
-		
-	function requestUpdateEditedDate(layer1, layer2, layer3, layer4) {
-	
-		const idThreadObjectKeysArray = [layer1, layer2, layer3, layer4].filter((l)=> l != undefined );
-		// filter에 대해서 천천히 이해하기
-	
-		const last = idThreadObjectKeysArray.length;
-		let counter = 0;
-		idThreadObjectKeysArray.forEach(eachLayer => {
-			switchedRef.child(parentsId)
-			// parentsId -> eachLayer 생각하기
-			.update(editedDateForParents, (e) => {
-				console.log("**followUpEditedDate completed = ", e);
-				console.log("last =", last);
-				console.log("counter =", counter);
-				if(++counter == last) {
-					cb();
-				}
-			});
-		});
-	};
-
-	switch(layerHere) {
-		case "character" :
-			// 해당없음
-			break;
-		case "direction" :
-			requestUpdateEditedDate("character");
-			break;
-		case "roadmap" :
-			requestUpdateEditedDate("character", "direction");
-		case "actionPlan" :
-			requestUpdateEditedDate("character", "direction", "roadmap");
-		default : null;
-	};
-};
-
-function requestRemoveCard(layerHere, idHere) {
-
-	const inputId = idHere;
-	const packagedData = objectById[inputId];
-	packagedData.editedDate = getTimeStamp();
-
-	const switchedRef = getRefBySwitchLayer(layerHere, inputId);
-	const idArrayLength = getEveryIdArrayOfLayer(layerHere).length;
-
-	if(layerHere == "character" && idArrayLength == 1) {
-		// character레이어에서 remove진행시, 
-		// firebase의 bigPicture 자체가 사라져, 로딩 로직에서 버그가 남.
-		// 그래서 예외 처리
-		const emptyData = {children: ""};
-		const switchedRefForEmptyData = switchedRef.parent;
-		switchedRefForEmptyData.set(emptyData, (e) => {
-			console.log("**remove completed = ", e);
-			alert("삭제되었습니다.");
-			});
-	} else {
-		switchedRef.child(inputId).remove((e) => {
-			request_followUpEditedDate(layerHere, packagedData);
-			console.log("**remove completed = ", e);
-			alert("삭제되었습니다.");
-			});
-	};
-};
-	
-function requestUpdateMainCard(idHere) {
-	
-	const characterIdArray = getEveryIdArrayOfLayer("character");
-
-	characterIdArray.forEach(eachId => {
-
-		let setMainValue = {};
-
-		if (eachId == idHere) {
-			setMainValue = {
-				"main": "main",
-				"editedDate": getTimeStamp()
-			};
-		} else {
-			setMainValue = {
-				"main": ""
-			};
-		};
-
-		db.ref("users")
-		.child(userData.uid)
-		.child("bigPicture")
-		.child("children")
-		.child(eachId)
-		.update(setMainValue, (e) => {
-			console.log("**updateMainCard completed = ", e);
-			});
-	});
-
-};
-
-function getRefBySwitchLayer(layerHere, inputIdHere) {
-
-	console.log("**=====getRefBySwitchLayer() start=====");
-
-	const userRef = db.ref("users").child(userData.uid);
-	const bigPictureRef = userRef.child("bigPicture");
-	const characterRef = bigPictureRef.child("children");
-
-	const resultIsNewId = isNewId(inputIdHere);
-
-	if (resultIsNewId) {
-
-		switch(layerHere){
-			case "character" :
-				return characterRef;
-			case "direction" : 
-				const characterId = getParentsIdfromChildId("direction", inputIdHere);
-				const directionRef = characterRef.child(characterId).child("children");
-				return directionRef;
-			case "roadmap" : 
-				const characterId2 = getParentsIdfromChildId("direction", inputIdHere);
-				const directionRef2 = characterRef.child(characterId2).child("children");
-				const directionId = getCardId("direction");
-				const roadmapRef = directionRef2.child(directionId).child("children");
-				return roadmapRef;
-			case "actionPlan" : 
-				const characterId3 = getParentsIdfromChildId("direction", inputIdHere);
-				const directionRef3 = characterRef.child(characterId3).child("children");
-				const directionId2 = getCardId("direction");
-				const roadmapRef2 = directionRef3.child(directionId2).child("children");
-				const roadmapId = getCardId("roadmap");
-				const actionPlanRef = roadmapRef2.child(roadmapId).child("children");
-				return actionPlanRef;
-			default: 
-				return null;
-		};
-
-	} else {
-
-		console.log("layer @getRefBySwitchLayer =", layerHere);
-		const idThreadObject = getIdThreadObjectById(inputIdHere);
-		console.log("idThreadObject =", idThreadObject);
-		const directionRef = characterRef.child(idThreadObject.characterId).child("children");
-		// [기록] 위 두가지는 향후 사용하기
-		
-		// const layer = eventListenerResult; //[해결] eventLister를 이렇게 활용하는게 맞을까? global의 사용
-
-		switch(layerHere){
-			case "character" : 
-				return characterRef;
-			case "direction" : 
-				return directionRef;
-			case "roadmap" : 
-				const roadmapRef = directionRef.child(idThreadObject.directionId).child("children");
-				return roadmapRef;
-			case "actionPlan" : 
-				const roadmapRef2 = directionRef.child(idThreadObject.directionId).child("children");
-				const actionPlanRef = roadmapRef2.child(idThreadObject.roadmapId).child("children");
-				return actionPlanRef;
-			default: 
-				return null;
-		};
-	};
-};
-
-///// user manager
-
-function showUserData(userDataHere) {
-	const userName = userDataHere.name;
-	const userEmail = userDataHere.email;
-	getSelectorById("nameChecked").innerHTML = "방문자: " + userName + " 대표";
-	getSelectorById("emailChecked").innerHTML = "(" + userEmail + ")"+"		";
 };
 
 ///// UI manager
 
-function showEmptyCard(layerHere) {
-	console.log("layerHere =", layerHere);
-	getSelectorById(layerHere).value = "";
+const UIDept = {
+	"showEmptyCard":
+		function showEmptyCard(layerHere) {
+			getSelectorById(layerHere).value = "";
+		}
 };
+
 
 function showItOnUI(layerHere, idHere) {
 	if (idHere != null) {
@@ -355,7 +308,7 @@ function showItOnUI(layerHere, idHere) {
 		getSelectorById("cardId_"+layerHere).value = objectById[idHere].id;
 		getSelectorById("cardParentsId_"+layerHere).value = objectById[idHere].parentsId;
 	} else {
-		showEmptyCard(layerHere);
+		UIDept.showEmptyCard(layerHere);
 	};
 	setupBtnShowOrHideByClassName(layerHere,"readCard");
 };
@@ -562,7 +515,7 @@ function showItIfNoBpData(layerHere) {
 		};
 	};
 
-	showEmptyCard(layerHere);
+	UIDept.showEmptyCard(layerHere);
 
 	if(layerHere == "character") {
 		setupBtnShowOrHideByClassName(layerHere,"createFirstCard");
@@ -592,17 +545,11 @@ function updateList(layerHere, sortedArray) {
 	const listId = "list_"+layerHere;
 	const list = getSelectorById(listId);
 
-	// list 초기화하기
-	console.log("listId =", listId);
-	console.log("layerHere =", layerHere);
-	console.log("list =", list);
-	console.log("list.getElementsByTagName(LI)", list.getElementsByTagName("LI"));
-
 	const lis = list.getElementsByTagName("LI");
-	console.log("lis =", lis);
+	// list 초기화하기
 	for(let i=lis.length-1; i>=0; i-- ){
 		lis[i].remove()
-	}
+	};
 
 	for (let i = 0; i < sortedArray.length; i++) {
 		const liValue = sortedArray[i][layerHere];
@@ -618,8 +565,6 @@ function updateSelectbox(layerHere) {
 
 	const selectboxId = "selectbox_"+layerHere;
 	const selectbox = getSelectorById(selectboxId);
-
-	// console.log("selectbox.options.length =", selectbox.options.length);
 
 	// selectbox 초기화하기
 	for (let i = selectbox.options.length - 1; i >= 0; i--) {
@@ -692,7 +637,7 @@ function selectBySelectbox(layerHere) {
 
 function setMainCard() {
 	const characterId = getSelectorById("cardId_character").value;
-	requestUpdateMainCard(characterId);
+	LtoSDept.requestUpdateMainCard(characterId);
 };
 
 function gotoMainCard() {
@@ -781,7 +726,7 @@ function saveNewCard(layerHere) {
 	const packagedData = packageNewCard(layerHere);
 
 	if (packagedData != null) {
-		requestSetCard(layerHere, packagedData);
+		LtoSDept.requestSetCard(layerHere, packagedData);
 		showItOnUI_followUp(layerHere);
 	};
 };
@@ -867,20 +812,20 @@ function saveEditedCard(layerHere) {
 
 	const packagedData = packageEditedCard(layerHere);
 	if (packagedData != null) {
-		requestUpdateCard(layerHere, packagedData);
+		LtoSDept.requestUpdateCard(layerHere, packagedData);
 	};
 };
 
 function removeCard(layerHere) {
 	const removeId = getSelectorById("cardId_"+layerHere).value;
 	if (confirm("정말 삭제하시겠습니까? 삭제가 완료되면, 해당 내용은 다시 복구될 수 없습니다.")) {
-		requestRemoveCard(layerHere, removeId);
+		LtoSDept.requestRemoveCard(layerHere, removeId);
 	};
 };
 
 function openNewCard(layerHere) {
 	getSelectorById("cardId_"+layerHere).value = "";
-	showEmptyCard(layerHere);
+	UIDept.showEmptyCard(layerHere);
 	setupBtnShowOrHideByClassName(layerHere,"openNewCard");
 
 	function openNewCard_followUp(layerHere) {
@@ -890,7 +835,7 @@ function openNewCard(layerHere) {
 		
 			idThreadObjectKeysArray.forEach(eachLayer => {
 				if (eachLayer != undefined) {
-					showEmptyCard(eachLayer);
+					UIDept.showEmptyCard(eachLayer);
 					setupBtnShowOrHideByClassName(eachLayer, "inactiveCard");
 				};
 			});
@@ -1092,8 +1037,6 @@ function getIdThreadObjectById(inputIdhere) {
 	const resultIsNewId = isNewId(inputIdhere);
 
 	let returnObject = {};
-
-	console.log("resultIsNewId =", resultIsNewId);
 
 	if (resultIsNewId) {
 		returnObject["characterId"] = getCardId("character");
