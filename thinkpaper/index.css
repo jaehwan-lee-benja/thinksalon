@@ -120,7 +120,7 @@ input:hover {
 }
 #gridMainTitle{
     display: grid;
-    grid-template-rows: 1.5rem 3rem 4rem;
+    grid-template-rows: 1.5rem 3rem 5rem;
     grid-gap: 0.2rem;
     max-width: 20rem;
     padding: 0 1rem;
@@ -164,6 +164,13 @@ input:hover {
 
 #mainCard_txt{
     text-align: center;
+}
+
+#divList{
+    max-width: 20rem;
+    padding: 0 1rem;
+    margin: 0 auto;
+    align-content: center;
 }
 
 #gridWebInfo{
@@ -217,6 +224,10 @@ https://www.w3schools.com/howto/howto_js_todolist.asp
         margin-bottom: 2rem;
         padding-bottom: 2rem;
         border-bottom: 1px solid rgb(200, 200, 200);
+    }
+
+    #gridBody{
+        margin: 2rem;
     }
 
     #gridWebInfo{
