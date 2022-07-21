@@ -1,4 +1,4 @@
-const db = firebase.database();
+const db = firebase.database(); // test_220718
 const SELECTBOX_BPTITLE_VALUE_INIT = "INIT";
 
 // [해결] github에서 branch로 main의 내용을 땡겨올 수 있을까?
@@ -76,7 +76,7 @@ function requestReadBigPicture(user) {
 
 		function showItOnUI_latest() {
 
-			const idThreadObjectKeysArray = ["character", "direction"];
+			const idThreadObjectKeysArray = ["character", "direction", "roadmap", "actionPlan"];
 			// 리팩토링 후 "roadmap", "actionPlan" 넣기
 
 			idThreadObjectKeysArray.forEach(eachLayer => {
@@ -95,8 +95,8 @@ function requestReadBigPicture(user) {
 					};
 					setupBtnShowOrHideByClassName(eachLayer, "readCard");
 					updateSelectbox(eachLayer);
-
 				} else {
+					console.log("eachLayer @requestReadBigPicture =", eachLayer);
 					showItIfNoBpData(eachLayer);
 					updateSelectbox(eachLayer);
 				};
@@ -197,7 +197,6 @@ function request_followUpEditedDate(layerHere, packagedDataHere, cb) {
 			requestUpdateEditedDate("character", "direction");
 		case "actionPlan" :
 			requestUpdateEditedDate("character", "direction", "roadmap");
-			// 리팩토링 후 "roadmap", "actionPlan" 넣기
 		default : null;
 	};
 };
@@ -281,12 +280,18 @@ function getRefBySwitchLayer(layerHere, inputIdHere) {
 				let directionRef = characterRef.child(characterId).child("children");
 				return directionRef;
 			case "roadmap" : 
+				let characterId2 = getParentsIdfromChildId("direction", inputIdHere);
+				let directionRef2 = characterRef.child(characterId2).child("children");
 				let directionId = getCardId("direction");
-				let roadmapRef = directionRef.child(directionId).child("children");
+				let roadmapRef = directionRef2.child(directionId).child("children");
 				return roadmapRef;
 			case "actionPlan" : 
+				let characterId3 = getParentsIdfromChildId("direction", inputIdHere);
+				let directionRef3 = characterRef.child(characterId3).child("children");
+				let directionId2 = getCardId("direction");
+				let roadmapRef2 = directionRef3.child(directionId2).child("children");
 				let roadmapId = getCardId("roadmap");
-				let actionPlanRef = roadmapRef.child(roadmapId).child("children");
+				let actionPlanRef = roadmapRef2.child(roadmapId).child("children");
 				return actionPlanRef;
 			default: 
 				return null;
@@ -294,10 +299,10 @@ function getRefBySwitchLayer(layerHere, inputIdHere) {
 
 	} else {
 
+		console.log("layer @getRefBySwitchLayer =", layerHere);
 		const idThreadObject = getIdThreadObjectById(inputIdHere);
+		console.log("idThreadObject =", idThreadObject);
 		const directionRef = characterRef.child(idThreadObject.characterId).child("children");
-		// const roadmapRef = directionRef.child(idThreadObject.directionId).child("children");
-		// const actionPlanRef = roadmapRef.child(idThreadObject.roadmapId).child("children");
 		// [기록] 위 두가지는 향후 사용하기
 		
 		// const layer = eventListenerResult; //[해결] eventLister를 이렇게 활용하는게 맞을까? global의 사용
@@ -308,8 +313,11 @@ function getRefBySwitchLayer(layerHere, inputIdHere) {
 			case "direction" : 
 				return directionRef;
 			case "roadmap" : 
+				const roadmapRef = directionRef.child(idThreadObject.directionId).child("children");
 				return roadmapRef;
 			case "actionPlan" : 
+				const roadmapRef2 = directionRef.child(idThreadObject.directionId).child("children");
+				const actionPlanRef = roadmapRef2.child(idThreadObject.roadmapId).child("children");
 				return actionPlanRef;
 			default: 
 				return null;
@@ -329,6 +337,7 @@ function showUserData(userDataHere) {
 ///// UI manager
 
 function showEmptyCard(layerHere) {
+	console.log("layerHere =", layerHere);
 	getSelectorById(layerHere).value = "";
 };
 
@@ -374,11 +383,12 @@ function showItOnUI_followUp(layerHere) {
 	
 	switch(layerHere) {
 		case "character" :
-			showItOnUI_latest_byLayerCondition("direction");
+			showItOnUI_latest_byLayerCondition("direction", "roadmap", "actionPlan");
 			// 리팩토링 후 showItOnUI_latest_byLayerCondition("direction", "roadmap", "actionPlan");
 			break;
 		case "direction" :
-			// showItOnUI_latest_byLayerCondition("roadmap", "actionPlan");
+			showItOnUI_latest_byLayerCondition("roadmap", "actionPlan");
+			// 리팩토링 후 showItOnUI_latest_byLayerCondition("roadmap", "actionPlan");
 			break;
 		case "roadmap" :
 			showItOnUI_latest_byLayerCondition("actionPlan");
@@ -725,9 +735,9 @@ function saveNewCard(layerHere) {
 						break;
 					case "roadmap" :
 						catchContentsData["parentsId"] = getCardId("direction");
-						contents["roadmapArea"] = getSelectorById("roadmapArea").value.trim();
-						contents["roadmapA"] = getSelectorById("roadmapA").value.trim();
-						contents["roadmapB"] = getSelectorById("roadmapArea").value.trim();
+						contents["roadmap"] = getSelectorById("roadmap").value.trim();
+						// contents["roadmapA"] = getSelectorById("roadmapA").value.trim();
+						// contents["roadmapB"] = getSelectorById("roadmapB").value.trim();
 						break;
 					case "actionPlan" :
 						catchContentsData["parentsId"] = getCardId("roadmap");
@@ -833,9 +843,9 @@ function saveEditedCard(layerHere) {
 					contents["direction"] = getSelectorById("direction").value.trim();
 					break;
 				case "roadmap" :
-					contents["roadmapArea"] = getSelectorById("roadmapArea").value.trim();
+					contents["roadmap"] = getSelectorById("roadmap").value.trim();
 					contents["roadmapA"] = getSelectorById("roadmapA").value.trim();
-					contents["roadmapB"] = getSelectorById("roadmapArea").value.trim();
+					contents["roadmapB"] = getSelectorById("roadmapB").value.trim();
 					break;
 				case "actionPlan" :
 					contents["actionPlan"] = getSelectorById("actionPlan").value.trim();
@@ -880,10 +890,11 @@ function openNewCard(layerHere) {
 		
 		switch(layerHere) {
 			case "character" :
-				openNewCard_byLayerCondition("direction");
+				openNewCard_byLayerCondition("direction", "roadmap", "actionPlan");
 				// 리팩토링 후 openNewCard_byLayerCondition("direction", "roadmap", "actionPlan");
 				break;
 			case "direction" :
+				openNewCard_byLayerCondition("roadmap", "actionPlan");
 				// openNewCard_byLayerCondition("roadmap", "actionPlan");
 				break;
 			case "roadmap" :
@@ -1074,11 +1085,13 @@ function getIdThreadObjectById(inputIdhere) {
 
 	let returnObject = {};
 
+	console.log("resultIsNewId =", resultIsNewId);
+
 	if (resultIsNewId) {
 		returnObject["characterId"] = getCardId("character");
 		returnObject["directionId"] = getCardId("direction");
-		// returnObject["roadmapId"] = getCardId("raodmap");
-		// returnObject["actionPlanId"] = getCardId("actionPlan");
+		returnObject["roadmapId"] = getCardId("raodmap");
+		returnObject["actionPlanId"] = getCardId("actionPlan");
 		return returnObject;
 	} else {
 		const unitObject = objectById[inputIdhere];
@@ -1193,12 +1206,13 @@ function getchildrenLayerBySwitchLayer(layerHere) {
 		case "character" : 
 			return "direction";
 		case "direction" :
+			// return null;
+			return "roadmap";
+		case "roadmap" :
+			// return null;
+			return "actionPlan";
+		case "actionPlan" :
 			return null;
-		// 	return "roadmap";
-		// case "roadmap" :
-		// 	return "actionPlan";
-		// case "actionPlan" :
-		// 	return null;
 		// 리팩토링 후 개선하기
 		default : return null; 
 	};
