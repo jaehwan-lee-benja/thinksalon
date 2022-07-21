@@ -1,12 +1,8 @@
-const db = firebase.database(); // test_220718
+const db = firebase.database();
 const SELECTBOX_BPTITLE_VALUE_INIT = "INIT";
-
-// [해결] github에서 branch로 main의 내용을 땡겨올 수 있을까?
-
-const userData = {}; //[해결] const or let 오브젝트에 키를 추가하는데, 이것은 데이터에 변화를 주는 것이 아닌가?
+const userData = {}; 
 let objectById = {};
 let isMainShown = false;
-let eventListenerResult = ""; //[해결] 이런 것이 필요한가?
 
 (function() {
 	logIn();
@@ -20,7 +16,6 @@ function logIn() {
 			requestReadUserData(user);
 			requestReadBigPicture(user);
 			openEditCardByDbclick();
-			// getLayerByEventListener(); // eventListener가 필요할 때 진행
 		} else {
 			window.location.replace("login.html");
 		};
@@ -147,13 +142,11 @@ function requestUpdateCard(layerHere, packagedDataHere) {
 };
 
 const o1 = {
-	fun1 : function(){
-
+	"fun1" : function(){
 	},
 	"fun2" : function(){
-
 	}
-}
+};
 
 o1.fun1();
 o1.fun2();
@@ -204,7 +197,7 @@ function request_followUpEditedDate(layerHere, packagedDataHere, cb) {
 function requestRemoveCard(layerHere, idHere) {
 
 	const inputId = idHere;
-	let packagedData = objectById[inputId];
+	const packagedData = objectById[inputId];
 	packagedData.editedDate = getTimeStamp();
 
 	const switchedRef = getRefBySwitchLayer(layerHere, inputId);
@@ -214,7 +207,7 @@ function requestRemoveCard(layerHere, idHere) {
 		// character레이어에서 remove진행시, 
 		// firebase의 bigPicture 자체가 사라져, 로딩 로직에서 버그가 남.
 		// 그래서 예외 처리
-		let emptyData = {children: ""};
+		const emptyData = {children: ""};
 		const switchedRefForEmptyData = switchedRef.parent;
 		switchedRefForEmptyData.set(emptyData, (e) => {
 			console.log("**remove completed = ", e);
@@ -268,7 +261,7 @@ function getRefBySwitchLayer(layerHere, inputIdHere) {
 	const bigPictureRef = userRef.child("bigPicture");
 	const characterRef = bigPictureRef.child("children");
 
-	let resultIsNewId = isNewId(inputIdHere);
+	const resultIsNewId = isNewId(inputIdHere);
 
 	if (resultIsNewId) {
 
@@ -276,22 +269,22 @@ function getRefBySwitchLayer(layerHere, inputIdHere) {
 			case "character" :
 				return characterRef;
 			case "direction" : 
-				let characterId = getParentsIdfromChildId("direction", inputIdHere);
-				let directionRef = characterRef.child(characterId).child("children");
+				const characterId = getParentsIdfromChildId("direction", inputIdHere);
+				const directionRef = characterRef.child(characterId).child("children");
 				return directionRef;
 			case "roadmap" : 
-				let characterId2 = getParentsIdfromChildId("direction", inputIdHere);
-				let directionRef2 = characterRef.child(characterId2).child("children");
-				let directionId = getCardId("direction");
-				let roadmapRef = directionRef2.child(directionId).child("children");
+				const characterId2 = getParentsIdfromChildId("direction", inputIdHere);
+				const directionRef2 = characterRef.child(characterId2).child("children");
+				const directionId = getCardId("direction");
+				const roadmapRef = directionRef2.child(directionId).child("children");
 				return roadmapRef;
 			case "actionPlan" : 
-				let characterId3 = getParentsIdfromChildId("direction", inputIdHere);
-				let directionRef3 = characterRef.child(characterId3).child("children");
-				let directionId2 = getCardId("direction");
-				let roadmapRef2 = directionRef3.child(directionId2).child("children");
-				let roadmapId = getCardId("roadmap");
-				let actionPlanRef = roadmapRef2.child(roadmapId).child("children");
+				const characterId3 = getParentsIdfromChildId("direction", inputIdHere);
+				const directionRef3 = characterRef.child(characterId3).child("children");
+				const directionId2 = getCardId("direction");
+				const roadmapRef2 = directionRef3.child(directionId2).child("children");
+				const roadmapId = getCardId("roadmap");
+				const actionPlanRef = roadmapRef2.child(roadmapId).child("children");
 				return actionPlanRef;
 			default: 
 				return null;
@@ -355,12 +348,12 @@ function showItOnUI(layerHere, idHere) {
 function showItOnUI_followUp(layerHere) {
 	function showItOnUI_latest_byLayerCondition(layer1, layer2, layer3, layer4) {
 	
-		let idThreadObjectKeysArray = [layer1, layer2, layer3, layer4];
+		const idThreadObjectKeysArray = [layer1, layer2, layer3, layer4];
 	
 		function getLatestIdByLayer(layerHere) {
-			let eachIdArrayByLayer = getEveryIdArrayOfLayer(layerHere);
+			const eachIdArrayByLayer = getEveryIdArrayOfLayer(layerHere);
 			if(eachIdArrayByLayer.length > 0){
-				let latestId = getLastestEditedId(eachIdArrayByLayer);
+				const latestId = getLastestEditedId(eachIdArrayByLayer);
 				return latestId;
 			} else {
 				return null;
@@ -369,7 +362,7 @@ function showItOnUI_followUp(layerHere) {
 	
 		idThreadObjectKeysArray.forEach(eachLayer => {
 			if (eachLayer != undefined) {
-				let latestIdOfEachLayer = getLatestIdByLayer(eachLayer);
+				const latestIdOfEachLayer = getLatestIdByLayer(eachLayer);
 				if(latestIdOfEachLayer != null) {
 					showItOnUI(eachLayer, latestIdOfEachLayer);
 					setupBtnShowOrHideByClassName(eachLayer, "readCard");
@@ -714,7 +707,7 @@ function saveNewCard(layerHere) {
 
 	function packageNewCard(layerHere) {
 
-		let moniterResult = monitorCardBlankOrDuplicates(layerHere);
+		const moniterResult = monitorCardBlankOrDuplicates(layerHere);
 	
 		if (moniterResult) {
 	
@@ -857,7 +850,7 @@ function saveEditedCard(layerHere) {
 		};
 	};
 
-	let packagedData = packageEditedCard(layerHere);
+	const packagedData = packageEditedCard(layerHere);
 	if (packagedData != null) {
 		requestUpdateCard(layerHere, packagedData);
 	};
@@ -1041,7 +1034,7 @@ function copyAndPast() {
 	};
 }
 
-// 작업중
+// 보관
 function getLayerByEventListener() {
 	const inputButtonSelector = document.getElementsByTagName("input");
 	for (let i = 0; i < inputButtonSelector.length; i++) {
