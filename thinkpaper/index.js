@@ -4,11 +4,26 @@ const userData = {};
 let objectById = {};
 let isMainShown = false;
 
+// const logInDept = {
+// 	"logIn": function logIn() {
+// 		firebase.auth().onAuthStateChanged(function (user) {
+// 			if (user != null) {
+// 				requestReadUserData(user);
+// 				requestReadBigPicture(user);
+// 				openEditCardByDbclick();
+// 			} else {
+// 				window.location.replace("login.html");
+// 			};
+// 		});
+// 	},
+// 	"logOut": function logOut() {
+// 		firebase.auth().signOut();
+// 	}
+// }
+
 (function() {
 	logIn();
 })();
-
-///// logIn manager
 
 function logIn() {
 	firebase.auth().onAuthStateChanged(function (user) {
@@ -24,7 +39,7 @@ function logIn() {
 
 function logOut() {
 	firebase.auth().signOut();
-};
+}
 
 ///// StoL manager
 
@@ -660,7 +675,7 @@ function updateSelectbox(layerHere) {
 		selectbox.insertBefore(option, selectbox.lastChild);
 	};
 
-	updateList(layerHere, sortedArray);
+	// updateList(layerHere, sortedArray);
 
 };
 
