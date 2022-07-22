@@ -118,7 +118,7 @@ input:hover {
 #gridMain{
     margin: 2rem 0;
 }
-#gridMainTitle{
+.gridMainTitle{
     display: grid;
     grid-template-rows: 1.5rem 3rem 5rem;
     grid-gap: 0.2rem;
@@ -128,13 +128,13 @@ input:hover {
     align-content: center;
 }
 
-#gridMainIndex{
+.gridMainIndex{
     display: grid;
     grid-template-rows: 1fr 2rem;
     grid-gap: 0.2rem;
 }
 
-#gridMainContents{
+.gridMainContents{
     display: grid;
     grid-template-rows: auto 1fr auto;
     grid-gap: 0.2rem;
@@ -150,7 +150,7 @@ input:hover {
     transition: all 0.3s cubic-bezier(.25,.8,.25,1);
 }
 
-#gridMainContents:hover {
+.gridMainContents:hover {
     box-shadow: 
         0 10px 20px rgba(0,0,0,0.19), 
         0 6px 6px rgba(0,0,0,0.23);
@@ -166,7 +166,7 @@ input:hover {
     text-align: center;
 }
 
-#divList{
+.divList{
     max-width: 20rem;
     padding: 0 1rem;
     margin: 0 auto;
@@ -246,7 +246,7 @@ https://www.w3schools.com/howto/howto_js_todolist.asp
         display: block;
         margin-bottom: 3rem;
     }
-    #divLayer{
+    .divLayer{
         margin-bottom: 3rem;
     }
     #gridMainSubFrame{
@@ -260,7 +260,7 @@ https://www.w3schools.com/howto/howto_js_todolist.asp
         padding-top: 0.5rem;
     }
 
-    #gridMainContents{
+    .gridMainContents{
         display: grid;
         grid-template-rows: auto 1fr;
         background-color: #FFF;
@@ -272,6 +272,7 @@ https://www.w3schools.com/howto/howto_js_todolist.asp
         transition: all 0.3s cubic-bezier(.25,.8,.25,1);
         margin: auto;
         grid-gap: 0.2rem;
+        height: 13rem;
     }
 
     #divContentsControl{
