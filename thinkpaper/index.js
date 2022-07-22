@@ -3,6 +3,7 @@ const SELECTBOX_BPTITLE_VALUE_INIT = "INIT";
 const userData = {}; 
 let objectById = {};
 let isMainShown = false;
+let eventListenerResult = "";
 
 (function() {
 	logIn();
@@ -14,6 +15,7 @@ function logIn() {
 			StoLDept.requestReadUserData(user);
 			StoLDept.requestReadBigPicture(user);
 			updateCardDept.openEditCardByDbclick();
+			supportDept.getLayerByEventListener();
 		} else {
 			window.location.replace("login.html");
 		};
@@ -112,21 +114,43 @@ const StoLDept = {
 const LtoSDept = {
 	"request_followUpEditedDate":
 		function request_followUpEditedDate(layerHere, packagedDataHere, cb) {
-			const parentsId = packagedDataHere.parentsId;
-			const parentsLayer = switchDept.getParentsLayerBySwitchLayer(layerHere);
-			const switchedRef = LtoSDept.getRefBySwitchLayer(parentsLayer, parentsId);
-			const editedDateForParents = {"editedDate": packagedDataHere.editedDate};
-				
-			function requestUpdateEditedDate(layer1, layer2, layer3, layer4) {
-			
-				const idThreadObjectKeysArray = [layer1, layer2, layer3, layer4].filter((l)=> l != undefined );
-				// filter에 대해서 천천히 이해하기
-			
-				const last = idThreadObjectKeysArray.length;
+
+			let idThreadObjectKeysArray = [];
+			let idThreadObject = {};
+
+			switch(layerHere) {
+				case "character" :
+					// 해당 없음
+					break;
+				case "direction" :
+					idThreadObjectKeysArray = ["character"];
+					idThreadObject.characterId = packagedDataHere.parentsId;
+					break;
+				case "roadmap" :
+					idThreadObjectKeysArray = ["character", "direction"];
+					const directionId = packagedDataHere.parentsId;
+					idThreadObject.directionId = directionId;
+					idThreadObject.characterId = idDept.getParentsIdfromChildId("direction", directionId);
+					break;
+				case "actionPlan" :
+					idThreadObjectKeysArray = ["character", "direction", "roadmap"];
+					const roadmapId = packagedDataHere.parentsId;
+					const directionId2 = idDept.getParentsIdfromChildId("roadmap", roadmapId);
+					idThreadObject.roadmapId = roadmapId;
+					idThreadObject.directionId = directionId2;
+					idThreadObject.characterId = idDept.getParentsIdfromChildId("direction", directionId2);
+					break;
+				default : null;
+			};
+
+			const last = idThreadObjectKeysArray.length;
+			if(last != 0) {
 				let counter = 0;
 				idThreadObjectKeysArray.forEach(eachLayer => {
-					switchedRef.child(parentsId)
-					// parentsId -> eachLayer 생각하기
+					const editedDateForParents = {"editedDate": packagedDataHere.editedDate};
+					const eachId = idThreadObject[eachLayer+"Id"];
+					const switchedRef = switchDept.getRefBySwitchLayer(eachLayer, packagedDataHere);
+					switchedRef.child(eachId)
 					.update(editedDateForParents, (e) => {
 						console.log("**followUpEditedDate completed = ", e);
 						if(++counter == last) {
@@ -135,21 +159,7 @@ const LtoSDept = {
 					});
 				});
 			};
-		
-			switch(layerHere) {
-				case "character" :
-					// 해당없음
-					break;
-				case "direction" :
-					requestUpdateEditedDate("character");
-					break;
-				case "roadmap" :
-					requestUpdateEditedDate("character", "direction");
-				case "actionPlan" :
-					requestUpdateEditedDate("character", "direction", "roadmap");
-				default : null;
-			};
-		}
+		}		
 };
 	
 const userDept = {
@@ -179,7 +189,7 @@ const UIDept = {
 			UIDept.setupBtnShowOrHideByClassName(layerHere,"readCard");
 		},
 	"showItOnUI_followUp":
-		function showItOnUI_followUp(layerHere) {
+		function showItOnUI_followUp(layerHere, idHere) {
 			function showItOnUI_latest_byLayerCondition(layer1, layer2, layer3, layer4) {
 			
 				const idThreadObjectKeysArray = [layer1, layer2, layer3, layer4];
@@ -201,16 +211,16 @@ const UIDept = {
 			switch(layerHere) {
 				case "character" :
 					showItOnUI_latest_byLayerCondition("direction", "roadmap", "actionPlan");
-					// 리팩토링 후 showItOnUI_latest_byLayerCondition("direction", "roadmap", "actionPlan");
 					break;
 				case "direction" :
 					showItOnUI_latest_byLayerCondition("roadmap", "actionPlan");
-					// 리팩토링 후 showItOnUI_latest_byLayerCondition("roadmap", "actionPlan");
 					break;
 				case "roadmap" :
 					showItOnUI_latest_byLayerCondition("actionPlan");
+					break;
 				case "actionPlan" :
 					// 해당없음
+					break;
 				default : null;
 			};
 		},
@@ -352,7 +362,6 @@ const UIDept = {
 			// 참고: https://stackoverflow.com/questions/454202/creating-a-textarea-with-auto-resize
 			const tx = document.getElementsByTagName("textarea");
 			for (let i = 0; i < tx.length; i++) {
-				// [해결] i는 const로 하면 안될것 같다. i++이 i를 다시 정의하는 과정이기 때문에. 그럴까?
 				tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
 				tx[i].addEventListener("input", OnInput, false);
 			};
@@ -487,7 +496,7 @@ const selectboxDept = {
 			const id = document.getElementById(selectboxId).value;
 			if(id != SELECTBOX_BPTITLE_VALUE_INIT) {
 				UIDept.showItOnUI(layerHere, id);
-				UIDept.showItOnUI_followUp(layerHere);
+				UIDept.showItOnUI_followUp(layerHere, id);
 			};
 		}
 };
@@ -552,7 +561,7 @@ const newCardDept = {
 			const packagedData = newCardDept.packageNewCard(layerHere);
 			if (packagedData != null) {
 				newCardDept.requestSetCard(layerHere, packagedData);
-				UIDept.showItOnUI_followUp(layerHere);
+				UIDept.showItOnUI_followUp(layerHere, packagedData.id);
 			};
 		},
 	"packageNewCard":
@@ -610,7 +619,7 @@ const newCardDept = {
 	"requestSetCard": 
 		function requestSetCard(layerHere, packagedDataHere) {
 			const inputId = packagedDataHere.id;
-			const switchedRef = LtoSDept.getRefBySwitchLayer(layerHere, inputId);
+			const switchedRef = switchDept.getRefBySwitchLayer(layerHere, packagedDataHere);
 			switchedRef.child(inputId)
 			.set(packagedDataHere)
 			.then((e) => {
@@ -637,8 +646,10 @@ const newCardDept = {
 					break;
 				case "roadmap" :
 					newCardDept.openNewCard_byLayerCondition("actionPlan");
+					break;
 				case "actionPlan" :
 					// 해당없음
+					break;
 				default : null;
 			};
 		},
@@ -685,8 +696,8 @@ const updateCardDept = {
 						break;
 					case "roadmap" :
 						contents["roadmap"] = document.getElementById("roadmap").value.trim();
-						contents["roadmapA"] = document.getElementById("roadmapA").value.trim();
-						contents["roadmapB"] = document.getElementById("roadmapB").value.trim();
+						// contents["roadmapA"] = document.getElementById("roadmapA").value.trim();
+						// contents["roadmapB"] = document.getElementById("roadmapB").value.trim();
 						break;
 					case "actionPlan" :
 						contents["actionPlan"] = document.getElementById("actionPlan").value.trim();
@@ -740,12 +751,13 @@ const updateCardDept = {
 	"requestUpdateCard":
 		function requestUpdateCard(layerHere, packagedDataHere) {
 			const inputId = packagedDataHere.id;
-			const switchedRef = LtoSDept.getRefBySwitchLayer(layerHere, inputId);
+			const switchedRef = switchDept.getRefBySwitchLayer(layerHere, packagedDataHere);
 			switchedRef.child(inputId)
 			.update(packagedDataHere, (e) => {
-				LtoSDept.request_followUpEditedDate(layerHere, packagedDataHere);
+				LtoSDept.request_followUpEditedDate(layerHere, packagedDataHere, function(){
+					alert("수정되었습니다.");
+				});
 				console.log("**update completed = ", e);
-				alert("수정되었습니다.");
 			});
 		},
 	"openEditCardByDbclick":
@@ -804,7 +816,7 @@ const removeCardDept = {
 			const packagedData = objectById[inputId];
 			packagedData.editedDate = supportDept.getTimeStamp();
 		
-			const switchedRef = LtoSDept.getRefBySwitchLayer(layerHere, inputId);
+			const switchedRef = switchDept.getRefBySwitchLayer(layerHere, packagedData);
 			const idArrayLength = idDept.getEveryIdArrayOfLayer(layerHere).length;
 		
 			if(layerHere == "character" && idArrayLength == 1) {
@@ -818,10 +830,12 @@ const removeCardDept = {
 					alert("삭제되었습니다.");
 					});
 			} else {
-				switchedRef.child(inputId).remove((e) => {
-					LtoSDept.request_followUpEditedDate(layerHere, packagedData);
+				switchedRef.child(inputId)
+				.remove((e) => {
+					LtoSDept.request_followUpEditedDate(layerHere, packagedData, function(){
+						alert("삭제되었습니다.");
+					});
 					console.log("**remove completed = ", e);
-					alert("삭제되었습니다.");
 					});
 			};
 		}
@@ -857,11 +871,11 @@ const monitorDept = {
 			for(let i = 0; i < mappedIdArray.length; i++) {
 				valueArray.push(mappedIdArray[i][layerHere2]);
 			};
-			const sameTextArray = monitorDept.filterSameTextArray(cardValueHere);
+			const sameTextArray = monitorDept.filterSameTextArray(cardValueHere, valueArray);
 			return sameTextArray;
 		},
 	"filterSameTextArray":
-		function filterSameTextArray(query) {
+		function filterSameTextArray(query, valueArray) {
 			return valueArray.find(value => query == value);
 		}
 };
@@ -921,13 +935,14 @@ const idDept = {
 			};
 		},
 	"getParentsIdfromChildId":
-		function getParentsIdfromChildId(layerHere, childIdHere) {
+		function getParentsIdfromChildId(childLayerHere, childIdHere) {
 			console.log("**=====idDept.getParentsIdfromChildId start=====");
 		
-			const everyIdArray = idDept.getEveryIdArrayOfLayer(layerHere);
+			const everyIdArray = idDept.getEveryIdArrayOfLayer(childLayerHere);
+			
 			let parentsId = "";
 		
-			if(layerHere == "character") {
+			if(childLayerHere == "character") {
 				parentsId = "bigPicture";
 				return parentsId;
 			} else {
@@ -937,9 +952,6 @@ const idDept = {
 						return parentsId;
 					};
 				};
-				const parentsLayer = switchDept.getParentsLayerBySwitchLayer(layerHere);
-				parentsId = supportDept.getCardId(parentsLayer);
-				return parentsId;
 			};
 		},
 	"getEveryIdArrayOfLayer":
@@ -964,6 +976,27 @@ const idDept = {
 			};
 			return everyIdArrayOfLayer;
 		},
+	"getEveryIdArrayOfLayerById":
+		function getEveryIdArrayOfLayerById(layerHere, idHere) {
+			const everyIdArray = Object.keys(objectById);
+			const everyIdArrayOfLayer = [];
+			for(let i = 0; i < everyIdArray.length; i++) {
+				if(objectById[everyIdArray[i]].layer == layerHere ) {
+					everyIdArrayOfLayer.push(everyIdArray[i]);
+				};
+			};
+			// character 레이어를 제외하고, 부모에 해당하는 것들 중에서만 중복을 검토하기
+			if(layerHere != "character") {
+				const everyIdArrayOfLayerFromSameParents = [];
+				for(let j = 0; j < everyIdArrayOfLayer.length; j++) {
+					if (objectById[everyIdArrayOfLayer[j]].parentsId == idDept.getParentsIdfromChildId(idHere)){
+						everyIdArrayOfLayerFromSameParents.push(everyIdArrayOfLayer[j]);
+					};
+				};
+				return everyIdArrayOfLayerFromSameParents;
+			};
+			return everyIdArrayOfLayer;
+		},
 	"isNewId":
 		function isNewId(idHere) {
 			const everyIdArray = Object.keys(objectById);
@@ -978,39 +1011,47 @@ const idDept = {
 
 const switchDept = {
 	"getRefBySwitchLayer":
-		function getRefBySwitchLayer(layerHere, inputIdHere) {
+		function getRefBySwitchLayer(layerHere, packagedDataHere) {
 			console.log("**=====getRefBySwitchLayer() start=====");
+			const id = packagedDataHere.id;
+			const parentsId = packagedDataHere.parentsId;
 			const userRef = db.ref("users").child(userData.uid);
 			const bigPictureRef = userRef.child("bigPicture");
 			const characterRef = bigPictureRef.child("children");
-			const resultIsNewId = idDept.isNewId(inputIdHere);
+			const resultIsNewId = idDept.isNewId(id);
 			if (resultIsNewId) {
 				switch(layerHere){
 					case "character" :
 						return characterRef;
 					case "direction" : 
-						const characterId = idDept.getParentsIdfromChildId("direction", inputIdHere);
+						const characterId = parentsId;
+
 						const directionRef = characterRef.child(characterId).child("children");
 						return directionRef;
+
 					case "roadmap" : 
-						const characterId2 = idDept.getParentsIdfromChildId("direction", inputIdHere);
+						const directionId = parentsId;
+						const characterId2 = idDept.getParentsIdfromChildId("direction", id);
+
 						const directionRef2 = characterRef.child(characterId2).child("children");
-						const directionId = supportDept.getCardId("direction");
 						const roadmapRef = directionRef2.child(directionId).child("children");
 						return roadmapRef;
+
 					case "actionPlan" : 
-						const characterId3 = idDept.getParentsIdfromChildId("direction", inputIdHere);
+						const roadmapId = parentsId;
+						const directionId2 = idDept.getParentsIdfromChildId("roadmap", roadmapId);
+						const characterId3 = idDept.getParentsIdfromChildId("direction", directionId2);
+
 						const directionRef3 = characterRef.child(characterId3).child("children");
-						const directionId2 = supportDept.getCardId("direction");
 						const roadmapRef2 = directionRef3.child(directionId2).child("children");
-						const roadmapId = supportDept.getCardId("roadmap");
 						const actionPlanRef = roadmapRef2.child(roadmapId).child("children");
 						return actionPlanRef;
+
 					default: 
 						return null;
 				};
 			} else {
-				const idThreadObject = switchDept.getIdThreadObjectById(inputIdHere);
+				const idThreadObject = switchDept.getIdThreadObjectById(layerHere, id);
 				const directionRef = characterRef.child(idThreadObject.characterId).child("children");	
 				switch(layerHere){
 					case "character" : 
@@ -1030,24 +1071,7 @@ const switchDept = {
 			};
 		},
 	"getIdThreadObjectById":
-		function getIdThreadObjectById(inputIdhere) {
-			const resultIsNewId = idDept.isNewId(inputIdhere);
-			let returnObject = {};
-			if (resultIsNewId) {
-				returnObject["characterId"] = supportDept.getCardId("character");
-				returnObject["directionId"] = supportDept.getCardId("direction");
-				returnObject["roadmapId"] = supportDept.getCardId("raodmap");
-				returnObject["actionPlanId"] = supportDept.getCardId("actionPlan");
-				return returnObject;
-			} else {
-				const unitObject = objectById[inputIdhere];
-				const inputLayer = unitObject.layer;
-				returnObject = switchDept.getIdBySwitchLayer(inputLayer);
-				return returnObject;
-			};
-		},
-	"getIdBySwitchLayer":
-		function getIdBySwitchLayer(layerHere) {
+		function getIdThreadObjectById(layerHere, inputIdhere) {
 			const returnObject = {};
 			switch(layerHere){
 				case "character" : 
