@@ -116,7 +116,7 @@ const LtoSDept = {
 		function request_followUpEditedDate(layerHere, packagedDataHere, cb) {
 
 			let idThreadObjectKeysArray = [];
-			let idThreadObject = {};
+			const idThreadObject = idDept.getIdThreadObjectByPackagedData(layerHere, packagedDataHere);
 
 			switch(layerHere) {
 				case "character" :
@@ -124,43 +124,37 @@ const LtoSDept = {
 					break;
 				case "direction" :
 					idThreadObjectKeysArray = ["character"];
-					idThreadObject.characterId = packagedDataHere.parentsId;
 					break;
 				case "roadmap" :
 					idThreadObjectKeysArray = ["character", "direction"];
-					const directionId = packagedDataHere.parentsId;
-					idThreadObject.directionId = directionId;
-					idThreadObject.characterId = idDept.getParentsIdfromChildId("direction", directionId);
 					break;
 				case "actionPlan" :
 					idThreadObjectKeysArray = ["character", "direction", "roadmap"];
-					const roadmapId = packagedDataHere.parentsId;
-					const directionId2 = idDept.getParentsIdfromChildId("roadmap", roadmapId);
-					idThreadObject.roadmapId = roadmapId;
-					idThreadObject.directionId = directionId2;
-					idThreadObject.characterId = idDept.getParentsIdfromChildId("direction", directionId2);
 					break;
 				default : null;
 			};
 
-			const last = idThreadObjectKeysArray.length;
-			if(last != 0) {
-				let counter = 0;
-
-				idThreadObjectKeysArray.forEach(eachLayer => {
-					const editedDateForParents = {"editedDate": packagedDataHere.editedDate};
-					const eachId = idThreadObject[eachLayer+"Id"];
-					const switchedRef = switchDept.getRefBySwitchLayer(eachLayer, eachId);
-					switchedRef.child(eachId)
-					.update(editedDateForParents, (e) => {
-						console.log("**followUpEditedDate completed = ", e);
-						if(++counter == last) {
-							cb();
-						}
+			if (layerHere != "character") {
+				const lastCount = idThreadObjectKeysArray.length;
+				if(lastCount != 0) {
+					let counter = 0;
+					idThreadObjectKeysArray.forEach(eachLayer => {
+						const editedDateForParents = {"editedDate": packagedDataHere.editedDate};
+						const eachId = idThreadObject[eachLayer+"Id"];
+						const switchedRef = switchDept.getRefBySwitchLayer(eachLayer, idThreadObject);
+						switchedRef.child(eachId)
+						.update(editedDateForParents, (e) => {
+							console.log("**followUpEditedDate completed = ", e);
+							if(++counter == lastCount) {
+								cb();
+							}
+						});
 					});
-				});
+				};
+			} else {
+				cb();
 			};
-		}		
+		}
 };
 	
 const userDept = {
@@ -620,132 +614,18 @@ const newCardDept = {
 	"requestSetCard": 
 		function requestSetCard(layerHere, packagedDataHere) {
 			const inputId = packagedDataHere.id;
-			const idThreadObject = newCardDept.getIdThreadObjectById_newCard(layerHere, packagedDataHere);
+			const idThreadObject = idDept.getIdThreadObjectByPackagedData(layerHere, packagedDataHere);
 
-			const switchedRef = newCardDept.getRefBySwitchLayer_newCard(layerHere, idThreadObject);
+			const switchedRef = switchDept.getRefBySwitchLayer(layerHere, idThreadObject);
 
 			switchedRef.child(inputId)
 			.set(packagedDataHere)
 			.then((e) => {
-				console.log("check1");
-				newCardDept.request_followUpEditedDate_newCard(layerHere, packagedDataHere, function(){
+				LtoSDept.request_followUpEditedDate(layerHere, packagedDataHere, function(){
 					alert("저장되었습니다.");
 				});
 			});
 
-		},
-	"getIdThreadObjectById_newCard":
-		function getIdThreadObjectById_newCard(layerHere, packagedDataHere) {
-			const idThreadObject = {};
-
-			switch(layerHere) {
-				case "character" :
-					// 해당 없음
-					break;
-				case "direction" :
-					idThreadObject.characterId = packagedDataHere.parentsId;
-					break;
-				case "roadmap" :
-					const directionId = packagedDataHere.parentsId;
-					idThreadObject.directionId = directionId;
-					idThreadObject.characterId = idDept.getParentsIdfromChildId("direction", directionId);
-					break;
-				case "actionPlan" :
-					const roadmapId = packagedDataHere.parentsId;
-					const directionId2 = idDept.getParentsIdfromChildId("roadmap", roadmapId);
-					idThreadObject.roadmapId = roadmapId;
-					idThreadObject.directionId = directionId2;
-					idThreadObject.characterId = idDept.getParentsIdfromChildId("direction", directionId2);
-					break;
-				default : null;
-			};
-			return idThreadObject;
-		},
-	"request_followUpEditedDate_newCard":
-		function request_followUpEditedDate_newCard(layerHere, packagedDataHere, cb) {
-
-			let idThreadObjectKeysArray = [];
-			const idThreadObject = newCardDept.getIdThreadObjectById_newCard(layerHere, packagedDataHere);
-
-			console.log("layerHere =", layerHere);
-
-			switch(layerHere) {
-				case "character" :
-					// 해당 없음
-					break;
-				case "direction" :
-					idThreadObjectKeysArray = ["character"];
-					break;
-				case "roadmap" :
-					idThreadObjectKeysArray = ["character", "direction"];
-					break;
-				case "actionPlan" :
-					idThreadObjectKeysArray = ["character", "direction", "roadmap"];
-					break;
-				default : null;
-			};
-
-			if (layerHere != "character") {
-				const lastNumber = idThreadObjectKeysArray.length;
-				console.log("lastNumber =", lastNumber);
-				if(lastNumber != 0) {
-					let counter = 0;
-					idThreadObjectKeysArray.forEach(eachLayer => {
-						const editedDateForParents = {"editedDate": packagedDataHere.editedDate};
-						const eachId = idThreadObject[eachLayer+"Id"];
-						const switchedRef = newCardDept.getRefBySwitchLayer_newCard(eachLayer, idThreadObject);
-						switchedRef.child(eachId)
-						.update(editedDateForParents, (e) => {
-							console.log("**followUpEditedDate completed = ", e);
-							if(++counter == lastNumber) {
-								cb();
-							}
-						});
-					});
-				};
-			};
-		},
-	"getRefBySwitchLayer_newCard":
-		function getRefBySwitchLayer_newCard(layerHere, idThreadObjectHere) {
-			console.log("**=====getRefBySwitchLayer() start=====");
-			
-			const parentsLayer = switchDept.getParentsLayerBySwitchLayer(layerHere);
-			const parentsId = idThreadObjectHere[parentsLayer+"Id"];
-
-			const userRef = db.ref("users").child(userData.uid);
-			const bigPictureRef = userRef.child("bigPicture");
-			const characterRef = bigPictureRef.child("children");
-
-			switch(layerHere){
-				case "character" :
-					return characterRef;
-				case "direction" : 
-					const characterId = parentsId;
-
-					const directionRef = characterRef.child(characterId).child("children");
-					return directionRef;
-
-				case "roadmap" : 
-					const directionId = parentsId;
-					const characterId2 = idDept.getParentsIdfromChildId("direction", directionId);
-
-					const directionRef2 = characterRef.child(characterId2).child("children");
-					const roadmapRef = directionRef2.child(directionId).child("children");
-					return roadmapRef;
-
-				case "actionPlan" : 
-					const roadmapId = parentsId;
-					const directionId2 = idDept.getParentsIdfromChildId("roadmap", roadmapId);
-					const characterId3 = idDept.getParentsIdfromChildId("direction", directionId2);
-
-					const directionRef3 = characterRef.child(characterId3).child("children");
-					const roadmapRef2 = directionRef3.child(directionId2).child("children");
-					const actionPlanRef = roadmapRef2.child(roadmapId).child("children");
-					return actionPlanRef;
-
-				default: 
-					return null;
-			};
 		},
 	"openNewCard":
 		function openNewCard(layerHere) {
@@ -870,7 +750,8 @@ const updateCardDept = {
 	"requestUpdateCard":
 		function requestUpdateCard(layerHere, packagedDataHere) {
 			const inputId = packagedDataHere.id;
-			const switchedRef = switchDept.getRefBySwitchLayer(layerHere, inputId);
+			const idThreadObject = idDept.getIdThreadObjectByPackagedData(layerHere, packagedDataHere);
+			const switchedRef = switchDept.getRefBySwitchLayer(layerHere, idThreadObject);
 			switchedRef.child(inputId)
 			.update(packagedDataHere, (e) => {
 				LtoSDept.request_followUpEditedDate(layerHere, packagedDataHere, function(){
@@ -934,8 +815,10 @@ const removeCardDept = {
 			const inputId = idHere;
 			const packagedData = objectById[inputId];
 			packagedData.editedDate = supportDept.getTimeStamp();
+
+			const idThreadObject = getIdThreadObjectByPackagedData(layerHere, packagedData);
 		
-			const switchedRef = switchDept.getRefBySwitchLayer(layerHere, inputId);
+			const switchedRef = switchDept.getRefBySwitchLayer(layerHere, idThreadObject);
 			const idArrayLength = idDept.getEveryIdArrayOfLayer(layerHere).length;
 		
 			if(layerHere == "character" && idArrayLength == 1) {
@@ -1123,73 +1006,77 @@ const idDept = {
 			} else {
 				return true;
 			};
+		},
+	"getIdThreadObjectByPackagedData":
+		function getIdThreadObjectByPackagedData(layerHere, packagedDataHere) {
+			const idThreadObject = {};
+
+			switch(layerHere) {
+				case "character" :
+					// 해당 없음
+					break;
+				case "direction" :
+					idThreadObject.characterId = packagedDataHere.parentsId;
+					break;
+				case "roadmap" :
+					const directionId = packagedDataHere.parentsId;
+					idThreadObject.directionId = directionId;
+					idThreadObject.characterId = idDept.getParentsIdfromChildId("direction", directionId);
+					break;
+				case "actionPlan" :
+					const roadmapId = packagedDataHere.parentsId;
+					const directionId2 = idDept.getParentsIdfromChildId("roadmap", roadmapId);
+					idThreadObject.roadmapId = roadmapId;
+					idThreadObject.directionId = directionId2;
+					idThreadObject.characterId = idDept.getParentsIdfromChildId("direction", directionId2);
+					break;
+				default : null;
+			};
+			return idThreadObject;
 		}
 } 
 
 const switchDept = {
 	"getRefBySwitchLayer":
-		function getRefBySwitchLayer(layerHere, idHere) {
+		function getRefBySwitchLayer(layerHere, idThreadObjectHere) {
 			console.log("**=====getRefBySwitchLayer() start=====");
 			
-			const idThreadObject = switchDept.getIdThreadObjectById(layerHere, idHere);
-
 			const parentsLayer = switchDept.getParentsLayerBySwitchLayer(layerHere);
-			const parentsId = idThreadObject[parentsLayer+"Id"];
+			const parentsId = idThreadObjectHere[parentsLayer+"Id"];
 
 			const userRef = db.ref("users").child(userData.uid);
 			const bigPictureRef = userRef.child("bigPicture");
 			const characterRef = bigPictureRef.child("children");
 
-			const resultIsNewId = idDept.isNewId(idHere);
+			switch(layerHere){
+				case "character" :
+					return characterRef;
+				case "direction" : 
+					const characterId = parentsId;
 
-			if (resultIsNewId) {
-				switch(layerHere){
-					case "character" :
-						return characterRef;
-					case "direction" : 
-						const characterId = parentsId;
+					const directionRef = characterRef.child(characterId).child("children");
+					return directionRef;
 
-						const directionRef = characterRef.child(characterId).child("children");
-						return directionRef;
+				case "roadmap" : 
+					const directionId = parentsId;
+					const characterId2 = idDept.getParentsIdfromChildId("direction", directionId);
 
-					case "roadmap" : 
-						const directionId = parentsId;
-						const characterId2 = idDept.getParentsIdfromChildId("direction", directionId);
+					const directionRef2 = characterRef.child(characterId2).child("children");
+					const roadmapRef = directionRef2.child(directionId).child("children");
+					return roadmapRef;
 
-						const directionRef2 = characterRef.child(characterId2).child("children");
-						const roadmapRef = directionRef2.child(directionId).child("children");
-						return roadmapRef;
+				case "actionPlan" : 
+					const roadmapId = parentsId;
+					const directionId2 = idDept.getParentsIdfromChildId("roadmap", roadmapId);
+					const characterId3 = idDept.getParentsIdfromChildId("direction", directionId2);
 
-					case "actionPlan" : 
-						const roadmapId = parentsId;
-						const directionId2 = idDept.getParentsIdfromChildId("roadmap", roadmapId);
-						const characterId3 = idDept.getParentsIdfromChildId("direction", directionId2);
+					const directionRef3 = characterRef.child(characterId3).child("children");
+					const roadmapRef2 = directionRef3.child(directionId2).child("children");
+					const actionPlanRef = roadmapRef2.child(roadmapId).child("children");
+					return actionPlanRef;
 
-						const directionRef3 = characterRef.child(characterId3).child("children");
-						const roadmapRef2 = directionRef3.child(directionId2).child("children");
-						const actionPlanRef = roadmapRef2.child(roadmapId).child("children");
-						return actionPlanRef;
-
-					default: 
-						return null;
-				};
-			} else {
-				const directionRef = characterRef.child(idThreadObject.characterId).child("children");	
-				switch(layerHere){
-					case "character" : 
-						return characterRef;
-					case "direction" : 
-						return directionRef;
-					case "roadmap" : 
-						const roadmapRef = directionRef.child(idThreadObject.directionId).child("children");
-						return roadmapRef;
-					case "actionPlan" : 
-						const roadmapRef2 = directionRef.child(idThreadObject.directionId).child("children");
-						const actionPlanRef = roadmapRef2.child(idThreadObject.roadmapId).child("children");
-						return actionPlanRef;
-					default: 
-						return null;
-				};
+				default: 
+					return null;
 			};
 		},
 	"getIdThreadObjectById":
