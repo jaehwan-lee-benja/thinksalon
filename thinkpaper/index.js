@@ -82,12 +82,9 @@ const StoLDept = {
 
 			idThreadObjectKeysArray.forEach(eachLayer => {
 
-				console.log("eachLayer =", eachLayer);
-
 				const latestIdOfEachLayer = idDept.getLatestIdByLayer(eachLayer);
 				
 				if(latestIdOfEachLayer != null) {
-					console.log("check1");
 					const mainId = mainCardDept.getMainId();
 				
 					if(mainId != null && isMainShown == false) {
@@ -99,7 +96,6 @@ const StoLDept = {
 					UIDept.setupBtnShowOrHideByClassName(eachLayer, "readCard");
 					selectboxDept.updateSelectbox(eachLayer);
 				} else {
-					console.log("check2");
 					UIDept.showItIfNoCard(eachLayer);
 					selectboxDept.updateSelectbox(eachLayer);
 				};
@@ -344,8 +340,6 @@ const UIDept = {
 	"setupTextareaReadOnly":
 		function setupTextareaReadOnly(layerHere, trueOrFalse){
 			document.getElementById(layerHere).readOnly = trueOrFalse;
-			// console.log("test =", document.getElementById(layerHere).readOnly);
-			// [질문] 위 콘솔을 진행하면, Maximum call stack size exceeded 가 뜸 - 사이트 로딩이 느린 것에 대한 케어 생각
 		},
 	"editCard_followup":
 		function editCard_followup(layerHere) {
@@ -441,8 +435,6 @@ const UIDept = {
 	"showItIfNoCard":
 		function showItIfNoCard(layerHere) {
 		
-			console.log("layerHere =", layerHere);
-
 			UIDept.showEmptyCard(layerHere);
 		
 			if(layerHere == "character") {
@@ -452,8 +444,6 @@ const UIDept = {
 				// direction 카드부터는 부모 레이어가 0이 아닌 경우에만, showEmptyCard(=createFirstCard)를 진행한다.
 				const parentLayer = switchDept.getParentsLayerBySwitchLayer(layerHere);
 				const parentsIdArrayLength = idDept.getEveryIdArrayOfLayer(parentLayer).length;
-
-				console.log("parentsIdArrayLength =", parentsIdArrayLength);
 		
 				if(parentsIdArrayLength != 0) {
 					UIDept.editCard_followup(layerHere);
