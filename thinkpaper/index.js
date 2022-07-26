@@ -292,23 +292,23 @@ const UIDept = {
 					const cardId = document.getElementById("cardId_character").value;
 					const mainId = mainCardDept.getMainId();
 				
-					if(cardId == mainId) {
-						UIDept.showUI("setMainCard_txt_"+layerHere);
-					} else {
-						if (mainId != null) {
-							UIDept.showUI("gotoMainCard_btn_"+layerHere);
-							UIDept.showUI("setMainCard_btn_"+layerHere);
-						} else {
-							UIDept.showUI("setMainCard_btn_"+layerHere);
-						};
-					};
+					// main기능 복구시 다시 오픈하기
+					// if(cardId == mainId) {
+					// 	UIDept.showUI("setMainCard_txt_"+layerHere);
+					// } else {
+					// 	if (mainId != null) {
+					// 		UIDept.showUI("gotoMainCard_btn_"+layerHere);
+					// 		UIDept.showUI("setMainCard_btn_"+layerHere);
+					// 	} else {
+					// 		UIDept.showUI("setMainCard_btn_"+layerHere);
+					// 	};
+					// };
 				};
 				setupBtnShowOrHideByClassName_main(layerHere, state);
 			};
 
 			const eachCardValue = document.getElementById(layerHere).value;
 			if(eachCardValue != "") {
-				console.log("layerHere =", layerHere);
 				UIDept.hideUI("guideMessage");
 			} else {
 				UIDept.showUI("guideMessage");
@@ -320,7 +320,7 @@ const UIDept = {
 			if (cardMode == "editing") {
 				document.getElementsByClassName(layerHere)[0].style.color = "#9CC0E7";
 				document.getElementsByClassName(layerHere)[0].style.borderColor = "#9CC0E7";
-				UIDept.setupTextareaBorderColorByClass(layerHere, "3px", "#9CC0E7");
+				UIDept.setupTextareaBorderColorByClass(layerHere, "2px", "#9CC0E7");
 				UIDept.setupTextareaReadOnly(layerHere, false);
 			} else {
 				document.getElementsByClassName(layerHere)[0].style.color = "#424242";
@@ -397,12 +397,9 @@ const UIDept = {
 		},
 	"showGuideMessage_forFirstCard":
 		function showGuideMessage_forFirstCard() {
-			console.log("check");
 			const guideMessage = document.getElementById("guideMessage");
 			const guideMessageValue = document.getElementById("guideMessage").innerText;
-			console.log("guideMessageValue =", guideMessageValue);
 			if (guideMessageValue == "") {
-				console.log("check2");
 				guideMessage.style.color = "#9CC0E7";
 				guideMessage.innerHTML = "'파란색 네모칸에 내용을 작성해보세요~!'"
 			};
@@ -828,7 +825,7 @@ const removeCardDept = {
 			const packagedData = objectById[inputId];
 			packagedData.editedDate = supportDept.getTimeStamp();
 
-			const idThreadObject = getIdThreadObjectByPackagedData(layerHere, packagedData);
+			const idThreadObject = idDept.getIdThreadObjectByPackagedData(layerHere, packagedData);
 		
 			const switchedRef = switchDept.getRefBySwitchLayer(layerHere, idThreadObject);
 			const idArrayLength = idDept.getEveryIdArrayOfLayer(layerHere).length;
@@ -840,7 +837,7 @@ const removeCardDept = {
 				const emptyData = {children: ""};
 				const switchedRefForEmptyData = switchedRef.parent;
 				switchedRefForEmptyData.set(emptyData, (e) => {
-					console.log("**remove completed = ", e);
+					console.log("**remove completed A = ", e);
 					alert("삭제되었습니다.");
 					});
 			} else {
@@ -849,7 +846,7 @@ const removeCardDept = {
 					LtoSDept.request_followupEditedDate(layerHere, packagedData, function(){
 						alert("삭제되었습니다.");
 					});
-					console.log("**remove completed = ", e);
+					console.log("**remove completed B = ", e);
 					});
 			};
 		}
@@ -950,7 +947,6 @@ const idDept = {
 		},
 	"getParentsIdfromChildId":
 		function getParentsIdfromChildId(childLayerHere, childIdHere) {
-			console.log("**=====idDept.getParentsIdfromChildId start=====");
 
 			const isNewIdResult = idDept.isNewId(childIdHere);
 			
@@ -1051,7 +1047,6 @@ const idDept = {
 const switchDept = {
 	"getRefBySwitchLayer":
 		function getRefBySwitchLayer(layerHere, idThreadObjectHere) {
-			console.log("**=====getRefBySwitchLayer() start=====");
 			
 			const parentsLayer = switchDept.getParentsLayerBySwitchLayer(layerHere);
 			const parentsId = idThreadObjectHere[parentsLayer+"Id"];
