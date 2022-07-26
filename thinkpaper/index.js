@@ -15,7 +15,7 @@ function logIn() {
 			StoLDept.requestReadUserData(user);
 			StoLDept.requestReadBigPicture(user);
 			updateCardDept.openEditCardByDbclick();
-			supportDept.getLayerByEventListener();
+			// supportDept.getLayerByEventListener(); // 필요시 활성화
 		} else {
 			window.location.replace("login.html");
 		};
@@ -96,14 +96,14 @@ const StoLDept = {
 					UIDept.setupBtnShowOrHideByClassName(eachLayer, "readCard");
 					selectboxDept.updateSelectbox(eachLayer);
 				} else {
-					UIDept.showItIfNoBpData(eachLayer);
+					UIDept.showItIfNoCard(eachLayer);
 					selectboxDept.updateSelectbox(eachLayer);
 				};
 			});
 		}
 	// 	switchedRef.child(inputId)
 	//		.set(packagedDataHere, (e) => {
-	// 		request_followUpEditedDate(layerHere, packagedDataHere);
+	// 		request_followupEditedDate(layerHere, packagedDataHere);
 	// 		alert("저장되었습니다.");});
 	// 		// [해결] 문서에서는 then(), catch()를 씀. 차이점? 
 	// 		// 참조: https://firebase.google.com/docs/database/web/read-and-write?hl=ko
@@ -112,8 +112,8 @@ const StoLDept = {
 };
 
 const LtoSDept = {
-	"request_followUpEditedDate":
-		function request_followUpEditedDate(layerHere, packagedDataHere, cb) {
+	"request_followupEditedDate":
+		function request_followupEditedDate(layerHere, packagedDataHere, cb) {
 
 			let idThreadObjectKeysArray = [];
 			const idThreadObject = idDept.getIdThreadObjectByPackagedData(layerHere, packagedDataHere);
@@ -144,7 +144,7 @@ const LtoSDept = {
 						const switchedRef = switchDept.getRefBySwitchLayer(eachLayer, idThreadObject);
 						switchedRef.child(eachId)
 						.update(editedDateForParents, (e) => {
-							console.log("**followUpEditedDate completed = ", e);
+							console.log("**followupEditedDate completed = ", e);
 							if(++counter == lastCount) {
 								cb();
 							}
@@ -183,8 +183,8 @@ const UIDept = {
 			};
 			UIDept.setupBtnShowOrHideByClassName(layerHere,"readCard");
 		},
-	"showItOnUI_followUp":
-		function showItOnUI_followUp(layerHere, idHere) {
+	"showItOnUI_followup":
+		function showItOnUI_followup(layerHere, idHere) {
 			function showItOnUI_latest_byLayerCondition(layer1, layer2, layer3, layer4) {
 			
 				const idThreadObjectKeysArray = [layer1, layer2, layer3, layer4];
@@ -196,7 +196,7 @@ const UIDept = {
 							UIDept.showItOnUI(eachLayer, latestIdOfEachLayer);
 							UIDept.setupBtnShowOrHideByClassName(eachLayer, "readCard");
 						} else {
-							UIDept.showItIfNoBpData(eachLayer);
+							UIDept.showItIfNoCard(eachLayer);
 						};
 						selectboxDept.updateSelectbox(eachLayer);
 					};
@@ -257,10 +257,10 @@ const UIDept = {
 				case "openNewCard" :
 					UIDept.showUI("saveNewCard_btn_"+layerHere);
 					UIDept.showUI("cancelEditCard_btn_"+layerHere)
+					UIDept.showGuideMessage_forFirstCard();
 					UIDept.setupTextareaModeByClassName(layerHere, "editing");
 					break;
 				case "readCard" :
-					UIDept.hideUI("guideMessage");
 					UIDept.showUI("openEditCard_btn_"+layerHere);
 					UIDept.showUI("openNewCard_btn_"+layerHere);
 					UIDept.showUI("removeCard_btn_"+layerHere);
@@ -272,7 +272,7 @@ const UIDept = {
 					UIDept.showUI("saveNewCard_btn_"+layerHere);
 					UIDept.showUI("removeCard_btn_"+layerHere);
 					UIDept.setupTextareaModeByClassName(layerHere, "editing");
-					UIDept.editCard_followUp(layerHere);
+					UIDept.editCard_followup(layerHere);
 					break;
 				case "inactiveCard" :
 					UIDept.setupTextareaModeByClassName(layerHere, "reading");
@@ -280,7 +280,7 @@ const UIDept = {
 					break;
 				default:
 					const state = null;
-			}
+			};
 			
 			if(layerHere == "character") {
 				function setupBtnShowOrHideByClassName_main(layerHere) {
@@ -305,6 +305,14 @@ const UIDept = {
 				};
 				setupBtnShowOrHideByClassName_main(layerHere, state);
 			};
+
+			const eachCardValue = document.getElementById(layerHere).value;
+			if(eachCardValue != "") {
+				console.log("layerHere =", layerHere);
+				UIDept.hideUI("guideMessage");
+			} else {
+				UIDept.showUI("guideMessage");
+			};
 			UIDept.resizeTextarea();
 		},
 	"setupTextareaModeByClassName":
@@ -325,8 +333,8 @@ const UIDept = {
 		function setupTextareaReadOnly(id, trueOrFalse){
 			document.getElementById(id).readOnly = trueOrFalse;
 		},
-	"editCard_followUp":
-		function editCard_followUp(layerHere) {
+	"editCard_followup":
+		function editCard_followup(layerHere) {
 			// children카드가 0개일 시, inactive 처리하기
 			const childrenLayer = switchDept.getChildrenLayerBySwitchLayer(layerHere);
 			if (childrenLayer != null) {
@@ -365,15 +373,14 @@ const UIDept = {
 				this.style.height = (this.scrollHeight) + "px";
 			};
 		},
-	"showItIfNoBpData":
-		function showItIfNoBpData(layerHere) {
+	"showItIfNoCard":
+		function showItIfNoCard(layerHere) {
 		
 			UIDept.showEmptyCard(layerHere);
 		
 			if(layerHere == "character") {
 				UIDept.setupBtnShowOrHideByClassName(layerHere,"createFirstCard");
-				UIDept.editCard_followUp(layerHere);
-				UIDept.showGuideMessage_forFirstCard();
+				UIDept.editCard_followup(layerHere);
 			} else {
 				// direction 카드부터는 부모 레이어가 0이 아닌 경우에만, showEmptyCard(=createFirstCard)를 진행한다.
 				const parentLayer = switchDept.getParentsLayerBySwitchLayer(layerHere);
@@ -381,17 +388,22 @@ const UIDept = {
 		
 				if(parentsIdArrayLength != 0) {
 					UIDept.setupBtnShowOrHideByClassName(layerHere,"createFirstCard");
-					UIDept.editCard_followUp(layerHere);
-					UIDept.showGuideMessage_forFirstCard();
+					UIDept.editCard_followup(layerHere);
+				} else {
+					UIDept.setupBtnShowOrHideByClassName(layerHere, "inactiveCard");
 				};
-
 			};
+			UIDept.showGuideMessage_forFirstCard();
 		},
 	"showGuideMessage_forFirstCard":
 		function showGuideMessage_forFirstCard() {
+			console.log("check");
 			const guideMessage = document.getElementById("guideMessage");
 			const guideMessageValue = document.getElementById("guideMessage").innerText;
+			console.log("guideMessageValue =", guideMessageValue);
 			if (guideMessageValue == "") {
+				console.log("check2");
+				guideMessage.style.color = "#9CC0E7";
 				guideMessage.innerHTML = "'파란색 네모칸에 내용을 작성해보세요~!'"
 			};
 		},
@@ -491,7 +503,7 @@ const selectboxDept = {
 			const id = document.getElementById(selectboxId).value;
 			if(id != SELECTBOX_BPTITLE_VALUE_INIT) {
 				UIDept.showItOnUI(layerHere, id);
-				UIDept.showItOnUI_followUp(layerHere, id);
+				UIDept.showItOnUI_followup(layerHere, id);
 			};
 		}
 };
@@ -556,7 +568,7 @@ const newCardDept = {
 			const packagedData = newCardDept.packageNewCard(layerHere);
 			if (packagedData != null) {
 				newCardDept.requestSetCard(layerHere, packagedData);
-				UIDept.showItOnUI_followUp(layerHere, packagedData.id);
+				UIDept.showItOnUI_followup(layerHere, packagedData.id);
 			};
 		},
 	"packageNewCard":
@@ -621,7 +633,7 @@ const newCardDept = {
 			switchedRef.child(inputId)
 			.set(packagedDataHere)
 			.then((e) => {
-				LtoSDept.request_followUpEditedDate(layerHere, packagedDataHere, function(){
+				LtoSDept.request_followupEditedDate(layerHere, packagedDataHere, function(){
 					alert("저장되었습니다.");
 				});
 			});
@@ -632,19 +644,19 @@ const newCardDept = {
 			document.getElementById("cardId_"+layerHere).value = "";
 			UIDept.showEmptyCard(layerHere);
 			UIDept.setupBtnShowOrHideByClassName(layerHere,"openNewCard");
-			newCardDept.openNewCard_followUp(layerHere);
+			newCardDept.openNewCard_followup(layerHere);
 		},
-	"openNewCard_followUp":
-		function openNewCard_followUp(layerHere) {			
+	"openNewCard_followup":
+		function openNewCard_followup(layerHere) {			
 			switch(layerHere) {
 				case "character" :
-					newCardDept.openNewCard_byLayerCondition("direction", "roadmap", "actionPlan");
+					newCardDept.openNewCard_followupBySwitchLayer("direction", "roadmap", "actionPlan");
 					break;
 				case "direction" :
-					newCardDept.openNewCard_byLayerCondition("roadmap", "actionPlan");
+					newCardDept.openNewCard_followupBySwitchLayer("roadmap", "actionPlan");
 					break;
 				case "roadmap" :
-					newCardDept.openNewCard_byLayerCondition("actionPlan");
+					newCardDept.openNewCard_followupBySwitchLayer("actionPlan");
 					break;
 				case "actionPlan" :
 					// 해당없음
@@ -652,8 +664,8 @@ const newCardDept = {
 				default : null;
 			};
 		},
-	"openNewCard_byLayerCondition":
-		function openNewCard_byLayerCondition(layer1, layer2, layer3, layer4) {
+	"openNewCard_followupBySwitchLayer":
+		function openNewCard_followupBySwitchLayer(layer1, layer2, layer3, layer4) {
 			const idThreadObjectKeysArray = [layer1, layer2, layer3, layer4];
 			idThreadObjectKeysArray.forEach(eachLayer => {
 				if (eachLayer != undefined) {
@@ -754,7 +766,7 @@ const updateCardDept = {
 			const switchedRef = switchDept.getRefBySwitchLayer(layerHere, idThreadObject);
 			switchedRef.child(inputId)
 			.update(packagedDataHere, (e) => {
-				LtoSDept.request_followUpEditedDate(layerHere, packagedDataHere, function(){
+				LtoSDept.request_followupEditedDate(layerHere, packagedDataHere, function(){
 					alert("수정되었습니다.");
 				});
 				console.log("**update completed = ", e);
@@ -834,7 +846,7 @@ const removeCardDept = {
 			} else {
 				switchedRef.child(inputId)
 				.remove((e) => {
-					LtoSDept.request_followUpEditedDate(layerHere, packagedData, function(){
+					LtoSDept.request_followupEditedDate(layerHere, packagedData, function(){
 						alert("삭제되었습니다.");
 					});
 					console.log("**remove completed = ", e);

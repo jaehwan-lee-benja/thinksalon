@@ -93,7 +93,7 @@ input:hover {
 
 #divTop{
     padding-bottom: 3rem;
-    margin: 0 0 2rem 0;
+    margin: 0 0 1rem 0;
     border-bottom: 1px solid rgb(220, 220, 220);
 }
 
@@ -115,9 +115,17 @@ input:hover {
     font-style: italic;
 }
 
-#gridMain{
-    margin: 2rem 0;
+#divNoticeMain {
+    text-align: center;
 }
+
+#gridMain{
+    display: grid;
+    grid-template-rows: 2rem 1fr;
+    grid-gap: 0.2rem;
+    margin-bottom: 2rem;
+};
+
 .gridMainTitle{
     display: grid;
     grid-template-rows: 1.5rem 3rem 5rem;
