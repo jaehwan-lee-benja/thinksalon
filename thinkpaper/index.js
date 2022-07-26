@@ -371,8 +371,6 @@ const UIDept = {
 					const idArray = idDept.getEveryIdArrayOfLayer(eachLayer);
 					if(idArray.length == 0) {
 						UIDept.setupBtnShowOrHideByClassName(eachLayer, "inactiveCard");
-					} else {
-						UIDept.setupBtnShowOrHideByClassName(eachLayer, "readCard");
 					};
 				};
 			});
@@ -399,7 +397,7 @@ const UIDept = {
 				// character인 경우를 제외하고, 상위 카드를 reading으로 바꾸기
 				if (eachLayer != "character") {
 					const parentsLayer = switchDept.getParentsLayerBySwitchLayer(eachLayer);
-					UIDept.setupTextareaModeByClassName(parentsLayer, "reading");
+					UIDept.setupBtnShowOrHideByClassName(parentsLayer, "readCard");
 					};
 			});
 
