@@ -3,7 +3,7 @@ const SELECTBOX_BPTITLE_VALUE_INIT = "INIT";
 const userData = {}; 
 let objectById = {};
 let isMainShown = false;
-let eventListenerResult = "";
+let eventListenerResult = {};
 
 (function() {
 	logIn();
@@ -15,7 +15,8 @@ function logIn() {
 			StoLDept.requestReadUserData(user);
 			StoLDept.requestReadBigPicture(user);
 			updateCardDept.openEditCardByDbclick();
-			// supportDept.getLayerByEventListener(); // 필요시 활성화
+			// supportDept.getLayerByEventListenerByButton();
+			// supportDept.getLayerByEventListenerBySelectbox();
 		} else {
 			window.location.replace("login.html");
 		};
@@ -81,10 +82,12 @@ const StoLDept = {
 
 			idThreadObjectKeysArray.forEach(eachLayer => {
 
+				console.log("eachLayer =", eachLayer);
+
 				const latestIdOfEachLayer = idDept.getLatestIdByLayer(eachLayer);
 				
 				if(latestIdOfEachLayer != null) {
-
+					console.log("check1");
 					const mainId = mainCardDept.getMainId();
 				
 					if(mainId != null && isMainShown == false) {
@@ -96,6 +99,7 @@ const StoLDept = {
 					UIDept.setupBtnShowOrHideByClassName(eachLayer, "readCard");
 					selectboxDept.updateSelectbox(eachLayer);
 				} else {
+					console.log("check2");
 					UIDept.showItIfNoCard(eachLayer);
 					selectboxDept.updateSelectbox(eachLayer);
 				};
@@ -184,40 +188,35 @@ const UIDept = {
 			UIDept.setupBtnShowOrHideByClassName(layerHere,"readCard");
 		},
 	"showItOnUI_followup":
-		function showItOnUI_followup(layerHere, idHere) {
-			function showItOnUI_latest_byLayerCondition(layer1, layer2, layer3, layer4) {
-			
-				const idThreadObjectKeysArray = [layer1, layer2, layer3, layer4];
-			
-				idThreadObjectKeysArray.forEach(eachLayer => {
-					if (eachLayer != undefined) {
-						const latestIdOfEachLayer = idDept.getLatestIdByLayer(eachLayer);
-						if(latestIdOfEachLayer != null) {
-							UIDept.showItOnUI(eachLayer, latestIdOfEachLayer);
-							UIDept.setupBtnShowOrHideByClassName(eachLayer, "readCard");
-						} else {
-							UIDept.showItIfNoCard(eachLayer);
-						};
-						selectboxDept.updateSelectbox(eachLayer);
-					};
-				});
-			};
-			
+		function showItOnUI_followup(layerHere) {
+			let idThreadObjectKeysArray = [];
 			switch(layerHere) {
 				case "character" :
-					showItOnUI_latest_byLayerCondition("direction", "roadmap", "actionPlan");
+					idThreadObjectKeysArray = ["direction", "roadmap", "actionPlan"];
 					break;
 				case "direction" :
-					showItOnUI_latest_byLayerCondition("roadmap", "actionPlan");
+					idThreadObjectKeysArray = ["roadmap", "actionPlan"];
 					break;
 				case "roadmap" :
-					showItOnUI_latest_byLayerCondition("actionPlan");
+					idThreadObjectKeysArray = ["actionPlan"];
 					break;
 				case "actionPlan" :
 					// 해당없음
 					break;
 				default : null;
 			};
+			idThreadObjectKeysArray.forEach(eachLayer => {
+				const latestIdOfEachLayer = idDept.getLatestIdByLayer(eachLayer);
+				if(latestIdOfEachLayer != null) {
+					UIDept.showItOnUI(eachLayer, latestIdOfEachLayer);
+					console.log("**readCard에 대한 버그 발생하는지 확인하기");
+					// 220727 - 아래 내용이 필요해서 넣었나? 일단 필요 없어 보임. 
+					// UIDept.setupBtnShowOrHideByClassName(eachLayer, "readCard");
+				} else {
+					UIDept.showItIfNoCard(eachLayer);
+				};
+				selectboxDept.updateSelectbox(eachLayer);
+			});
 		},
 	"hideUI":
 		function hideUI(id) {
@@ -251,12 +250,15 @@ const UIDept = {
 			// 모드에 따라 설정하기
 			switch(state){
 				case "createFirstCard" :
+					idDept.emptyCardId(layerHere);
 					UIDept.showUI("saveNewCard_btn_"+layerHere);
 					UIDept.setupTextareaModeByClassName(layerHere, "editing");
+					// 220727 아래의 경우의수가 발생하는지 체크하기
+					// UIDept.editCard_followup(layerHere);
 					break;
 				case "openNewCard" :
 					UIDept.showUI("saveNewCard_btn_"+layerHere);
-					UIDept.showUI("cancelEditCard_btn_"+layerHere)
+					UIDept.showUI("cancelEditCard_btn_"+layerHere);
 					UIDept.showGuideMessage_forFirstCard();
 					UIDept.setupTextareaModeByClassName(layerHere, "editing");
 					break;
@@ -275,8 +277,18 @@ const UIDept = {
 					UIDept.editCard_followup(layerHere);
 					break;
 				case "inactiveCard" :
-					UIDept.setupTextareaModeByClassName(layerHere, "reading");
-					document.getElementById("alert_txt_"+layerHere).innerHTML = "(상위 카드 작성 후, 작성 가능)";
+					// const parentsLayer = switchDept.getParentsLayerBySwitchLayer(layerHere);
+					// const isReadingMode = document.getElementById(parentsLayer).readOnly;
+					// if (isReadingMode) {
+						// case "createFirstCard"의 변형 버전
+						// idDept.emptyCardId(layerHere);
+						// UIDept.showUI("saveNewCard_btn_"+layerHere);
+						// UIDept.setupTextareaModeByClassName(layerHere, "editing");
+					// } else {
+						idDept.emptyCardId(layerHere);
+						UIDept.setupTextareaModeByClassName(layerHere, "reading");
+						document.getElementById("alert_txt_"+layerHere).innerHTML = "(상위 카드 작성 후, 작성 가능)";
+					// };
 					break;
 				default:
 					const state = null;
@@ -330,8 +342,10 @@ const UIDept = {
 			};
 		},
 	"setupTextareaReadOnly":
-		function setupTextareaReadOnly(id, trueOrFalse){
-			document.getElementById(id).readOnly = trueOrFalse;
+		function setupTextareaReadOnly(layerHere, trueOrFalse){
+			document.getElementById(layerHere).readOnly = trueOrFalse;
+			// console.log("test =", document.getElementById(layerHere).readOnly);
+			// [질문] 위 콘솔을 진행하면, Maximum call stack size exceeded 가 뜸 - 사이트 로딩이 느린 것에 대한 케어 생각
 		},
 	"editCard_followup":
 		function editCard_followup(layerHere) {
@@ -427,6 +441,8 @@ const UIDept = {
 	"showItIfNoCard":
 		function showItIfNoCard(layerHere) {
 		
+			console.log("layerHere =", layerHere);
+
 			UIDept.showEmptyCard(layerHere);
 		
 			if(layerHere == "character") {
@@ -436,6 +452,8 @@ const UIDept = {
 				// direction 카드부터는 부모 레이어가 0이 아닌 경우에만, showEmptyCard(=createFirstCard)를 진행한다.
 				const parentLayer = switchDept.getParentsLayerBySwitchLayer(layerHere);
 				const parentsIdArrayLength = idDept.getEveryIdArrayOfLayer(parentLayer).length;
+
+				console.log("parentsIdArrayLength =", parentsIdArrayLength);
 		
 				if(parentsIdArrayLength != 0) {
 					UIDept.editCard_followup(layerHere);
@@ -551,7 +569,7 @@ const selectboxDept = {
 			const id = document.getElementById(selectboxId).value;
 			if(id != SELECTBOX_BPTITLE_VALUE_INIT) {
 				UIDept.showItOnUI(layerHere, id);
-				UIDept.showItOnUI_followup(layerHere, id);
+				UIDept.showItOnUI_followup(layerHere);
 			};
 		}
 };
@@ -616,7 +634,7 @@ const newCardDept = {
 			const packagedData = newCardDept.packageNewCard(layerHere);
 			if (packagedData != null) {
 				newCardDept.requestSetCard(layerHere, packagedData);
-				UIDept.showItOnUI_followup(layerHere, packagedData.id);
+				UIDept.showItOnUI_followup(layerHere);
 			};
 		},
 	"packageNewCard":
@@ -956,14 +974,49 @@ const supportDept = {
 			const result = document.getElementById(cardElementId).value;
 			return result;
 		},
-	"getLayerByEventListener":
-		function getLayerByEventListener() {
+	"getLayerByEventListenerByButton":
+		function getLayerByEventListenerByButton() {
+			eventListenerResult = {};
 			const inputButtonSelector = document.getElementsByTagName("input");
 			for (let i = 0; i < inputButtonSelector.length; i++) {
 				inputButtonSelector[i].addEventListener("click", function (e) {
-					eventListenerResult = "";
-					returnClassName = e.target.parentNode.parentNode.className;
-					eventListenerResult = returnClassName;
+
+					const returnLayer = e.target
+						.parentNode
+						.parentNode
+						.className;
+					const returnId = e.target
+						.parentNode
+						.parentNode
+						.firstElementChild
+						.value;
+
+					eventListenerResult = switchDept.getIdThreadObjectById(returnLayer, returnId);
+
+				});
+			};
+		},
+	"getLayerByEventListenerBySelectbox":
+		function getLayerByEventListenerBySelectbox() {
+			eventListenerResult = {};
+			const inputSelectboxSelector = document.getElementsByTagName("select");
+			for (let i = 0; i < inputSelectboxSelector.length; i++) {
+				inputSelectboxSelector[i].addEventListener("change", function (e) {
+					
+					const returnLayer = e.target
+						.id
+						.substr(10);
+					const returnId = e.target
+						.parentNode
+						.parentNode
+						.parentNode
+						.nextElementSibling
+						.firstElementChild
+						.children[0]
+						.value;
+
+					eventListenerResult = switchDept.getIdThreadObjectById(returnLayer, returnId);
+					
 				});
 			};
 		}
@@ -1028,7 +1081,8 @@ const idDept = {
 				const everyIdArrayOfLayerFromSameParents = [];
 				for(let j = 0; j < everyIdArrayOfLayer.length; j++) {
 					const parentsLayer = switchDept.getParentsLayerBySwitchLayer(layerHere);
-					if (objectById[everyIdArrayOfLayer[j]].parentsId == supportDept.getCardId(parentsLayer)){
+					const parentsId = supportDept.getCardId(parentsLayer);
+					if (objectById[everyIdArrayOfLayer[j]].parentsId == parentsId){
 						everyIdArrayOfLayerFromSameParents.push(everyIdArrayOfLayer[j]);
 					};
 				};
@@ -1093,6 +1147,13 @@ const idDept = {
 				default : null;
 			};
 			return idThreadObject;
+		},
+	"emptyCardId" :
+		function emptyCardId(layerHere) {
+			const cardElementId = "cardId_"+layerHere;
+			document.getElementById(cardElementId).value = "";
+			const cardElementParentsId = "cardParentsId_"+layerHere;
+			document.getElementById(cardElementParentsId).value = "";
 		}
 } 
 
