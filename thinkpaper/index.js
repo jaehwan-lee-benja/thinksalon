@@ -335,21 +335,74 @@ const UIDept = {
 		},
 	"editCard_followup":
 		function editCard_followup(layerHere) {
-			// children카드가 0개일 시, inactive 처리하기
-			const childrenLayer = switchDept.getChildrenLayerBySwitchLayer(layerHere);
-			if (childrenLayer != null) {
-				const childrenIdArray = idDept.getEveryIdArrayOfLayer(childrenLayer);
-				// children 카드에 아무것도 없으면, inactive 있으면, read로 읽기
-				if(childrenIdArray.length == 0) {
-					UIDept.setupBtnShowOrHideByClassName(childrenLayer, "inactiveCard");
+
+			// 카드 갯수가 0이면, inactive / 있으면, read로 읽기
+
+			let layerArrayForDownSide = [];
+
+			switch(layerHere) {
+				case "character" :
+					layerArrayForDownSide = ["character", "direction", "roadmap", "actionPlan"];
+					break;
+				case "direction" :
+					layerArrayForDownSide = ["direction", "roadmap", "actionPlan"];
+					break;
+				case "roadmap" :
+					layerArrayForDownSide = ["roadmap", "actionPlan"];
+					break;
+				case "actionPlan" :
+					layerArrayForDownSide = ["actionPlan"];
+					break;
+				default : null;
+			};
+
+			layerArrayForDownSide.forEach(eachLayer => {
+				const childrenLayer = switchDept.getChildrenLayerBySwitchLayer(eachLayer);
+				if(childrenLayer != null){
+					// actionPlan이 아닌 경우
+					const childrenIdArray = idDept.getEveryIdArrayOfLayer(childrenLayer);
+					if(childrenIdArray.length == 0) {
+						UIDept.setupBtnShowOrHideByClassName(childrenLayer, "inactiveCard");
+					} else {
+						UIDept.setupBtnShowOrHideByClassName(childrenLayer, "readCard");
+					};
 				} else {
-					UIDept.setupBtnShowOrHideByClassName(childrenLayer, "readCard");
+					// actionPlan인 경우
+					const idArray = idDept.getEveryIdArrayOfLayer(eachLayer);
+					if(idArray.length == 0) {
+						UIDept.setupBtnShowOrHideByClassName(eachLayer, "inactiveCard");
+					} else {
+						UIDept.setupBtnShowOrHideByClassName(eachLayer, "readCard");
+					};
 				};
+			});
+
+			let layerArrayForUpSide = [];
+
+			switch(layerHere) {
+				case "character" :
+					layerArrayForUpSide = ["character"];
+					break;
+				case "direction" :
+					layerArrayForUpSide = ["character", "direction"];
+					break;
+				case "roadmap" :
+					layerArrayForUpSide = ["character", "direction", "roadmap"];
+					break;
+				case "actionPlan" :
+					layerArrayForUpSide = ["character", "direction", "roadmap", "actionPlan"];
+					break;
+				default : null;
 			};
-			if (layerHere != "character") {
-			const parentsLayer = switchDept.getParentsLayerBySwitchLayer(layerHere);
-			UIDept.setupTextareaModeByClassName(parentsLayer, "reading");
-			};
+
+			layerArrayForUpSide.forEach(eachLayer => {
+				// character인 경우를 제외하고, 상위 카드를 reading으로 바꾸기
+				if (eachLayer != "character") {
+					const parentsLayer = switchDept.getParentsLayerBySwitchLayer(eachLayer);
+					UIDept.setupTextareaModeByClassName(parentsLayer, "reading");
+					};
+			});
+
 		},
 	"setupTextareaBorderColorByClass":
 		function setupTextareaBorderColorByClass(layerHere, px, color) {
@@ -379,16 +432,16 @@ const UIDept = {
 			UIDept.showEmptyCard(layerHere);
 		
 			if(layerHere == "character") {
-				UIDept.setupBtnShowOrHideByClassName(layerHere,"createFirstCard");
 				UIDept.editCard_followup(layerHere);
+				UIDept.setupBtnShowOrHideByClassName(layerHere,"createFirstCard");
 			} else {
 				// direction 카드부터는 부모 레이어가 0이 아닌 경우에만, showEmptyCard(=createFirstCard)를 진행한다.
 				const parentLayer = switchDept.getParentsLayerBySwitchLayer(layerHere);
 				const parentsIdArrayLength = idDept.getEveryIdArrayOfLayer(parentLayer).length;
 		
 				if(parentsIdArrayLength != 0) {
-					UIDept.setupBtnShowOrHideByClassName(layerHere,"createFirstCard");
 					UIDept.editCard_followup(layerHere);
+					UIDept.setupBtnShowOrHideByClassName(layerHere,"createFirstCard");
 				} else {
 					UIDept.setupBtnShowOrHideByClassName(layerHere, "inactiveCard");
 				};
@@ -788,6 +841,7 @@ const updateCardDept = {
 	"openEditCard":
 		function openEditCard(layerHere) {
 			UIDept.setupBtnShowOrHideByClassName(layerHere,"editCard");
+			UIDept.editCard_followup(layerHere);
 		},
 	"cancelEditCard":
 		function cancelEditCard(layerHere) {
