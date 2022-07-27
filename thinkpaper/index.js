@@ -94,10 +94,12 @@ const StoLDept = {
 						UIDept.showItOnUI(eachLayer, latestIdOfEachLayer);
 					};
 					UIDept.setupBtnShowOrHideByClassName(eachLayer, "readCard");
-					selectboxDept.updateSelectbox(eachLayer);
+					// selectboxDept.updateSelectbox(eachLayer);
+					listDept.updateList(eachLayer);
 				} else {
 					UIDept.showItIfNoCard(eachLayer);
-					selectboxDept.updateSelectbox(eachLayer);
+					// selectboxDept.updateSelectbox(eachLayer);
+					listDept.updateList(eachLayer);
 				};
 			});
 		}
@@ -211,7 +213,8 @@ const UIDept = {
 				} else {
 					UIDept.showItIfNoCard(eachLayer);
 				};
-				selectboxDept.updateSelectbox(eachLayer);
+				// selectboxDept.updateSelectbox(eachLayer);
+				listDept.updateList(eachLayer);
 			});
 		},
 	"hideUI":
@@ -469,7 +472,7 @@ const UIDept = {
 		}
 };
 
-const listDept = {
+const listDept = { 
 	"updateList": 
 		function updateList(layerHere) {
 			const listId = "list_"+layerHere;
@@ -489,6 +492,9 @@ const listDept = {
 				const listItem = document.createElement('li');
 				listItem.innerHTML = liValue;
 				list.appendChild(listItem);
+				const liId = sortedArray[i].id;
+				listItem.setAttribute("value", liId);
+				list.onclick = listDept.clickLi(layerHere);
 			};
 		},
 	"getMappedObject_idEditedDateContents":
@@ -510,6 +516,38 @@ const listDept = {
 				(a,b) => new Date(b.editedDate) - new Date(a.editedDate)
 			);
 			return mappedArrayHere;
+		},
+	"clickLi":
+		function clickLi(layerHere) {
+			// 참고: https://daisy-mansion.tistory.com/46
+			const li = document.getElementById("list_"+layerHere).children;
+			
+			const liArray = [];
+			for (let i = 0; i < li.length; i++) {
+				liArray.push(li[i]);
+			};
+
+			liArray.forEach((v)=>{
+
+				v.addEventListener("click",(e)=>{
+
+					//색 조정하기
+					liArray.forEach((eachLi) => {
+						eachLi.style.background = "#f9f9f9";
+						eachLi.style.color = '#424242';
+					});
+
+					e.target.style.background = '#E2EDF8';
+					e.target.style.color = '#424242';
+
+					// [질문] css의 hover가 멈추는 현상
+
+					const id = e.target.getAttribute("value");
+					UIDept.showItOnUI(layerHere, id);
+					UIDept.showItOnUI_followup(layerHere);
+
+				});
+			});
 		}
 };
 
@@ -574,7 +612,8 @@ const mainCardDept = {
 		function gotoMainCard() {
 			const mainId = mainCardDept.getMainId();
 			UIDept.showItOnUI("character", mainId);
-			selectboxDept.updateSelectbox("character");
+			// selectboxDept.updateSelectbox("character");
+			listDept.updateList("character");
 		},
 	"getMainId":
 		function getMainId() {
@@ -1257,3 +1296,4 @@ const switchDept = {
 };
 
 // [질문] css gridMainTop 작동되지 않음
+// [질문] refactorying 주안점

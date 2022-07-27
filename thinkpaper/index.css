@@ -62,10 +62,26 @@ input[type="button"] {
         cursor: pointer;
         width: 100%;
         /* display: inline-block; */
-      }
+}
 
 /* On mouse-over */
 input:hover {
+    background: #9CC0E7;
+    color: #FFF;
+}
+
+li {
+    list-style: none;
+    margin: 0.1rem auto;
+    padding: 0.2rem;
+    width: 90%;
+    min-height: 1rem;
+    border: 1px solid #424242;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+li:hover {
     background: #9CC0E7;
     color: #FFF;
 }
@@ -79,7 +95,7 @@ input:hover {
 }
 
 #divImageMain{
-    width: 50%;
+    width: 30%;
     margin: 0 auto 2rem auto;
     text-align: center;
 }
