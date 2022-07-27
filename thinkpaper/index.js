@@ -550,7 +550,7 @@ const selectboxDept = {
 				selectbox.insertBefore(option, selectbox.lastChild);
 			};
 		
-			// listDept.updateList(layerHere, sortedArray);
+			listDept.updateList(layerHere, sortedArray);
 		
 		},
 	"selectBySelectbox":
