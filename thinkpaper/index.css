@@ -86,7 +86,7 @@ input:hover {
 
 #gridBody{
     display: grid;
-    grid-template-rows: "height: auto;" 1fr 3rem;
+    grid-template-rows: "height: auto;" auto 3rem;
     margin: 5rem;
     grid-gap: 0.2rem;
 }
@@ -106,7 +106,7 @@ input:hover {
 #gridLayer{
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
-    grid-gap: 0.2rem;
+    grid-gap: 0.8rem;
 }
 
 #guideMessage{
@@ -121,14 +121,16 @@ input:hover {
 
 #gridMain{
     display: grid;
+    /* background-color: aqua; */
     grid-template-rows: 2rem 1fr;
     grid-gap: 0.2rem;
     margin-bottom: 2rem;
 };
 
-.gridMainTitle{
+.gridMainTop{
     display: grid;
-    grid-template-rows: 1.5rem 3rem 5rem;
+    background-color: red;
+    grid-template-rows: 1fr 1fr auto;
     grid-gap: 0.2rem;
     max-width: 20rem;
     padding: 0 1rem;
@@ -256,7 +258,8 @@ https://www.w3schools.com/howto/howto_js_todolist.asp
         margin-bottom: 3rem;
     }
     .divLayer{
-        margin-bottom: 3rem;
+        margin: 0 auto 3rem auto;
+        max-width: 20rem;
     }
     #gridMainSubFrame{
         display: block;

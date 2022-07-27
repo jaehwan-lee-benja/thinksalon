@@ -372,7 +372,7 @@ const UIDept = {
 					if(childrenIdArray.length == 0) {
 						UIDept.setupBtnShowOrHideByClassName(childrenLayer, "inactiveCard");
 					} else {
-						UIDept.setupBtnShowOrHideByClassName(childrenLayer, "readCard");
+						UIDept.showItOnUI(childrenLayer, idDept.getCardId(childrenLayer));
 					};
 				} else {
 					// actionPlan인 경우
@@ -655,17 +655,17 @@ const newCardDept = {
 					contents["character"] = document.getElementById("character").value.trim();
 					break;
 				case "direction" :
-					catchContentsData["parentsId"] = supportDept.getCardId("character");
+					catchContentsData["parentsId"] = idDept.getCardId("character");
 					contents["direction"] = document.getElementById("direction").value.trim();
 					break;
 				case "roadmap" :
-					catchContentsData["parentsId"] = supportDept.getCardId("direction");
+					catchContentsData["parentsId"] = idDept.getCardId("direction");
 					contents["roadmap"] = document.getElementById("roadmap").value.trim();
 					// contents["roadmapA"] = document.getElementById("roadmapA").value.trim();
 					// contents["roadmapB"] = document.getElementById("roadmapB").value.trim();
 					break;
 				case "actionPlan" :
-					catchContentsData["parentsId"] = supportDept.getCardId("roadmap");
+					catchContentsData["parentsId"] = idDept.getCardId("roadmap");
 					contents["actionPlan"] = document.getElementById("actionPlan").value.trim();
 					break;
 				default:
@@ -748,7 +748,7 @@ const updateCardDept = {
 			
 			if (monitorResult) {
 				const packagedData = {};
-				packagedData["id"] = supportDept.getCardId(layerHere);
+				packagedData["id"] = idDept.getCardId(layerHere);
 				packagedData["parentsId"] = document.getElementById("cardParentsId_"+layerHere).value;
 				packagedData["editedDate"] = supportDept.getTimeStamp();
 				packagedData["contents"] = {};
@@ -779,7 +779,7 @@ const updateCardDept = {
 		function monitorIfCardChanged(layerHere) {
 			
 			// 현재 UI에 띄워진 값 포착하기
-			const id = supportDept.getCardId(layerHere);
+			const id = idDept.getCardId(layerHere);
 			const value = document.getElementById(layerHere).value.trim();
 			const object = {"id": id, [layerHere]: value};
 
@@ -851,7 +851,7 @@ const updateCardDept = {
 		},
 	"cancelEditCard":
 		function cancelEditCard(layerHere) {
-			const cardId = supportDept.getCardId(layerHere);
+			const cardId = idDept.getCardId(layerHere);
 			if(cardId != ""){
 				UIDept.showItOnUI(layerHere, cardId);
 				const childrenLayer = switchDept.getChildrenLayerBySwitchLayer(layerHere);
@@ -873,7 +873,7 @@ const updateCardDept = {
 const removeCardDept = {
 	"removeCard":
 		function removeCard(layerHere) {
-			const removeId = supportDept.getCardId(layerHere);
+			const removeId = idDept.getCardId(layerHere);
 			if (confirm("정말 삭제하시겠습니까? 삭제가 완료되면, 해당 내용은 다시 복구될 수 없습니다.")) {
 				removeCardDept.requestRemoveCard(layerHere, removeId);
 			};
@@ -957,12 +957,6 @@ const supportDept = {
 			const now = new Date();
 			const nowString = now.toISOString();
 			return nowString;
-		},
-	"getCardId":
-		function getCardId(layerHere) {
-			const cardElementId = "cardId_"+layerHere;
-			const result = document.getElementById(cardElementId).value;
-			return result;
 		},
 	"getLayerByEventListenerByButton":
 		function getLayerByEventListenerByButton() {
@@ -1071,7 +1065,7 @@ const idDept = {
 				const everyIdArrayOfLayerFromSameParents = [];
 				for(let j = 0; j < everyIdArrayOfLayer.length; j++) {
 					const parentsLayer = switchDept.getParentsLayerBySwitchLayer(layerHere);
-					const parentsId = supportDept.getCardId(parentsLayer);
+					const parentsId = idDept.getCardId(parentsLayer);
 					if (objectById[everyIdArrayOfLayer[j]].parentsId == parentsId){
 						everyIdArrayOfLayerFromSameParents.push(everyIdArrayOfLayer[j]);
 					};
@@ -1144,6 +1138,12 @@ const idDept = {
 			document.getElementById(cardElementId).value = "";
 			const cardElementParentsId = "cardParentsId_"+layerHere;
 			document.getElementById(cardElementParentsId).value = "";
+		},
+	"getCardId":
+		function getCardId(layerHere) {
+			const cardElementId = "cardId_"+layerHere;
+			const result = document.getElementById(cardElementId).value;
+			return result;
 		}
 } 
 
@@ -1256,4 +1256,4 @@ const switchDept = {
 		}
 };
 
-
+// [질문] css gridMainTop 작동되지 않음
