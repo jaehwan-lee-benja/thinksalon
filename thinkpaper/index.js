@@ -541,6 +541,7 @@ const listDept = {
 					e.target.style.color = '#424242';
 
 					// [질문] css의 hover가 멈추는 현상
+					// hover 추가로 적용하기
 
 					const id = e.target.getAttribute("value");
 					UIDept.showItOnUI(layerHere, id);
@@ -655,7 +656,7 @@ const mainCardDept = {
 					});
 			});
 		}
-}
+};
 
 const newCardDept = {
 	"saveNewCard":
@@ -1184,7 +1185,7 @@ const idDept = {
 			const result = document.getElementById(cardElementId).value;
 			return result;
 		}
-} 
+};
 
 const switchDept = {
 	"getRefBySwitchLayer":

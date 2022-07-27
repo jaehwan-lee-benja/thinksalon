@@ -137,16 +137,14 @@ li:hover {
 
 #gridMain{
     display: grid;
-    /* background-color: aqua; */
     grid-template-rows: 2rem 1fr;
     grid-gap: 0.2rem;
     margin-bottom: 2rem;
-};
+}
 
 .gridMainTop{
     display: grid;
-    background-color: red;
-    grid-template-rows: 1fr 1fr auto;
+    grid-template-rows: 2rem 4rem;
     grid-gap: 0.2rem;
     max-width: 20rem;
     padding: 0 1rem;
