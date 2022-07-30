@@ -529,8 +529,20 @@ const listDept = {
 				list.appendChild(listItem);
 				const liId = sortedArray[i].id;
 				listItem.setAttribute("value", liId);
-				list.onclick = listDept.clickLi(layerHere);
 			};
+			listDept.addOpenNewCardLi(layerHere);
+			list.onclick = listDept.clickLi(layerHere);
+		},
+	"addOpenNewCardLi":
+		function addOpenNewCardLi(layerHere) {
+			const listId = "list_"+layerHere;
+			const list = document.getElementById(listId);
+			const liValue_newCard = "(+ 새 리스트 추가하기)";
+			const listItem = document.createElement('li');
+			listItem.innerHTML = liValue_newCard;
+			list.appendChild(listItem);
+			const liId_newCard = "newCardBtn_"+layerHere;
+			listItem.setAttribute("value", liId_newCard);
 		},
 	"getMappedObject_idEditedDateContents":
 		function getMappedObject_idEditedDateContents(layerHere) {		
@@ -554,6 +566,7 @@ const listDept = {
 		},
 	"clickLi":
 		function clickLi(layerHere) {
+			console.log("check1");
 			// 참고: https://daisy-mansion.tistory.com/46
 			const li = document.getElementById("list_"+layerHere).children;
 			
@@ -566,17 +579,21 @@ const listDept = {
 
 				v.addEventListener("click",(e)=>{
 
+					const id = e.target.getAttribute("value");
+					const newCardid = "newCardBtn_"+layerHere;
+
 					//색 조정하기
 					liArray.forEach((eachLi) => {
 
-						// console.log("e.target =", e.target);
-
-						function mOver2() {
-							eachLi.setAttribute("style", "background: "+COLOR_SELECTED_GRAYBLUE+"; color: "+COLOR_TXT_DARKGRAY+";");
-						};
-	
-						function mOut2() {
-							eachLi.setAttribute("style", "background: "+COLOR_SELECTED_GRAYBLUE+"; color: "+COLOR_TXT_DARKGRAY+";")
+						// if의 용도: "새 카드 추가 li가 눌렸음"을 시각적으로 나타낼 필요가 없음
+						if(id != newCardid) {
+							function mOver2() {
+								eachLi.setAttribute("style", "background: "+COLOR_SELECTED_GRAYBLUE+"; color: "+COLOR_TXT_DARKGRAY+";");
+							};
+		
+							function mOut2() {
+								eachLi.setAttribute("style", "background: "+COLOR_SELECTED_GRAYBLUE+"; color: "+COLOR_TXT_DARKGRAY+";")
+							};
 						};
 
 						if (eachLi != e.target) {
@@ -607,14 +624,22 @@ const listDept = {
 
 					});
 
-					e.target.style.background = COLOR_SELECTED_GRAYBLUE;
-					e.target.style.color = COLOR_TXT_DARKGRAY;
 
-					const id = e.target.getAttribute("value");
-					UIDept.showItOnUI(layerHere, id);
-					UIDept.showItOnUI_followup(layerHere);
-					UIDept.showHideListDiv(layerHere);
 
+					if (id != newCardid){
+
+						console.log("check2");
+						e.target.style.background = COLOR_SELECTED_GRAYBLUE;
+						e.target.style.color = COLOR_TXT_DARKGRAY;
+
+						UIDept.showItOnUI(layerHere, id);
+						UIDept.showItOnUI_followup(layerHere);
+						UIDept.showHideListDiv(layerHere);
+
+					} else {
+						console.log("check3");
+						newCardDept.openNewCard(layerHere);
+					};
 				});
 			});
 		}
@@ -806,9 +831,14 @@ const newCardDept = {
 	"openNewCard":
 		function openNewCard(layerHere) {
 			document.getElementById("cardId_"+layerHere).value = "";
-			UIDept.showEmptyCard(layerHere);
-			UIDept.setupBtnShowOrHideByClassName(layerHere,"openNewCard");
-			newCardDept.openNewCard_followup(layerHere);
+			const idArray = idDept.getEveryIdArrayOfLayer(layerHere);
+			if (idArray.length != 0) {
+				UIDept.showEmptyCard(layerHere);
+				UIDept.setupBtnShowOrHideByClassName(layerHere,"openNewCard");
+				newCardDept.openNewCard_followup(layerHere);
+			} else {
+				UIDept.showItIfNoCard(layerHere);
+			}
 		},
 	"openNewCard_followup":
 		function openNewCard_followup(layerHere) {			
@@ -835,6 +865,7 @@ const newCardDept = {
 				if (eachLayer != undefined) {
 					UIDept.showEmptyCard(eachLayer);
 					UIDept.setupBtnShowOrHideByClassName(eachLayer, "inactiveCard");
+					UIDept.hideUI("list_"+eachLayer);
 				};
 			});
 		},
