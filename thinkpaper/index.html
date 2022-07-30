@@ -24,190 +24,96 @@
     </div>
 
     <div id="gridMain">
-        <div id="divNoticeMain">
-            <p type="text" id="guideMessage"></p>
-        </div>
-        <div id="gridLayer">
-            <div class="divLayer">
-                <div class="gridMainTop">
-                    <div>
-                        <h2>캐릭터</h2>
-                    </div>
-                    <div>
-                        <span>큰 그림의 주인공, 내 삶의 역할 별 캐릭터 구분하기</span>
-                    </div>
-                    <!-- <div class="gridMainIndex">
-                        <div>
-                            <span>[목록 선택하기]<br></span>
-                            <select style="width: 100%; font-size: 0.8rem;" id="selectbox_character"
-                                onchange="selectboxDept.selectBySelectbox('character');">
-                                <option value="INIT">클릭하여 이동</option>
-                            </select>
-                        </div>
-                        <div>
-                        </div>
-                    </div> -->
-                </div>
-                <div id="editCard_character" class="gridMainContents">
-                    <div class="character">
-                        <input type="hidden" id="cardId_character"></input>
-                        <input type="hidden" id="cardParentsId_character"></input>
-                        <textarea id="character" placeholder="예)개인으로서의 나" readonly></textarea>
-                        <div style="margin: 1rem 0">
-                            <input id="openEditCard_btn_character" onClick="updateCardDept.openEditCard('character')" type="button" value="수정하기">
-                            <input id="cancelEditCard_btn_character" onClick="updateCardDept.cancelEditCard('character')" type="button" value="작성(수정) 취소하기">
-                            <input id="saveEditedCard_btn_character" onClick="updateCardDept.saveEditedCard('character')" type="button" value="수정본 저장하기">
-                            <input id="saveNewCard_btn_character" onClick="newCardDept.saveNewCard('character')" type="button" value="새 카드로 저장하기">
-                            <input id="removeCard_btn_character" onClick="removeCardDept.removeCard('character')" type="button" value="삭제하기">
-                            <input id="openNewCard_btn_character" onClick="newCardDept.openNewCard('character')" type="button" value="새 카드 작성하기">
-                        </div>
-                    </div>
-                </div>
-                <div class="divList">
-                    <div id="list_character"></div>
+        <div class="gridLayer">
+            <div class="gridMainTop">
+                <div>
+                    <h2>캐릭터</h2>
                 </div>
                 <div>
-                    <div>
-                        <input id="gotoMainCard_btn_character" onClick="mainCardDept.gotoMainCard()" type="button" value="메인 카드로 이동하기">
-                    </div>
-                    <div id = "gridMainEdit">
-                        <input id="setMainCard_btn_character" onClick="mainCardDept.setMainCard()" type="button" value="메인 카드로 설정하기">
-                        <div id="mainCard_txt">
-                            <span id="setMainCard_txt_character">
-                                <!-- 현재 카드는 '메인 카드(★)'입니다. -->
-                            </span>
-                        </div>
-                    </div>
+                    <span>큰 그림의 주인공, 내 삶의 역할 별 캐릭터 구분하기</span>
                 </div>
+                <!-- <div class="gridMainIndex">
+                    <div>
+                        <span>[목록 선택하기]<br></span>
+                        <select style="width: 100%; font-size: 0.8rem;" id="selectbox_character"
+                            onchange="selectboxDept.selectBySelectbox('character');">
+                            <option value="INIT">클릭하여 이동</option>
+                        </select>
+                    </div>
+                    <div>
+                    </div>
+                </div> -->
             </div>
-            <div class="divLayer">
-                <div class="gridMainTop">
+            <div class="gridMainTop">
+                <div>
+                    <h2>방향성</h2>
+                </div>
+                <div>
+                    <span>이 길을 나아가는 '본질 가치'는 무엇인가?(목적, 의미, Why)</span>
+                </div>
+                <!-- <div class="gridMainIndex">
                     <div>
-                        <h2>방향성</h2>
+                        <span>[목록 선택하기]<br></span>
+                        <select style="width: 100%; font-size: 0.8rem;" id="selectbox_direction"
+                            onchange="selectboxDept.selectBySelectbox('direction');">
+                            <option value="INIT">클릭하여 이동</option>
+                        </select>
                     </div>
                     <div>
-                        <span>이 길을 나아가는 '본질 가치'는 무엇인가?(목적, 의미, Why)</span>
                     </div>
-                    <!-- <div class="gridMainIndex">
-                        <div>
-                            <span>[목록 선택하기]<br></span>
-                            <select style="width: 100%; font-size: 0.8rem;" id="selectbox_direction"
-                                onchange="selectboxDept.selectBySelectbox('direction');">
-                                <option value="INIT">클릭하여 이동</option>
-                            </select>
-                        </div>
-                        <div>
-                        </div>
-                    </div> -->
-                </div>
-                <div id="editCard_direction" class="gridMainContents">
-                    <div class="direction">
-                        <input type="hidden" id="cardId_direction"></input>
-                        <input type="hidden" id="cardParentsId_direction"></input>
-                        <textarea id="direction" placeholder="예)건강한 삶 살기" readonly></textarea>
-                        <div style="margin: 1rem 0">
-                            <input id="openEditCard_btn_direction" onClick="updateCardDept.openEditCard('direction')" type="button" value="수정하기">
-                            <input id="cancelEditCard_btn_direction" onClick="updateCardDept.cancelEditCard('direction')" type="button" value="작성(수정) 취소하기">
-                            <input id="saveEditedCard_btn_direction" onClick="updateCardDept.saveEditedCard('direction')" type="button" value="수정본 저장하기">
-                            <input id="saveNewCard_btn_direction" onClick="newCardDept.saveNewCard('direction')" type="button" value="새 카드로 저장하기">
-                            <input id="removeCard_btn_direction" onClick="removeCardDept.removeCard('direction')" type="button" value="삭제하기">
-                            <input id="openNewCard_btn_direction" onClick="newCardDept.openNewCard('direction')" type="button" value="새 카드 작성하기">
-                        </div>
-                        <div style="text-align: center; font-style: italic; color: #9c9c9c;">
-                            <span type="text" id="alert_txt_direction"></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="divList">
-                    <div id="list_direction"></div>
-                </div>
+                </div> -->
             </div>
-            <div class="divLayer">
-                <div class="gridMainTop">
+            <div class="gridMainTop">
+                <div>
+                    <h2>로드맵</h2>
+                </div>
+                <div>
+                    <span>방향성 아래에서, 나는 어떤 길을 가고자 하는가?</span>
+                </div>
+                <!-- <div class="gridMainIndex">
                     <div>
-                        <h2>로드맵</h2>
+                        <span>[목록 선택하기]<br></span>
+                        <select style="width: 100%; font-size: 0.8rem;" id="selectbox_roadmap"
+                            onchange="selectboxDept.selectBySelectbox('roadmap');">
+                            <option value="INIT">클릭하여 이동</option>
+                        </select>
                     </div>
                     <div>
-                        <span>방향성 아래에서, 나는 어떤 길을 가고자 하는가?</span>
                     </div>
-                    <!-- <div class="gridMainIndex">
-                        <div>
-                            <span>[목록 선택하기]<br></span>
-                            <select style="width: 100%; font-size: 0.8rem;" id="selectbox_roadmap"
-                                onchange="selectboxDept.selectBySelectbox('roadmap');">
-                                <option value="INIT">클릭하여 이동</option>
-                            </select>
-                        </div>
-                        <div>
-                        </div>
-                    </div> -->
-                </div>
-                <div id="editCard_roadmap" class="gridMainContents">
-                    <div class="roadmap">
-                        <input type="hidden" id="cardId_roadmap"></input>
-                        <input type="hidden" id="cardParentsId_roadmap"></input>
-                        <textarea id="roadmap" placeholder="예)주4회 아침 스트레칭 습관화" readonly></textarea>
-                        <div style="margin: 1rem 0">
-                            <input id="openEditCard_btn_roadmap" onClick="updateCardDept.openEditCard('roadmap')" type="button" value="수정하기">
-                            <input id="cancelEditCard_btn_roadmap" onClick="updateCardDept.cancelEditCard('roadmap')" type="button" value="작성(수정) 취소하기">
-                            <input id="saveEditedCard_btn_roadmap" onClick="updateCardDept.saveEditedCard('roadmap')" type="button" value="수정본 저장하기">
-                            <input id="saveNewCard_btn_roadmap" onClick="newCardDept.saveNewCard('roadmap')" type="button" value="새 카드로 저장하기">
-                            <input id="removeCard_btn_roadmap" onClick="removeCardDept.removeCard('roadmap')" type="button" value="삭제하기">
-                            <input id="openNewCard_btn_roadmap" onClick="newCardDept.openNewCard('roadmap')" type="button" value="새 카드 작성하기">
-                        </div>
-                        <div style="text-align: center; font-style: italic; color: #9c9c9c;">
-                            <span type="text" id="alert_txt_roadmap"></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="divList">
-                    <div id="list_roadmap"></div>
-                </div>
+                </div> -->
             </div>
-            <div class="divLayer">
-                <div class="gridMainTop">
+            <div class="gridMainTop">
+                <div>
+                    <h2>액션플랜</h2>
+                </div>
+                <div>
+                    <span>길을 가기위한 '구체적인 행동'은 어떤 것들이 있는가?</span>
+                </div>
+                <!-- <div class="gridMainIndex">
                     <div>
-                        <h2>액션플랜</h2>
+                        <span>[목록 선택하기]<br></span>
+                        <select style="width: 100%; font-size: 0.8rem;" id="selectbox_actionPlan"
+                            onchange="selectboxDept.selectBySelectbox('actionPlan');">
+                            <option value="INIT">클릭하여 이동</option>
+                        </select>
                     </div>
                     <div>
-                        <span>길을 가기위한 '구체적인 행동'은 어떤 것들이 있는가?</span>
                     </div>
-                    <!-- <div class="gridMainIndex">
-                        <div>
-                            <span>[목록 선택하기]<br></span>
-                            <select style="width: 100%; font-size: 0.8rem;" id="selectbox_actionPlan"
-                                onchange="selectboxDept.selectBySelectbox('actionPlan');">
-                                <option value="INIT">클릭하여 이동</option>
-                            </select>
-                        </div>
-                        <div>
-                        </div>
-                    </div> -->
-                </div>
-                <div id="editCard_actionPlan" class="gridMainContents">
-                    <div class="actionPlan">
-                        <input type="hidden" id="cardId_actionPlan"></input>
-                        <input type="hidden" id="cardParentsId_actionPlan"></input>
-                        <textarea id="actionPlan" placeholder="예)취침시간 조정하기" readonly></textarea>
-                        <div style="margin: 1rem 0">
-                            <input id="openEditCard_btn_actionPlan" onClick="updateCardDept.openEditCard('actionPlan')" type="button" value="수정하기">
-                            <input id="cancelEditCard_btn_actionPlan" onClick="updateCardDept.cancelEditCard('actionPlan')" type="button" value="작성(수정) 취소하기">
-                            <input id="saveEditedCard_btn_actionPlan" onClick="updateCardDept.saveEditedCard('actionPlan')" type="button" value="수정본 저장하기">
-                            <input id="saveNewCard_btn_actionPlan" onClick="newCardDept.saveNewCard('actionPlan')" type="button" value="새 카드로 저장하기">
-                            <input id="removeCard_btn_actionPlan" onClick="removeCardDept.removeCard('actionPlan')" type="button" value="삭제하기">
-                            <input id="openNewCard_btn_actionPlan" onClick="newCardDept.openNewCard('actionPlan')" type="button" value="새 카드 작성하기">
-                        </div>
-                        <div style="text-align: center; font-style: italic; color: #9c9c9c;">
-                            <span type="text" id="alert_txt_actionPlan"></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="divList">
-                    <div id="list_actionPlan"></div>
-                </div>
+                </div> -->
             </div>
-            <div>
-                
+        </div>
+        <div class="gridLayer">
+            <div class="divList">
+                <div id="list_character"></div>
+            </div>
+            <div class="divList">
+                <div id="list_direction"></div>
+            </div>
+            <div class="divList">
+                <div id="list_roadmap"></div>
+            </div>
+            <div class="divList">
+                <div id="list_actionPlan"></div>
             </div>
             <!-- 
                 <div class="gridMainContents">
@@ -239,6 +145,93 @@
                         <textarea id="actionPlan" placeholder="예)식습관 일기 쓰기" readonly></textarea>
                     </div>
                 </div> -->
+        </div>
+        <div class="gridLayer">
+            <div id="editCard_character" class="gridMainContents">
+                <div class="character">
+                    <input type="hidden" id="cardId_character"></input>
+                    <input type="hidden" id="cardParentsId_character"></input>
+                    <textarea id="character" placeholder="예)개인으로서의 나" readonly></textarea>
+                    <div style="margin: 1rem 0">
+                        <input id="openEditCard_btn_character" onClick="updateCardDept.openEditCard('character')" type="button" value="수정하기">
+                        <input id="cancelEditCard_btn_character" onClick="updateCardDept.cancelEditCard('character')" type="button" value="작성(수정) 취소하기">
+                        <input id="saveEditedCard_btn_character" onClick="updateCardDept.saveEditedCard('character')" type="button" value="수정본 저장하기">
+                        <input id="saveNewCard_btn_character" onClick="newCardDept.saveNewCard('character')" type="button" value="새 카드로 저장하기">
+                        <input id="removeCard_btn_character" onClick="removeCardDept.removeCard('character')" type="button" value="삭제하기">
+                        <input id="openNewCard_btn_character" onClick="newCardDept.openNewCard('character')" type="button" value="새 카드 작성하기">
+                    </div>
+                </div>
+                <div>
+                    <div>
+                        <input id="gotoMainCard_btn_character" onClick="mainCardDept.gotoMainCard()" type="button" value="메인 카드로 이동하기">
+                    </div>
+                    <div id = "gridMainEdit">
+                        <input id="setMainCard_btn_character" onClick="mainCardDept.setMainCard()" type="button" value="메인 카드로 설정하기">
+                        <div id="mainCard_txt">
+                            <span id="setMainCard_txt_character">
+                                <!-- 현재 카드는 '메인 카드(★)'입니다. -->
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="editCard_direction" class="gridMainContents">
+                <div class="direction">
+                    <input type="hidden" id="cardId_direction"></input>
+                    <input type="hidden" id="cardParentsId_direction"></input>
+                    <textarea id="direction" placeholder="예)건강한 삶 살기" readonly></textarea>
+                    <div style="margin: 1rem 0">
+                        <input id="openEditCard_btn_direction" onClick="updateCardDept.openEditCard('direction')" type="button" value="수정하기">
+                        <input id="cancelEditCard_btn_direction" onClick="updateCardDept.cancelEditCard('direction')" type="button" value="작성(수정) 취소하기">
+                        <input id="saveEditedCard_btn_direction" onClick="updateCardDept.saveEditedCard('direction')" type="button" value="수정본 저장하기">
+                        <input id="saveNewCard_btn_direction" onClick="newCardDept.saveNewCard('direction')" type="button" value="새 카드로 저장하기">
+                        <input id="removeCard_btn_direction" onClick="removeCardDept.removeCard('direction')" type="button" value="삭제하기">
+                        <input id="openNewCard_btn_direction" onClick="newCardDept.openNewCard('direction')" type="button" value="새 카드 작성하기">
+                    </div>
+                    <div style="text-align: center; font-style: italic; color: #9c9c9c;">
+                        <span type="text" id="alert_txt_direction"></span>
+                    </div>
+                </div>
+            </div>
+            <div id="editCard_roadmap" class="gridMainContents">
+                <div class="roadmap">
+                    <input type="hidden" id="cardId_roadmap"></input>
+                    <input type="hidden" id="cardParentsId_roadmap"></input>
+                    <textarea id="roadmap" placeholder="예)주4회 아침 스트레칭 습관화" readonly></textarea>
+                    <div style="margin: 1rem 0">
+                        <input id="openEditCard_btn_roadmap" onClick="updateCardDept.openEditCard('roadmap')" type="button" value="수정하기">
+                        <input id="cancelEditCard_btn_roadmap" onClick="updateCardDept.cancelEditCard('roadmap')" type="button" value="작성(수정) 취소하기">
+                        <input id="saveEditedCard_btn_roadmap" onClick="updateCardDept.saveEditedCard('roadmap')" type="button" value="수정본 저장하기">
+                        <input id="saveNewCard_btn_roadmap" onClick="newCardDept.saveNewCard('roadmap')" type="button" value="새 카드로 저장하기">
+                        <input id="removeCard_btn_roadmap" onClick="removeCardDept.removeCard('roadmap')" type="button" value="삭제하기">
+                        <input id="openNewCard_btn_roadmap" onClick="newCardDept.openNewCard('roadmap')" type="button" value="새 카드 작성하기">
+                    </div>
+                    <div style="text-align: center; font-style: italic; color: #9c9c9c;">
+                        <span type="text" id="alert_txt_roadmap"></span>
+                    </div>
+                </div>
+            </div>
+            <div id="editCard_actionPlan" class="gridMainContents">
+                <div class="actionPlan">
+                    <input type="hidden" id="cardId_actionPlan"></input>
+                    <input type="hidden" id="cardParentsId_actionPlan"></input>
+                    <textarea id="actionPlan" placeholder="예)취침시간 조정하기" readonly></textarea>
+                    <div style="margin: 1rem 0">
+                        <input id="openEditCard_btn_actionPlan" onClick="updateCardDept.openEditCard('actionPlan')" type="button" value="수정하기">
+                        <input id="cancelEditCard_btn_actionPlan" onClick="updateCardDept.cancelEditCard('actionPlan')" type="button" value="작성(수정) 취소하기">
+                        <input id="saveEditedCard_btn_actionPlan" onClick="updateCardDept.saveEditedCard('actionPlan')" type="button" value="수정본 저장하기">
+                        <input id="saveNewCard_btn_actionPlan" onClick="newCardDept.saveNewCard('actionPlan')" type="button" value="새 카드로 저장하기">
+                        <input id="removeCard_btn_actionPlan" onClick="removeCardDept.removeCard('actionPlan')" type="button" value="삭제하기">
+                        <input id="openNewCard_btn_actionPlan" onClick="newCardDept.openNewCard('actionPlan')" type="button" value="새 카드 작성하기">
+                    </div>
+                    <div style="text-align: center; font-style: italic; color: #9c9c9c;">
+                        <span type="text" id="alert_txt_actionPlan"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="divNoticeMain">
+            <p type="text" id="guideMessage"></p>
         </div>
     </div>
 

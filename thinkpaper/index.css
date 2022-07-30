@@ -119,10 +119,11 @@ li:hover {
     border: 0.2px solid rgb(200, 200, 200);
 }
 
-#gridLayer{
+.gridLayer{
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
     grid-gap: 0.8rem;
+    margin-bottom: 1rem;
 }
 
 #guideMessage{
@@ -137,14 +138,14 @@ li:hover {
 
 #gridMain{
     display: grid;
-    grid-template-rows: 2rem 1fr;
+    grid-template-rows: auto 1fr 20rem 2rem;
     grid-gap: 0.2rem;
     margin-bottom: 2rem;
 }
 
 .gridMainTop{
     display: grid;
-    grid-template-rows: 2rem 4rem;
+    grid-template-rows: 2rem 3rem;
     grid-gap: 0.2rem;
     max-width: 20rem;
     padding: 0 1rem;
@@ -192,7 +193,7 @@ li:hover {
 }
 
 .divList{
-    max-width: 20rem;
+    width: 100%;
     margin: 0 auto;
     align-content: center;
 }
@@ -266,13 +267,9 @@ https://www.w3schools.com/howto/howto_js_todolist.asp
     #imageMain{
         max-width: 80%;
     }
-    #gridLayer{
+    .gridLayer{
         display: block;
         margin-bottom: 3rem;
-    }
-    .divLayer{
-        margin: 0 auto 3rem auto;
-        max-width: 20rem;
     }
     #gridMainSubFrame{
         display: block;

@@ -21,7 +21,7 @@ function logIn() {
 		if (user != null) {
 			StoLDept.requestReadUserData(user);
 			StoLDept.requestReadBigPicture(user);
-			UIDept.hideListDiv();
+			UIDept.hideDiv();
 			updateCardDept.openEditCardByDbclick();
 			// supportDept.getLayerByEventListenerByButton();
 			// supportDept.getLayerByEventListenerBySelectbox();
@@ -101,14 +101,15 @@ const StoLDept = {
 					} else {	
 						UIDept.showItOnUI(eachLayer, latestIdOfEachLayer);
 					};
+					listDept.updateList(eachLayer);
 					UIDept.setupBtnShowOrHideByClassName(eachLayer, "readCard");
 					// selectboxDept.updateSelectbox(eachLayer);
-					listDept.updateList(eachLayer);
 				} else {
+					listDept.updateList(eachLayer);
 					UIDept.showItIfNoCard(eachLayer);
 					// selectboxDept.updateSelectbox(eachLayer);
-					listDept.updateList(eachLayer);
 				};
+				UIDept.setLiColorByCard(eachLayer);
 			});
 		}
 	// 	switchedRef.child(inputId)
@@ -192,6 +193,7 @@ const UIDept = {
 				UIDept.showEmptyCard(layerHere);
 			};
 			UIDept.setupBtnShowOrHideByClassName(layerHere,"readCard");
+			UIDept.setLiColorByCard(layerHere);
 		},
 	"showItOnUI_followup":
 		function showItOnUI_followup(layerHere) {
@@ -215,9 +217,6 @@ const UIDept = {
 				const latestIdOfEachLayer = idDept.getLatestIdByLayer(eachLayer);
 				if(latestIdOfEachLayer != null) {
 					UIDept.showItOnUI(eachLayer, latestIdOfEachLayer);
-					console.log("**readCard에 대한 버그 발생하는지 확인하기");
-					// 220727 - 아래 내용이 필요해서 넣었나? 일단 필요 없어 보임. 
-					// UIDept.setupBtnShowOrHideByClassName(eachLayer, "readCard");
 				} else {
 					UIDept.showItIfNoCard(eachLayer);
 				};
@@ -478,31 +477,79 @@ const UIDept = {
 		function highLightBorder(id, color) {
 			return document.getElementById(id).style.borderColor = color;
 		},
-	"hideListDiv":
-		function hideListDiv() {
+	"hideDiv":
+		function hideDiv() {
 			UIDept.hideUI("list_direction");
 			UIDept.hideUI("list_roadmap");
 			UIDept.hideUI("list_actionPlan");
+
+			UIDept.hideUI("editCard_direction");
+			UIDept.hideUI("editCard_roadmap");
+			UIDept.hideUI("editCard_actionPlan");
 		},
-	"showHideListDiv": 
-		function showHideListDiv(layerHere) {
+	"showHideDiv": 
+		function showHideDiv(layerHere) {
 			switch(layerHere) {
+				case null :
+
+					UIDept.hideUI("list_direction");
+					UIDept.hideUI("list_roadmap");
+					UIDept.hideUI("list_actionPlan");
+
+					UIDept.hideUI("editCard_direction");
+					UIDept.hideUI("editCard_roadmap");
+					UIDept.hideUI("editCard_actionPlan");
+
+					break;
 				case "character" :
+					
 					UIDept.showUI("list_direction");
 					UIDept.hideUI("list_roadmap");
 					UIDept.hideUI("list_actionPlan");
+
+					UIDept.showUI("editCard_direction");
+					UIDept.hideUI("editCard_roadmap");
+					UIDept.hideUI("editCard_actionPlan");
+
 					break;
 				case "direction" :
+
 					UIDept.showUI("list_roadmap");
 					UIDept.hideUI("list_actionPlan");
+
+					UIDept.showUI("editCard_roadmap");
+					UIDept.hideUI("editCard_actionPlan");
+
 					break;
 				case "roadmap" :
+					
 					UIDept.showUI("list_actionPlan");
+
+					UIDept.showUI("editCard_actionPlan");
+
 					break;
 				case "actionPlan" :
-					// 해당 없음
+
 					break;
 				default : null;
+			};
+		},
+	"setLiColorByCard":
+		function setLiColorByCard(layerHere) {
+			const id = idDept.getCardId(layerHere);
+			const li = document.getElementsByTagName("li");
+			// console.log("li =", li);
+			console.log(layerHere + " |1| " + id);
+			for (let i = 0; i < li.length; i++) {
+				const liValue = li[i].getAttribute("value");
+				console.log(layerHere + " |2| " + liValue);
+				if(id == liValue) {
+					// console.log("id =", id);
+					// console.log("liValue =", liValue);
+					// console.log("li[i] =", li[i]);
+					li[i].style.background = COLOR_SELECTED_GRAYBLUE;
+					li[i].style.color = COLOR_TXT_DARKGRAY;
+				};
 			};
 		}
 };
@@ -566,7 +613,6 @@ const listDept = {
 		},
 	"clickLi":
 		function clickLi(layerHere) {
-			console.log("check1");
 			// 참고: https://daisy-mansion.tistory.com/46
 			const li = document.getElementById("list_"+layerHere).children;
 			
@@ -624,21 +670,18 @@ const listDept = {
 
 					});
 
-
-
 					if (id != newCardid){
-
-						console.log("check2");
-						e.target.style.background = COLOR_SELECTED_GRAYBLUE;
-						e.target.style.color = COLOR_TXT_DARKGRAY;
 
 						UIDept.showItOnUI(layerHere, id);
 						UIDept.showItOnUI_followup(layerHere);
-						UIDept.showHideListDiv(layerHere);
+						UIDept.showHideDiv(layerHere);
 
 					} else {
-						console.log("check3");
+
 						newCardDept.openNewCard(layerHere);
+						const parentLayer = switchDept.getParentsLayerBySwitchLayer(layerHere);
+						UIDept.showHideDiv(parentLayer);
+
 					};
 				});
 			});
