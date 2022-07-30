@@ -1,5 +1,12 @@
 const db = firebase.database();
 const SELECTBOX_BPTITLE_VALUE_INIT = "INIT";
+const COLOR_BG_LIGHTWHITE = "#F9F9F9";
+const COLOR_LINE_GRAY = "#C8C8C8";
+const COLOR_TXT_DARKGRAY = "#424242";
+const COLOR_FOCUSED_BLUE = "#9CC0E7";
+const COLOR_SELECTED_GRAYBLUE = "#B6BFC8";
+const COLOR_SELECTEDTXT_WHITE = "#FFF";
+
 const userData = {}; 
 let objectById = {};
 let isMainShown = false;
@@ -329,14 +336,14 @@ const UIDept = {
 	"setupTextareaModeByClassName":
 		function setupTextareaModeByClassName(layerHere, cardMode) {
 			if (cardMode == "editing") {
-				document.getElementsByClassName(layerHere)[0].style.color = "#9CC0E7";
-				document.getElementsByClassName(layerHere)[0].style.borderColor = "#9CC0E7";
-				UIDept.setupTextareaBorderColorByClass(layerHere, "2px", "#9CC0E7");
+				document.getElementsByClassName(layerHere)[0].style.color = COLOR_FOCUSED_BLUE;
+				document.getElementsByClassName(layerHere)[0].style.borderColor = COLOR_FOCUSED_BLUE;
+				UIDept.setupTextareaBorderColorByClass(layerHere, "2px", COLOR_FOCUSED_BLUE);
 				UIDept.setupTextareaReadOnly(layerHere, false);
 			} else {
-				document.getElementsByClassName(layerHere)[0].style.color = "#424242";
-				document.getElementsByClassName(layerHere)[0].style.borderColor = "#424242";
-				UIDept.setupTextareaBorderColorByClass(layerHere, "1px", "#c8c8c8");
+				document.getElementsByClassName(layerHere)[0].style.color = COLOR_TXT_DARKGRAY;
+				document.getElementsByClassName(layerHere)[0].style.borderColor = COLOR_TXT_DARKGRAY;
+				UIDept.setupTextareaBorderColorByClass(layerHere, "1px", COLOR_LINE_GRAY);
 				UIDept.setupTextareaReadOnly(layerHere, true);
 			};
 		},
@@ -462,7 +469,7 @@ const UIDept = {
 			const guideMessage = document.getElementById("guideMessage");
 			const guideMessageValue = document.getElementById("guideMessage").innerText;
 			if (guideMessageValue == "") {
-				guideMessage.style.color = "#9CC0E7";
+				guideMessage.style.color = COLOR_FOCUSED_BLUE;
 				guideMessage.innerHTML = "'파란색 네모칸에 내용을 작성해보세요~!'"
 			};
 		},
@@ -533,15 +540,47 @@ const listDept = {
 
 					//색 조정하기
 					liArray.forEach((eachLi) => {
-						eachLi.style.background = "#f9f9f9";
-						eachLi.style.color = '#424242';
+
+						// console.log("e.target =", e.target);
+
+						function mOver2() {
+							eachLi.setAttribute("style", "background: "+COLOR_SELECTED_GRAYBLUE+"; color: "+COLOR_TXT_DARKGRAY+";");
+						};
+	
+						function mOut2() {
+							eachLi.setAttribute("style", "background: "+COLOR_SELECTED_GRAYBLUE+"; color: "+COLOR_TXT_DARKGRAY+";")
+						};
+
+						if (eachLi != e.target) {
+
+							eachLi.style.background = COLOR_BG_LIGHTWHITE;
+							eachLi.style.color = COLOR_TXT_DARKGRAY;
+
+							// hover 적용하기
+							// 참고: https://www.codegrepper.com/code-examples/javascript/hover+vanilla+javascript
+	
+							function mOver1() {
+								eachLi.setAttribute("style", "background: "+COLOR_FOCUSED_BLUE+"; color: "+COLOR_SELECTEDTXT_WHITE+";");
+							};
+		
+							function mOut1() {
+								eachLi.setAttribute("style", "background: "+COLOR_BG_LIGHTWHITE+"; color: "+COLOR_TXT_DARKGRAY+";")
+							};
+
+							eachLi.addEventListener("mouseover", mOver1, false);
+							eachLi.addEventListener("mouseout", mOut1, false);
+
+						} else {
+
+							eachLi.addEventListener("mouseover", mOver2, false);
+							eachLi.addEventListener("mouseout", mOut2, false);
+
+						};
+
 					});
 
-					e.target.style.background = '#E2EDF8';
-					e.target.style.color = '#424242';
-
-					// [질문] css의 hover가 멈추는 현상
-					// hover 추가로 적용하기
+					e.target.style.background = COLOR_SELECTED_GRAYBLUE;
+					e.target.style.color = COLOR_TXT_DARKGRAY;
 
 					const id = e.target.getAttribute("value");
 					UIDept.showItOnUI(layerHere, id);
