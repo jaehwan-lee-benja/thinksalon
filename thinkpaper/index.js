@@ -21,6 +21,7 @@ function logIn() {
 		if (user != null) {
 			StoLDept.requestReadUserData(user);
 			StoLDept.requestReadBigPicture(user);
+			UIDept.hideListDiv();
 			updateCardDept.openEditCardByDbclick();
 			// supportDept.getLayerByEventListenerByButton();
 			// supportDept.getLayerByEventListenerBySelectbox();
@@ -476,6 +477,33 @@ const UIDept = {
 	"highLightBorder":
 		function highLightBorder(id, color) {
 			return document.getElementById(id).style.borderColor = color;
+		},
+	"hideListDiv":
+		function hideListDiv() {
+			UIDept.hideUI("list_direction");
+			UIDept.hideUI("list_roadmap");
+			UIDept.hideUI("list_actionPlan");
+		},
+	"showHideListDiv": 
+		function showHideListDiv(layerHere) {
+			switch(layerHere) {
+				case "character" :
+					UIDept.showUI("list_direction");
+					UIDept.hideUI("list_roadmap");
+					UIDept.hideUI("list_actionPlan");
+					break;
+				case "direction" :
+					UIDept.showUI("list_roadmap");
+					UIDept.hideUI("list_actionPlan");
+					break;
+				case "roadmap" :
+					UIDept.showUI("list_actionPlan");
+					break;
+				case "actionPlan" :
+					// 해당 없음
+					break;
+				default : null;
+			};
 		}
 };
 
@@ -585,6 +613,7 @@ const listDept = {
 					const id = e.target.getAttribute("value");
 					UIDept.showItOnUI(layerHere, id);
 					UIDept.showItOnUI_followup(layerHere);
+					UIDept.showHideListDiv(layerHere);
 
 				});
 			});
@@ -1334,6 +1363,3 @@ const switchDept = {
 			};
 		}
 };
-
-// [질문] css gridMainTop 작동되지 않음
-// [질문] refactorying 주안점
