@@ -2,10 +2,31 @@ const db = firebase.database();
 const SELECTBOX_BPTITLE_VALUE_INIT = "INIT";
 const COLOR_BG_LIGHTWHITE = "#F9F9F9";
 const COLOR_LINE_GRAY = "#C8C8C8";
-const COLOR_TXT_DARKGRAY = "#424242";
+const COLOR_TXTANDLINE_DARKGRAY = "#424242";
 const COLOR_FOCUSED_BLUE = "#9CC0E7";
 const COLOR_SELECTED_GRAYBLUE = "#B6BFC8";
 const COLOR_SELECTEDTXT_WHITE = "#FFF";
+
+const COLORSET_NORMAL = 
+	"color: "+COLOR_TXTANDLINE_DARKGRAY+";"+
+	"background: "+COLOR_BG_LIGHTWHITE+";"+
+	"border: 1px solid "+COLOR_TXTANDLINE_DARKGRAY+";";
+const COLORSET_NORMAL_HOVER = 
+	"color: "+COLOR_SELECTEDTXT_WHITE+";"+
+	"background: "+COLOR_FOCUSED_BLUE+";"+
+	"border: 1px solid "+COLOR_TXTANDLINE_DARKGRAY+";";
+const COLORSET_SECETED = 
+	"color: "+COLOR_TXTANDLINE_DARKGRAY+";"+ 
+	"background: "+COLOR_SELECTED_GRAYBLUE+";"+
+	"border: 1px solid "+COLOR_TXTANDLINE_DARKGRAY+";";
+const COLORSET_ADDCARD = 
+	"color:"+COLOR_LINE_GRAY+";"+ 
+	"background: "+COLOR_BG_LIGHTWHITE+";"+
+	"border: 1px solid "+COLOR_LINE_GRAY+";";
+const COLORSET_ADDCARD_HOVER = 
+	"color: "+COLOR_SELECTEDTXT_WHITE+";"+
+	"background: "+COLOR_BG_LIGHTWHITE+";"+
+	"border: 1px solid "+COLOR_LINE_GRAY+";";
 
 const userData = {}; 
 let objectById = {};
@@ -112,14 +133,6 @@ const StoLDept = {
 				UIDept.setLiColorByCard(eachLayer);
 			});
 		}
-	// 	switchedRef.child(inputId)
-	//		.set(packagedDataHere, (e) => {
-	// 		request_followupEditedDate(layerHere, packagedDataHere);
-	// 		alert("저장되었습니다.");});
-	// 		// [해결] 문서에서는 then(), catch()를 씀. 차이점? 
-	// 		// 참조: https://firebase.google.com/docs/database/web/read-and-write?hl=ko
-	// 		// 문서 버전을 함께 확인하기, 
-	//		// [질문] 버전확인 방법
 };
 
 const LtoSDept = {
@@ -341,8 +354,8 @@ const UIDept = {
 				UIDept.setupTextareaBorderColorByClass(layerHere, "2px", COLOR_FOCUSED_BLUE);
 				UIDept.setupTextareaReadOnly(layerHere, false);
 			} else {
-				document.getElementsByClassName(layerHere)[0].style.color = COLOR_TXT_DARKGRAY;
-				document.getElementsByClassName(layerHere)[0].style.borderColor = COLOR_TXT_DARKGRAY;
+				document.getElementsByClassName(layerHere)[0].style.color = COLOR_TXTANDLINE_DARKGRAY;
+				document.getElementsByClassName(layerHere)[0].style.borderColor = COLOR_TXTANDLINE_DARKGRAY;
 				UIDept.setupTextareaBorderColorByClass(layerHere, "1px", COLOR_LINE_GRAY);
 				UIDept.setupTextareaReadOnly(layerHere, true);
 			};
@@ -539,16 +552,16 @@ const UIDept = {
 			const id = idDept.getCardId(layerHere);
 			const li = document.getElementsByTagName("li");
 			// console.log("li =", li);
-			console.log(layerHere + " |1| " + id);
+			// console.log(layerHere + " |A| " + id);
 			for (let i = 0; i < li.length; i++) {
 				const liValue = li[i].getAttribute("value");
-				console.log(layerHere + " |2| " + liValue);
+				// console.log(layerHere + " |B| " + liValue);
 				if(id == liValue) {
 					// console.log("id =", id);
 					// console.log("liValue =", liValue);
 					// console.log("li[i] =", li[i]);
 					li[i].style.background = COLOR_SELECTED_GRAYBLUE;
-					li[i].style.color = COLOR_TXT_DARKGRAY;
+					li[i].style.color = COLOR_TXTANDLINE_DARKGRAY;
 				};
 			};
 		}
@@ -577,19 +590,20 @@ const listDept = {
 				const liId = sortedArray[i].id;
 				listItem.setAttribute("value", liId);
 			};
-			listDept.addOpenNewCardLi(layerHere);
+			listDept.addOpenAddCardLi(layerHere);
 			list.onclick = listDept.clickLi(layerHere);
 		},
-	"addOpenNewCardLi":
-		function addOpenNewCardLi(layerHere) {
+	"addOpenAddCardLi":
+		function addOpenAddCardLi(layerHere) {
 			const listId = "list_"+layerHere;
 			const list = document.getElementById(listId);
-			const liValue_newCard = "(+ 새 리스트 추가하기)";
+			const liValue_addCard = "(+ 새 리스트 추가하기)";
 			const listItem = document.createElement('li');
-			listItem.innerHTML = liValue_newCard;
+			listItem.innerHTML = liValue_addCard;
 			list.appendChild(listItem);
-			const liId_newCard = "newCardBtn_"+layerHere;
-			listItem.setAttribute("value", liId_newCard);
+			const liId_addCard = "addCardBtn_"+layerHere;
+			listItem.setAttribute("value", liId_addCard);
+			listItem.setAttribute("style", COLORSET_ADDCARD);
 		},
 	"getMappedObject_idEditedDateContents":
 		function getMappedObject_idEditedDateContents(layerHere) {		
@@ -626,51 +640,100 @@ const listDept = {
 				v.addEventListener("click",(e)=>{
 
 					const id = e.target.getAttribute("value");
-					const newCardid = "newCardBtn_"+layerHere;
+					const addCardId = "addCardBtn_"+layerHere;
 
-					//색 조정하기
-					liArray.forEach((eachLi) => {
+					console.log("e.target=", e.target);
 
-						// if의 용도: "새 카드 추가 li가 눌렸음"을 시각적으로 나타낼 필요가 없음
-						if(id != newCardid) {
-							function mOver2() {
-								eachLi.setAttribute("style", "background: "+COLOR_SELECTED_GRAYBLUE+"; color: "+COLOR_TXT_DARKGRAY+";");
-							};
-		
-							function mOut2() {
-								eachLi.setAttribute("style", "background: "+COLOR_SELECTED_GRAYBLUE+"; color: "+COLOR_TXT_DARKGRAY+";")
-							};
-						};
+					function mOver2() {
+						console.log("mOver2");
+						// e.target.removeEventListener("mouseover", mOver2);
+						e.target.setAttribute("style", COLORSET_SECETED);
+					};
 
-						if (eachLi != e.target) {
+					function mOut2() {
+						console.log("mOut2");
+						// e.target.removeEventListener("mouseout", mOut2);
+						e.target.setAttribute("style", COLORSET_SECETED);
+					};
 
-							eachLi.style.background = COLOR_BG_LIGHTWHITE;
-							eachLi.style.color = COLOR_TXT_DARKGRAY;
+					function mOver3() {
+						console.log("mOver3");
+						// e.target.removeEventListener("mouseover", mOver3);
+						e.target.setAttribute("style", COLORSET_ADDCARD_HOVER);
+					};
+
+					function mOut3() {
+						console.log("mOut3");
+						// e.target.removeEventListener("mouseout", mOut3);
+						e.target.setAttribute("style", COLORSET_ADDCARD);
+					};
+
+					// 색 조정하기
+					// [질문] 컬러 조정 시도 - eventListener가 꼬여서 그런지 이상현상이 있음
+
+					// function removeEventListenerAll(liArrayHere) {
+
+					// 	liArrayHere.forEach((eachLi) => {
+					// 		eachLi.removeEventListener("mouseover", mOver1(eachLi));
+					// 		eachLi.removeEventListener("mouseout", mOut1(eachLi));
+	
+					// 		eachLi.removeEventListener("mouseover", mOver2(eachLi));
+					// 		eachLi.removeEventListener("mouseout", mOut2(eachLi));
+	
+					// 		eachLi.removeEventListener("mouseover", mOver3(eachLi));
+					// 		eachLi.removeEventListener("mouseout", mOut3(eachLi));
+					// 	});
+
+					// };
+
+					// removeEventListenerAll(liArray);
+
+					if(id != addCardId) {
+
+						// 선택되지 않은 나머지 li에 대한 처리
+						liArray.forEach((eachLi) => {
+
+							// console.log("eachLi =", eachLi);
+
+							// [질문] eventLister가 없어지지 않고 쌓이는 현상
 
 							// hover 적용하기
 							// 참고: https://www.codegrepper.com/code-examples/javascript/hover+vanilla+javascript
+
+							// if의 용도: "새 카드 추가 li가 눌렸음"을 시각적으로 나타낼 필요가 없음
+
+							if (eachLi != e.target) {
+
+								eachLi.style.background = COLOR_BG_LIGHTWHITE;
+								eachLi.style.color = COLOR_TXTANDLINE_DARKGRAY;
+
+								function mOver1() {
+									console.log("mOver1");
+									// eachLi.removeEventListener("mouseover", mOver1);
+									eachLi.setAttribute("style", COLORSET_NORMAL_HOVER);
+								};
+			
+								function mOut1() {
+									console.log("mOut1");
+									// eachLi.removeEventListener("mouseout", mOut1);
+									eachLi.setAttribute("style", COLORSET_NORMAL);
+								};
+
+								console.log("1");
+								eachLi.addEventListener("mouseover", mOver1);
+								eachLi.addEventListener("mouseout", mOut1);
+
+								// [질문] ()에 파라미터를 넣으면 작동이 안된다.
+								// eachLi.addEventListener("mouseover", mOver1(eachLi));
+								// eachLi.addEventListener("mouseout", mOut1(eachLi));
 	
-							function mOver1() {
-								eachLi.setAttribute("style", "background: "+COLOR_FOCUSED_BLUE+"; color: "+COLOR_SELECTEDTXT_WHITE+";");
 							};
-		
-							function mOut1() {
-								eachLi.setAttribute("style", "background: "+COLOR_BG_LIGHTWHITE+"; color: "+COLOR_TXT_DARKGRAY+";")
-							};
+						});
 
-							eachLi.addEventListener("mouseover", mOver1, false);
-							eachLi.addEventListener("mouseout", mOut1, false);
-
-						} else {
-
-							eachLi.addEventListener("mouseover", mOver2, false);
-							eachLi.addEventListener("mouseout", mOut2, false);
-
-						};
-
-					});
-
-					if (id != newCardid){
+						// 선택된 li에 대한 처리
+						console.log("2");
+						e.target.addEventListener("mouseover", mOver2);
+						e.target.addEventListener("mouseout", mOut2);
 
 						UIDept.showItOnUI(layerHere, id);
 						UIDept.showItOnUI_followup(layerHere);
@@ -678,10 +741,14 @@ const listDept = {
 
 					} else {
 
+						// ADDCARD에 대한 처리
+						console.log("3");
+						e.target.addEventListener("mouseover", mOver3);
+						e.target.addEventListener("mouseout", mOut3);
+
 						newCardDept.openNewCard(layerHere);
 						const parentLayer = switchDept.getParentsLayerBySwitchLayer(layerHere);
 						UIDept.showHideDiv(parentLayer);
-
 					};
 				});
 			});
