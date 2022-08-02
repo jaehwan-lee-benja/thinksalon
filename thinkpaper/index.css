@@ -73,9 +73,9 @@ input:hover {
 li {
     list-style: none;
     margin: 0.1rem auto;
-    padding: 0.2rem;
-    width: 90%;
+    padding: 0.2rem 0.4rem;
     min-height: 1rem;
+
     border: 1px solid #424242;
     vertical-align: middle;
     cursor: pointer;
@@ -119,12 +119,7 @@ li:hover {
     border: 0.2px solid rgb(200, 200, 200);
 }
 
-.gridLayer{
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    grid-gap: 0.8rem;
-    margin-bottom: 1rem;
-}
+
 
 #guideMessage{
     display: block;
@@ -140,14 +135,29 @@ li:hover {
     display: grid;
     grid-template-rows: auto 1fr 20rem 2rem;
     grid-gap: 0.2rem;
-    margin-bottom: 2rem;
+    margin: 1rem auto;
+}
+
+.gridLayer{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-gap: 0.8rem;
+    margin-bottom: 1rem;
 }
 
 .gridMainTop{
     display: grid;
-    grid-template-rows: 2rem 3rem;
+    grid-template-rows: 2rem 1fr;
     grid-gap: 0.2rem;
-    max-width: 20rem;
+    width: 16rem;
+    padding: 0 1rem;
+    margin: 0 auto;
+    align-content: center;
+}
+
+.divList{
+
+    width: 16rem;
     padding: 0 1rem;
     margin: 0 auto;
     align-content: center;
@@ -163,10 +173,11 @@ li:hover {
     display: grid;
     grid-template-rows: auto 1fr auto;
     grid-gap: 0.2rem;
-    max-width: 20rem;
-    background-color: #FFF;
+
+    width: 16rem;
     padding: 1rem;
     margin: 0 auto 2rem auto;
+    background-color: #FFF;
     align-content: center;
     border-radius: 2px;
     box-shadow: 
@@ -184,18 +195,12 @@ li:hover {
 
 #gridMainEdit{
     display: grid;
-    max-width: 20rem;
+
     align-content: center;
 }
 
 #mainCard_txt{
     text-align: center;
-}
-
-.divList{
-    width: 100%;
-    margin: 0 auto;
-    align-content: center;
 }
 
 #gridWebInfo{
@@ -260,16 +265,6 @@ https://www.w3schools.com/howto/howto_js_todolist.asp
         display: block;
         border-top: 0.2px solid rgb(200, 200, 200);
         padding-top: 0.5rem;
-    }
-    #divImageMain{
-        width: 90%;
-    }
-    #imageMain{
-        max-width: 80%;
-    }
-    .gridLayer{
-        display: block;
-        margin-bottom: 3rem;
     }
     #gridMainSubFrame{
         display: block;
