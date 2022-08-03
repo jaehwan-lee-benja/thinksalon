@@ -81,7 +81,6 @@ const StoLDept = {
 				const v = snapshot.val();
 				objectById = {};
 
-				// [질문] 재귀함수는 이 안에 넣어야 정리가 되는듯함, 괜찮을지?
 				function requestReadIdAndObjectFromChildren(o){
 					// console.log('**requestReadIdAndObjectFromChildren >>',o)
 					const c = o.children;
@@ -240,9 +239,15 @@ const UIDept = {
 	"hideUI":
 		function hideUI(id) {
 			document.getElementById(id).style.display = "none";
+			if(id == "editCard_direction") {
+				console.log("id =", id);
+				console.log("document.getElementById(id) =", document.getElementById(id));
+			}
+			// [질문] 작동되지 않음
 		},
 	"showUI":
 		function showUI(id) {
+			console.log("id @showUI=", id);
 			document.getElementById(id).style.display = "initial";
 		},
 	"setupBtnShowOrHideByClassName":
@@ -392,7 +397,6 @@ const UIDept = {
 				if(childrenLayer != null){
 					// actionPlan이 아닌 경우
 					const childrenIdArray = idDept.getEveryIdArrayOfLayer(childrenLayer);
-					console.log("childrenIdArray =", childrenIdArray);
 					if(childrenIdArray.length == 0) {
 						UIDept.setupBtnShowOrHideByClassName(childrenLayer, "inactiveCard");
 					} else {
@@ -446,9 +450,11 @@ const UIDept = {
 			setTimeout(()=>{
 				const selectorTextareaOnCard = document.getElementsByClassName(layerHere);
 				for (let i = 0; i < selectorTextareaOnCard.length; i++) {
-					selectorTextareaOnCard[i].parentNode.setAttribute("style", "box-shadow: 0 0 0 " + px + color + " inset");
+					// selectorTextareaOnCard[i].parentNode.setAttribute("style", "box-shadow: 0 0 0 " + px + color + " inset");
 					// selectorTextareaOnCard[i].parentNode.setAttribute("style", "border: solid " + px + color);
 					// selectorTextareaOnCard[i].parentNode.style.border = "solid " + px + color;
+					selectorTextareaOnCard[i].parentNode.style.boxShadow = "0 0 0 " + px + color + " inset";
+					// [마음에 새기기]
 				};
 			},1);
 		},
@@ -502,6 +508,8 @@ const UIDept = {
 		},
 	"hideDiv":
 		function hideDiv() {
+			console.log("hideDiv!");
+
 			UIDept.hideUI("list_direction");
 			UIDept.hideUI("list_roadmap");
 			UIDept.hideUI("list_actionPlan");
@@ -512,6 +520,7 @@ const UIDept = {
 		},
 	"showHideDiv": 
 		function showHideDiv(layerHere) {
+			console.log("showHideDiv!");
 			switch(layerHere) {
 				case null :
 
@@ -660,7 +669,8 @@ const listDept = {
 				listItem.setAttribute("value", liId);
 			};
 			listDept.addOpenAddCardLi(layerHere);
-			list.onclick = listDept.clickLi(layerHere);
+			//list.onclick = 
+			listDept.clickLi(layerHere);
 		},
 	"addOpenAddCardLi":
 		function addOpenAddCardLi(layerHere) {
@@ -706,6 +716,9 @@ const listDept = {
 
 			liArray.forEach((v)=>{
 
+				//v.removeEventListener();
+				// eventListener 안에 eventListener가 있으면 안된다. 처음 그려질 때, hover가 적용되도록 하기. (css에서 hover지우고도 해보기)
+
 				v.addEventListener("click",(e)=>{
 
 					const id = e.target.getAttribute("value");
@@ -714,25 +727,25 @@ const listDept = {
 					// console.log("e.target=", e.target);
 
 					function mOver2() {
-						// console.log("mOver2");
+						console.log("mOver2");
 						// e.target.removeEventListener("mouseover", mOver2);
 						e.target.setAttribute("style", COLORSET_SECETED);
 					};
 
 					function mOut2() {
-						// console.log("mOut2");
+						console.log("mOut2");
 						// e.target.removeEventListener("mouseout", mOut2);
 						e.target.setAttribute("style", COLORSET_SECETED);
 					};
 
 					function mOver3() {
-						// console.log("mOver3");
+						console.log("mOver3");
 						// e.target.removeEventListener("mouseover", mOver3);
 						e.target.setAttribute("style", COLORSET_ADDCARD_HOVER);
 					};
 
 					function mOut3() {
-						// console.log("mOut3");
+						console.log("mOut3");
 						// e.target.removeEventListener("mouseout", mOut3);
 						e.target.setAttribute("style", COLORSET_ADDCARD);
 					};
@@ -777,13 +790,13 @@ const listDept = {
 								eachLi.style.color = COLOR_TXT_DARKGRAY;
 
 								function mOver1() {
-									// console.log("mOver1");
+									console.log("mOver1");
 									// eachLi.removeEventListener("mouseover", mOver1);
 									eachLi.setAttribute("style", COLORSET_NORMAL_HOVER);
 								};
 			
 								function mOut1() {
-									// console.log("mOut1");
+									console.log("mOut1");
 									// eachLi.removeEventListener("mouseout", mOut1);
 									eachLi.setAttribute("style", COLORSET_NORMAL);
 								};
