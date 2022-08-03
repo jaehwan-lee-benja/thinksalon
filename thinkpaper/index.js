@@ -1,31 +1,29 @@
 const db = firebase.database();
 const SELECTBOX_BPTITLE_VALUE_INIT = "INIT";
-const COLOR_BG_LIGHTWHITE = "#F9F9F9";
 const COLOR_LINE_GRAY = "#C8C8C8";
-const COLOR_TXTANDLINE_DARKGRAY = "#424242";
-const COLOR_FOCUSED_BLUE = "#9CC0E7";
-const COLOR_SELECTED_GRAYBLUE = "#B6BFC8";
-const COLOR_SELECTEDTXT_WHITE = "#FFF";
+const COLOR_TXT_DARKGRAY = "#2A2B2A";
+const COLOR_FOCUSED_YELLOW = "#F7DA7B";
+const COLOR_SELECTED_GRAYBLUE = "#CFD4C9";
 
 const COLORSET_NORMAL = 
-	"color: "+COLOR_TXTANDLINE_DARKGRAY+";"+
-	"background: "+COLOR_BG_LIGHTWHITE+";"+
-	"border: 1px solid "+COLOR_TXTANDLINE_DARKGRAY+";";
+	"color: "+COLOR_TXT_DARKGRAY+";"+
+	"background: '';"+
+	"border: 1px solid "+COLOR_LINE_GRAY+";";
 const COLORSET_NORMAL_HOVER = 
-	"color: "+COLOR_SELECTEDTXT_WHITE+";"+
-	"background: "+COLOR_FOCUSED_BLUE+";"+
-	"border: 1px solid "+COLOR_TXTANDLINE_DARKGRAY+";";
+	"color: "+COLOR_TXT_DARKGRAY+";"+
+	"background: "+COLOR_FOCUSED_YELLOW+";"+
+	"border: 1px solid "+COLOR_LINE_GRAY+";";
 const COLORSET_SECETED = 
-	"color: "+COLOR_TXTANDLINE_DARKGRAY+";"+ 
+	"color: "+COLOR_TXT_DARKGRAY+";"+ 
 	"background: "+COLOR_SELECTED_GRAYBLUE+";"+
-	"border: 1px solid "+COLOR_TXTANDLINE_DARKGRAY+";";
+	"border: 1px solid "+COLOR_LINE_GRAY+";";
 const COLORSET_ADDCARD = 
 	"color:"+COLOR_LINE_GRAY+";"+ 
-	"background: "+COLOR_BG_LIGHTWHITE+";"+
+	"background: '';"+
 	"border: 1px solid "+COLOR_LINE_GRAY+";";
 const COLORSET_ADDCARD_HOVER = 
-	"color: "+COLOR_SELECTEDTXT_WHITE+";"+
-	"background: "+COLOR_BG_LIGHTWHITE+";"+
+	"color: "+COLOR_TXT_DARKGRAY+";"+
+	"background: '';"+
 	"border: 1px solid "+COLOR_LINE_GRAY+";";
 
 const userData = {}; 
@@ -280,7 +278,7 @@ const UIDept = {
 				case "openNewCard" :
 					UIDept.showUI("saveNewCard_btn_"+layerHere);
 					UIDept.showUI("cancelEditCard_btn_"+layerHere);
-					UIDept.showGuideMessage_forFirstCard();
+					// UIDept.showGuideMessage_forFirstCard();
 					UIDept.setupTextareaModeByClassName(layerHere, "editing");
 					break;
 				case "readCard" :
@@ -351,13 +349,13 @@ const UIDept = {
 	"setupTextareaModeByClassName":
 		function setupTextareaModeByClassName(layerHere, cardMode) {
 			if (cardMode == "editing") {
-				document.getElementsByClassName(layerHere)[0].style.color = COLOR_FOCUSED_BLUE;
-				document.getElementsByClassName(layerHere)[0].style.borderColor = COLOR_FOCUSED_BLUE;
-				UIDept.setupTextareaBorderColorByClass(layerHere, "2px", COLOR_FOCUSED_BLUE);
+				document.getElementsByClassName(layerHere)[0].style.color = COLOR_FOCUSED_YELLOW;
+				document.getElementsByClassName(layerHere)[0].style.borderColor = COLOR_FOCUSED_YELLOW;
+				UIDept.setupTextareaBorderColorByClass(layerHere, "2px", COLOR_FOCUSED_YELLOW);
 				UIDept.setupTextareaReadOnly(layerHere, false);
 			} else {
-				document.getElementsByClassName(layerHere)[0].style.color = COLOR_TXTANDLINE_DARKGRAY;
-				document.getElementsByClassName(layerHere)[0].style.borderColor = COLOR_TXTANDLINE_DARKGRAY;
+				document.getElementsByClassName(layerHere)[0].style.color = COLOR_TXT_DARKGRAY;
+				document.getElementsByClassName(layerHere)[0].style.borderColor = COLOR_TXT_DARKGRAY;
 				UIDept.setupTextareaBorderColorByClass(layerHere, "1px", COLOR_LINE_GRAY);
 				UIDept.setupTextareaReadOnly(layerHere, true);
 			};
@@ -477,14 +475,14 @@ const UIDept = {
 					UIDept.setupBtnShowOrHideByClassName(layerHere, "inactiveCard");
 				};
 			};
-			UIDept.showGuideMessage_forFirstCard();
+			// UIDept.showGuideMessage_forFirstCard();
 		},
 	"showGuideMessage_forFirstCard":
 		function showGuideMessage_forFirstCard() {
 			const guideMessage = document.getElementById("guideMessage");
 			const guideMessageValue = document.getElementById("guideMessage").innerText;
 			if (guideMessageValue == "") {
-				guideMessage.style.color = COLOR_FOCUSED_BLUE;
+				guideMessage.style.color = COLOR_FOCUSED_YELLOW;
 				guideMessage.innerHTML = "'파란색 네모칸에 내용을 작성해보세요~!'"
 			};
 		},
@@ -563,7 +561,7 @@ const UIDept = {
 					// console.log("liValue =", liValue);
 					// console.log("li[i] =", li[i]);
 					li[i].style.background = COLOR_SELECTED_GRAYBLUE;
-					li[i].style.color = COLOR_TXTANDLINE_DARKGRAY;
+					li[i].style.color = COLOR_TXT_DARKGRAY;
 				};
 			};
 		},
@@ -603,16 +601,29 @@ const UIDept = {
 				divSelector[i].addEventListener("mouseover", function (e) {
 					const layer = e.currentTarget.getAttribute("id").substr(4);
 					UIDept.showHideMainImage(layer);
+					// UIDept.setLayerHighlight(layer, true);
 				});
-				divSelector[i].addEventListener("mouseout", function () {
+				divSelector[i].addEventListener("mouseout", function (e) {
+					const layer = e.currentTarget.getAttribute("id").substr(4);
 					UIDept.showUI("image01");
 					UIDept.hideUI("image02");
 					UIDept.hideUI("image03");
 					UIDept.hideUI("image04");
-					UIDept.hideUI("image05");				
+					UIDept.hideUI("image05");
+					// UIDept.setLayerHighlight(layer, false);				
 				});
 			};
 		},
+	"setLayerHighlight":
+		function setLayerHighlight(layerHere, trueOrFalseHere) {
+			const elementId = "layer_"+layerHere;
+			const divSelector = document.getElementById(elementId);
+			if(trueOrFalseHere) {
+				divSelector.setAttribute("style", "background-color: "+COLOR_FOCUSED_YELLOW+";");
+			} else {
+				divSelector.setAttribute("style", "background-color: '';");
+			}
+		}
 };
 
 const listDept = { 
@@ -690,28 +701,28 @@ const listDept = {
 					const id = e.target.getAttribute("value");
 					const addCardId = "addCardBtn_"+layerHere;
 
-					console.log("e.target=", e.target);
+					// console.log("e.target=", e.target);
 
 					function mOver2() {
-						console.log("mOver2");
+						// console.log("mOver2");
 						// e.target.removeEventListener("mouseover", mOver2);
 						e.target.setAttribute("style", COLORSET_SECETED);
 					};
 
 					function mOut2() {
-						console.log("mOut2");
+						// console.log("mOut2");
 						// e.target.removeEventListener("mouseout", mOut2);
 						e.target.setAttribute("style", COLORSET_SECETED);
 					};
 
 					function mOver3() {
-						console.log("mOver3");
+						// console.log("mOver3");
 						// e.target.removeEventListener("mouseover", mOver3);
 						e.target.setAttribute("style", COLORSET_ADDCARD_HOVER);
 					};
 
 					function mOut3() {
-						console.log("mOut3");
+						// console.log("mOut3");
 						// e.target.removeEventListener("mouseout", mOut3);
 						e.target.setAttribute("style", COLORSET_ADDCARD);
 					};
@@ -752,22 +763,22 @@ const listDept = {
 
 							if (eachLi != e.target) {
 
-								eachLi.style.background = COLOR_BG_LIGHTWHITE;
-								eachLi.style.color = COLOR_TXTANDLINE_DARKGRAY;
+								eachLi.style.background = "";
+								eachLi.style.color = COLOR_TXT_DARKGRAY;
 
 								function mOver1() {
-									console.log("mOver1");
+									// console.log("mOver1");
 									// eachLi.removeEventListener("mouseover", mOver1);
 									eachLi.setAttribute("style", COLORSET_NORMAL_HOVER);
 								};
 			
 								function mOut1() {
-									console.log("mOut1");
+									// console.log("mOut1");
 									// eachLi.removeEventListener("mouseout", mOut1);
 									eachLi.setAttribute("style", COLORSET_NORMAL);
 								};
 
-								console.log("1");
+								// console.log("1");
 								eachLi.addEventListener("mouseover", mOver1);
 								eachLi.addEventListener("mouseout", mOut1);
 
@@ -779,7 +790,7 @@ const listDept = {
 						});
 
 						// 선택된 li에 대한 처리
-						console.log("2");
+						// console.log("2");
 						e.target.addEventListener("mouseover", mOver2);
 						e.target.addEventListener("mouseout", mOut2);
 
@@ -790,7 +801,7 @@ const listDept = {
 					} else {
 
 						// ADDCARD에 대한 처리
-						console.log("3");
+						// console.log("3");
 						e.target.addEventListener("mouseover", mOver3);
 						e.target.addEventListener("mouseout", mOut3);
 
