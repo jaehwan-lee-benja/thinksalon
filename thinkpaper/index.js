@@ -43,6 +43,8 @@ function logIn() {
 			StoLDept.requestReadUserData(user);
 			StoLDept.requestReadBigPicture(user);
 			UIDept.hideDiv();
+			UIDept.showHideMainImage();
+			UIDept.setMainImage();
 			updateCardDept.openEditCardByDbclick();
 			// supportDept.getLayerByEventListenerByButton();
 			// supportDept.getLayerByEventListenerBySelectbox();
@@ -564,7 +566,53 @@ const UIDept = {
 					li[i].style.color = COLOR_TXTANDLINE_DARKGRAY;
 				};
 			};
-		}
+		},
+	"showHideMainImage":
+		function showHideMainImage(layerHere){
+
+			UIDept.hideUI("image01");
+			UIDept.hideUI("image02");
+			UIDept.hideUI("image03");
+			UIDept.hideUI("image04");
+			UIDept.hideUI("image05");
+
+			switch(layerHere) {
+				case undefined :
+					UIDept.showUI("image01");
+					break;
+				case "character" :
+					UIDept.showUI("image02");
+					break;
+				case "direction" :
+					UIDept.showUI("image03");
+					break;
+				case "roadmap" :
+					UIDept.showUI("image04");
+					break;
+				case "actionPlan" :
+					UIDept.showUI("image05");
+					break;
+				default : null;
+			};
+		},
+	"setMainImage":
+		function setMainImage() {
+			// [질문] div 구조 고민
+			const divSelector = document.getElementsByClassName("divColumn");
+			for (let i = 0; i < divSelector.length; i++) {
+				divSelector[i].addEventListener("mouseover", function (e) {
+					const layer = e.currentTarget.getAttribute("id").substr(4);
+					UIDept.showHideMainImage(layer);
+				});
+				divSelector[i].addEventListener("mouseout", function () {
+					UIDept.showUI("image01");
+					UIDept.hideUI("image02");
+					UIDept.hideUI("image03");
+					UIDept.hideUI("image04");
+					UIDept.hideUI("image05");				
+				});
+			};
+		},
 };
 
 const listDept = { 

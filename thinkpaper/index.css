@@ -133,12 +133,12 @@ li:hover {
 
 #gridMain{
     display: grid;
-    grid-template-rows: auto 1fr 20rem 2rem;
+    grid-template-rows: 1fr 20rem 2rem;
     grid-gap: 0.2rem;
     margin: 1rem auto;
 }
 
-.gridLayer{
+#gridColumn{
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
     grid-gap: 0.8rem;
@@ -156,10 +156,9 @@ li:hover {
 }
 
 .divList{
-
     width: 16rem;
     padding: 0 1rem;
-    margin: 0 auto;
+    margin: 2rem auto;
     align-content: center;
 }
 
