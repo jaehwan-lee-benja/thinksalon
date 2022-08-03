@@ -145,11 +145,17 @@ li:hover {
     margin-bottom: 1rem;
 }
 
+.girdColumnForLayer{
+    display: grid;
+    grid-template-rows: 6rem 1fr auto;
+    grid-gap: 1.2rem;
+    margin-bottom: 1rem;
+}
+
 .gridMainTop{
     display: grid;
     grid-template-rows: 2rem 1fr;
     grid-gap: 0.2rem;
-    height: 6rem;
     width: 16rem;
     /*[질문] 최대 높이에 맞춰서 진행방법? */
     padding: 0 1rem;

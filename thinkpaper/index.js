@@ -186,7 +186,7 @@ const userDept = {
 	function showUserData(userDataHere) {
 		const userName = userDataHere.name;
 		const userEmail = userDataHere.email;
-		document.getElementById("nameChecked").innerHTML = "방문자: " + userName + " 대표";
+		document.getElementById("nameChecked").innerHTML = "방문자: " + userName;
 		document.getElementById("emailChecked").innerHTML = "(" + userEmail + ")"+"		";
 	}
 };
@@ -392,10 +392,17 @@ const UIDept = {
 				if(childrenLayer != null){
 					// actionPlan이 아닌 경우
 					const childrenIdArray = idDept.getEveryIdArrayOfLayer(childrenLayer);
+					console.log("childrenIdArray =", childrenIdArray);
 					if(childrenIdArray.length == 0) {
 						UIDept.setupBtnShowOrHideByClassName(childrenLayer, "inactiveCard");
 					} else {
-						UIDept.showItOnUI(childrenLayer, idDept.getCardId(childrenLayer));
+						const childrenCardId = idDept.getCardId(childrenLayer);
+						if(childrenCardId != "") {
+							UIDept.showItOnUI(childrenLayer, childrenCardId);
+						} else {
+							// 하위카드 '새 리스트 추가' + 상위 카드 '기존 카드 편집'시, 하위 카드의 cardId가 없는 상태로, inactive 처리 필요
+							UIDept.setupBtnShowOrHideByClassName(childrenLayer, "inactiveCard");
+						}
 					};
 				} else {
 					// actionPlan인 경우
@@ -405,6 +412,7 @@ const UIDept = {
 					};
 				};
 			});
+
 
 			let layerArrayForUpSide = [];
 
@@ -438,7 +446,9 @@ const UIDept = {
 			setTimeout(()=>{
 				const selectorTextareaOnCard = document.getElementsByClassName(layerHere);
 				for (let i = 0; i < selectorTextareaOnCard.length; i++) {
-					selectorTextareaOnCard[i].parentNode.style.border = "solid " + px + color;
+					selectorTextareaOnCard[i].parentNode.setAttribute("style", "box-shadow: 0 0 0 " + px + color + " inset");
+					// selectorTextareaOnCard[i].parentNode.setAttribute("style", "border: solid " + px + color);
+					// selectorTextareaOnCard[i].parentNode.style.border = "solid " + px + color;
 				};
 			},1);
 		},
@@ -596,7 +606,7 @@ const UIDept = {
 	"setMainImage":
 		function setMainImage() {
 			// [질문] div 구조 고민
-			const divSelector = document.getElementsByClassName("divColumn");
+			const divSelector = document.getElementsByClassName("girdColumnForLayer");
 			for (let i = 0; i < divSelector.length; i++) {
 				divSelector[i].addEventListener("mouseover", function (e) {
 					const layer = e.currentTarget.getAttribute("id").substr(4);
