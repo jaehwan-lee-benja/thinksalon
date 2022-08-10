@@ -84,12 +84,12 @@ li {
     transition: all 0.3s cubic-bezier(.25,.8,.25,1);
 }
 
-li:hover {
+/* li:hover {
     background: #F7DA7B;
     box-shadow: 
         0 10px 20px rgba(0,0,0,0.19), 
         0 6px 6px rgba(0,0,0,0.23);
-}
+} */
 
 #titleText{
     font-family: 'EB Garamond', serif;

@@ -3,7 +3,7 @@ const SELECTBOX_BPTITLE_VALUE_INIT = "INIT";
 const COLOR_LINE_GRAY = "#C8C8C8";
 const COLOR_TXT_DARKGRAY = "#2A2B2A";
 const COLOR_FOCUSED_YELLOW = "#F7DA7B";
-const COLOR_SELECTED_GRAYBLUE = "#CFD4C9";
+const COLOR_SELECTED_GRAYGREEN = "#CFD4C9";
 
 const COLORSET_NORMAL = 
 	"color: "+COLOR_TXT_DARKGRAY+";"+
@@ -15,7 +15,7 @@ const COLORSET_NORMAL_HOVER =
 	"border: 1px solid "+COLOR_LINE_GRAY+";";
 const COLORSET_SECETED = 
 	"color: "+COLOR_TXT_DARKGRAY+";"+ 
-	"background: "+COLOR_SELECTED_GRAYBLUE+";"+
+	"background: "+COLOR_SELECTED_GRAYGREEN+";"+
 	"border: 1px solid "+COLOR_LINE_GRAY+";";
 const COLORSET_ADDCARD = 
 	"color:"+COLOR_LINE_GRAY+";"+ 
@@ -239,15 +239,9 @@ const UIDept = {
 	"hideUI":
 		function hideUI(id) {
 			document.getElementById(id).style.display = "none";
-			if(id == "editCard_direction") {
-				console.log("id =", id);
-				console.log("document.getElementById(id) =", document.getElementById(id));
-			}
-			// [질문] 작동되지 않음
 		},
 	"showUI":
 		function showUI(id) {
-			console.log("id @showUI=", id);
 			document.getElementById(id).style.display = "initial";
 		},
 	"setupBtnShowOrHideByClassName":
@@ -508,8 +502,6 @@ const UIDept = {
 		},
 	"hideDiv":
 		function hideDiv() {
-			console.log("hideDiv!");
-
 			UIDept.hideUI("list_direction");
 			UIDept.hideUI("list_roadmap");
 			UIDept.hideUI("list_actionPlan");
@@ -520,7 +512,6 @@ const UIDept = {
 		},
 	"showHideDiv": 
 		function showHideDiv(layerHere) {
-			console.log("showHideDiv!");
 			switch(layerHere) {
 				case null :
 
@@ -570,17 +561,15 @@ const UIDept = {
 		function setLiColorByCard(layerHere) {
 			const id = idDept.getCardId(layerHere);
 			const li = document.getElementsByTagName("li");
-			// console.log("li =", li);
-			// console.log(layerHere + " |A| " + id);
 			for (let i = 0; i < li.length; i++) {
-				const liValue = li[i].getAttribute("value");
-				// console.log(layerHere + " |B| " + liValue);
-				if(id == liValue) {
-					// console.log("id =", id);
-					// console.log("liValue =", liValue);
-					// console.log("li[i] =", li[i]);
-					li[i].style.background = COLOR_SELECTED_GRAYBLUE;
-					li[i].style.color = COLOR_TXT_DARKGRAY;
+				const idOfLi = li[i].getAttribute("value");
+				const layerOfLi = idDept.getLayerById(idOfLi);
+				if(layerHere == layerOfLi) {
+					if(id == idOfLi) {
+						li[i].style.background = COLOR_SELECTED_GRAYGREEN;
+					} else {
+						li[i].style.background = "";
+					};
 				};
 			};
 		},
@@ -726,32 +715,29 @@ const listDept = {
 
 					// console.log("e.target=", e.target);
 
-					function mOver2() {
-						console.log("mOver2");
-						// e.target.removeEventListener("mouseover", mOver2);
-						e.target.setAttribute("style", COLORSET_SECETED);
-					};
+					// function mOver2() {
+					// 	console.log("mOver2");
+					// 	// e.target.removeEventListener("mouseover", mOver2);
+					// 	e.target.setAttribute("style", COLORSET_SECETED);
+					// };
 
-					function mOut2() {
-						console.log("mOut2");
-						// e.target.removeEventListener("mouseout", mOut2);
-						e.target.setAttribute("style", COLORSET_SECETED);
-					};
+					// function mOut2() {
+					// 	console.log("mOut2");
+					// 	// e.target.removeEventListener("mouseout", mOut2);
+					// 	e.target.setAttribute("style", COLORSET_SECETED);
+					// };
 
-					function mOver3() {
-						console.log("mOver3");
-						// e.target.removeEventListener("mouseover", mOver3);
-						e.target.setAttribute("style", COLORSET_ADDCARD_HOVER);
-					};
+					// function mOver3() {
+					// 	console.log("mOver3");
+					// 	// e.target.removeEventListener("mouseover", mOver3);
+					// 	e.target.setAttribute("style", COLORSET_ADDCARD_HOVER);
+					// };
 
-					function mOut3() {
-						console.log("mOut3");
-						// e.target.removeEventListener("mouseout", mOut3);
-						e.target.setAttribute("style", COLORSET_ADDCARD);
-					};
-
-					// 색 조정하기
-					// [질문] 컬러 조정 시도 - eventListener가 꼬여서 그런지 이상현상이 있음
+					// function mOut3() {
+					// 	console.log("mOut3");
+					// 	// e.target.removeEventListener("mouseout", mOut3);
+					// 	e.target.setAttribute("style", COLORSET_ADDCARD);
+					// };
 
 					// function removeEventListenerAll(liArrayHere) {
 
@@ -773,49 +759,49 @@ const listDept = {
 					if(id != addCardId) {
 
 						// 선택되지 않은 나머지 li에 대한 처리
-						liArray.forEach((eachLi) => {
+						// liArray.forEach((eachLi) => {
 
-							// console.log("eachLi =", eachLi);
+						// 	// console.log("eachLi =", eachLi);
 
-							// [질문] eventLister가 없어지지 않고 쌓이는 현상
+						// 	// [질문] eventLister가 없어지지 않고 쌓이는 현상
 
-							// hover 적용하기
-							// 참고: https://www.codegrepper.com/code-examples/javascript/hover+vanilla+javascript
+						// 	// hover 적용하기
+						// 	// 참고: https://www.codegrepper.com/code-examples/javascript/hover+vanilla+javascript
 
-							// if의 용도: "새 카드 추가 li가 눌렸음"을 시각적으로 나타낼 필요가 없음
+						// 	// if의 용도: "새 카드 추가 li가 눌렸음"을 시각적으로 나타낼 필요가 없음
 
-							if (eachLi != e.target) {
+						// 	if (eachLi != e.target) {
 
-								eachLi.style.background = "";
-								eachLi.style.color = COLOR_TXT_DARKGRAY;
+						// 		eachLi.style.background = "";
+						// 		eachLi.style.color = COLOR_TXT_DARKGRAY;
 
-								function mOver1() {
-									console.log("mOver1");
-									// eachLi.removeEventListener("mouseover", mOver1);
-									eachLi.setAttribute("style", COLORSET_NORMAL_HOVER);
-								};
+						// 		function mOver1() {
+						// 			console.log("mOver1");
+						// 			// eachLi.removeEventListener("mouseover", mOver1);
+						// 			eachLi.setAttribute("style", COLORSET_NORMAL_HOVER);
+						// 		};
 			
-								function mOut1() {
-									console.log("mOut1");
-									// eachLi.removeEventListener("mouseout", mOut1);
-									eachLi.setAttribute("style", COLORSET_NORMAL);
-								};
+						// 		function mOut1() {
+						// 			console.log("mOut1");
+						// 			// eachLi.removeEventListener("mouseout", mOut1);
+						// 			eachLi.setAttribute("style", COLORSET_NORMAL);
+						// 		};
 
-								// console.log("1");
-								eachLi.addEventListener("mouseover", mOver1);
-								eachLi.addEventListener("mouseout", mOut1);
+						// 		// console.log("1");
+						// 		eachLi.addEventListener("mouseover", mOver1);
+						// 		eachLi.addEventListener("mouseout", mOut1);
 
-								// [질문] ()에 파라미터를 넣으면 작동이 안된다.
-								// eachLi.addEventListener("mouseover", mOver1(eachLi));
-								// eachLi.addEventListener("mouseout", mOut1(eachLi));
+						// 		// [질문] ()에 파라미터를 넣으면 작동이 안된다.
+						// 		// eachLi.addEventListener("mouseover", mOver1(eachLi));
+						// 		// eachLi.addEventListener("mouseout", mOut1(eachLi));
 	
-							};
-						});
+						// 	};
+						// });
 
 						// 선택된 li에 대한 처리
 						// console.log("2");
-						e.target.addEventListener("mouseover", mOver2);
-						e.target.addEventListener("mouseout", mOut2);
+						// e.target.addEventListener("mouseover", mOver2);
+						// e.target.addEventListener("mouseout", mOut2);
 
 						UIDept.showItOnUI(layerHere, id);
 						UIDept.showItOnUI_followup(layerHere);
@@ -823,10 +809,10 @@ const listDept = {
 
 					} else {
 
-						// ADDCARD에 대한 처리
-						// console.log("3");
-						e.target.addEventListener("mouseover", mOver3);
-						e.target.addEventListener("mouseout", mOut3);
+						// // ADDCARD에 대한 처리
+						// // console.log("3");
+						// e.target.addEventListener("mouseover", mOver3);
+						// e.target.addEventListener("mouseout", mOut3);
 
 						newCardDept.openNewCard(layerHere);
 						const parentLayer = switchDept.getParentsLayerBySwitchLayer(layerHere);
@@ -1475,6 +1461,17 @@ const idDept = {
 			const cardElementId = "cardId_"+layerHere;
 			const result = document.getElementById(cardElementId).value;
 			return result;
+		},
+	"getLayerById":
+		function getLayerById(idHere) {
+			const everyIdArray = Object.keys(objectById);
+			let layer = "";
+			everyIdArray.forEach( eachId => {
+				if (eachId == idHere) {
+					layer = objectById[idHere].layer;
+				};
+			})
+			return layer;
 		}
 };
 
