@@ -105,15 +105,12 @@ li:hover {
 }
 
 #gridBody{
-    display: grid;
-    grid-template-rows: auto auto auto;
     margin: 6rem;
-    grid-gap: 0.2rem;
 }
 
-#divTop{
+/* #divTop{
     border-bottom: 1px solid rgb(220, 220, 220);
-}
+} */
 
 #divInfoTable{
     margin: 1rem 0;
@@ -136,6 +133,8 @@ li:hover {
     grid-template-rows: 1fr 2rem;
     grid-gap: 0.2rem;
     margin: 3rem auto;
+    padding: 3rem 0;
+    border-Top: 1px solid rgb(220, 220, 220);
 }
 
 #gridColumn{
