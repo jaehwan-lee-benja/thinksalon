@@ -629,7 +629,7 @@ const listDept = {
 			for (let i = 0; i < sortedArray.length; i++) {
 				const liValue = sortedArray[i][layerHere];
 				const listItem = document.createElement('li');
-				listItem.innerHTML = liValue;
+				listItem.innerHTML = "<textarea readonly>"+ liValue +"</textarea>";
 				list.appendChild(listItem);
 				const liId = sortedArray[i].id;
 				listItem.setAttribute("value", liId);
@@ -684,23 +684,27 @@ const listDept = {
 
 				v.addEventListener("click",(e)=>{
 
-					const id = e.target.getAttribute("value");
+					const idByLi = e.target.getAttribute("value");
+					const idByTextArea = e.target.parentNode.getAttribute("value");					
+
 					const addCardId = "addCardBtn_"+layerHere;
 
-					// e.target.style.background = COLOR_FOCUSED_YELLOW;
-
-					if(id != addCardId) {
-
-						UIDept.showItOnUI(layerHere, id);
-						UIDept.showItOnUI_followup(layerHere);
-						UIDept.showHideDiv(layerHere);
-
-					} else {
+					if(idByLi == addCardId) {
 
 						newCardDept.openNewCard(layerHere);
 						const parentLayer = switchDept.getParentsLayerBySwitchLayer(layerHere);
 						UIDept.showHideDiv(parentLayer);
 						UIDept.setLiColorByCard(layerHere);
+
+					} else if(idByLi != addCardId || idByTextArea != addCardId) {
+
+						if(idByLi != null) {
+							UIDept.showItOnUI(layerHere, idByLi);
+						} else {
+							UIDept.showItOnUI(layerHere, idByTextArea);
+						};
+						UIDept.showItOnUI_followup(layerHere);
+						UIDept.showHideDiv(layerHere);
 
 					};
 				});

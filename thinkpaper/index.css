@@ -28,12 +28,12 @@ h4 {
 textarea {
     outline: none !important; 
     width: 100%;
-    min-height: 5rem;
-    border: 0.2px solid #C8C8C8;
-    background-color: #FFFFFF;
+    min-height: 1rem;
+    max-height: 15rem;
+    border: 0px solid #C8C8C8;
+    background-color: transparent;
     font-size: 0.8rem;
     color: #2A2B2A;
-    padding: 0.5rem;
     box-sizing: border-box;
     resize: vertical; /* 상하만 가능 */
     border-radius: 0.2rem;
