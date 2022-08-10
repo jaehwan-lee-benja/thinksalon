@@ -705,103 +705,12 @@ const listDept = {
 
 			liArray.forEach((v)=>{
 
-				//v.removeEventListener();
-				// eventListener 안에 eventListener가 있으면 안된다. 처음 그려질 때, hover가 적용되도록 하기. (css에서 hover지우고도 해보기)
-
 				v.addEventListener("click",(e)=>{
 
 					const id = e.target.getAttribute("value");
 					const addCardId = "addCardBtn_"+layerHere;
 
-					// console.log("e.target=", e.target);
-
-					// function mOver2() {
-					// 	console.log("mOver2");
-					// 	// e.target.removeEventListener("mouseover", mOver2);
-					// 	e.target.setAttribute("style", COLORSET_SECETED);
-					// };
-
-					// function mOut2() {
-					// 	console.log("mOut2");
-					// 	// e.target.removeEventListener("mouseout", mOut2);
-					// 	e.target.setAttribute("style", COLORSET_SECETED);
-					// };
-
-					// function mOver3() {
-					// 	console.log("mOver3");
-					// 	// e.target.removeEventListener("mouseover", mOver3);
-					// 	e.target.setAttribute("style", COLORSET_ADDCARD_HOVER);
-					// };
-
-					// function mOut3() {
-					// 	console.log("mOut3");
-					// 	// e.target.removeEventListener("mouseout", mOut3);
-					// 	e.target.setAttribute("style", COLORSET_ADDCARD);
-					// };
-
-					// function removeEventListenerAll(liArrayHere) {
-
-					// 	liArrayHere.forEach((eachLi) => {
-					// 		eachLi.removeEventListener("mouseover", mOver1(eachLi));
-					// 		eachLi.removeEventListener("mouseout", mOut1(eachLi));
-	
-					// 		eachLi.removeEventListener("mouseover", mOver2(eachLi));
-					// 		eachLi.removeEventListener("mouseout", mOut2(eachLi));
-	
-					// 		eachLi.removeEventListener("mouseover", mOver3(eachLi));
-					// 		eachLi.removeEventListener("mouseout", mOut3(eachLi));
-					// 	});
-
-					// };
-
-					// removeEventListenerAll(liArray);
-
 					if(id != addCardId) {
-
-						// 선택되지 않은 나머지 li에 대한 처리
-						// liArray.forEach((eachLi) => {
-
-						// 	// console.log("eachLi =", eachLi);
-
-						// 	// [질문] eventLister가 없어지지 않고 쌓이는 현상
-
-						// 	// hover 적용하기
-						// 	// 참고: https://www.codegrepper.com/code-examples/javascript/hover+vanilla+javascript
-
-						// 	// if의 용도: "새 카드 추가 li가 눌렸음"을 시각적으로 나타낼 필요가 없음
-
-						// 	if (eachLi != e.target) {
-
-						// 		eachLi.style.background = "";
-						// 		eachLi.style.color = COLOR_TXT_DARKGRAY;
-
-						// 		function mOver1() {
-						// 			console.log("mOver1");
-						// 			// eachLi.removeEventListener("mouseover", mOver1);
-						// 			eachLi.setAttribute("style", COLORSET_NORMAL_HOVER);
-						// 		};
-			
-						// 		function mOut1() {
-						// 			console.log("mOut1");
-						// 			// eachLi.removeEventListener("mouseout", mOut1);
-						// 			eachLi.setAttribute("style", COLORSET_NORMAL);
-						// 		};
-
-						// 		// console.log("1");
-						// 		eachLi.addEventListener("mouseover", mOver1);
-						// 		eachLi.addEventListener("mouseout", mOut1);
-
-						// 		// [질문] ()에 파라미터를 넣으면 작동이 안된다.
-						// 		// eachLi.addEventListener("mouseover", mOver1(eachLi));
-						// 		// eachLi.addEventListener("mouseout", mOut1(eachLi));
-	
-						// 	};
-						// });
-
-						// 선택된 li에 대한 처리
-						// console.log("2");
-						// e.target.addEventListener("mouseover", mOver2);
-						// e.target.addEventListener("mouseout", mOut2);
 
 						UIDept.showItOnUI(layerHere, id);
 						UIDept.showItOnUI_followup(layerHere);
@@ -809,14 +718,11 @@ const listDept = {
 
 					} else {
 
-						// // ADDCARD에 대한 처리
-						// // console.log("3");
-						// e.target.addEventListener("mouseover", mOver3);
-						// e.target.addEventListener("mouseout", mOut3);
-
 						newCardDept.openNewCard(layerHere);
 						const parentLayer = switchDept.getParentsLayerBySwitchLayer(layerHere);
 						UIDept.showHideDiv(parentLayer);
+						UIDept.setLiColorByCard(layerHere);
+
 					};
 				});
 			});
