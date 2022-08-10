@@ -27,7 +27,7 @@ function logIn() {
 			UIDept.showHideDiv(null);
 			UIDept.showHideMainImage();
 			UIDept.setMainImage();
-			updateCardDept.openEditCardByDbclick();
+			// updateCardDept.openEditCardByDbclick(); li가 생길때 진행으로 변경
 			// supportDept.getLayerByEventListenerByButton();
 			// supportDept.getLayerByEventListenerBySelectbox();
 		} else {
@@ -345,7 +345,14 @@ const UIDept = {
 		},
 	"setupTextareaReadOnly":
 		function setupTextareaReadOnly(layerHere, trueOrFalse){
-			document.getElementById(layerHere).readOnly = trueOrFalse;
+			const textareaElement = document.getElementById(layerHere);
+			textareaElement.readOnly = trueOrFalse;
+			if(trueOrFalse == false) {
+				setTimeout(()=>{
+				textareaElement.style.backgroundColor = "#FFF";
+				textareaElement.style.border = "solid 2px" + COLOR_SELECTED_GRAYGREEN;
+				},1);
+			}
 		},
 	"editCard_followup":
 		function editCard_followup(layerHere) {
@@ -432,16 +439,18 @@ const UIDept = {
 					// selectorTextareaOnCard[i].parentNode.setAttribute("style", "border: solid " + px + color);
 					// selectorTextareaOnCard[i].parentNode.style.border = "solid " + px + color;
 					selectorTextareaOnCard[i].parentNode.style.boxShadow = "0 0 0 " + px + color + " inset";
-					// [마음에 새기기]
 				};
 			},1);
 		},
 	"resizeTextarea":
 		function resizeTextarea() {
 			// 참고: https://stackoverflow.com/questions/454202/creating-a-textarea-with-auto-resize
+			// console.log("resizeTextarea is working");
+			// [질문] editCard가 늘어난 사이즈에서, 다른 li를 눌러서 내용을 볼 때, 크기가 큰 경우, 줄어들지 않음
 			const tx = document.getElementsByTagName("textarea");
 			for (let i = 0; i < tx.length; i++) {
-				tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
+				// tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px; overflow-y:auto;");
+				tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;");
 				tx[i].addEventListener("input", OnInput, false);
 			};
 			function OnInput() {
@@ -633,10 +642,11 @@ const listDept = {
 				list.appendChild(listItem);
 				const liId = sortedArray[i].id;
 				listItem.setAttribute("value", liId);
+				listItem.setAttribute("layer", layerHere);
 			};
 			listDept.addOpenAddCardLi(layerHere);
-			//list.onclick = 
 			listDept.clickLi(layerHere);
+			updateCardDept.openEditCardByDbclick();
 		},
 	"addOpenAddCardLi":
 		function addOpenAddCardLi(layerHere) {
@@ -707,6 +717,9 @@ const listDept = {
 						UIDept.showHideDiv(layerHere);
 
 					};
+
+					UIDept.resizeTextarea();
+
 				});
 			});
 		}
@@ -1039,13 +1052,17 @@ const updateCardDept = {
 			const textareaOnCard = document.getElementsByTagName("textarea");
 			for (let i = 0; i < textareaOnCard.length; i++) {
 				textareaOnCard[i].addEventListener("dblclick", function (e) {
-					const layer = e.target.id;
-					const idArray = idDept.getEveryIdArrayOfLayer(layer);
+					console.log("openEditCardByDbclick here!");
+					// const layerOfTarget = e.target.parentNode.getAttribute("layer");
+					const layerOfTarget = e.target.getAttribute("id");
+					console.log("layerOfTarget =", layerOfTarget);
+					const idArray = idDept.getEveryIdArrayOfLayer(layerOfTarget);
 					const readOnlyCondition = textareaOnCard[i].readOnly;
 					if(idArray.length > 0 && readOnlyCondition){
-						updateCardDept.openEditCard(layer);
+						updateCardDept.openEditCard(layerOfTarget);
+						// e.target.readOnly = false;
 					}else if(idArray.length = 0){
-						newCardDept.openNewCard(layer);
+						newCardDept.openNewCard(layerOfTarget);
 					};
 				});
 			};
