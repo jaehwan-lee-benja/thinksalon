@@ -93,6 +93,7 @@ li:hover {
 
 #titleText{
     font-family: 'EB Garamond', serif;
+    margin: 0 auto;
 }
 
 #date {
@@ -107,10 +108,6 @@ li:hover {
 #gridBody{
     margin: 6rem;
 }
-
-/* #divTop{
-    border-bottom: 1px solid rgb(220, 220, 220);
-} */
 
 #divInfoTable{
     margin: 1rem 0;
@@ -255,6 +252,11 @@ https://www.w3schools.com/howto/howto_js_todolist.asp
    
 
 @media(max-width:700px){
+
+    h1{
+        font-size: 2rem;
+    }
+
     #divIndex{
         margin-bottom: 2rem;
         padding-bottom: 2rem;
@@ -272,6 +274,11 @@ https://www.w3schools.com/howto/howto_js_todolist.asp
     }
     .button{
         text-align: left;
+    }
+
+    #divTop{
+        min-width: 12rem;
+        margin: 0 auto;
     }
 
     #gridMainFrame{
