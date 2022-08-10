@@ -5,24 +5,8 @@ const COLOR_TXT_DARKGRAY = "#2A2B2A";
 const COLOR_FOCUSED_YELLOW = "#F7DA7B";
 const COLOR_SELECTED_GRAYGREEN = "#CFD4C9";
 
-const COLORSET_NORMAL = 
-	"color: "+COLOR_TXT_DARKGRAY+";"+
-	"background: '';"+
-	"border: 1px solid "+COLOR_LINE_GRAY+";";
-const COLORSET_NORMAL_HOVER = 
-	"color: "+COLOR_TXT_DARKGRAY+";"+
-	"background: "+COLOR_FOCUSED_YELLOW+";"+
-	"border: 1px solid "+COLOR_LINE_GRAY+";";
-const COLORSET_SECETED = 
-	"color: "+COLOR_TXT_DARKGRAY+";"+ 
-	"background: "+COLOR_SELECTED_GRAYGREEN+";"+
-	"border: 1px solid "+COLOR_LINE_GRAY+";";
 const COLORSET_ADDCARD = 
 	"color:"+COLOR_LINE_GRAY+";"+ 
-	"background: '';"+
-	"border: 1px solid "+COLOR_LINE_GRAY+";";
-const COLORSET_ADDCARD_HOVER = 
-	"color: "+COLOR_TXT_DARKGRAY+";"+
 	"background: '';"+
 	"border: 1px solid "+COLOR_LINE_GRAY+";";
 
@@ -40,7 +24,7 @@ function logIn() {
 		if (user != null) {
 			StoLDept.requestReadUserData(user);
 			StoLDept.requestReadBigPicture(user);
-			UIDept.hideDiv();
+			UIDept.showHideDiv(null);
 			UIDept.showHideMainImage();
 			UIDept.setMainImage();
 			updateCardDept.openEditCardByDbclick();
@@ -256,15 +240,15 @@ const UIDept = {
 					alertTextElement.innerHTML = "";
 				};
 			};
-		
-			// 일단 모두 가리기
+
+			// 모든 버튼 지우기
 			UIDept.hideUI("openEditCard_btn_"+layerHere);
 			UIDept.hideUI("cancelEditCard_btn_"+layerHere);
 			UIDept.hideUI("saveEditedCard_btn_"+layerHere);
 			UIDept.hideUI("saveNewCard_btn_"+layerHere);
 			UIDept.hideUI("removeCard_btn_"+layerHere);
 			UIDept.hideUI("openNewCard_btn_"+layerHere);
-		
+
 			// 모드에 따라 설정하기
 			switch(state){
 				case "createFirstCard" :
@@ -500,25 +484,17 @@ const UIDept = {
 		function highLightBorder(id, color) {
 			return document.getElementById(id).style.borderColor = color;
 		},
-	"hideDiv":
-		function hideDiv() {
-			UIDept.hideUI("list_direction");
-			UIDept.hideUI("list_roadmap");
-			UIDept.hideUI("list_actionPlan");
-
-			UIDept.hideUI("editCard_direction");
-			UIDept.hideUI("editCard_roadmap");
-			UIDept.hideUI("editCard_actionPlan");
-		},
 	"showHideDiv": 
 		function showHideDiv(layerHere) {
 			switch(layerHere) {
 				case null :
 
+					UIDept.showUI("list_character");
 					UIDept.hideUI("list_direction");
 					UIDept.hideUI("list_roadmap");
 					UIDept.hideUI("list_actionPlan");
 
+					UIDept.showUI("editCard_character");
 					UIDept.hideUI("editCard_direction");
 					UIDept.hideUI("editCard_roadmap");
 					UIDept.hideUI("editCard_actionPlan");
@@ -565,6 +541,7 @@ const UIDept = {
 				const idOfLi = li[i].getAttribute("value");
 				const layerOfLi = idDept.getLayerById(idOfLi);
 				if(layerHere == layerOfLi) {
+					li[i].style.background = "";
 					if(id == idOfLi) {
 						li[i].style.background = COLOR_SELECTED_GRAYGREEN;
 					} else {
@@ -709,6 +686,8 @@ const listDept = {
 
 					const id = e.target.getAttribute("value");
 					const addCardId = "addCardBtn_"+layerHere;
+
+					// e.target.style.background = COLOR_FOCUSED_YELLOW;
 
 					if(id != addCardId) {
 
