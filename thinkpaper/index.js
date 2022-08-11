@@ -10,7 +10,7 @@ const COLORSET_ADDCARD =
 	"background: '';"+
 	"border: 1px solid "+COLOR_LINE_GRAY+";";
 
-const userData = {}; 
+const userData = {};
 let objectById = {};
 let isMainShown = false;
 let eventListenerResult = {};
