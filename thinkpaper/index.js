@@ -447,18 +447,18 @@ const UIDept = {
 	"setupTextareaModeByClassName_li":
 		function setupTextareaModeByClassName_li(idHere, cardMode) {
 			console.log("idHere =", idHere);
-			const textareaElement = document.getElementById(idHere);
+			const textareaElement = document.querySelector("li[value='"+idHere+"']").children[0];
 			console.log("textareaElement =", textareaElement);
 			if (cardMode == "editing") {
 				textareaElement.style.color = COLOR_FOCUSED_YELLOW;
 				textareaElement.style.borderColor = COLOR_FOCUSED_YELLOW;
-				// UIDept.setupTextareaBorderColorByClass(layerHere, "2px", COLOR_FOCUSED_YELLOW);
-				// UIDept.setupTextareaReadOnly(layerHere, false);
+				UIDept.setupTextareaBorderColorByClass_li(idHere, "2px", COLOR_FOCUSED_YELLOW);
+				UIDept.setupTextareaReadOnly_li(idHere, false);
 			} else {
 				textareaElement.style.color = COLOR_TXT_DARKGRAY;
 				textareaElement.style.borderColor = COLOR_TXT_DARKGRAY;
-				// UIDept.setupTextareaBorderColorByClass(layerHere, "1px", COLOR_LINE_GRAY);
-				// UIDept.setupTextareaReadOnly(layerHere, true);
+				UIDept.setupTextareaBorderColorByClass_li(idHere, "1px", COLOR_LINE_GRAY);
+				UIDept.setupTextareaReadOnly_li(idHere, true);
 			};
 		},
 	"setupTextareaReadOnly":
@@ -473,8 +473,19 @@ const UIDept = {
 			}
 		},
 	"setupTextareaReadOnly_li":
+		function setupTextareaReadOnly_li(layerHere, trueOrFalse){
+			const textareaElement = document.getElementById(layerHere);
+			textareaElement.readOnly = trueOrFalse;
+			if(trueOrFalse == false) {
+				setTimeout(()=>{
+				textareaElement.style.backgroundColor = "#FFF";
+				textareaElement.style.border = "solid 2px" + COLOR_SELECTED_GRAYGREEN;
+				},1);
+			}
+		},
+	"setupTextareaReadOnly_li":
 		function setupTextareaReadOnly_li(idHere, trueOrFalse){
-			const textareaElement = document.getElementById(idHere);
+			const textareaElement = document.querySelector("li[value='"+idHere+"']").children[0];
 			textareaElement.readOnly = trueOrFalse;
 			if(trueOrFalse == false) {
 				setTimeout(()=>{
@@ -564,9 +575,15 @@ const UIDept = {
 			setTimeout(()=>{
 				const selectorTextareaOnCard = document.getElementsByClassName(layerHere);
 				for (let i = 0; i < selectorTextareaOnCard.length; i++) {
-					// selectorTextareaOnCard[i].parentNode.setAttribute("style", "box-shadow: 0 0 0 " + px + color + " inset");
-					// selectorTextareaOnCard[i].parentNode.setAttribute("style", "border: solid " + px + color);
-					// selectorTextareaOnCard[i].parentNode.style.border = "solid " + px + color;
+					selectorTextareaOnCard[i].parentNode.style.boxShadow = "0 0 0 " + px + color + " inset";
+				};
+			},1);
+		},
+	"setupTextareaBorderColorByClass_li":
+		function setupTextareaBorderColorByClass_li(idHere, px, color) {
+			setTimeout(()=>{
+				const selectorTextareaOnCard = document.querySelector("li[value='"+idHere+"']").children[0];
+				for (let i = 0; i < selectorTextareaOnCard.length; i++) {
 					selectorTextareaOnCard[i].parentNode.style.boxShadow = "0 0 0 " + px + color + " inset";
 				};
 			},1);
