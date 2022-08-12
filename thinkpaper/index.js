@@ -329,6 +329,107 @@ const UIDept = {
 			};
 			UIDept.resizeTextarea();
 		},
+	"setupBtnShowOrHideByClassName_li":
+		function setupBtnShowOrHideByClassName_li(layerHere, idHere, state) {
+
+			// 카드 안내 글씨 지우기
+			if(layerHere != "character") {
+				const parentsLayer = switchDept.getParentsLayerBySwitchLayer(layerHere);
+				const parentsCardValue = document.getElementById(parentsLayer).value;
+				const alertTextElement = document.getElementById("alert_txt_"+layerHere);
+				if(parentsCardValue != "" && alertTextElement.innerText != "") {
+					alertTextElement.innerHTML = "";
+				};
+			};
+
+			// 모든 버튼 지우기
+			UIDept.hideUI("openEditCard_btn_"+layerHere);
+			UIDept.hideUI("cancelEditCard_btn_"+layerHere);
+			UIDept.hideUI("saveEditedCard_btn_"+layerHere);
+			UIDept.hideUI("saveNewCard_btn_"+layerHere);
+			UIDept.hideUI("removeCard_btn_"+layerHere);
+			UIDept.hideUI("openNewCard_btn_"+layerHere);
+
+			// 모드에 따라 설정하기
+			switch(state){
+				case "createFirstCard" :
+					idDept.emptyCardId(layerHere);
+					UIDept.showUI("saveNewCard_btn_"+layerHere);
+					UIDept.setupTextareaModeByClassName(layerHere, "editing");
+					// 220727 아래의 경우의수가 발생하는지 체크하기
+					// UIDept.editCard_followup(layerHere);
+					break;
+				case "openNewCard" :
+					UIDept.showUI("saveNewCard_btn_"+layerHere);
+					UIDept.showUI("cancelEditCard_btn_"+layerHere);
+					// UIDept.showGuideMessage_forFirstCard();
+					UIDept.setupTextareaModeByClassName(layerHere, "editing");
+					break;
+				case "readCard" :
+					UIDept.showUI("openEditCard_btn_"+layerHere);
+					UIDept.showUI("openNewCard_btn_"+layerHere);
+					UIDept.showUI("removeCard_btn_"+layerHere);
+					UIDept.setupTextareaModeByClassName(layerHere, "reading");
+					break;
+				case "editCard" :
+					UIDept.showUI("saveEditedCard_btn_"+layerHere);
+					UIDept.showUI("cancelEditCard_btn_"+layerHere);
+					UIDept.showUI("saveNewCard_btn_"+layerHere);
+					UIDept.showUI("removeCard_btn_"+layerHere);
+					UIDept.setupTextareaModeByClassName_li(idHere, "editing");
+					UIDept.editCard_followup(layerHere);
+					break;
+				case "inactiveCard" :
+					// const parentsLayer = switchDept.getParentsLayerBySwitchLayer(layerHere);
+					// const isReadingMode = document.getElementById(parentsLayer).readOnly;
+					// if (isReadingMode) {
+						// case "createFirstCard"의 변형 버전
+						// idDept.emptyCardId(layerHere);
+						// UIDept.showUI("saveNewCard_btn_"+layerHere);
+						// UIDept.setupTextareaModeByClassName(layerHere, "editing");
+					// } else {
+						idDept.emptyCardId(layerHere);
+						UIDept.setupTextareaModeByClassName(layerHere, "reading");
+						document.getElementById("alert_txt_"+layerHere).innerHTML = "(상위 카드 작성 후, 작성 가능)";
+					// };
+					break;
+				default:
+					const state = null;
+			};
+			
+			if(layerHere == "character") {
+				function setupBtnShowOrHideByClassName_main(layerHere) {
+		
+					UIDept.hideUI("gotoMainCard_btn_"+layerHere);
+					UIDept.hideUI("setMainCard_btn_"+layerHere);
+					UIDept.hideUI("setMainCard_txt_"+layerHere);
+				
+					const cardId = document.getElementById("cardId_character").value;
+					const mainId = mainCardDept.getMainId();
+				
+					// main기능 복구시 다시 오픈하기
+					// if(cardId == mainId) {
+					// 	UIDept.showUI("setMainCard_txt_"+layerHere);
+					// } else {
+					// 	if (mainId != null) {
+					// 		UIDept.showUI("gotoMainCard_btn_"+layerHere);
+					// 		UIDept.showUI("setMainCard_btn_"+layerHere);
+					// 	} else {
+					// 		UIDept.showUI("setMainCard_btn_"+layerHere);
+					// 	};
+					// };
+				};
+				setupBtnShowOrHideByClassName_main(layerHere, state);
+			};
+
+			const eachCardValue = document.getElementById(layerHere).value;
+			if(eachCardValue != "") {
+				UIDept.hideUI("guideMessage");
+			} else {
+				UIDept.showUI("guideMessage");
+			};
+			UIDept.resizeTextarea();
+		},
 	"setupTextareaModeByClassName":
 		function setupTextareaModeByClassName(layerHere, cardMode) {
 			if (cardMode == "editing") {
@@ -343,9 +444,37 @@ const UIDept = {
 				UIDept.setupTextareaReadOnly(layerHere, true);
 			};
 		},
+	"setupTextareaModeByClassName_li":
+		function setupTextareaModeByClassName_li(idHere, cardMode) {
+			console.log("idHere =", idHere);
+			const textareaElement = document.getElementById(idHere);
+			console.log("textareaElement =", textareaElement);
+			if (cardMode == "editing") {
+				textareaElement.style.color = COLOR_FOCUSED_YELLOW;
+				textareaElement.style.borderColor = COLOR_FOCUSED_YELLOW;
+				// UIDept.setupTextareaBorderColorByClass(layerHere, "2px", COLOR_FOCUSED_YELLOW);
+				// UIDept.setupTextareaReadOnly(layerHere, false);
+			} else {
+				textareaElement.style.color = COLOR_TXT_DARKGRAY;
+				textareaElement.style.borderColor = COLOR_TXT_DARKGRAY;
+				// UIDept.setupTextareaBorderColorByClass(layerHere, "1px", COLOR_LINE_GRAY);
+				// UIDept.setupTextareaReadOnly(layerHere, true);
+			};
+		},
 	"setupTextareaReadOnly":
 		function setupTextareaReadOnly(layerHere, trueOrFalse){
 			const textareaElement = document.getElementById(layerHere);
+			textareaElement.readOnly = trueOrFalse;
+			if(trueOrFalse == false) {
+				setTimeout(()=>{
+				textareaElement.style.backgroundColor = "#FFF";
+				textareaElement.style.border = "solid 2px" + COLOR_SELECTED_GRAYGREEN;
+				},1);
+			}
+		},
+	"setupTextareaReadOnly_li":
+		function setupTextareaReadOnly_li(idHere, trueOrFalse){
+			const textareaElement = document.getElementById(idHere);
 			textareaElement.readOnly = trueOrFalse;
 			if(trueOrFalse == false) {
 				setTimeout(()=>{
@@ -553,8 +682,10 @@ const UIDept = {
 					li[i].style.background = "";
 					if(id == idOfLi) {
 						li[i].style.background = COLOR_SELECTED_GRAYGREEN;
+						li[i].setAttribute("pointed", "Y");
 					} else {
 						li[i].style.background = "";
+						li[i].setAttribute("pointed", "N");
 					};
 				};
 			};
@@ -1071,6 +1202,167 @@ const updateCardDept = {
 		function openEditCard(layerHere) {
 			UIDept.setupBtnShowOrHideByClassName(layerHere,"editCard");
 			UIDept.editCard_followup(layerHere);
+		},
+	"cancelEditCard":
+		function cancelEditCard(layerHere) {
+			const cardId = idDept.getCardId(layerHere);
+			if(cardId != ""){
+				UIDept.showItOnUI(layerHere, cardId);
+				const childrenLayer = switchDept.getChildrenLayerBySwitchLayer(layerHere);
+				if (childrenLayer != null) {
+					const idArray = idDept.getEveryIdArrayOfLayer(childrenLayer);
+					if(idArray.length == 0) {
+						UIDept.setupBtnShowOrHideByClassName(childrenLayer, "createFirstCard");
+					};
+				};
+			} else {
+				// 기존 카드가 있는 상태에서, 새 카드 만들기 후, 편집 취소를 할 때의 경우, 최신 lastest 카드를 보여주기
+				// 기존 카드가 없는 경우에는 cancelEditCard 버튼이 나타나지 않음.
+				const id = idDept.getLatestIdByLayer(layerHere);
+				UIDept.showItOnUI(layerHere, id);
+			};
+		}
+};
+
+const updateLiDept = {
+	"saveEditedCard":
+		function saveEditedCard(layerHere) {
+			const packagedData = updateCardDept.packageEditedCard(layerHere);
+			if (packagedData != null) {
+				updateCardDept.requestUpdateCard(layerHere, packagedData);
+			};
+		},
+	"packageEditedCard":
+		function packageEditedCard(layerHere) {	
+
+			const resultIsChanged = updateCardDept.monitorIfCardChanged(layerHere);
+			const monitorResult = updateCardDept.getMoniterResult(layerHere, resultIsChanged);
+			
+			if (monitorResult) {
+				const packagedData = {};
+				packagedData["id"] = idDept.getCardId(layerHere);
+				packagedData["parentsId"] = document.getElementById("cardParentsId_"+layerHere).value;
+				packagedData["editedDate"] = supportDept.getTimeStamp();
+				packagedData["contents"] = {};
+		
+				const contents = packagedData["contents"];
+				switch(layerHere){
+					case "character" :
+						contents["character"] = document.getElementById("character").value.trim();
+						break;
+					case "direction" :
+						contents["direction"] = document.getElementById("direction").value.trim();
+						break;
+					case "roadmap" :
+						contents["roadmap"] = document.getElementById("roadmap").value.trim();
+						// contents["roadmapA"] = document.getElementById("roadmapA").value.trim();
+						// contents["roadmapB"] = document.getElementById("roadmapB").value.trim();
+						break;
+					case "actionPlan" :
+						contents["actionPlan"] = document.getElementById("actionPlan").value.trim();
+						break;
+					default: 
+						const layer = null;
+				};
+				return packagedData;
+			};
+		},
+	"monitorIfCardChanged":
+		function monitorIfCardChanged(layerHere) {
+			
+			// 현재 UI에 띄워진 값 포착하기
+			const id = idDept.getCardId(layerHere);
+			const value = document.getElementById(layerHere).value.trim();
+			const object = {"id": id, [layerHere]: value};
+
+			// 로컬 데이터에 있는 값 포착하기
+			const arrayWithId = updateCardDept.getMappedObject_idContents(layerHere);
+		
+			// 위 두가지가 같은 경우의 수라면, 수정이 이뤄지지 않은 상태
+			for(let i = 0; i < arrayWithId.length; i++) {
+				if(JSON.stringify(object) === JSON.stringify(arrayWithId[i])) {
+					return false;
+				};
+			};
+			return true;
+		},
+	"getMappedObject_idContents":
+		function getMappedObject_idContents(layerHere) {		
+			const returnArray = [];
+			const eachIdArrayByLayer = idDept.getEveryIdArrayOfLayer(layerHere);
+			eachIdArrayByLayer.forEach(EachId => {
+				const returnObject = {};
+				returnObject["id"] = objectById[EachId].id;
+				returnObject[layerHere] = objectById[EachId].contents[layerHere];
+				returnArray.push(returnObject);
+			});
+			return returnArray;
+		},
+	"getMoniterResult":
+		function getMoniterResult(layerHere, isChangedHere) {
+			if (isChangedHere) {
+				const monitorResultInFunction = monitorDept.monitorCardBlankOrDuplicates(layerHere);
+				return monitorResultInFunction;
+			} else {
+				return true;
+			};
+		},
+	"requestUpdateCard":
+		function requestUpdateCard(layerHere, packagedDataHere) {
+			const inputId = packagedDataHere.id;
+			const idThreadObject = idDept.getIdThreadObjectByPackagedData(layerHere, packagedDataHere);
+			const switchedRef = switchDept.getRefBySwitchLayer(layerHere, idThreadObject);
+			switchedRef.child(inputId)
+			.update(packagedDataHere, (e) => {
+				LtoSDept.request_followupEditedDate(layerHere, packagedDataHere, function(){
+					alert("수정되었습니다.");
+				});
+				console.log("**update completed = ", e);
+			});
+		},
+	"openEditCardByDbclick":
+		function openEditCardByDbclick() {
+			const textareaOnCard = document.getElementsByTagName("textarea");
+			for (let i = 0; i < textareaOnCard.length; i++) {
+				textareaOnCard[i].addEventListener("dblclick", function (e) {
+					console.log("openEditCardByDbclick here!");
+					// const layerOfTarget = e.target.parentNode.getAttribute("layer");
+					const layerOfTarget = e.target.getAttribute("id");
+					console.log("layerOfTarget =", layerOfTarget);
+					const idArray = idDept.getEveryIdArrayOfLayer(layerOfTarget);
+					const readOnlyCondition = textareaOnCard[i].readOnly;
+					if(idArray.length > 0 && readOnlyCondition){
+						updateCardDept.openEditCard(layerOfTarget);
+						// e.target.readOnly = false;
+					}else if(idArray.length = 0){
+						newCardDept.openNewCard(layerOfTarget);
+					};
+				});
+			};
+		},
+	"openEditLi":
+		function openEditLi(layerHere) {
+			const id = updateLiDept.clickLi_update(layerHere);
+			console.log("id =", id);
+			UIDept.setupBtnShowOrHideByClassName_li(layerHere, id, "editCard");
+			// UIDept.editCard_followup(layerHere);
+		},
+	"clickLi_update":
+		function clickLi_update(layerHere) {
+			console.log("layerHere =", layerHere);
+
+			const li = document.getElementById("list_"+layerHere).children;
+			console.log("li =", li);
+			
+			for (let i = 0; i < li.length; i++) {
+				const isPointed = li[i].getAttribute("pointed");
+				console.log("isPointed =", isPointed);
+				if (isPointed == "Y") {
+					const valueOfLi = li[i].getAttribute("value");
+					return valueOfLi;
+				};			
+			};
+
 		},
 	"cancelEditCard":
 		function cancelEditCard(layerHere) {
