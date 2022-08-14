@@ -5,7 +5,7 @@ const COLOR_TXT_DARKGRAY = "#2A2B2A";
 const COLOR_FOCUSED_YELLOW = "#F7DA7B";
 const COLOR_SELECTED_GRAYGREEN = "#CFD4C9";
 
-const COLORSET_ADDCARD = 
+const COLORSET_ADDLI = 
 	"color:"+COLOR_LINE_GRAY+";"+ 
 	"background: '';"+
 	"border: 1px solid "+COLOR_LINE_GRAY+";";
@@ -376,7 +376,6 @@ const UIDept = {
 					UIDept.showUI("cancelEditCard_btn_"+layerHere);
 					UIDept.showUI("saveNewCard_btn_"+layerHere);
 					UIDept.showUI("removeCard_btn_"+layerHere);
-					console.log("idHere @setupBtnShowOrHideByClassName_li =", idHere);
 					UIDept.setupTextareaModeByClassName_li(idHere, "editing");
 					UIDept.editCard_followup(layerHere);
 					break;
@@ -447,9 +446,7 @@ const UIDept = {
 		},
 	"setupTextareaModeByClassName_li":
 		function setupTextareaModeByClassName_li(idHere, cardMode) {
-			console.log("idHere =", idHere);
 			const liElement = document.getElementById(idHere);
-			console.log("liElement =", liElement);
 			const textareaElement = liElement.children[0];
 			if (cardMode == "editing") {
 				textareaElement.style.color = COLOR_FOCUSED_YELLOW;
@@ -476,7 +473,8 @@ const UIDept = {
 		},
 	"setupTextareaReadOnly_li":
 		function setupTextareaReadOnly_li(idHere, trueOrFalse){
-			const textareaElement = document.querySelector("li[id='"+idHere+"']").children[0];
+			const liElement = document.getElementById(idHere);
+			const textareaElement = liElement.children[0];
 			textareaElement.readOnly = trueOrFalse;
 			if(trueOrFalse == false) {
 				setTimeout(()=>{
@@ -766,7 +764,7 @@ const listDept = {
 			const liElements = list.getElementsByTagName("LI");
 			// list 초기화하기
 			for(let i=liElements.length-1; i>=0; i-- ){
-				liElements[i].remove()
+				liElements[i].remove();
 			};
 			// Array 만들기
 			const mappedArray = listDept.getMappedObject_idEditedDateContents(layerHere);
@@ -790,13 +788,13 @@ const listDept = {
 		function addOpenAddCardLi(layerHere) {
 			const listId = "list_"+layerHere;
 			const list = document.getElementById(listId);
-			const liValue_addCard = "(+ 새 리스트 추가하기)";
+			const liValue_addLi = "(+ 새 리스트 추가하기)";
 			const listItem = document.createElement('li');
-			listItem.innerHTML = liValue_addCard;
+			listItem.innerHTML = "<textarea readonly>"+ liValue_addLi +"</textarea>";
 			list.appendChild(listItem);
-			const liId_addCard = "addCardBtn_"+layerHere;
-			listItem.setAttribute("id", liId_addCard);
-			listItem.setAttribute("style", COLORSET_ADDCARD);
+			const liId_addLi = "addLiBtn_"+layerHere;
+			listItem.setAttribute("id", liId_addLi);
+			listItem.setAttribute("style", COLORSET_ADDLI);
 		},
 	"getMappedObject_idEditedDateContents":
 		function getMappedObject_idEditedDateContents(layerHere) {		
@@ -835,7 +833,7 @@ const listDept = {
 					const idByLi = e.target.getAttribute("id");
 					const idByTextArea = e.target.parentNode.getAttribute("id");					
 
-					const addCardId = "addCardBtn_"+layerHere;
+					const addLiId = "addLiBtn_"+layerHere;
 
 					let id = ""
 					if(idByLi != null) {
@@ -844,27 +842,29 @@ const listDept = {
 						id = idByTextArea;
 					};
 					
-					const textareaElement = document.querySelector("li[id='"+id+"']").children[0];
+					const liElement = document.getElementById(id);
+					const textareaElement = liElement.children[0];
 					const isEditing = textareaElement.getAttribute("readOnly");
 
 					// 편집 모드일 때는 readonly가 null로 표기됨
 					if(isEditing != null) {
-						if(idByLi == addCardId) {
+						if(id != addLiId) {
 
+							UIDept.showItOnUI(layerHere, id);
+							UIDept.showItOnUI_followup(layerHere);
+							UIDept.showHideDiv(layerHere);
+	
+						} else {
+	
 							newCardDept.openNewCard(layerHere);
 							const parentLayer = switchDept.getParentsLayerBySwitchLayer(layerHere);
 							UIDept.showHideDiv(parentLayer);
 							UIDept.setLiColorByCard(layerHere);
 	
-						} else if(idByLi != addCardId || idByTextArea != addCardId) {
-	
-							UIDept.showItOnUI(layerHere, id);
-							UIDept.showItOnUI_followup(layerHere);
-							UIDept.showHideDiv(layerHere);
-	
 						};
 	
 						UIDept.resizeTextarea();
+
 					};
 
 				});
@@ -1249,12 +1249,11 @@ const updateLiDept = {
 	"packageEditedLi":
 		function packageEditedLi(layerHere) {	
 
-			// const resultIsChanged = updateLiDept.monitorIfLiChanged(layerHere);
-			// const monitorResult = updateLiDept.getMoniterResult(layerHere, resultIsChanged);
+			const resultIsChanged = updateLiDept.monitorIfLiChanged(layerHere);
+			const monitorResult = updateLiDept.getMoniterResult(layerHere, resultIsChanged);
 			
-			// if (monitorResult) {
+			if (monitorResult) {
 				const packagedData = {};
-				console.log("layerHere =", layerHere);
 				const id = idDept.getLiId(layerHere);
 				packagedData["id"] = id;
 				if (layerHere == "character") {
@@ -1267,13 +1266,12 @@ const updateLiDept = {
 				packagedData["contents"] = {};
 		
 				const contents = packagedData["contents"];
-				console.log("id =", id);
-				const pointedLi = document.getElementById(id).children[0];
-				console.log("pointedLi =", pointedLi);
-				contents[layerHere] = pointedLi.value.trim();
+				const pointedLi = document.getElementById(id);
+				const pointedTextarea = pointedLi.children[0];
+				contents[layerHere] = pointedTextarea.value.trim();
 
 				return packagedData;
-			// };
+			};
 		},
 	"monitorIfLiChanged":
 		function monitorIfLiChanged(layerHere) {
@@ -1331,7 +1329,6 @@ const updateLiDept = {
 	"openEditLi":
 		function openEditLi(layerHere) {
 			const id = idDept.getLiId(layerHere);
-			console.log("id @openEditLi =", id);
 			UIDept.setupBtnShowOrHideByClassName_li(layerHere, id, "editCard");
 			// UIDept.editCard_followup(layerHere);
 		},
@@ -1633,15 +1630,12 @@ const idDept = {
 		function getLiId(layerHere) {
 
 			const listElement = document.getElementById("list_"+layerHere);
-			console.log("listElement =", listElement);
 			const li = listElement.children;
 			
 			for (let i = 0; i < li.length; i++) {
 				const isPointed = li[i].getAttribute("pointed");
-				console.log("isPointed = ", isPointed);
 				if (isPointed == "Y") {
 					const valueOfLi = li[i].id;
-					console.log("valueOfLi =", valueOfLi);
 					return valueOfLi;
 				};			
 			};
