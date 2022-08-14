@@ -376,6 +376,7 @@ const UIDept = {
 					UIDept.showUI("cancelEditCard_btn_"+layerHere);
 					UIDept.showUI("saveNewCard_btn_"+layerHere);
 					UIDept.showUI("removeCard_btn_"+layerHere);
+					console.log("idHere @setupBtnShowOrHideByClassName_li =", idHere);
 					UIDept.setupTextareaModeByClassName_li(idHere, "editing");
 					UIDept.editCard_followup(layerHere);
 					break;
@@ -446,7 +447,10 @@ const UIDept = {
 		},
 	"setupTextareaModeByClassName_li":
 		function setupTextareaModeByClassName_li(idHere, cardMode) {
-			const textareaElement = document.querySelector("li[value='"+idHere+"']").children[0];
+			console.log("idHere =", idHere);
+			const liElement = document.getElementById(idHere);
+			console.log("liElement =", liElement);
+			const textareaElement = liElement.children[0];
 			if (cardMode == "editing") {
 				textareaElement.style.color = COLOR_FOCUSED_YELLOW;
 				textareaElement.style.borderColor = COLOR_FOCUSED_YELLOW;
@@ -472,7 +476,7 @@ const UIDept = {
 		},
 	"setupTextareaReadOnly_li":
 		function setupTextareaReadOnly_li(idHere, trueOrFalse){
-			const textareaElement = document.querySelector("li[value='"+idHere+"']").children[0];
+			const textareaElement = document.querySelector("li[id='"+idHere+"']").children[0];
 			textareaElement.readOnly = trueOrFalse;
 			if(trueOrFalse == false) {
 				setTimeout(()=>{
@@ -569,7 +573,7 @@ const UIDept = {
 	"setupTextareaBorderColorByClass_li":
 		function setupTextareaBorderColorByClass_li(idHere, px, color) {
 			setTimeout(()=>{
-				const selectorTextareaOnCard = document.querySelector("li[value='"+idHere+"']").children[0];
+				const selectorTextareaOnCard = document.querySelector("li[id='"+idHere+"']").children[0];
 				for (let i = 0; i < selectorTextareaOnCard.length; i++) {
 					selectorTextareaOnCard[i].parentNode.style.boxShadow = "0 0 0 " + px + color + " inset";
 				};
@@ -679,7 +683,7 @@ const UIDept = {
 			const id = idDept.getCardId(layerHere);
 			const li = document.getElementsByTagName("li");
 			for (let i = 0; i < li.length; i++) {
-				const idOfLi = li[i].getAttribute("value");
+				const idOfLi = li[i].getAttribute("id");
 				const layerOfLi = idDept.getLayerById(idOfLi);
 				if(layerHere == layerOfLi) {
 					li[i].style.background = "";
@@ -775,7 +779,7 @@ const listDept = {
 				listItem.innerHTML = "<textarea readonly>"+ liValue +"</textarea>";
 				list.appendChild(listItem);
 				const liId = sortedArray[i].id;
-				listItem.setAttribute("value", liId);
+				listItem.setAttribute("id", liId);
 				listItem.setAttribute("layer", layerHere);
 			};
 			listDept.addOpenAddCardLi(layerHere);
@@ -791,7 +795,7 @@ const listDept = {
 			listItem.innerHTML = liValue_addCard;
 			list.appendChild(listItem);
 			const liId_addCard = "addCardBtn_"+layerHere;
-			listItem.setAttribute("value", liId_addCard);
+			listItem.setAttribute("id", liId_addCard);
 			listItem.setAttribute("style", COLORSET_ADDCARD);
 		},
 	"getMappedObject_idEditedDateContents":
@@ -828,8 +832,8 @@ const listDept = {
 
 				v.addEventListener("click",(e)=>{
 
-					const idByLi = e.target.getAttribute("value");
-					const idByTextArea = e.target.parentNode.getAttribute("value");					
+					const idByLi = e.target.getAttribute("id");
+					const idByTextArea = e.target.parentNode.getAttribute("id");					
 
 					const addCardId = "addCardBtn_"+layerHere;
 
@@ -840,7 +844,7 @@ const listDept = {
 						id = idByTextArea;
 					};
 					
-					const textareaElement = document.querySelector("li[value='"+id+"']").children[0];
+					const textareaElement = document.querySelector("li[id='"+id+"']").children[0];
 					const isEditing = textareaElement.getAttribute("readOnly");
 
 					// 편집 모드일 때는 readonly가 null로 표기됨
@@ -1235,26 +1239,102 @@ const updateCardDept = {
 };
 
 const updateLiDept = {
+	"saveEditedLi":
+		function saveEditedLi(layerHere) {
+			const packagedData = updateLiDept.packageEditedLi(layerHere);
+			if (packagedData != null) {
+				updateLiDept.requestUpdateLi(layerHere, packagedData);
+			};
+		},
+	"packageEditedLi":
+		function packageEditedLi(layerHere) {	
+
+			// const resultIsChanged = updateLiDept.monitorIfLiChanged(layerHere);
+			// const monitorResult = updateLiDept.getMoniterResult(layerHere, resultIsChanged);
+			
+			// if (monitorResult) {
+				const packagedData = {};
+				console.log("layerHere =", layerHere);
+				const id = idDept.getLiId(layerHere);
+				packagedData["id"] = id;
+				if (layerHere == "character") {
+					packagedData["parentsId"] = "";
+				} else {
+					const parentsLayer = switchDept.getParentsLayerBySwitchLayer(layerHere);
+					packagedData["parentsId"] = idDept.getLiId(parentsLayer);
+				}
+				packagedData["editedDate"] = supportDept.getTimeStamp();
+				packagedData["contents"] = {};
+		
+				const contents = packagedData["contents"];
+				console.log("id =", id);
+				const pointedLi = document.getElementById(id).children[0];
+				console.log("pointedLi =", pointedLi);
+				contents[layerHere] = pointedLi.value.trim();
+
+				return packagedData;
+			// };
+		},
+	"monitorIfLiChanged":
+		function monitorIfLiChanged(layerHere) {
+			
+			// 현재 UI에 띄워진 값 포착하기
+			const id = idDept.getLiId(layerHere);
+			const value = document.getElementById(layerHere).value.trim();
+			const object = {"id": id, [layerHere]: value};
+
+			// 로컬 데이터에 있는 값 포착하기
+			const arrayWithId = updateLiDept.getMappedObject_idContents(layerHere);
+		
+			// 위 두가지가 같은 경우의 수라면, 수정이 이뤄지지 않은 상태
+			for(let i = 0; i < arrayWithId.length; i++) {
+				if(JSON.stringify(object) === JSON.stringify(arrayWithId[i])) {
+					return false;
+				};
+			};
+			return true;
+		},
+	"getMappedObject_idContents":
+		function getMappedObject_idContents(layerHere) {		
+			const returnArray = [];
+			const eachIdArrayByLayer = idDept.getEveryIdArrayOfLayer(layerHere);
+			eachIdArrayByLayer.forEach(EachId => {
+				const returnObject = {};
+				returnObject["id"] = objectById[EachId].id;
+				returnObject[layerHere] = objectById[EachId].contents[layerHere];
+				returnArray.push(returnObject);
+			});
+			return returnArray;
+		},
+	"getMoniterResult":
+		function getMoniterResult(layerHere, isChangedHere) {
+			if (isChangedHere) {
+				const monitorResultInFunction = monitorDept.monitorLiBlankOrDuplicates(layerHere);
+				return monitorResultInFunction;
+			} else {
+				return true;
+			};
+		},
+	"requestUpdateLi":
+		function requestUpdateLi(layerHere, packagedDataHere) {
+			const inputId = packagedDataHere.id;
+			const idThreadObject = idDept.getIdThreadObjectByPackagedData(layerHere, packagedDataHere);
+			const switchedRef = switchDept.getRefBySwitchLayer(layerHere, idThreadObject);
+			switchedRef.child(inputId)
+			.update(packagedDataHere, (e) => {
+				LtoSDept.request_followupEditedDate(layerHere, packagedDataHere, function(){
+					alert("수정되었습니다.");
+				});
+				console.log("**update completed = ", e);
+			});
+		},
 	"openEditLi":
 		function openEditLi(layerHere) {
-			const id = updateLiDept.clickLi_update(layerHere);
+			const id = idDept.getLiId(layerHere);
+			console.log("id @openEditLi =", id);
 			UIDept.setupBtnShowOrHideByClassName_li(layerHere, id, "editCard");
 			// UIDept.editCard_followup(layerHere);
 		},
-	"clickLi_update":
-		function clickLi_update(layerHere) {
-
-			const li = document.getElementById("list_"+layerHere).children;
-			
-			for (let i = 0; i < li.length; i++) {
-				const isPointed = li[i].getAttribute("pointed");
-				if (isPointed == "Y") {
-					const valueOfLi = li[i].getAttribute("value");
-					return valueOfLi;
-				};			
-			};
-
-		}
 };
 
 const removeCardDept = {
@@ -1302,6 +1382,23 @@ const removeCardDept = {
 const monitorDept = {
 	"monitorCardBlankOrDuplicates":
 		function monitorCardBlankOrDuplicates(layerHere) {
+			const cardValue = document.getElementById(layerHere).value.trim();
+			if (cardValue != "") {		
+				const sameTextArray = monitorDept.getSameTextArray(layerHere, cardValue);
+				if (sameTextArray == undefined) {
+					return true;
+				} else {
+					UIDept.highLightBorder(layerHere, "red");
+					alert("중복된 카드가 있습니다. 내용을 수정해주시기 바랍니다.");
+				};
+			} else {
+				UIDept.highLightBorder(layerHere, "red");
+				alert("카드가 비어있습니다. 내용을 입력해주시기 바랍니다.");
+			};
+			return false;
+		},
+	"monitorLiBlankOrDuplicates":
+		function monitorLiBlankOrDuplicates(layerHere) {
 			const cardValue = document.getElementById(layerHere).value.trim();
 			if (cardValue != "") {		
 				const sameTextArray = monitorDept.getSameTextArray(layerHere, cardValue);
@@ -1531,6 +1628,24 @@ const idDept = {
 			const cardElementId = "cardId_"+layerHere;
 			const result = document.getElementById(cardElementId).value;
 			return result;
+		},
+	"getLiId":
+		function getLiId(layerHere) {
+
+			const listElement = document.getElementById("list_"+layerHere);
+			console.log("listElement =", listElement);
+			const li = listElement.children;
+			
+			for (let i = 0; i < li.length; i++) {
+				const isPointed = li[i].getAttribute("pointed");
+				console.log("isPointed = ", isPointed);
+				if (isPointed == "Y") {
+					const valueOfLi = li[i].id;
+					console.log("valueOfLi =", valueOfLi);
+					return valueOfLi;
+				};			
+			};
+
 		},
 	"getLayerById":
 		function getLayerById(idHere) {
