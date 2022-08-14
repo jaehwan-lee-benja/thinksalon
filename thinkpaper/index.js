@@ -446,9 +446,7 @@ const UIDept = {
 		},
 	"setupTextareaModeByClassName_li":
 		function setupTextareaModeByClassName_li(idHere, cardMode) {
-			console.log("idHere =", idHere);
 			const textareaElement = document.querySelector("li[value='"+idHere+"']").children[0];
-			console.log("textareaElement =", textareaElement);
 			if (cardMode == "editing") {
 				textareaElement.style.color = COLOR_FOCUSED_YELLOW;
 				textareaElement.style.borderColor = COLOR_FOCUSED_YELLOW;
@@ -463,17 +461,6 @@ const UIDept = {
 		},
 	"setupTextareaReadOnly":
 		function setupTextareaReadOnly(layerHere, trueOrFalse){
-			const textareaElement = document.getElementById(layerHere);
-			textareaElement.readOnly = trueOrFalse;
-			if(trueOrFalse == false) {
-				setTimeout(()=>{
-				textareaElement.style.backgroundColor = "#FFF";
-				textareaElement.style.border = "solid 2px" + COLOR_SELECTED_GRAYGREEN;
-				},1);
-			}
-		},
-	"setupTextareaReadOnly_li":
-		function setupTextareaReadOnly_li(layerHere, trueOrFalse){
 			const textareaElement = document.getElementById(layerHere);
 			textareaElement.readOnly = trueOrFalse;
 			if(trueOrFalse == false) {
@@ -591,7 +578,6 @@ const UIDept = {
 	"resizeTextarea":
 		function resizeTextarea() {
 			// 참고: https://stackoverflow.com/questions/454202/creating-a-textarea-with-auto-resize
-			// console.log("resizeTextarea is working");
 			// [질문] editCard가 늘어난 사이즈에서, 다른 li를 눌러서 내용을 볼 때, 크기가 큰 경우, 줄어들지 않음
 			const tx = document.getElementsByTagName("textarea");
 			for (let i = 0; i < tx.length; i++) {
@@ -847,26 +833,35 @@ const listDept = {
 
 					const addCardId = "addCardBtn_"+layerHere;
 
-					if(idByLi == addCardId) {
-
-						newCardDept.openNewCard(layerHere);
-						const parentLayer = switchDept.getParentsLayerBySwitchLayer(layerHere);
-						UIDept.showHideDiv(parentLayer);
-						UIDept.setLiColorByCard(layerHere);
-
-					} else if(idByLi != addCardId || idByTextArea != addCardId) {
-
-						if(idByLi != null) {
-							UIDept.showItOnUI(layerHere, idByLi);
-						} else {
-							UIDept.showItOnUI(layerHere, idByTextArea);
-						};
-						UIDept.showItOnUI_followup(layerHere);
-						UIDept.showHideDiv(layerHere);
-
+					let id = ""
+					if(idByLi != null) {
+						id = idByLi;
+					} else {
+						id = idByTextArea;
 					};
+					
+					const textareaElement = document.querySelector("li[value='"+id+"']").children[0];
+					const isEditing = textareaElement.getAttribute("readOnly");
 
-					UIDept.resizeTextarea();
+					// 편집 모드일 때는 readonly가 null로 표기됨
+					if(isEditing != null) {
+						if(idByLi == addCardId) {
+
+							newCardDept.openNewCard(layerHere);
+							const parentLayer = switchDept.getParentsLayerBySwitchLayer(layerHere);
+							UIDept.showHideDiv(parentLayer);
+							UIDept.setLiColorByCard(layerHere);
+	
+						} else if(idByLi != addCardId || idByTextArea != addCardId) {
+	
+							UIDept.showItOnUI(layerHere, id);
+							UIDept.showItOnUI_followup(layerHere);
+							UIDept.showHideDiv(layerHere);
+	
+						};
+	
+						UIDept.resizeTextarea();
+					};
 
 				});
 			});
@@ -1200,10 +1195,8 @@ const updateCardDept = {
 			const textareaOnCard = document.getElementsByTagName("textarea");
 			for (let i = 0; i < textareaOnCard.length; i++) {
 				textareaOnCard[i].addEventListener("dblclick", function (e) {
-					console.log("openEditCardByDbclick here!");
 					// const layerOfTarget = e.target.parentNode.getAttribute("layer");
 					const layerOfTarget = e.target.getAttribute("id");
-					console.log("layerOfTarget =", layerOfTarget);
 					const idArray = idDept.getEveryIdArrayOfLayer(layerOfTarget);
 					const readOnlyCondition = textareaOnCard[i].readOnly;
 					if(idArray.length > 0 && readOnlyCondition){
@@ -1242,163 +1235,25 @@ const updateCardDept = {
 };
 
 const updateLiDept = {
-	"saveEditedCard":
-		function saveEditedCard(layerHere) {
-			const packagedData = updateCardDept.packageEditedCard(layerHere);
-			if (packagedData != null) {
-				updateCardDept.requestUpdateCard(layerHere, packagedData);
-			};
-		},
-	"packageEditedCard":
-		function packageEditedCard(layerHere) {	
-
-			const resultIsChanged = updateCardDept.monitorIfCardChanged(layerHere);
-			const monitorResult = updateCardDept.getMoniterResult(layerHere, resultIsChanged);
-			
-			if (monitorResult) {
-				const packagedData = {};
-				packagedData["id"] = idDept.getCardId(layerHere);
-				packagedData["parentsId"] = document.getElementById("cardParentsId_"+layerHere).value;
-				packagedData["editedDate"] = supportDept.getTimeStamp();
-				packagedData["contents"] = {};
-		
-				const contents = packagedData["contents"];
-				switch(layerHere){
-					case "character" :
-						contents["character"] = document.getElementById("character").value.trim();
-						break;
-					case "direction" :
-						contents["direction"] = document.getElementById("direction").value.trim();
-						break;
-					case "roadmap" :
-						contents["roadmap"] = document.getElementById("roadmap").value.trim();
-						// contents["roadmapA"] = document.getElementById("roadmapA").value.trim();
-						// contents["roadmapB"] = document.getElementById("roadmapB").value.trim();
-						break;
-					case "actionPlan" :
-						contents["actionPlan"] = document.getElementById("actionPlan").value.trim();
-						break;
-					default: 
-						const layer = null;
-				};
-				return packagedData;
-			};
-		},
-	"monitorIfCardChanged":
-		function monitorIfCardChanged(layerHere) {
-			
-			// 현재 UI에 띄워진 값 포착하기
-			const id = idDept.getCardId(layerHere);
-			const value = document.getElementById(layerHere).value.trim();
-			const object = {"id": id, [layerHere]: value};
-
-			// 로컬 데이터에 있는 값 포착하기
-			const arrayWithId = updateCardDept.getMappedObject_idContents(layerHere);
-		
-			// 위 두가지가 같은 경우의 수라면, 수정이 이뤄지지 않은 상태
-			for(let i = 0; i < arrayWithId.length; i++) {
-				if(JSON.stringify(object) === JSON.stringify(arrayWithId[i])) {
-					return false;
-				};
-			};
-			return true;
-		},
-	"getMappedObject_idContents":
-		function getMappedObject_idContents(layerHere) {		
-			const returnArray = [];
-			const eachIdArrayByLayer = idDept.getEveryIdArrayOfLayer(layerHere);
-			eachIdArrayByLayer.forEach(EachId => {
-				const returnObject = {};
-				returnObject["id"] = objectById[EachId].id;
-				returnObject[layerHere] = objectById[EachId].contents[layerHere];
-				returnArray.push(returnObject);
-			});
-			return returnArray;
-		},
-	"getMoniterResult":
-		function getMoniterResult(layerHere, isChangedHere) {
-			if (isChangedHere) {
-				const monitorResultInFunction = monitorDept.monitorCardBlankOrDuplicates(layerHere);
-				return monitorResultInFunction;
-			} else {
-				return true;
-			};
-		},
-	"requestUpdateCard":
-		function requestUpdateCard(layerHere, packagedDataHere) {
-			const inputId = packagedDataHere.id;
-			const idThreadObject = idDept.getIdThreadObjectByPackagedData(layerHere, packagedDataHere);
-			const switchedRef = switchDept.getRefBySwitchLayer(layerHere, idThreadObject);
-			switchedRef.child(inputId)
-			.update(packagedDataHere, (e) => {
-				LtoSDept.request_followupEditedDate(layerHere, packagedDataHere, function(){
-					alert("수정되었습니다.");
-				});
-				console.log("**update completed = ", e);
-			});
-		},
-	"openEditCardByDbclick":
-		function openEditCardByDbclick() {
-			const textareaOnCard = document.getElementsByTagName("textarea");
-			for (let i = 0; i < textareaOnCard.length; i++) {
-				textareaOnCard[i].addEventListener("dblclick", function (e) {
-					console.log("openEditCardByDbclick here!");
-					// const layerOfTarget = e.target.parentNode.getAttribute("layer");
-					const layerOfTarget = e.target.getAttribute("id");
-					console.log("layerOfTarget =", layerOfTarget);
-					const idArray = idDept.getEveryIdArrayOfLayer(layerOfTarget);
-					const readOnlyCondition = textareaOnCard[i].readOnly;
-					if(idArray.length > 0 && readOnlyCondition){
-						updateCardDept.openEditCard(layerOfTarget);
-						// e.target.readOnly = false;
-					}else if(idArray.length = 0){
-						newCardDept.openNewCard(layerOfTarget);
-					};
-				});
-			};
-		},
 	"openEditLi":
 		function openEditLi(layerHere) {
 			const id = updateLiDept.clickLi_update(layerHere);
-			console.log("id =", id);
 			UIDept.setupBtnShowOrHideByClassName_li(layerHere, id, "editCard");
 			// UIDept.editCard_followup(layerHere);
 		},
 	"clickLi_update":
 		function clickLi_update(layerHere) {
-			console.log("layerHere =", layerHere);
 
 			const li = document.getElementById("list_"+layerHere).children;
-			console.log("li =", li);
 			
 			for (let i = 0; i < li.length; i++) {
 				const isPointed = li[i].getAttribute("pointed");
-				console.log("isPointed =", isPointed);
 				if (isPointed == "Y") {
 					const valueOfLi = li[i].getAttribute("value");
 					return valueOfLi;
 				};			
 			};
 
-		},
-	"cancelEditCard":
-		function cancelEditCard(layerHere) {
-			const cardId = idDept.getCardId(layerHere);
-			if(cardId != ""){
-				UIDept.showItOnUI(layerHere, cardId);
-				const childrenLayer = switchDept.getChildrenLayerBySwitchLayer(layerHere);
-				if (childrenLayer != null) {
-					const idArray = idDept.getEveryIdArrayOfLayer(childrenLayer);
-					if(idArray.length == 0) {
-						UIDept.setupBtnShowOrHideByClassName(childrenLayer, "createFirstCard");
-					};
-				};
-			} else {
-				// 기존 카드가 있는 상태에서, 새 카드 만들기 후, 편집 취소를 할 때의 경우, 최신 lastest 카드를 보여주기
-				// 기존 카드가 없는 경우에는 cancelEditCard 버튼이 나타나지 않음.
-				const id = idDept.getLatestIdByLayer(layerHere);
-				UIDept.showItOnUI(layerHere, id);
-			};
 		}
 };
 
