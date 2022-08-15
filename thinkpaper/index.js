@@ -1329,7 +1329,7 @@ const updateLiDept = {
 			// const resultIsChanged = updateLiDept.monitorIfLiChanged(layerHere);
 			// const monitorResult = updateLiDept.getMoniterResult(layerHere, resultIsChanged);
 			
-			if (monitorResult) {
+			// if (monitorResult) {
 				const packagedData = {};
 				const id = idDept.getLiId(layerHere);
 				packagedData["id"] = id;
@@ -1348,7 +1348,7 @@ const updateLiDept = {
 				contents[layerHere] = pointedTextarea.value.trim();
 
 				return packagedData;
-			};
+			// };
 		},
 	"monitorIfLiChanged":
 		function monitorIfLiChanged(layerHere) {
