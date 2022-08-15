@@ -815,16 +815,17 @@ const listDept = {
 				v.addEventListener("click",(e)=>{
 
 					const idByLi = e.target.getAttribute("id");
-					const idByTextArea = e.target.parentNode.getAttribute("id");					
+					const idByTextarea = e.target.parentNode.getAttribute("id");					
 
 					const addLiId = "addLiBtn_"+layerHere;
 
 					// [질문] 자식을 포함한 유닛을 한번에 적용할수는 없을까?
+					// e.target의 요소가 li or textarea인지 구분하여 정리
 					let id = ""
 					if(idByLi != null) {
 						id = idByLi;
 					} else {
-						id = idByTextArea;
+						id = idByTextarea;
 					};
 					
 					const liElement = document.getElementById(id);
@@ -833,15 +834,19 @@ const listDept = {
 
 					// 편집 모드일 때는 readonly가 null로 표기됨
 					// [질문] 이것을 이렇게 판단하는것이 좋을지?
+					// != null을 지우는 방식으로 하기
+					
 					if(isEditing != null) {
 						if(id != addLiId) {
 
+							console.log("A");
 							UIDept.showItOnUI(layerHere, id);
 							UIDept.showItOnUI_followup(layerHere);
 							UIDept.showHideDiv(layerHere);
 	
 						} else {
 	
+							console.log("B");
 							newCardDept.openNewCard(layerHere);
 							const parentLayer = switchDept.getParentsLayerBySwitchLayer(layerHere);
 							UIDept.showHideDiv(parentLayer);
@@ -859,13 +864,13 @@ const listDept = {
 				v.addEventListener("dblclick",(e)=>{
 					
 					const idByLi = e.target.getAttribute("id");
-					const idByTextArea = e.target.parentNode.getAttribute("id");					
+					const idByTextarea = e.target.parentNode.getAttribute("id");					
 
 					let id = ""
 					if(idByLi != null) {
 						id = idByLi;
 					} else {
-						id = idByTextArea;
+						id = idByTextarea;
 					};
 
 					const liElement = document.getElementById(id);

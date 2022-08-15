@@ -153,6 +153,7 @@ li:active {
     margin: 3rem auto;
     padding: 3rem 0;
     border-Top: 1px solid rgb(220, 220, 220);
+    overflow-x: scroll;
 }
 
 #gridColumn{
