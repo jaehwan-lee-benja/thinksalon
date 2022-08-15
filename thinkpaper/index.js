@@ -794,6 +794,7 @@ const listDept = {
 			list.appendChild(listItem);
 			const liId_addLi = "addLiBtn_"+layerHere;
 			listItem.setAttribute("id", liId_addLi);
+			listItem.setAttribute("layer", layerHere);
 			listItem.setAttribute("style", COLORSET_ADDLI);
 		},
 	"getMappedObject_idEditedDateContents":
@@ -867,6 +868,34 @@ const listDept = {
 
 					};
 
+				});
+
+				v.addEventListener("dblclick",(e)=>{
+
+					console.log("openEditLiByDbclick!");
+					
+					const idByLi = e.target.getAttribute("id");
+					const idByTextArea = e.target.parentNode.getAttribute("id");					
+
+					let id = ""
+					if(idByLi != null) {
+						id = idByLi;
+					} else {
+						id = idByTextArea;
+					};
+
+					const liElement = document.getElementById(id);
+					const textareaElement = liElement.children[0];
+					const layer = liElement.getAttribute("layer");
+					const addLiId = "addLiBtn_"+layer;
+					const isEditing = textareaElement.getAttribute("readOnly");
+
+					if(isEditing != null && id != addLiId){
+						updateLiDept.openEditLi(layer);
+					} else if(isEditing != null && id == addLiId){
+						console.log("id == addLiId");
+						// newCardDept.openNewCard(layerOfTarget);
+					};
 				});
 			});
 		}
@@ -1331,7 +1360,7 @@ const updateLiDept = {
 			const id = idDept.getLiId(layerHere);
 			UIDept.setupBtnShowOrHideByClassName_li(layerHere, id, "editCard");
 			// UIDept.editCard_followup(layerHere);
-		},
+		}
 };
 
 const removeCardDept = {
