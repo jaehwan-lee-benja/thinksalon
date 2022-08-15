@@ -766,7 +766,6 @@ const listDept = {
 			};
 			listDept.addOpenAddCardLi(layerHere);
 			listDept.clickLi(layerHere);
-			updateCardDept.openEditCardByDbclick();
 		},
 	"addOpenAddCardLi":
 		function addOpenAddCardLi(layerHere) {
@@ -883,6 +882,20 @@ const listDept = {
 					};
 				});
 			});
+		},
+	"getLastLi":
+		function getLastLi(layerHere) {
+			const li = document.getElementById("list_"+layerHere).children;
+			
+			const liArray = [];
+			for (let i = 0; i < li.length; i++) {
+				liArray.push(li[i]);
+			};
+
+			const last = liArray[liArray.length - 1];
+			console.log("last =", last);
+			
+			return last;
 		}
 };
 
@@ -1064,15 +1077,15 @@ const newLiDept = {
 			const packagedData = newLiDept.packageNewLi(layerHere);
 			if (packagedData != null) {
 				newLiDept.requestSetLi(layerHere, packagedData);
-				UIDept.showItOnUI_followup(layerHere);
+				// UIDept.showItOnUI_followup(layerHere);
 			};
 		},
-	"packageNewCard":
-		function packageNewCard(layerHere) {
-			const monitorResult = monitorDept.monitorCardBlankOrDuplicates(layerHere);
-			if (monitorResult) {
-				const catchedData = newCardDept.catchContentsDataBySwitchLayer(layerHere);
-				const idNew = newCardDept.getUuidv4();
+	"packageNewLi":
+		function packageNewLi(layerHere) {
+			// const monitorResult = monitorDept.monitorCardBlankOrDuplicates(layerHere);
+			// if (monitorResult) {
+				const catchedData = newLiDept.catchContentsDataBySwitchLayer(layerHere);
+				const idNew = newLiDept.getUuidv4();
 				catchedData["id"] = idNew;
 				catchedData["children"] = "";
 				catchedData["createdDate"] = supportDept.getTimeStamp();
@@ -1080,35 +1093,26 @@ const newLiDept = {
 				catchedData["main"] = "";
 				catchedData["layer"] = layerHere;
 				return catchedData;
-			};
+			// };
 		},
 	"catchContentsDataBySwitchLayer":
 		function catchContentsDataBySwitchLayer(layerHere) {
 			
 			const catchContentsData = {};
 			catchContentsData["contents"] = {};
-			const contents = catchContentsData["contents"];
-		
-			switch(layerHere){
-				case "character" :
-					catchContentsData["parentsId"] = "";
-					contents["character"] = document.getElementById("character").value.trim();
-					break;
-				case "direction" :
-					catchContentsData["parentsId"] = idDept.getCardId("character");
-					contents["direction"] = document.getElementById("direction").value.trim();
-					break;
-				case "roadmap" :
-					catchContentsData["parentsId"] = idDept.getCardId("direction");
-					contents["roadmap"] = document.getElementById("roadmap").value.trim();
-					break;
-				case "actionPlan" :
-					catchContentsData["parentsId"] = idDept.getCardId("roadmap");
-					contents["actionPlan"] = document.getElementById("actionPlan").value.trim();
-					break;
-				default:
-					const layerHere = null;
+			
+			if (layerHere == "character") {
+				catchContentsData["parentsId"] = "";
+			} else {
+				const parentsLayer = switchDept.getParentsLayerBySwitchLayer(layerHere);
+				catchContentsData["parentsId"] = idDept.getLiId(parentsLayer);
 			};
+
+			const contents = catchContentsData["contents"];
+			const lastLiContents = listDept.getLastLi(layerHere).children[0].value;
+			console.log("lastLiContents = ", lastLiContents);
+			contents[layerHere] = lastLiContents.trim();
+
 			return catchContentsData;
 		},
 	"getUuidv4":
@@ -1321,8 +1325,9 @@ const updateLiDept = {
 	"packageEditedLi":
 		function packageEditedLi(layerHere) {	
 
-			const resultIsChanged = updateLiDept.monitorIfLiChanged(layerHere);
-			const monitorResult = updateLiDept.getMoniterResult(layerHere, resultIsChanged);
+			// CRUD 후 진행하기
+			// const resultIsChanged = updateLiDept.monitorIfLiChanged(layerHere);
+			// const monitorResult = updateLiDept.getMoniterResult(layerHere, resultIsChanged);
 			
 			if (monitorResult) {
 				const packagedData = {};
