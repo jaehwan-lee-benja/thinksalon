@@ -177,6 +177,12 @@ const UIDept = {
 		function showEmptyCard(layerHere) {
 			document.getElementById(layerHere).value = "";
 		},
+	"showEmptyLi": 
+		function showEmptyLi(idHere) {
+			const liElement = document.getElementById(idHere);
+			const textareaElement = liElement.children[0];
+			textareaElement.value = "";
+		},
 	"showItOnUI": 
 		function showItOnUI(layerHere, idHere) {
 			if (idHere != null) {
@@ -345,8 +351,7 @@ const UIDept = {
 				case "openNewCard" :
 					UIDept.showUI("saveNewCard_btn_"+layerHere);
 					UIDept.showUI("cancelEditCard_btn_"+layerHere);
-					// UIDept.showGuideMessage_forFirstCard();
-					UIDept.setupTextareaModeByClassName(layerHere, "editing");
+					UIDept.setupTextareaModeByClassName_li(idHere, "editing");
 					break;
 				case "readCard" :
 					UIDept.showUI("openEditCard_btn_"+layerHere);
@@ -874,7 +879,7 @@ const listDept = {
 						updateLiDept.openEditLi(layer);
 					} else if(isEditing != null && id == addLiId){
 						console.log("id == addLiId");
-						// newCardDept.openNewCard(layerOfTarget);
+						newLiDept.openNewLi(layer, id);
 					};
 				});
 			});
@@ -1033,6 +1038,118 @@ const newCardDept = {
 					break;
 				case "roadmap" :
 					newCardDept.openNewCard_followupBySwitchLayer("actionPlan");
+					break;
+				case "actionPlan" :
+					// 해당없음
+					break;
+				default : null;
+			};
+		},
+	"openNewCard_followupBySwitchLayer":
+		function openNewCard_followupBySwitchLayer(layer1, layer2, layer3, layer4) {
+			const idThreadObjectKeysArray = [layer1, layer2, layer3, layer4];
+			idThreadObjectKeysArray.forEach(eachLayer => {
+				if (eachLayer != undefined) {
+					UIDept.showEmptyCard(eachLayer);
+					UIDept.setupBtnShowOrHideByClassName(eachLayer, "inactiveCard");
+					UIDept.hideUI("list_"+eachLayer);
+				};
+			});
+		},
+};
+
+const newLiDept = {
+	"saveNewLi":
+		function saveNewLi(layerHere) {
+			const packagedData = newLiDept.packageNewLi(layerHere);
+			if (packagedData != null) {
+				newLiDept.requestSetLi(layerHere, packagedData);
+				UIDept.showItOnUI_followup(layerHere);
+			};
+		},
+	"packageNewCard":
+		function packageNewCard(layerHere) {
+			const monitorResult = monitorDept.monitorCardBlankOrDuplicates(layerHere);
+			if (monitorResult) {
+				const catchedData = newCardDept.catchContentsDataBySwitchLayer(layerHere);
+				const idNew = newCardDept.getUuidv4();
+				catchedData["id"] = idNew;
+				catchedData["children"] = "";
+				catchedData["createdDate"] = supportDept.getTimeStamp();
+				catchedData["editedDate"] = supportDept.getTimeStamp();
+				catchedData["main"] = "";
+				catchedData["layer"] = layerHere;
+				return catchedData;
+			};
+		},
+	"catchContentsDataBySwitchLayer":
+		function catchContentsDataBySwitchLayer(layerHere) {
+			
+			const catchContentsData = {};
+			catchContentsData["contents"] = {};
+			const contents = catchContentsData["contents"];
+		
+			switch(layerHere){
+				case "character" :
+					catchContentsData["parentsId"] = "";
+					contents["character"] = document.getElementById("character").value.trim();
+					break;
+				case "direction" :
+					catchContentsData["parentsId"] = idDept.getCardId("character");
+					contents["direction"] = document.getElementById("direction").value.trim();
+					break;
+				case "roadmap" :
+					catchContentsData["parentsId"] = idDept.getCardId("direction");
+					contents["roadmap"] = document.getElementById("roadmap").value.trim();
+					break;
+				case "actionPlan" :
+					catchContentsData["parentsId"] = idDept.getCardId("roadmap");
+					contents["actionPlan"] = document.getElementById("actionPlan").value.trim();
+					break;
+				default:
+					const layerHere = null;
+			};
+			return catchContentsData;
+		},
+	"getUuidv4":
+		function getUuidv4() {
+			return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+			(c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+			);
+		},
+	"requestSetLi": 
+		function requestSetLi(layerHere, packagedDataHere) {
+			const inputId = packagedDataHere.id;
+			const idThreadObject = idDept.getIdThreadObjectByPackagedData(layerHere, packagedDataHere);
+
+			const switchedRef = switchDept.getRefBySwitchLayer(layerHere, idThreadObject);
+
+			switchedRef.child(inputId)
+			.set(packagedDataHere)
+			.then((e) => {
+				LtoSDept.request_followupEditedDate(layerHere, packagedDataHere, function(){
+					alert("저장되었습니다.");
+				});
+			});
+
+		},
+	"openNewLi":
+		function openNewLi(layerHere, idHere) {
+			UIDept.showEmptyLi(idHere);
+			UIDept.setupBtnShowOrHideByClassName_li(layerHere, idHere, "openNewCard");
+			// newLiDept.openNewLi_followup(layerHere);
+		},
+	"openNewLi_followup":
+		function openNewLi_followup(layerHere) {			
+			switch(layerHere) {
+				case "character" :
+					newLiDept.openNewCard_followupBySwitchLayer("direction", "roadmap", "actionPlan");
+					break;
+				case "direction" :
+					newLiDept.openNewCard_followupBySwitchLayer("roadmap", "actionPlan");
+					break;
+				case "roadmap" :
+					newLiDept.openNewCard_followupBySwitchLayer("actionPlan");
 					break;
 				case "actionPlan" :
 					// 해당없음
