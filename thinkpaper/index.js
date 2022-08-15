@@ -107,11 +107,9 @@ const StoLDept = {
 					};
 					listDept.updateList(eachLayer);
 					UIDept.setupBtnShowOrHideByClassName(eachLayer, "readCard");
-					// selectboxDept.updateSelectbox(eachLayer);
 				} else {
 					listDept.updateList(eachLayer);
 					UIDept.showItIfNoCard(eachLayer);
-					// selectboxDept.updateSelectbox(eachLayer);
 				};
 				UIDept.setLiColorByCard(eachLayer);
 			});
@@ -216,7 +214,6 @@ const UIDept = {
 				} else {
 					UIDept.showItIfNoCard(eachLayer);
 				};
-				// selectboxDept.updateSelectbox(eachLayer);
 				listDept.updateList(eachLayer);
 			});
 		},
@@ -255,13 +252,10 @@ const UIDept = {
 					idDept.emptyCardId(layerHere);
 					UIDept.showUI("saveNewCard_btn_"+layerHere);
 					UIDept.setupTextareaModeByClassName(layerHere, "editing");
-					// 220727 아래의 경우의수가 발생하는지 체크하기
-					// UIDept.editCard_followup(layerHere);
 					break;
 				case "openNewCard" :
 					UIDept.showUI("saveNewCard_btn_"+layerHere);
 					UIDept.showUI("cancelEditCard_btn_"+layerHere);
-					// UIDept.showGuideMessage_forFirstCard();
 					UIDept.setupTextareaModeByClassName(layerHere, "editing");
 					break;
 				case "readCard" :
@@ -279,18 +273,9 @@ const UIDept = {
 					UIDept.editCard_followup(layerHere);
 					break;
 				case "inactiveCard" :
-					// const parentsLayer = switchDept.getParentsLayerBySwitchLayer(layerHere);
-					// const isReadingMode = document.getElementById(parentsLayer).readOnly;
-					// if (isReadingMode) {
-						// case "createFirstCard"의 변형 버전
-						// idDept.emptyCardId(layerHere);
-						// UIDept.showUI("saveNewCard_btn_"+layerHere);
-						// UIDept.setupTextareaModeByClassName(layerHere, "editing");
-					// } else {
 						idDept.emptyCardId(layerHere);
 						UIDept.setupTextareaModeByClassName(layerHere, "reading");
 						document.getElementById("alert_txt_"+layerHere).innerHTML = "(상위 카드 작성 후, 작성 가능)";
-					// };
 					break;
 				default:
 					const state = null;
@@ -356,8 +341,6 @@ const UIDept = {
 					idDept.emptyCardId(layerHere);
 					UIDept.showUI("saveNewCard_btn_"+layerHere);
 					UIDept.setupTextareaModeByClassName(layerHere, "editing");
-					// 220727 아래의 경우의수가 발생하는지 체크하기
-					// UIDept.editCard_followup(layerHere);
 					break;
 				case "openNewCard" :
 					UIDept.showUI("saveNewCard_btn_"+layerHere);
@@ -612,7 +595,6 @@ const UIDept = {
 					UIDept.setupBtnShowOrHideByClassName(layerHere, "inactiveCard");
 				};
 			};
-			// UIDept.showGuideMessage_forFirstCard();
 		},
 	"showGuideMessage_forFirstCard":
 		function showGuideMessage_forFirstCard() {
@@ -725,13 +707,11 @@ const UIDept = {
 		},
 	"setMainImage":
 		function setMainImage() {
-			// [질문] div 구조 고민
 			const divSelector = document.getElementsByClassName("girdColumnForLayer");
 			for (let i = 0; i < divSelector.length; i++) {
 				divSelector[i].addEventListener("mouseover", function (e) {
 					const layer = e.currentTarget.getAttribute("id").substr(4);
 					UIDept.showHideMainImage(layer);
-					// UIDept.setLayerHighlight(layer, true);
 				});
 				divSelector[i].addEventListener("mouseout", function (e) {
 					const layer = e.currentTarget.getAttribute("id").substr(4);
@@ -740,7 +720,6 @@ const UIDept = {
 					UIDept.hideUI("image03");
 					UIDept.hideUI("image04");
 					UIDept.hideUI("image05");
-					// UIDept.setLayerHighlight(layer, false);				
 				});
 			};
 		},
@@ -836,6 +815,7 @@ const listDept = {
 
 					const addLiId = "addLiBtn_"+layerHere;
 
+					// [질문] 자식을 포함한 유닛을 한번에 적용할수는 없을까?
 					let id = ""
 					if(idByLi != null) {
 						id = idByLi;
@@ -848,6 +828,7 @@ const listDept = {
 					const isEditing = textareaElement.getAttribute("readOnly");
 
 					// 편집 모드일 때는 readonly가 null로 표기됨
+					// [질문] 이것을 이렇게 판단하는것이 좋을지?
 					if(isEditing != null) {
 						if(id != addLiId) {
 
@@ -870,9 +851,8 @@ const listDept = {
 
 				});
 
+				// [질문] eventListener 이렇게 적용해도 되는지?
 				v.addEventListener("dblclick",(e)=>{
-
-					console.log("openEditLiByDbclick!");
 					
 					const idByLi = e.target.getAttribute("id");
 					const idByTextArea = e.target.parentNode.getAttribute("id");					
@@ -901,57 +881,6 @@ const listDept = {
 		}
 };
 
-const selectboxDept = {
-	"updateSelectbox":
-		function updateSelectbox(layerHere) {
-
-			const selectboxId = "selectbox_"+layerHere;
-			const selectbox = document.getElementById(selectboxId);
-		
-			// selectbox 초기화
-			for (let i = selectbox.options.length - 1; i >= 0; i--) {
-				selectbox.remove(i + 1);
-			};
-		
-			// Array 만들기
-			const mappedArray = listDept.getMappedObject_idEditedDateContents(layerHere);
-		
-			// selectbox option list 순서 잡기(최근 편집 순서)
-			const sortedArray = listDept.sortingArray(mappedArray);
-		
-			// <option> 만들어서, Array 넣기
-			for (let i = 0; i < sortedArray.length; i++) {
-				const option = document.createElement("OPTION");
-				const optionId = sortedArray[i].id;
-				const optionValue = sortedArray[i][layerHere];
-				const txt = document.createTextNode(optionValue);
-				const mainId = mainCardDept.getMainId();
-				if(optionId == mainId) {
-					const mainOptionMark = optionValue + " ★";
-					const mainTxt = document.createTextNode(mainOptionMark);
-					option.appendChild(mainTxt);
-				} else {
-					option.appendChild(txt);
-				};
-				option.setAttribute("value", optionId);
-				option.setAttribute("innerHTML", optionValue);
-				selectbox.insertBefore(option, selectbox.lastChild);
-			};
-		
-			listDept.updateList(layerHere, sortedArray);
-		
-		},
-	"selectBySelectbox":
-		function selectBySelectbox(layerHere) {
-			const selectboxId = "selectbox_"+layerHere;
-			const id = document.getElementById(selectboxId).value;
-			if(id != SELECTBOX_BPTITLE_VALUE_INIT) {
-				UIDept.showItOnUI(layerHere, id);
-				UIDept.showItOnUI_followup(layerHere);
-			};
-		}
-};
-
 const mainCardDept = {
 	"setMainCard":
 		function setMainCard() {
@@ -962,7 +891,6 @@ const mainCardDept = {
 		function gotoMainCard() {
 			const mainId = mainCardDept.getMainId();
 			UIDept.showItOnUI("character", mainId);
-			// selectboxDept.updateSelectbox("character");
 			listDept.updateList("character");
 		},
 	"getMainId":
@@ -1050,8 +978,6 @@ const newCardDept = {
 				case "roadmap" :
 					catchContentsData["parentsId"] = idDept.getCardId("direction");
 					contents["roadmap"] = document.getElementById("roadmap").value.trim();
-					// contents["roadmapA"] = document.getElementById("roadmapA").value.trim();
-					// contents["roadmapB"] = document.getElementById("roadmapB").value.trim();
 					break;
 				case "actionPlan" :
 					catchContentsData["parentsId"] = idDept.getCardId("roadmap");
