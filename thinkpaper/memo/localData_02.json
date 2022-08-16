@@ -1,0 +1,38 @@
+{
+    "userData": {
+        "uid": "",
+        "name": "",
+        "email": "",
+        "phone": "",
+        "signedinDate": "",
+        "visitCounts": "",
+        "visitRate": ""
+    },
+    "areaB": {
+        "children": {
+            "#$Id": {
+                "id": "",
+                "parentsId": "",
+                "createdDate": "",
+                "editedDate": "",
+                "main": "",
+                "layer": "layer00",
+                "row": "",
+                "contents": {"txt":""},
+                "children": {
+                    "#$Id": {
+                        "id": "",
+                        "parentsId": "",
+                        "createdDate": "",
+                        "editedDate": "",
+                        "main": "",
+                        "layer": "layer01",
+                        "row": "",
+                        "contents": {"txt":""},
+                        "children": {}
+                    }
+                }
+            }
+        }
+    }
+}
