@@ -16,7 +16,7 @@
                 "createdDate": "",
                 "editedDate": "",
                 "main": "",
-                "layer": "layer00",
+                "layer": "character",
                 "row": "",
                 "contents": {"txt":""},
                 "children": {
@@ -26,10 +26,22 @@
                         "createdDate": "",
                         "editedDate": "",
                         "main": "",
-                        "layer": "layer01",
+                        "layer": "direction",
                         "row": "",
                         "contents": {"txt":""},
-                        "children": {}
+                        "children": {
+                            "#$Id": {
+                                "id": "",
+                                "parentsId": "",
+                                "createdDate": "",
+                                "editedDate": "",
+                                "main": "",
+                                "layer": "roadmap",
+                                "row": "",
+                                "contents": {"txt":""},
+                                "children": {}
+                            }                    
+                        }
                     }
                 }
             }
