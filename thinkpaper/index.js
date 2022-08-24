@@ -96,7 +96,7 @@ const StoLDept = {
 				if(latestIdOfEachLayer != null) {
 					UIDept.showItOnUI(eachLayer, latestIdOfEachLayer);
 					listDept.updateList(eachLayer);
-					UIDept.setupBtnShowOrHideByClassName(eachLayer, "readCard");
+					UIDept.setupBtnShowOrHideByClassName_li(eachLayer, "readCard");
 				} else {
 					listDept.updateList(eachLayer);
 					UIDept.showItIfNoCard(eachLayer);
@@ -176,13 +176,12 @@ const UIDept = {
 	"showItOnUI": 
 		function showItOnUI(layerHere, idHere) {
 			if (idHere != null) {
-				document.getElementById(layerHere).value = objectById[idHere].contents["txt"];
 				document.getElementById("cardId_"+layerHere).value = objectById[idHere].id;
 				document.getElementById("cardParentsId_"+layerHere).value = objectById[idHere].parentsId;
 			} else {
 				UIDept.showEmptyCard(layerHere);
 			};
-			UIDept.setupBtnShowOrHideByClassName(layerHere,"readCard");
+			UIDept.setupBtnShowOrHideByClassName_li(layerHere,"readCard");
 			UIDept.setLiColorByCard(layerHere);
 		},
 	"showItOnUI_followup":
@@ -440,21 +439,21 @@ const UIDept = {
 					// layer3이 아닌 경우
 					const childrenIdArray = idDept.getEveryIdArrayOfLayer(childrenLayer);
 					if(childrenIdArray.length == 0) {
-						UIDept.setupBtnShowOrHideByClassName(childrenLayer, "inactiveCard");
+						UIDept.setupBtnShowOrHideByClassName_li(childrenLayer, "inactiveCard");
 					} else {
 						const childrenCardId = idDept.getCardId(childrenLayer);
 						if(childrenCardId != "") {
 							UIDept.showItOnUI(childrenLayer, childrenCardId);
 						} else {
 							// 하위카드 '새 리스트 추가' + 상위 카드 '기존 카드 편집'시, 하위 카드의 cardId가 없는 상태로, inactive 처리 필요
-							UIDept.setupBtnShowOrHideByClassName(childrenLayer, "inactiveCard");
+							UIDept.setupBtnShowOrHideByClassName_li(childrenLayer, "inactiveCard");
 						}
 					};
 				} else {
 					// layer3인 경우
 					const idArray = idDept.getEveryIdArrayOfLayer(eachLayer);
 					if(idArray.length == 0) {
-						UIDept.setupBtnShowOrHideByClassName(eachLayer, "inactiveCard");
+						UIDept.setupBtnShowOrHideByClassName_li(eachLayer, "inactiveCard");
 					};
 				};
 			});
@@ -482,7 +481,7 @@ const UIDept = {
 				// layer0인 경우를 제외하고, 상위 카드를 reading으로 바꾸기
 				if (eachLayer != "layer0") {
 					const parentsLayer = switchDept.getParentsLayerBySwitchLayer(eachLayer);
-					UIDept.setupBtnShowOrHideByClassName(parentsLayer, "readCard");
+					UIDept.setupBtnShowOrHideByClassName_li(parentsLayer, "readCard");
 					};
 			});
 
@@ -527,7 +526,7 @@ const UIDept = {
 		
 			if(layerHere == "layer0") {
 				UIDept.editCard_followup(layerHere);
-				UIDept.setupBtnShowOrHideByClassName(layerHere,"createFirstCard");
+				UIDept.setupBtnShowOrHideByClassName_li(layerHere,"createFirstCard");
 			} else {
 				// layer1 카드부터는 부모 레이어가 0이 아닌 경우에만, showEmptyCard(=createFirstCard)를 진행한다.
 				const parentLayer = switchDept.getParentsLayerBySwitchLayer(layerHere);
@@ -535,9 +534,9 @@ const UIDept = {
 		
 				if(parentsIdArrayLength != 0) {
 					UIDept.editCard_followup(layerHere);
-					UIDept.setupBtnShowOrHideByClassName(layerHere,"createFirstCard");
+					UIDept.setupBtnShowOrHideByClassName_li(layerHere,"createFirstCard");
 				} else {
-					UIDept.setupBtnShowOrHideByClassName(layerHere, "inactiveCard");
+					UIDept.setupBtnShowOrHideByClassName_li(layerHere, "inactiveCard");
 				};
 			};
 		},
@@ -914,7 +913,7 @@ const newCardDept = {
 			const idArray = idDept.getEveryIdArrayOfLayer(layerHere);
 			if (idArray.length != 0) {
 				UIDept.showEmptyCard(layerHere);
-				UIDept.setupBtnShowOrHideByClassName(layerHere,"openNewCard");
+				UIDept.setupBtnShowOrHideByClassName_li(layerHere,"openNewCard");
 				newCardDept.openNewCard_followup(layerHere);
 			} else {
 				UIDept.showItIfNoCard(layerHere);
@@ -944,7 +943,7 @@ const newCardDept = {
 			idThreadObjectKeysArray.forEach(eachLayer => {
 				if (eachLayer != undefined) {
 					UIDept.showEmptyCard(eachLayer);
-					UIDept.setupBtnShowOrHideByClassName(eachLayer, "inactiveCard");
+					UIDept.setupBtnShowOrHideByClassName_li(eachLayer, "inactiveCard");
 					UIDept.hideUI("list_"+eachLayer);
 				};
 			});
@@ -1046,7 +1045,7 @@ const newLiDept = {
 			idThreadObjectKeysArray.forEach(eachLayer => {
 				if (eachLayer != undefined) {
 					UIDept.showEmptyCard(eachLayer);
-					UIDept.setupBtnShowOrHideByClassName(eachLayer, "inactiveCard");
+					UIDept.setupBtnShowOrHideByClassName_li(eachLayer, "inactiveCard");
 					UIDept.hideUI("list_"+eachLayer);
 				};
 			});
@@ -1149,7 +1148,7 @@ const updateCardDept = {
 		},
 	"openEditCard":
 		function openEditCard(layerHere) {
-			UIDept.setupBtnShowOrHideByClassName(layerHere,"editCard");
+			UIDept.setupBtnShowOrHideByClassName_li(layerHere,"editCard");
 			UIDept.editCard_followup(layerHere);
 		},
 	"cancelEditCard":
@@ -1161,7 +1160,7 @@ const updateCardDept = {
 				if (childrenLayer != null) {
 					const idArray = idDept.getEveryIdArrayOfLayer(childrenLayer);
 					if(idArray.length == 0) {
-						UIDept.setupBtnShowOrHideByClassName(childrenLayer, "createFirstCard");
+						UIDept.setupBtnShowOrHideByClassName_li(childrenLayer, "createFirstCard");
 					};
 				};
 			} else {
