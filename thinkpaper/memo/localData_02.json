@@ -8,7 +8,7 @@
         "visitCounts": "",
         "visitRate": ""
     },
-    "areaB": {
+    "bigPicture": {
         "children": {
             "#$Id": {
                 "id": "",
@@ -16,34 +16,10 @@
                 "createdDate": "",
                 "editedDate": "",
                 "main": "",
-                "layer": "character",
+                "layer": "",
                 "row": "",
                 "contents": {"txt":""},
-                "children": {
-                    "#$Id": {
-                        "id": "",
-                        "parentsId": "",
-                        "createdDate": "",
-                        "editedDate": "",
-                        "main": "",
-                        "layer": "direction",
-                        "row": "",
-                        "contents": {"txt":""},
-                        "children": {
-                            "#$Id": {
-                                "id": "",
-                                "parentsId": "",
-                                "createdDate": "",
-                                "editedDate": "",
-                                "main": "",
-                                "layer": "roadmap",
-                                "row": "",
-                                "contents": {"txt":""},
-                                "children": {}
-                            }                    
-                        }
-                    }
-                }
+                "children": { }
             }
         }
     }
