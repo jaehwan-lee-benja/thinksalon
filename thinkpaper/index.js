@@ -54,7 +54,9 @@ const StoLDept = {
 	"requestReadBigPicture":
 		function requestReadBigPicture(user) {
 
-			const userRef = db.ref("users").child(user.uid).child("bigPicture");
+			const userRef = db.ref("users")
+							.child(user.uid)
+							.child("bigPicture");
 			
 			userRef.on("value", (snapshot) => {
 				console.log("**===== .on is here =====");
@@ -80,28 +82,8 @@ const StoLDept = {
 				requestReadIdAndObjectFromChildren(v);
 				// console.log('**objectById >>',objectById)
 		
-				StoLDept.showItOnUI_latest();
+				UIDept.showItOnUI();
 
-			});
-		},
-	"showItOnUI_latest":
-		function showItOnUI_latest() {
-		
-			const idThreadObjectKeysArray = ["layer0", "layer1", "layer2", "layer3"];
-
-			idThreadObjectKeysArray.forEach(eachLayer => {
-
-				const latestIdOfEachLayer = idDept.getLatestIdByLayer(eachLayer);
-				
-				if(latestIdOfEachLayer != null) {
-					UIDept.showItOnUI(eachLayer, latestIdOfEachLayer);
-					listDept.updateList(eachLayer);
-					UIDept.setupBtnShowOrHideByClassName_li(eachLayer, "readCard");
-				} else {
-					listDept.updateList(eachLayer);
-					UIDept.showItIfNoCard(eachLayer);
-				};
-				UIDept.setLiColorByCard(eachLayer);
 			});
 		}
 };
@@ -174,13 +156,7 @@ const UIDept = {
 			textareaElement.value = "";
 		},
 	"showItOnUI": 
-		function showItOnUI(layerHere, idHere) {
-			if (idHere != null) {
-				document.getElementById("cardId_"+layerHere).value = objectById[idHere].id;
-				document.getElementById("cardParentsId_"+layerHere).value = objectById[idHere].parentsId;
-			} else {
-				UIDept.showEmptyCard(layerHere);
-			};
+		function showItOnUI(layerHere) {
 			UIDept.setupBtnShowOrHideByClassName_li(layerHere,"readCard");
 			UIDept.setLiColorByCard(layerHere);
 		},
@@ -604,7 +580,7 @@ const UIDept = {
 		},
 	"setLiColorByCard":
 		function setLiColorByCard(layerHere) {
-			const id = idDept.getCardId(layerHere);
+			const id = idDept.getCardId(layerHere); // first number li로 바꾸기
 			const li = document.getElementsByTagName("li");
 			for (let i = 0; i < li.length; i++) {
 				const idOfLi = li[i].getAttribute("id");
@@ -832,124 +808,6 @@ const listDept = {
 		}
 };
 
-const newCardDept = {
-	"saveNewCard":
-		function saveNewCard(layerHere) {
-			const packagedData = newCardDept.packageNewCard(layerHere);
-			if (packagedData != null) {
-				newCardDept.requestSetCard(layerHere, packagedData);
-				UIDept.showItOnUI_followup(layerHere);
-			};
-		},
-	"packageNewCard":
-		function packageNewCard(layerHere) {
-			const monitorResult = monitorDept.monitorCardBlankOrDuplicates(layerHere);
-			if (monitorResult) {
-				const catchedData = newCardDept.catchContentsDataBySwitchLayer(layerHere);
-				const idNew = newCardDept.getUuidv4();
-				catchedData["id"] = idNew;
-				catchedData["children"] = "";
-				catchedData["createdDate"] = supportDept.getTimeStamp();
-				catchedData["editedDate"] = supportDept.getTimeStamp();
-				catchedData["main"] = "";
-				catchedData["layer"] = layerHere;
-				return catchedData;
-			};
-		},
-	"catchContentsDataBySwitchLayer":
-		function catchContentsDataBySwitchLayer(layerHere) {
-			
-			const catchContentsData = {};
-			catchContentsData["contents"] = {};
-			const contents = catchContentsData["contents"];
-		
-			switch(layerHere){
-				case "layer0" :
-					catchContentsData["parentsId"] = "";
-					contents["txt"] = document.getElementById("layer0").value.trim();
-					break;
-				case "layer1" :
-					catchContentsData["parentsId"] = idDept.getCardId("layer0");
-					contents["txt"] = document.getElementById("layer1").value.trim();
-					break;
-				case "layer2" :
-					catchContentsData["parentsId"] = idDept.getCardId("layer1");
-					contents["txt"] = document.getElementById("layer2").value.trim();
-					break;
-				case "layer3" :
-					catchContentsData["parentsId"] = idDept.getCardId("layer2");
-					contents["txt"] = document.getElementById("layer3").value.trim();
-					break;
-				default:
-					const layerHere = null;
-			};
-			return catchContentsData;
-		},
-	"getUuidv4":
-		function getUuidv4() {
-			return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
-			(c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
-			);
-		},
-	"requestSetCard": 
-		function requestSetCard(layerHere, packagedDataHere) {
-			const inputId = packagedDataHere.id;
-			const idThreadObject = idDept.getIdThreadObjectByPackagedData(layerHere, packagedDataHere);
-
-			const switchedRef = switchDept.getRefBySwitchLayer(layerHere, idThreadObject);
-
-			switchedRef.child(inputId)
-			.set(packagedDataHere)
-			.then((e) => {
-				LtoSDept.request_followupEditedDate(layerHere, packagedDataHere, function(){
-					alert("저장되었습니다.");
-				});
-			});
-
-		},
-	"openNewCard":
-		function openNewCard(layerHere) {
-			document.getElementById("cardId_"+layerHere).value = "";
-			const idArray = idDept.getEveryIdArrayOfLayer(layerHere);
-			if (idArray.length != 0) {
-				UIDept.showEmptyCard(layerHere);
-				UIDept.setupBtnShowOrHideByClassName_li(layerHere,"openNewCard");
-				newCardDept.openNewCard_followup(layerHere);
-			} else {
-				UIDept.showItIfNoCard(layerHere);
-			}
-		},
-	"openNewCard_followup":
-		function openNewCard_followup(layerHere) {			
-			switch(layerHere) {
-				case "layer0" :
-					newCardDept.openNewCard_followupBySwitchLayer("layer1", "layer2", "layer3");
-					break;
-				case "layer1" :
-					newCardDept.openNewCard_followupBySwitchLayer("layer2", "layer3");
-					break;
-				case "layer2" :
-					newCardDept.openNewCard_followupBySwitchLayer("layer3");
-					break;
-				case "layer3" :
-					// 해당없음
-					break;
-				default : null;
-			};
-		},
-	"openNewCard_followupBySwitchLayer":
-		function openNewCard_followupBySwitchLayer(layer1, layer2, layer3, layer4) {
-			const idThreadObjectKeysArray = [layer1, layer2, layer3, layer4];
-			idThreadObjectKeysArray.forEach(eachLayer => {
-				if (eachLayer != undefined) {
-					UIDept.showEmptyCard(eachLayer);
-					UIDept.setupBtnShowOrHideByClassName_li(eachLayer, "inactiveCard");
-					UIDept.hideUI("list_"+eachLayer);
-				};
-			});
-		},
-};
-
 const newLiDept = {
 	"saveNewLi":
 		function saveNewLi(layerHere) {
@@ -1052,126 +910,6 @@ const newLiDept = {
 		},
 };
 
-const updateCardDept = {
-	"saveEditedCard":
-		function saveEditedCard(layerHere) {
-			const packagedData = updateCardDept.packageEditedCard(layerHere);
-			if (packagedData != null) {
-				updateCardDept.requestUpdateCard(layerHere, packagedData);
-			};
-		},
-	"packageEditedCard":
-		function packageEditedCard(layerHere) {	
-
-			const resultIsChanged = updateCardDept.monitorIfCardChanged(layerHere);
-			const monitorResult = updateCardDept.getMoniterResult(layerHere, resultIsChanged);
-			
-			if (monitorResult) {
-				const packagedData = {};
-				packagedData["id"] = idDept.getCardId(layerHere);
-				packagedData["parentsId"] = document.getElementById("cardParentsId_"+layerHere).value;
-				packagedData["editedDate"] = supportDept.getTimeStamp();
-				packagedData["contents"] = {};
-		
-				const contents = packagedData["contents"];
-				switch(layerHere){
-					case "layer0" :
-						contents["txt"] = document.getElementById("layer0").value.trim();
-						break;
-					case "layer1" :
-						contents["txt"] = document.getElementById("layer1").value.trim();
-						break;
-					case "layer2" :
-						contents["txt"] = document.getElementById("layer2").value.trim();
-						break;
-					case "layer3" :
-						contents["txt"] = document.getElementById("layer3").value.trim();
-						break;
-					default: 
-						const layer = null;
-				};
-				return packagedData;
-			};
-		},
-	"monitorIfCardChanged":
-		function monitorIfCardChanged(layerHere) {
-			
-			// 현재 UI에 띄워진 값 포착하기
-			const id = idDept.getCardId(layerHere);
-			const value = document.getElementById(layerHere).value.trim();
-			const object = {"id": id, [layerHere]: value};
-
-			// 로컬 데이터에 있는 값 포착하기
-			const arrayWithId = updateCardDept.getMappedObject_idContents(layerHere);
-		
-			// 위 두가지가 같은 경우의 수라면, 수정이 이뤄지지 않은 상태
-			for(let i = 0; i < arrayWithId.length; i++) {
-				if(JSON.stringify(object) === JSON.stringify(arrayWithId[i])) {
-					return false;
-				};
-			};
-			return true;
-		},
-	"getMappedObject_idContents":
-		function getMappedObject_idContents(layerHere) {		
-			const returnArray = [];
-			const eachIdArrayByLayer = idDept.getEveryIdArrayOfLayer(layerHere);
-			eachIdArrayByLayer.forEach(EachId => {
-				const returnObject = {};
-				returnObject["id"] = objectById[EachId].id;
-				returnObject[layerHere] = objectById[EachId].contents["txt"];
-				returnArray.push(returnObject);
-			});
-			return returnArray;
-		},
-	"getMoniterResult":
-		function getMoniterResult(layerHere, isChangedHere) {
-			if (isChangedHere) {
-				const monitorResultInFunction = monitorDept.monitorCardBlankOrDuplicates(layerHere);
-				return monitorResultInFunction;
-			} else {
-				return true;
-			};
-		},
-	"requestUpdateCard":
-		function requestUpdateCard(layerHere, packagedDataHere) {
-			const inputId = packagedDataHere.id;
-			const idThreadObject = idDept.getIdThreadObjectByPackagedData(layerHere, packagedDataHere);
-			const switchedRef = switchDept.getRefBySwitchLayer(layerHere, idThreadObject);
-			switchedRef.child(inputId)
-			.update(packagedDataHere, (e) => {
-				LtoSDept.request_followupEditedDate(layerHere, packagedDataHere, function(){
-					alert("수정되었습니다.");
-				});
-				console.log("**update completed = ", e);
-			});
-		},
-	"openEditCard":
-		function openEditCard(layerHere) {
-			UIDept.setupBtnShowOrHideByClassName_li(layerHere,"editCard");
-			UIDept.editCard_followup(layerHere);
-		},
-	"cancelEditCard":
-		function cancelEditCard(layerHere) {
-			const cardId = idDept.getCardId(layerHere);
-			if(cardId != ""){
-				UIDept.showItOnUI(layerHere, cardId);
-				const childrenLayer = switchDept.getChildrenLayerBySwitchLayer(layerHere);
-				if (childrenLayer != null) {
-					const idArray = idDept.getEveryIdArrayOfLayer(childrenLayer);
-					if(idArray.length == 0) {
-						UIDept.setupBtnShowOrHideByClassName_li(childrenLayer, "createFirstCard");
-					};
-				};
-			} else {
-				// 기존 카드가 있는 상태에서, 새 카드 만들기 후, 편집 취소를 할 때의 경우, 최신 lastest 카드를 보여주기
-				// 기존 카드가 없는 경우에는 cancelEditCard 버튼이 나타나지 않음.
-				const id = idDept.getLatestIdByLayer(layerHere);
-				UIDept.showItOnUI(layerHere, id);
-			};
-		}
-};
-
 const updateLiDept = {
 	"saveEditedLi":
 		function saveEditedLi(layerHere) {
@@ -1266,47 +1004,24 @@ const updateLiDept = {
 			const id = idDept.getLiId(layerHere);
 			UIDept.setupBtnShowOrHideByClassName_li(layerHere, id, "editCard");
 			// UIDept.editCard_followup(layerHere);
-		}
-};
-
-const removeCardDept = {
-	"removeCard":
-		function removeCard(layerHere) {
-			const removeId = idDept.getCardId(layerHere);
-			if (confirm("정말 삭제하시겠습니까? 삭제가 완료되면, 해당 내용은 다시 복구될 수 없습니다.")) {
-				removeCardDept.requestRemoveCard(layerHere, removeId);
-			};
 		},
-	"requestRemoveCard":
-		function requestRemoveCard(layerHere, idHere) {
-
-			const inputId = idHere;
-			const packagedData = objectById[inputId];
-			packagedData.editedDate = supportDept.getTimeStamp();
-
-			const idThreadObject = idDept.getIdThreadObjectByPackagedData(layerHere, packagedData);
-		
-			const switchedRef = switchDept.getRefBySwitchLayer(layerHere, idThreadObject);
-			const idArrayLength = idDept.getEveryIdArrayOfLayer(layerHere).length;
-		
-			if(layerHere == "layer0" && idArrayLength == 1) {
-				// layer0레이어에서 remove진행시, 
-				// firebase의 bigPicture 자체가 사라져, 로딩 로직에서 버그가 남.
-				// 그래서 예외 처리
-				const emptyData = {children: ""};
-				const switchedRefForEmptyData = switchedRef.parent;
-				switchedRefForEmptyData.set(emptyData, (e) => {
-					console.log("**remove completed A = ", e);
-					alert("삭제되었습니다.");
-					});
+	"cancelEditLi":
+		function cancelEditLi(layerHere) {
+			const cardId = idDept.getCardId(layerHere);
+			if(cardId != ""){
+				UIDept.showItOnUI(layerHere, cardId);
+				const childrenLayer = switchDept.getChildrenLayerBySwitchLayer(layerHere);
+				if (childrenLayer != null) {
+					const idArray = idDept.getEveryIdArrayOfLayer(childrenLayer);
+					if(idArray.length == 0) {
+						UIDept.setupBtnShowOrHideByClassName_li(childrenLayer, "createFirstCard");
+					};
+				};
 			} else {
-				switchedRef.child(inputId)
-				.remove((e) => {
-					LtoSDept.request_followupEditedDate(layerHere, packagedData, function(){
-						alert("삭제되었습니다.");
-					});
-					console.log("**remove completed B = ", e);
-					});
+				// 기존 카드가 있는 상태에서, 새 카드 만들기 후, 편집 취소를 할 때의 경우, 최신 lastest 카드를 보여주기
+				// 기존 카드가 없는 경우에는 cancelEditCard 버튼이 나타나지 않음.
+				const id = idDept.getLatestIdByLayer(layerHere);
+				UIDept.showItOnUI(layerHere, id);
 			};
 		}
 };
