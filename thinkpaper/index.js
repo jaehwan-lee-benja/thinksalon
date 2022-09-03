@@ -96,22 +96,22 @@ const LtoSDept = {
 			const idThreadObject = idDept.getIdThreadObjectByPackagedData(layerHere, packagedDataHere);
 
 			switch(layerHere) {
-				case "layer0" :
+				case 0 :
 					// 해당 없음
 					break;
-				case "layer1" :
-					idThreadObjectKeysArray = ["layer0"];
+				case 1 :
+					idThreadObjectKeysArray = [0];
 					break;
-				case "layer2" :
-					idThreadObjectKeysArray = ["layer0", "layer1"];
+				case 2 :
+					idThreadObjectKeysArray = [0, 1];
 					break;
-				case "layer3" :
-					idThreadObjectKeysArray = ["layer0", "layer1", "layer2"];
+				case 3 :
+					idThreadObjectKeysArray = [0, 1, 2];
 					break;
 				default : null;
 			};
 
-			if (layerHere != "layer0") {
+			if (layerHere != 0) {
 				const lastCount = idThreadObjectKeysArray.length;
 				if(lastCount != 0) {
 					let counter = 0;
@@ -164,16 +164,16 @@ const UIDept = {
 		function showItOnUI_followup(layerHere) {
 			let idThreadObjectKeysArray = [];
 			switch(layerHere) {
-				case "layer0" :
-					idThreadObjectKeysArray = ["layer1", "layer2", "layer3"];
+				case 0 :
+					idThreadObjectKeysArray = [1, 2, 3];
 					break;
-				case "layer1" :
-					idThreadObjectKeysArray = ["layer2", "layer3"];
+				case 1 :
+					idThreadObjectKeysArray = [2, 3];
 					break;
-				case "layer2" :
-					idThreadObjectKeysArray = ["layer3"];
+				case 2 :
+					idThreadObjectKeysArray = [3];
 					break;
-				case "layer3" :
+				case 3 :
 					// 해당없음
 					break;
 				default : null;
@@ -200,7 +200,7 @@ const UIDept = {
 		function setupBtnShowOrHideByClassName(layerHere, state) {
 
 			// 카드 안내 글씨 지우기
-			if(layerHere != "layer0") {
+			if(layerHere != 0) {
 				const parentsLayer = switchDept.getParentsLayerBySwitchLayer(layerHere);
 				const parentsCardValue = document.getElementById(parentsLayer).value;
 				const alertTextElement = document.getElementById("alert_txt_"+layerHere);
@@ -264,7 +264,7 @@ const UIDept = {
 		function setupBtnShowOrHideByClassName_li(layerHere, idHere, state) {
 
 			// 카드 안내 글씨 지우기
-			if(layerHere != "layer0") {
+			if(layerHere != 0) {
 				const parentsLayer = switchDept.getParentsLayerBySwitchLayer(layerHere);
 				const parentsCardValue = document.getElementById(parentsLayer).value;
 				const alertTextElement = document.getElementById("alert_txt_"+layerHere);
@@ -394,17 +394,17 @@ const UIDept = {
 			let layerArrayForDownSide = [];
 
 			switch(layerHere) {
-				case "layer0" :
-					layerArrayForDownSide = ["layer0", "layer1", "layer2", "layer3"];
+				case 0 :
+					layerArrayForDownSide = [0, 1, 2, 3];
 					break;
-				case "layer1" :
-					layerArrayForDownSide = ["layer1", "layer2", "layer3"];
+				case 1 :
+					layerArrayForDownSide = [1, 2, 3];
 					break;
-				case "layer2" :
-					layerArrayForDownSide = ["layer2", "layer3"];
+				case 2 :
+					layerArrayForDownSide = [2, 3];
 					break;
-				case "layer3" :
-					layerArrayForDownSide = ["layer3"];
+				case 3 :
+					layerArrayForDownSide = [3];
 					break;
 				default : null;
 			};
@@ -438,24 +438,24 @@ const UIDept = {
 			let layerArrayForUpSide = [];
 
 			switch(layerHere) {
-				case "layer0" :
-					layerArrayForUpSide = ["layer0"];
+				case 0 :
+					layerArrayForUpSide = [0];
 					break;
-				case "layer1" :
-					layerArrayForUpSide = ["layer0", "layer1"];
+				case 1 :
+					layerArrayForUpSide = [0, 1];
 					break;
-				case "layer2" :
-					layerArrayForUpSide = ["layer0", "layer1", "layer2"];
+				case 2 :
+					layerArrayForUpSide = [0, 1, 2];
 					break;
-				case "layer3" :
-					layerArrayForUpSide = ["layer0", "layer1", "layer2", "layer3"];
+				case 3 :
+					layerArrayForUpSide = [0, 1, 2, 3];
 					break;
 				default : null;
 			};
 
 			layerArrayForUpSide.forEach(eachLayer => {
 				// layer0인 경우를 제외하고, 상위 카드를 reading으로 바꾸기
-				if (eachLayer != "layer0") {
+				if (eachLayer != 0) {
 					const parentsLayer = switchDept.getParentsLayerBySwitchLayer(eachLayer);
 					UIDept.setupBtnShowOrHideByClassName_li(parentsLayer, "readCard");
 					};
@@ -500,7 +500,7 @@ const UIDept = {
 		
 			UIDept.showEmptyCard(layerHere);
 		
-			if(layerHere == "layer0") {
+			if(layerHere == 0) {
 				UIDept.editCard_followup(layerHere);
 				UIDept.setupBtnShowOrHideByClassName_li(layerHere,"createFirstCard");
 			} else {
@@ -545,7 +545,7 @@ const UIDept = {
 					UIDept.hideUI("editCard_layer3");
 
 					break;
-				case "layer0" :
+				case 0 :
 					
 					UIDept.showUI("list_layer1");
 					UIDept.hideUI("list_layer2");
@@ -556,7 +556,7 @@ const UIDept = {
 					UIDept.hideUI("editCard_layer3");
 
 					break;
-				case "layer1" :
+				case 1 :
 
 					UIDept.showUI("list_layer2");
 					UIDept.hideUI("list_layer3");
@@ -565,14 +565,14 @@ const UIDept = {
 					UIDept.hideUI("editCard_layer3");
 
 					break;
-				case "layer2" :
+				case 2 :
 					
 					UIDept.showUI("list_layer3");
 
 					UIDept.showUI("editCard_layer3");
 
 					break;
-				case "layer3" :
+				case 3 :
 
 					break;
 				default : null;
@@ -610,16 +610,16 @@ const UIDept = {
 				case undefined :
 					UIDept.showUI("image01");
 					break;
-				case "layer0" :
+				case 0 :
 					UIDept.showUI("image02");
 					break;
-				case "layer1" :
+				case 1 :
 					UIDept.showUI("image03");
 					break;
-				case "layer2" :
+				case 2 :
 					UIDept.showUI("image04");
 					break;
-				case "layer3" :
+				case 3 :
 					UIDept.showUI("image05");
 					break;
 				default : null;
@@ -838,7 +838,7 @@ const newLiDept = {
 			const catchContentsData = {};
 			catchContentsData["contents"] = {};
 			
-			if (layerHere == "layer0") {
+			if (layerHere == 0) {
 				catchContentsData["parentsId"] = "";
 			} else {
 				const parentsLayer = switchDept.getParentsLayerBySwitchLayer(layerHere);
@@ -882,16 +882,16 @@ const newLiDept = {
 	"openNewLi_followup":
 		function openNewLi_followup(layerHere) {			
 			switch(layerHere) {
-				case "layer0" :
-					newLiDept.openNewCard_followupBySwitchLayer("layer1", "layer2", "layer3");
+				case 0 :
+					newLiDept.openNewCard_followupBySwitchLayer(1, 2, 3);
 					break;
-				case "layer1" :
-					newLiDept.openNewCard_followupBySwitchLayer("layer2", "layer3");
+				case 1 :
+					newLiDept.openNewCard_followupBySwitchLayer(2, 3);
 					break;
-				case "layer2" :
-					newLiDept.openNewCard_followupBySwitchLayer("layer3");
+				case 2 :
+					newLiDept.openNewCard_followupBySwitchLayer(3);
 					break;
-				case "layer3" :
+				case 3 :
 					// 해당없음
 					break;
 				default : null;
@@ -929,7 +929,7 @@ const updateLiDept = {
 				const packagedData = {};
 				const id = idDept.getLiId(layerHere);
 				packagedData["id"] = id;
-				if (layerHere == "layer0") {
+				if (layerHere == 0) {
 					packagedData["parentsId"] = "";
 				} else {
 					const parentsLayer = switchDept.getParentsLayerBySwitchLayer(layerHere);
@@ -1046,7 +1046,7 @@ const removeLiDept = {
 			const switchedRef = switchDept.getRefBySwitchLayer(layerHere, idThreadObject);
 			const idArrayLength = idDept.getEveryIdArrayOfLayer(layerHere).length;
 		
-			if(layerHere == "layer0" && idArrayLength == 1) {
+			if(layerHere == 0 && idArrayLength == 1) {
 				// layer0레이어에서 remove진행시, 
 				// firebase의 bigPicture 자체가 사라져, 로딩 로직에서 버그가 남.
 				// 그래서 예외 처리
@@ -1188,7 +1188,7 @@ const idDept = {
 
 			const isNewIdResult = idDept.isNewId(childIdHere);
 			
-			if(childLayerHere != "layer0" && !isNewIdResult) {
+			if(childLayerHere != 0 && !isNewIdResult) {
 				const everyIdArray = Object.keys(objectById);
 				for(let i = 0; i < everyIdArray.length; i++) {
 					if(everyIdArray[i] == childIdHere) {
@@ -1210,7 +1210,7 @@ const idDept = {
 				};
 			};
 			// layer0 레이어를 제외하고, 부모에 해당하는 것들 중에서만 중복을 검토하기
-			if(layerHere != "layer0") {
+			if(layerHere != 0) {
 				const everyIdArrayOfLayerFromSameParents = [];
 				for(let j = 0; j < everyIdArrayOfLayer.length; j++) {
 					const parentsLayer = switchDept.getParentsLayerBySwitchLayer(layerHere);
@@ -1233,7 +1233,7 @@ const idDept = {
 				};
 			};
 			// layer0 레이어를 제외하고, 부모에 해당하는 것들 중에서만 중복을 검토하기
-			if(layerHere != "layer0") {
+			if(layerHere != 0) {
 				const everyIdArrayOfLayerFromSameParents = [];
 				for(let j = 0; j < everyIdArrayOfLayer.length; j++) {
 					if (objectById[everyIdArrayOfLayer[j]].parentsId == idDept.getParentsIdfromChildId(layerHere, idHere)){
@@ -1259,23 +1259,23 @@ const idDept = {
 			const idThreadObject = {};
 
 			switch(layerHere) {
-				case "layer0" :
+				case 0 :
 					// 해당 없음
 					break;
-				case "layer1" :
+				case 1 :
 					idThreadObject.layer0Id = packagedDataHere.parentsId;
 					break;
-				case "layer2" :
+				case 2 :
 					const layer1Id = packagedDataHere.parentsId;
 					idThreadObject.layer1Id = layer1Id;
-					idThreadObject.layer0Id = idDept.getParentsIdfromChildId("layer1", layer1Id);
+					idThreadObject.layer0Id = idDept.getParentsIdfromChildId(1, layer1Id);
 					break;
-				case "layer3" :
+				case 3 :
 					const layer2Id = packagedDataHere.parentsId;
-					const layer1Id2 = idDept.getParentsIdfromChildId("layer2", layer2Id);
+					const layer1Id2 = idDept.getParentsIdfromChildId(2, layer2Id);
 					idThreadObject.layer2Id = layer2Id;
 					idThreadObject.layer1Id = layer1Id2;
-					idThreadObject.layer0Id = idDept.getParentsIdfromChildId("layer1", layer1Id2);
+					idThreadObject.layer0Id = idDept.getParentsIdfromChildId(1, layer1Id2);
 					break;
 				default : null;
 			};
@@ -1334,26 +1334,26 @@ const switchDept = {
 			const layer0Ref = bigPictureRef.child("children");
 
 			switch(layerHere){
-				case "layer0" :
+				case 0 :
 					return layer0Ref;
-				case "layer1" : 
+				case 1 : 
 					const layer0Id = parentsId;
 
 					const layer1Ref = layer0Ref.child(layer0Id).child("children");
 					return layer1Ref;
 
-				case "layer2" : 
+				case 2 : 
 					const layer1Id = parentsId;
-					const layer0Id2 = idDept.getParentsIdfromChildId("layer1", layer1Id);
+					const layer0Id2 = idDept.getParentsIdfromChildId(1, layer1Id);
 
 					const layer1Ref2 = layer0Ref.child(layer0Id2).child("children");
 					const layer2Ref = layer1Ref2.child(layer1Id).child("children");
 					return layer2Ref;
 
-				case "layer3" : 
+				case 3 : 
 					const layer2Id = parentsId;
-					const layer1Id2 = idDept.getParentsIdfromChildId("layer2", layer2Id);
-					const layer0Id3 = idDept.getParentsIdfromChildId("layer1", layer1Id2);
+					const layer1Id2 = idDept.getParentsIdfromChildId(2, layer2Id);
+					const layer0Id3 = idDept.getParentsIdfromChildId(1, layer1Id2);
 
 					const layer1Ref3 = layer0Ref.child(layer0Id3).child("children");
 					const layer2Ref2 = layer1Ref3.child(layer1Id2).child("children");
@@ -1368,30 +1368,30 @@ const switchDept = {
 		function getIdThreadObjectById(layerHere, inputIdhere) {
 			const returnObject = {};
 			switch(layerHere){
-				case "layer0" : 
+				case 0 : 
 					returnObject["layer0Id"] = inputIdhere;
 					returnObject["layer1Id"] = "";
 					returnObject["layer2Id"] = "";
 					returnObject["layer3Id"] = "";
 					break;
-				case "layer1" :
-					returnObject["layer0Id"] = idDept.getParentsIdfromChildId("layer1", inputIdhere);
+				case 1 :
+					returnObject["layer0Id"] = idDept.getParentsIdfromChildId(1, inputIdhere);
 					returnObject["layer1Id"] = inputIdhere;
 					returnObject["layer2Id"] = "";
 					returnObject["layer3Id"] = "";
 					break;
-				case "layer2" :
-					const layer1Id = idDept.getParentsIdfromChildId("layer2", inputIdhere);
-					const layer0Id = idDept.getParentsIdfromChildId("layer1", layer1Id);
+				case 2 :
+					const layer1Id = idDept.getParentsIdfromChildId(2, inputIdhere);
+					const layer0Id = idDept.getParentsIdfromChildId(1, layer1Id);
 					returnObject["layer0Id"] = layer0Id;
 					returnObject["layer1Id"] = layer1Id;
 					returnObject["layer2Id"] = inputIdhere;
 					returnObject["layer3Id"] = "";
 					break;
-				case "layer3" :
-					const layer2Id = idDept.getParentsIdfromChildId("layer3", inputIdhere);
-					const direcitonId2 = idDept.getParentsIdfromChildId("layer2", layer2Id);
-					const layer0Id2 = idDept.getParentsIdfromChildId("layer1", direcitonId2);
+				case 3 :
+					const layer2Id = idDept.getParentsIdfromChildId(3, inputIdhere);
+					const direcitonId2 = idDept.getParentsIdfromChildId(2, layer2Id);
+					const layer0Id2 = idDept.getParentsIdfromChildId(1, direcitonId2);
 					returnObject["layer0Id"] = layer0Id2;
 					returnObject["layer1Id"] = direcitonId2;
 					returnObject["layer2Id"] = layer2Id;
@@ -1404,27 +1404,27 @@ const switchDept = {
 	"getParentsLayerBySwitchLayer":
 		function getParentsLayerBySwitchLayer(layerHere) {
 			switch(layerHere){
-				case "layer0" : 
+				case 0 : 
 					return null;
-				case "layer1" :
-					return "layer0";
-				case "layer2" :
-					return "layer1";
-				case "layer3" :
-					return "layer2";
+				case 1 :
+					return 0;
+				case 2 :
+					return 1;
+				case 3 :
+					return 2;
 				default : return null; 
 			};
 		},
 	"getChildrenLayerBySwitchLayer":
 		function getChildrenLayerBySwitchLayer(layerHere) {
 			switch(layerHere){
-				case "layer0" : 
-					return "layer1";
-				case "layer1" :
-					return "layer2";
-				case "layer2" :
-					return "layer3";
-				case "layer3" :
+				case 0 : 
+					return 1;
+				case 1 :
+					return 2;
+				case 2 :
+					return 3;
+				case 3 :
 					return null;
 				default : return null; 
 			};
