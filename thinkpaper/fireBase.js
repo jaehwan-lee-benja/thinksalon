@@ -18,7 +18,6 @@
         hasInit = true;
     }
     //appFireBase = firebase;
-    // [질문] appFireBase가 꼭 필요한가?
 })();
 
 function logIn() {
