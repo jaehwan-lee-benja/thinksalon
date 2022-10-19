@@ -19,10 +19,9 @@
             <span>내 삶의 큰그림 정리하기</span>
             <div id="divImageMain">
                 <img id="image01" src="images/01_basic.png">
-                <img id="image02" style = "display: none;" src="images/02_character_Y.png">
+                <!-- <img id="image02" style = "display: none;" src="images/02_character_Y.png">
                 <img id="image03" style = "display: none;" src="images/03_direction_Y.png">
-                <img id="image04" style = "display: none;" src="images/04_roadmap_Y.png">
-                <img id="image05" style = "display: none;" src="images/05_actionPlan_Y.png">
+                <img id="image04" style = "display: none;" src="images/04_roadmap_Y.png"> -->
             </div>
         </div>
     </div>
@@ -32,7 +31,7 @@
             <div id="div_layer0" class="girdColumnForLayer">
                 <div class="gridMainTop">
                     <div>
-                        <h2 id="layer_layer0">캐릭터</h2>
+                        <h2 id="layer_layer0">역할</h2>
                     </div>
                     <div>
                         <span>나는 어떤 역할들을 지니고 있는가?</span>
@@ -41,10 +40,10 @@
                 <div class="divList">
                     <div id="list_layer0"  style = "display: none;"></div>
                 </div>
-                <div class="gridMainContents" id="editCard_layer0"  style = "display: none;">
-                    <div class="layer0">
-                        <input type="hidden" id="cardId_layer0"></input>
-                        <input type="hidden" id="cardParentsId_layer0"></input>
+                <div class="gridMainContents" id="editLi_layer0"  style = "display: none;">
+                    <div id="layer0">
+                        <input type="hidden" id="liId_layer0"></input>
+                        <input type="hidden" id="liParentsId_layer0"></input>
                         <div style="margin: 1rem 0">
                             <span> li 테스트 중 버튼 </span>
                             <input id="openEditLi_btn_layer0" onClick="updateLiDept.openEditLi('layer0')" type="button" value="[수정하기]">
@@ -69,10 +68,10 @@
                 <div class="divList">
                     <div id="list_layer1" style = "display: none;"></div>
                 </div>
-                <div class="gridMainContents" id="editCard_layer1" style = "display: none;">
-                    <div class="layer1">
-                        <input type="hidden" id="cardId_layer1"></input>
-                        <input type="hidden" id="cardParentsId_layer1"></input>
+                <div class="gridMainContents" id="editLi_layer1" style = "display: none;">
+                    <div id="layer1">
+                        <input type="hidden" id="liId_layer1"></input>
+                        <input type="hidden" id="liParentsId_layer1"></input>
                         <div style="margin: 1rem 0">
                             <span> li 테스트 중 버튼 </span>
                             <input id="openEditLi_btn_layer1" onClick="updateLiDept.openEditLi('layer1')" type="button" value="[수정하기]">
@@ -81,9 +80,6 @@
                             <input id="saveNewLi_btn_layer1" onClick="newLiDept.saveNewLi('layer1')" type="button" value="[새 카드로 저장하기]">
                             <input id="removeLi_btn_layer1" onClick="removeLiDept.removeLi('layer1')" type="button" value="[삭제하기]">
                             <input id="openNewLi_btn_layer1" onClick="newLiDept.openNewLi('layer1')" type="button" value="[새 카드 작성하기]">
-                        </div>
-                        <div style="text-align: center; font-style: italic; color: #9c9c9c;">
-                            <span type="text" id="alert_txt_layer1"></span>
                         </div>
                     </div>
                 </div>
@@ -100,10 +96,10 @@
                 <div class="divList">
                     <div id="list_layer2" style = "display: none;"></div>
                 </div>
-                <div class="gridMainContents" id="editCard_layer2" style = "display: none;">
-                    <div class="layer2">
-                        <input type="hidden" id="cardId_layer2"></input>
-                        <input type="hidden" id="cardParentsId_layer2"></input>
+                <div class="gridMainContents" id="editLi_layer2" style = "display: none;">
+                    <div id="layer2">
+                        <input type="hidden" id="liId_layer2"></input>
+                        <input type="hidden" id="liParentsId_layer2"></input>
                         <div style="margin: 1rem 0">
                             <span> li 테스트 중 버튼 </span>
                             <input id="openEditLi_btn_layer2" onClick="updateLiDept.openEditLi('layer2')" type="button" value="[수정하기]">
@@ -113,46 +109,9 @@
                             <input id="removeLi_btn_layer2" onClick="removeLiDept.removeLi('layer2')" type="button" value="[삭제하기]">
                             <input id="openNewLi_btn_layer2" onClick="newLiDept.openNewLi('layer2')" type="button" value="[새 카드 작성하기]">
                         </div>
-                        <div style="text-align: center; font-style: italic; color: #9c9c9c;">
-                            <span type="text" id="alert_txt_layer2"></span>
-                        </div>
                     </div>
                 </div>
             </div>
-            <div id="div_layer3" class="girdColumnForLayer">
-                <div class="gridMainTop">
-                    <div>
-                        <h2 id="layer_layer3">액션플랜</h2>
-                    </div>
-                    <div>
-                        <span>길을 가기위해, 내가 지금 할 수 있는 '행동'은 무엇인가?</span>
-                    </div>
-                </div>
-                <div class="divList">
-                    <div id="list_layer3" style = "display: none;"></div>
-                </div>
-                <div class="gridMainContents" id="editCard_layer3" style = "display: none;">
-                    <div class="layer3">
-                        <input type="hidden" id="cardId_layer3"></input>
-                        <input type="hidden" id="cardParentsId_layer3"></input>
-                        <div style="margin: 1rem 0">
-                            <span> li 테스트 중 버튼 </span>
-                            <input id="openEditLi_btn_layer3" onClick="updateLiDept.openEditLi('layer3')" type="button" value="[수정하기]">
-                            <input id="cancelEditLi_btn_layer3" onClick="updateLiDept.cancelEditLi('layer3')" type="button" value="[작성(수정) 취소하기]">
-                            <input id="saveEditedLi_btn_layer3" onClick="updateLiDept.saveEditedLi('layer3')" type="button" value="[수정본 저장하기]">
-                            <input id="saveNewLi_btn_layer3" onClick="newLiDept.saveNewLi('layer3')" type="button" value="[새 카드로 저장하기]">
-                            <input id="removeLi_btn_layer3" onClick="removeLiDept.removeLi('layer3')" type="button" value="[삭제하기]">
-                            <input id="openNewLi_btn_layer3" onClick="newLiDept.openNewLi('layer3')" type="button" value="[새 카드 작성하기]">
-                        </div>
-                        <div style="text-align: center; font-style: italic; color: #9c9c9c;">
-                            <span type="text" id="alert_txt_layer3"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div id="divNoticeMain">
-            <p type="text" id="guideMessage"></p>
         </div>
     </div>
 
