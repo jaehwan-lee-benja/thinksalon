@@ -23,26 +23,7 @@ let eventListenerResult = {};
 	logIn();
 })();
 
-function logIn() {
-	firebase.auth().onAuthStateChanged(function (user) {
-		if (user != null) {
-			StoLDept.requestReadUserData(user);
-			StoLDept.requestReadBigPicture(user);
-			UIDept.showHideDiv(null);
-			UIDept.showHideMainImage();
-			// UIDept.setMainImage();
-			// supportDept.getLayerByEventListenerByButton();
-		} else {
-			window.location.replace("login.html");
-		};
-	});
-};
-
-function logOut() {
-	firebase.auth().signOut();
-};
-
-// 유저 데이터 다루기
+// 유저 정보
 const userDept = {
 	"showUserData":
 	function showUserData(userDataHere) {
@@ -53,7 +34,7 @@ const userDept = {
 	}
 };
 
-// 서버 관련 다루기
+// 서버 통신
 const StoLDept = {
 	"requestReadUserData": 
 		function requestReadUserData(user) {
@@ -76,13 +57,13 @@ const StoLDept = {
 							.child("bigPicture");
 			
 			userRef.on("value", (snapshot) => {
-				console.log("*keep*===== .on is here =====");
+				console.log("*keep* ===== .on is here =====");
 		
 				const v = snapshot.val();
 				objectById = {};
 
 				function requestReadIdAndObjectFromChildren(o){
-					// console.log('*keep*requestReadIdAndObjectFromChildren >>',o)
+					// console.log('*keep* requestReadIdAndObjectFromChildren >>',o)
 					const c = o.children;
 					if(!c) return;
 				
@@ -97,12 +78,21 @@ const StoLDept = {
 				};
 
 				requestReadIdAndObjectFromChildren(v);
-				// console.log('*keep*objectById >>',objectById)
+				// console.log('*keep* objectById >>',objectById)
 		
+				const count = Object.keys(objectById).length; 
 				const layers = [0, 1, 2];
+
 				layers.forEach(eachLayer => {
-					UIDept.showItOnUI(eachLayer);
+
+					if(count > 0) {
+							UIDept.showItOnUI(eachLayer);
+					} else {
+							UIDept.setupBtnShowOrHideByClassName(eachLayer, "createFirstLi");
+					};
+
 				});
+
 
 			});
 		}
@@ -138,7 +128,7 @@ const LtoSDept = {
 						const switchedRef = switchDept.getRefBySwitchLayer(eachLayer, idThreadObject);
 						switchedRef.child(eachId)
 						.update(editedDateForParents, (e) => {
-							console.log("*keep*followupEditedDate completed = ", e);
+							console.log("*keep* followupEditedDate completed = ", e);
 							if(++counter == lastCount) {
 								cb();
 							}
@@ -158,15 +148,15 @@ const UIDept = {
 		function showEmptyLi(layerHere) {
 			document.getElementById(layerHere).value = "";
 		},
-	"showEmptyLi": 
-		function showEmptyLi(idHere) {
-			const liElement = document.getElementById(idHere);
-			const textareaElement = liElement.children[0];
-			textareaElement.value = "";
-		},
+	// "showEmptyLi": 
+	// 	function showEmptyLi(idHere) {
+	// 		const liElement = document.getElementById(idHere);
+	// 		const textareaElement = liElement.children[0];
+	// 		textareaElement.value = "";
+	// 	},
 	"showItOnUI": 
 		function showItOnUI(layerHere) {
-			UIDept.setupBtnShowOrHideByClassName(layerHere,"readLi");
+			UIDept.setupBtnShowOrHideByClassName(layerHere, "readLi");
 			UIDept.setLiColorByLi(layerHere);
 		},
 	"showItOnUI_followup":
@@ -203,22 +193,24 @@ const UIDept = {
 			document.getElementById(id).style.display = "initial";
 		},
 	"setupBtnShowOrHideByClassName":
-		function setupBtnShowOrHideByClassName(layerHere, idHere, state) {
+		function setupBtnShowOrHideByClassName(layerHere, state, idHere) {
 
 			// 모든 버튼 지우기
-			UIDept.hideUI("openEditLi_btn_layer"+layerHere);
-			UIDept.hideUI("cancelEditLi_btn_layer"+layerHere);
-			UIDept.hideUI("saveEditedLi_btn_layer"+layerHere);
-			UIDept.hideUI("saveNewLi_btn_layer"+layerHere);
-			UIDept.hideUI("removeLi_btn_layer"+layerHere);
-			UIDept.hideUI("openNewLi_btn_layer"+layerHere);
+			// UIDept.hideUI("openEditLi_btn_layer"+layerHere);
+			// UIDept.hideUI("cancelEditLi_btn_layer"+layerHere);
+			// UIDept.hideUI("saveEditedLi_btn_layer"+layerHere);
+			// UIDept.hideUI("saveNewLi_btn_layer"+layerHere);
+			// UIDept.hideUI("removeLi_btn_layer"+layerHere);
+			// UIDept.hideUI("openNewLi_btn_layer"+layerHere);
 
 			// 모드에 따라 설정하기
 			switch(state){
 				case "createFirstLi" :
-					idDept.emptyLiId(layerHere);
+					// idDept.emptyLiId(layerHere);
 					UIDept.showUI("saveNewLi_btn_layer"+layerHere);
 					UIDept.setupTextareaModeByClassName(layerHere, "editing");
+					// listDept.startList(layerHere);
+					listDept.updateList(layerHere);
 					break;
 				case "openNewLi" :
 					UIDept.showUI("saveNewLi_btn_layer"+layerHere);
@@ -248,7 +240,7 @@ const UIDept = {
 						// UIDept.showUI("saveNewLi_btn_layer"+layerHere);
 						// UIDept.setupTextareaModeByClassName(layerHere, "editing");
 					// } else {
-						idDept.emptyLiId(layerHere);
+						// idDept.emptyLiId(layerHere);
 						UIDept.setupTextareaModeByClassName(layerHere, "reading");
 						document.getElementById("alert_txt_"+layerHere).innerHTML = "(상위 카드 작성 후, 작성 가능)";
 					// };
@@ -261,16 +253,17 @@ const UIDept = {
 		},
 	"setupTextareaModeByClassName":
 		function setupTextareaModeByClassName(layerHere, liMode) {
+			const elementByClass = document.getElementsByClassName(layerHere);
 			if (liMode == "editing") {
-				document.getElementsByClassName(layerHere)[0].style.color = COLOR_FOCUSED_YELLOW;
-				document.getElementsByClassName(layerHere)[0].style.borderColor = COLOR_FOCUSED_YELLOW;
+				elementByClass[0].style.color = COLOR_FOCUSED_YELLOW;
+				elementByClass[0].style.borderColor = COLOR_FOCUSED_YELLOW;
 				UIDept.setupTextareaBorderColorByClass(layerHere, "2px", COLOR_FOCUSED_YELLOW);
-				UIDept.setupTextareaReadOnly(layerHere, false);
+				// UIDept.setupTextareaReadOnly(layerHere, false);
 			} else {
-				document.getElementsByClassName(layerHere)[0].style.color = COLOR_TXT_DARKGRAY;
-				document.getElementsByClassName(layerHere)[0].style.borderColor = COLOR_TXT_DARKGRAY;
+				elementByClass[0].style.color = COLOR_TXT_DARKGRAY;
+				elementByClass[0].style.borderColor = COLOR_TXT_DARKGRAY;
 				UIDept.setupTextareaBorderColorByClass(layerHere, "1px", COLOR_LINE_GRAY);
-				UIDept.setupTextareaReadOnly(layerHere, true);
+				// UIDept.setupTextareaReadOnly(layerHere, true);
 			};
 		},
 	"setupTextareaModeByClassName_li":
@@ -292,6 +285,7 @@ const UIDept = {
 	"setupTextareaReadOnly":
 		function setupTextareaReadOnly(layerHere, trueOrFalse){
 			const textareaElement = document.getElementById(layerHere);
+			console.log("textareaElement = ", textareaElement);
 			textareaElement.readOnly = trueOrFalse;
 			if(trueOrFalse == false) {
 				setTimeout(()=>{
@@ -556,9 +550,15 @@ const UIDept = {
 
 // li 다루기
 const listDept = { 
+	"startList":
+		function startList(layerHere) {
+			const listId = "list_layer"+layerHere;
+			const list = document.getElementById(listId);
+			const liElements = list.getElementsByTagName("LI");
+		},
 	"updateList": 
 		function updateList(layerHere) {
-			const listId = "list_"+layerHere;
+			const listId = "list_layer"+layerHere;
 			const list = document.getElementById(listId);
 			const liElements = list.getElementsByTagName("LI");
 			// list 초기화하기
@@ -584,7 +584,7 @@ const listDept = {
 		},
 	"addOpenAddLiLi":
 		function addOpenAddLiLi(layerHere) {
-			const listId = "list_"+layerHere;
+			const listId = "list_layer"+layerHere;
 			const list = document.getElementById(listId);
 			const liValue_addLi = "(+ 새 리스트 추가하기)";
 			const listItem = document.createElement('li');
@@ -618,7 +618,7 @@ const listDept = {
 	"clickLi":
 		function clickLi(layerHere) {
 			// 참고: https://daisy-mansion.tistory.com/46
-			const li = document.getElementById("list_"+layerHere).children;
+			const li = document.getElementById("list_layer"+layerHere).children;
 			
 			const liArray = [];
 			for (let i = 0; i < li.length; i++) {
@@ -627,45 +627,45 @@ const listDept = {
 
 			liArray.forEach((v)=>{
 
-				v.addEventListener("click",(e)=>{
+				// v.addEventListener("click",(e)=>{
 
-					let id = ""
-					const targetTagName = e.target.tagName;
+				// 	let id = ""
+				// 	const targetTagName = e.target.tagName;
 
-					if(targetTagName == "LI") {
-						id = e.target.getAttribute("id");
-					} else {
-						id = e.target.parentNode.getAttribute("id");	
-					};
+				// 	if(targetTagName == "LI") {
+				// 		id = e.target.getAttribute("id");
+				// 	} else {
+				// 		id = e.target.parentNode.getAttribute("id");	
+				// 	};
 
-					const addLiId = "addLiBtn_"+layerHere;
+				// 	const addLiId = "addLiBtn_"+layerHere;
 					
-					const liElement = document.getElementById(id);
-					const textareaElement = liElement.children[0];
-					const isEditing = textareaElement.getAttribute("readOnly");
+				// 	const liElement = document.getElementById(id);
+				// 	const textareaElement = liElement.children[0];
+				// 	const isEditing = textareaElement.getAttribute("readOnly");
 					
-					if(!isEditing) {
+				// 	if(!isEditing) {
 
-						if(id != addLiId) {
+				// 		if(id != addLiId) {
 
-							UIDept.showItOnUI(layerHere, id);
-							UIDept.showItOnUI_followup(layerHere);
-							UIDept.showHideDiv(layerHere);
+				// 			UIDept.showItOnUI(layerHere, id);
+				// 			UIDept.showItOnUI_followup(layerHere);
+				// 			UIDept.showHideDiv(layerHere);
 	
-						} else {
+				// 		} else {
 	
-							newLiDept.openNewLi(layerHere);
-							const parentLayer = switchDept.getParentsLayerBySwitchLayer(layerHere);
-							UIDept.showHideDiv(parentLayer);
-							UIDept.setLiColorByLi(layerHere);
+				// 			newLiDept.openNewLi(layerHere);
+				// 			const parentLayer = switchDept.getParentsLayerBySwitchLayer(layerHere);
+				// 			UIDept.showHideDiv(parentLayer);
+				// 			UIDept.setLiColorByLi(layerHere);
 	
-						};
+				// 		};
 	
-						UIDept.resizeTextarea();
+				// 		UIDept.resizeTextarea();
 
-					};
+				// 	};
 
-				});
+				// });
 
 				v.addEventListener("dblclick",(e)=>{
 					
@@ -695,7 +695,7 @@ const listDept = {
 		},
 	"getLastLi":
 		function getLastLi(layerHere) {
-			const li = document.getElementById("list_"+layerHere).children;
+			const li = document.getElementById("list_layer"+layerHere).children;
 			
 			const liArray = [];
 			for (let i = 0; i < li.length; i++) {
@@ -776,8 +776,8 @@ const newLiDept = {
 		},
 	"openNewLi":
 		function openNewLi(layerHere, idHere) {
-			UIDept.showEmptyLi(idHere);
-			UIDept.setupBtnShowOrHideByClassName(layerHere, idHere, "openNewLi");
+			// UIDept.showEmptyLi(idHere);
+			UIDept.setupBtnShowOrHideByClassName(layerHere, "openNewLi", idHere);
 			// newLiDept.openNewLi_followup(layerHere);
 		},
 	"openNewLi_followup":
@@ -895,13 +895,13 @@ const updateLiDept = {
 				LtoSDept.request_followupEditedDate(layerHere, packagedDataHere, function(){
 					alert("수정되었습니다.");
 				});
-				console.log("*keep*update completed = ", e);
+				console.log("*keep* update completed = ", e);
 			});
 		},
 	"openEditLi":
 		function openEditLi(layerHere) {
 			const id = idDept.getLiId(layerHere);
-			UIDept.setupBtnShowOrHideByClassName(layerHere, id, "editLi");
+			UIDept.setupBtnShowOrHideByClassName(layerHere, "editLi", id);
 			// UIDept.editLi_followup(layerHere);
 		},
 	"cancelEditLi":
@@ -953,7 +953,7 @@ const removeLiDept = {
 				const emptyData = {children: ""};
 				const switchedRefForEmptyData = switchedRef.parent;
 				switchedRefForEmptyData.set(emptyData, (e) => {
-					console.log("*keep*remove completed A = ", e);
+					console.log("*keep* remove completed A = ", e);
 					alert("삭제되었습니다.");
 					});
 			} else {
@@ -962,7 +962,7 @@ const removeLiDept = {
 					LtoSDept.request_followupEditedDate(layerHere, packagedData, function(){
 						alert("삭제되었습니다.");
 					});
-					console.log("*keep*remove completed B = ", e);
+					console.log("*keep* remove completed B = ", e);
 					});
 			};
 		}
@@ -1191,12 +1191,12 @@ const idDept = {
 			const liElementParentsId = "liParentsId_"+layerHere;
 			document.getElementById(liElementParentsId).value = "";
 		},
-	"getLiId":
-		function getLiId(layerHere) {
-			const liElementId = "liId_layer"+layerHere;
-			const result = document.getElementById(liElementId).value;
-			return result;
-		},
+	// "getLiId":
+	// 	function getLiId(layerHere) {
+	// 		const liElementId = "liId_layer"+layerHere;
+	// 		const result = document.getElementById(liElementId).value;
+	// 		return result;
+	// 	},
 	"getLiId":
 		function getLiId(layerHere) {
 

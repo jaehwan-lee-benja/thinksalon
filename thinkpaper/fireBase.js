@@ -19,6 +19,23 @@
     }
     //appFireBase = firebase;
     // [질문] appFireBase가 꼭 필요한가?
-})()
+})();
 
+function logIn() {
+	firebase.auth().onAuthStateChanged(function (user) {
+		if (user != null) {
+			StoLDept.requestReadUserData(user);
+			StoLDept.requestReadBigPicture(user);
+			UIDept.showHideDiv(null);
+			UIDept.showHideMainImage();
+			// UIDept.setMainImage();
+			// supportDept.getLayerByEventListenerByButton();
+		} else {
+			window.location.replace("login.html");
+		};
+	});
+};
 
+function logOut() {
+	firebase.auth().signOut();
+};
