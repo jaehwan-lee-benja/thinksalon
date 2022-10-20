@@ -1,12 +1,13 @@
-function showEmptyLi(layerHere) {
-	document.getElementById(layerHere).value = "";
-};
-// "showEmptyLi": 
-// 	function showEmptyLi(idHere) {
-// 		const liElement = document.getElementById(idHere);
-// 		const textareaElement = liElement.children[0];
-// 		textareaElement.value = "";
-// 	},
+function showEmptyLi(idHere) {
+	const liElement = document.getElementById(idHere);
+	const textareaElement = liElement.children[0];
+	textareaElement.value = "";
+}
+function showNewLi(idHere) {
+	const liElement = document.getElementById(idHere);
+	const textareaElement = liElement.children[0];
+	textareaElement.value = "";
+}
 function showItOnUI(layerHere) {
 	setupBtnShowOrHideByClassName(layerHere, "readLi");
 	setLiColorByLi(layerHere);
@@ -43,40 +44,32 @@ function showUI(idHere) {
 };
 function setupBtnShowOrHideByClassName(layerHere, state, idHere) {
 
-	// 모든 버튼 지우기
-	// hideUI("openEditLi_btn_layer"+layerHere);
-	// hideUI("cancelEditLi_btn_layer"+layerHere);
-	// hideUI("saveEditedLi_btn_layer"+layerHere);
-	// hideUI("saveNewLi_btn_layer"+layerHere);
-	// hideUI("removeLi_btn_layer"+layerHere);
-	// hideUI("openNewLi_btn_layer"+layerHere);
-
 	// 모드에 따라 설정하기
 	switch(state){
 		case "createFirstLi" :
 			// emptyLiId(layerHere);
 			showUI("saveNewLi_btn_layer"+layerHere);
-			setupTextareaModeByClassName(layerHere, "editing");
+			// setupTextareaModeByClassName(idHere, "editing");
 			// startList(layerHere);
 			updateList(layerHere);
 			break;
 		case "openNewLi" :
 			showUI("saveNewLi_btn_layer"+layerHere);
 			showUI("cancelEditLi_btn_layer"+layerHere);
-			setupTextareaModeByClassName_li(idHere, "editing");
+			setupTextareaModeByClassName(idHere, "editing");
 			break;
 		case "readLi" :
 			showUI("openEditLi_btn_layer"+layerHere);
 			showUI("openNewLi_btn_layer"+layerHere);
 			showUI("removeLi_btn_layer"+layerHere);
-			setupTextareaModeByClassName(layerHere, "reading");
+			// setupTextareaModeByClassName(idHere, "reading");
 			break;
 		case "editLi" :
 			showUI("saveEditedLi_btn_layer"+layerHere);
 			showUI("cancelEditLi_btn_layer"+layerHere);
 			showUI("saveNewLi_btn_layer"+layerHere);
 			showUI("removeLi_btn_layer"+layerHere);
-			setupTextareaModeByClassName_li(idHere, "editing");
+			setupTextareaModeByClassName(idHere, "editing");
 			editLi_followup(layerHere);
 			break;
 		case "inactiveLi" :
@@ -86,10 +79,10 @@ function setupBtnShowOrHideByClassName(layerHere, state, idHere) {
 				// case "createFirstLi"의 변형 버전
 				// emptyLiId(layerHere);
 				// showUI("saveNewLi_btn_layer"+layerHere);
-				// setupTextareaModeByClassName(layerHere, "editing");
+				// setupTextareaModeByClassName(idHere, "editing");
 			// } else {
 				// emptyLiId(layerHere);
-				setupTextareaModeByClassName(layerHere, "reading");
+				setupTextareaModeByClassName(idHere, "reading");
 				document.getElementById("alert_txt_"+layerHere).innerHTML = "(상위 카드 작성 후, 작성 가능)";
 			// };
 			break;

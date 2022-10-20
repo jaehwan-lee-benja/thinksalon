@@ -20,10 +20,10 @@ function updateList(layerHere) {
 		listItem.setAttribute("id", liId);
 		listItem.setAttribute("layer", layerHere);
 	};
-	addOpenAddLiLi(layerHere);
+	addOpenAddLi(layerHere);
 	clickLi(layerHere);
 };
-function addOpenAddLiLi(layerHere) {
+function addOpenAddLi(layerHere) {
 	const listId = "list_layer"+layerHere;
 	const list = document.getElementById(listId);
 	const liValue_addLi = "(+ 새 리스트 추가하기)";
@@ -106,26 +106,32 @@ function clickLi(layerHere) {
 
 		v.addEventListener("dblclick",(e)=>{
 			
+			console.log("dblclick worked!");
 			const idByLi = e.target.getAttribute("id");
 			const idByTextarea = e.target.parentNode.getAttribute("id");					
 
-			let id = ""
+			let dblclickedId = ""
 			if(idByLi != null) {
-				id = idByLi;
+				dblclickedId = idByLi;
 			} else {
-				id = idByTextarea;
+				dblclickedId = idByTextarea;
 			};
 
-			const liElement = document.getElementById(id);
+			console.log("dblclickedId = ", dblclickedId);
+
+			const liElement = document.getElementById(dblclickedId);
+			console.log("liElement = ", liElement);
 			const textareaElement = liElement.children[0];
 			const layer = liElement.getAttribute("layer");
 			const addLiId = "addLiBtn_"+layer;
 			const isEditing = textareaElement.getAttribute("readOnly");
 
-			if(isEditing != null && id != addLiId){
+			if( isEditing != null && dblclickedId != addLiId){
+				console.log("test1");
 				openEditLi(layer);
-			} else if(isEditing != null && id == addLiId){
-				openNewLi(layer, id);
+			} else if(isEditing != null && dblclickedId == addLiId){
+				console.log("test2");
+				openNewLi(layer, dblclickedId);
 			};
 		});
 	});

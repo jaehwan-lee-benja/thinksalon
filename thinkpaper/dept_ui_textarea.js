@@ -1,19 +1,5 @@
-function setupTextareaModeByClassName(layerHere, liMode) {
-	const layer = "layer"+layerHere;
-	const elementByClass = document.getElementsByClassName(layer);
-	if (liMode == "editing") {
-		elementByClass[0].style.color = COLOR_FOCUSED_YELLOW;
-		elementByClass[0].style.borderColor = COLOR_FOCUSED_YELLOW;
-		setupTextareaBorderColorByClass(layer, "2px", COLOR_FOCUSED_YELLOW);
-		// setupTextareaReadOnly(layer, false);
-	} else {
-		elementByClass[0].style.color = COLOR_TXT_DARKGRAY;
-		elementByClass[0].style.borderColor = COLOR_TXT_DARKGRAY;
-		setupTextareaBorderColorByClass(layer, "1px", COLOR_LINE_GRAY);
-		// setupTextareaReadOnly(layer, true);
-	};
-};
-function setupTextareaModeByClassName_li(idHere, liMode) {
+function setupTextareaModeByClassName(idHere, liMode) {
+	console.log("idHere = ", idHere);
 	const liElement = document.getElementById(idHere);
 	const textareaElement = liElement.children[0];
 	if (liMode == "editing") {

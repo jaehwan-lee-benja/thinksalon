@@ -41,14 +41,13 @@ function requestReadBigPicture(user) {
 
 		requestReadIdAndObjectFromChildren(v);
 
-		console.log("objectById = ", objectById);
-
 		const count = Object.keys(objectById).length; 
 		const layers = [0, 1, 2];
 
 		layers.forEach(eachLayer => {
 			if(count > 0) {
 				showItOnUI(eachLayer);
+				setupBtnShowOrHideByClassName(eachLayer, "createFirstLi");
 			} else {
 				setupBtnShowOrHideByClassName(eachLayer, "createFirstLi");
 			};

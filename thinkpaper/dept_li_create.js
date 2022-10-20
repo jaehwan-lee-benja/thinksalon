@@ -59,7 +59,9 @@ function requestSetLi(layerHere, packagedDataHere) {
 
 };
 function openNewLi(layerHere, idHere) {
-	// showEmptyLi(idHere);
+	console.log("layerHere = ", layerHere);
+	showEmptyLi(idHere);
+	// addOpenAddLi(layerHere);
 	setupBtnShowOrHideByClassName(layerHere, "openNewLi", idHere);
 	// openNewLi_followup(layerHere);
 };

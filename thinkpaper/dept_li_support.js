@@ -149,3 +149,21 @@ function getLayerById(idHere) {
 	})
 	return layer;
 };
+function countRow(layerHere) {
+    const layer = layerHere;
+	const idArray = Object.keys(objectById);
+	console.log("idArray = ", idArray);
+    const idArrayLength = idArray.length;
+    console.log("idArrayLength = ", idArrayLength);
+    const objectArrayFromSameLayer = [];
+    idArray.forEach( eachId => {
+        const layerOfEachObject = objectById[eachId].layer;
+        console.log("layerOfEachObject = ", layerOfEachObject);
+        if(layerOfEachObject == layer) {
+            objectArrayFromSameLayer.push(layerOfEachObject);
+        };
+    });
+    const liCount = objectArrayFromSameLayer.length;
+    console.log("liCount = ", liCount);
+    return liCount;
+};
