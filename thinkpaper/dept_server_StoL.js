@@ -1,5 +1,7 @@
 function requestReadUserData(user) {
-	const userRef = db.ref("users").child(user.uid).child("user");
+	const userRef = db.ref("users")
+					.child(user.uid)
+					.child("user");
 	userRef.on("value", (snapshot) => {
 		snapshot.forEach(childSnap => {
 			const key = childSnap.key;
@@ -10,6 +12,7 @@ function requestReadUserData(user) {
 		showUserData(userData);
 	});
 };
+
 function requestReadBigPicture(user) {
 
 	const userRef = db.ref("users")
@@ -22,8 +25,7 @@ function requestReadBigPicture(user) {
 		const v = snapshot.val();
 		objectById = {};
 
-		function requestReadIdAndObjectFromChildren(o){
-			// console.log('*keep* requestReadIdAndObjectFromChildren >>',o)
+		function requestReadIdAndObjectFromChildren(o) {
 			const c = o.children;
 			if(!c) return;
 		
@@ -38,21 +40,19 @@ function requestReadBigPicture(user) {
 		};
 
 		requestReadIdAndObjectFromChildren(v);
-		// console.log('*keep* objectById >>',objectById)
+
+		console.log("objectById = ", objectById);
 
 		const count = Object.keys(objectById).length; 
 		const layers = [0, 1, 2];
 
 		layers.forEach(eachLayer => {
-
 			if(count > 0) {
-					showItOnUI(eachLayer);
+				showItOnUI(eachLayer);
 			} else {
-					setupBtnShowOrHideByClassName(eachLayer, "createFirstLi");
+				setupBtnShowOrHideByClassName(eachLayer, "createFirstLi");
 			};
-
 		});
-
 
 	});
 };

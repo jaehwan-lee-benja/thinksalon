@@ -36,4 +36,4 @@ function request_followupEditedDate(layerHere, packagedDataHere, cb) {
 	} else {
 		cb();
 	};
-}
+};

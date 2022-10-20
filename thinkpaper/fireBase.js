@@ -18,20 +18,3 @@
     }
     //appFireBase = firebase;
 })();
-function logIn() {
-	firebase.auth().onAuthStateChanged(function (user) {
-		if (user != null) {
-			requestReadUserData(user);
-			requestReadBigPicture(user);
-			showHideDiv(null);
-			showHideMainImage();
-			// setMainImage();
-			// supportDept.getLayerByEventListenerByButton();
-		} else {
-			window.location.replace("login.html");
-		};
-	});
-};
-function logOut() {
-	firebase.auth().signOut();
-};

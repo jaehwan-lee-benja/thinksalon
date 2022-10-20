@@ -22,7 +22,7 @@ function updateList(layerHere) {
 	};
 	addOpenAddLiLi(layerHere);
 	clickLi(layerHere);
-}
+};
 function addOpenAddLiLi(layerHere) {
 	const listId = "list_layer"+layerHere;
 	const list = document.getElementById(listId);
@@ -34,7 +34,7 @@ function addOpenAddLiLi(layerHere) {
 	listItem.setAttribute("id", liId_addLi);
 	listItem.setAttribute("layer", layerHere);
 	listItem.setAttribute("style", COLORSET_ADDLI);
-}
+};
 function getMappedObject_idEditedDateContents(layerHere) {		
 	const returnArray = [];
 	const eachIdArrayByLayer = getEveryIdArrayOfLayer(layerHere);
@@ -46,13 +46,13 @@ function getMappedObject_idEditedDateContents(layerHere) {
 		returnArray.push(returnObject);
 	});
 	return returnArray;
-}
+};
 function sortingArray(mappedArrayHere){
 	mappedArrayHere.sort(
 		(a,b) => new Date(b.editedDate) - new Date(a.editedDate)
 	);
 	return mappedArrayHere;
-}
+};
 function clickLi(layerHere) {
 	// 참고: https://daisy-mansion.tistory.com/46
 	const li = document.getElementById("list_layer"+layerHere).children;
@@ -129,7 +129,7 @@ function clickLi(layerHere) {
 			};
 		});
 	});
-}
+};
 function getLastLi(layerHere) {
 	const li = document.getElementById("list_layer"+layerHere).children;
 	
@@ -141,4 +141,4 @@ function getLastLi(layerHere) {
 	const last = liArray[liArray.length - 1];
 	
 	return last;
-}
+};

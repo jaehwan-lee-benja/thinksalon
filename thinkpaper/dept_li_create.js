@@ -16,6 +16,7 @@ function packageNewLi(layerHere) {
 		catchedData["editedDate"] = getTimeStamp();
 		catchedData["main"] = "";
 		catchedData["layer"] = layerHere;
+		catchedData["row"] = countRow(layerHere);
 		return catchedData;
 	// };
 };

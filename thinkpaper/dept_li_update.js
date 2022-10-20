@@ -74,7 +74,7 @@ function requestUpdateLi(layerHere, packagedDataHere) {
 	const switchedRef = getRefBySwitchLayer(layerHere, idThreadObject);
 	switchedRef.child(inputId)
 	.update(packagedDataHere, (e) => {
-		LtoSDept.request_followupEditedDate(layerHere, packagedDataHere, function(){
+		request_followupEditedDate(layerHere, packagedDataHere, function(){
 			alert("수정되었습니다.");
 		});
 		console.log("*keep* update completed = ", e);
@@ -82,24 +82,24 @@ function requestUpdateLi(layerHere, packagedDataHere) {
 };
 function openEditLi(layerHere) {
 	const id = getLiId(layerHere);
-	UIDept.setupBtnShowOrHideByClassName(layerHere, "editLi", id);
-	// UIDept.editLi_followup(layerHere);
+	setupBtnShowOrHideByClassName(layerHere, "editLi", id);
+	// editLi_followup(layerHere);
 };
 function cancelEditLi(layerHere) {
 	const liId = getLiId(layerHere);
 	if(liId != ""){
-		UIDept.showItOnUI(layerHere, liId);
+		showItOnUI(layerHere, liId);
 		const childrenLayer = getChildrenLayerBySwitchLayer(layerHere);
 		if (childrenLayer != null) {
 			const idArray = getEveryIdArrayOfLayer(childrenLayer);
 			if(idArray.length == 0) {
-				UIDept.setupBtnShowOrHideByClassName(childrenLayer, "createFirstLi");
+				setupBtnShowOrHideByClassName(childrenLayer, "createFirstLi");
 			};
 		};
 	} else {
 		// 기존 카드가 있는 상태에서, 새 카드 만들기 후, 편집 취소를 할 때의 경우, 최신 lastest 카드를 보여주기
 		// 기존 카드가 없는 경우에는 cancelEditLi 버튼이 나타나지 않음.
 		const id = getLatestIdByLayer(layerHere);
-		UIDept.showItOnUI(layerHere, id);
+		showItOnUI(layerHere, id);
 	};
 };
