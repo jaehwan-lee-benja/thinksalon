@@ -10,7 +10,6 @@
 </head>
 
 <body id="gridBody">
-
     <div id="divTop">
         <div style="text-align: center;">
             <div id = "titleText">
@@ -19,13 +18,9 @@
             <span>내 삶의 큰그림 정리하기</span>
             <div id="divImageMain">
                 <img id="image01" src="images/01_basic.png">
-                <!-- <img id="image02" style = "display: none;" src="images/02_character_Y.png">
-                <img id="image03" style = "display: none;" src="images/03_direction_Y.png">
-                <img id="image04" style = "display: none;" src="images/04_roadmap_Y.png"> -->
             </div>
         </div>
     </div>
-
     <div id="gridMain">
         <div id="gridColumn">
             <div id="div_layer0" class="girdColumnForLayer">
@@ -41,11 +36,10 @@
                     <div id="list_layer0"  style = "display: none;"></div>
                 </div>
                 <div class="gridMainContents" id="editLi_layer0"  style = "display: none;">
-                    <div class="0">
+                    <div class="layer0">
                         <input type="hidden" id="liId_layer0"></input>
                         <input type="hidden" id="liParentsId_layer0"></input>
                         <div style="margin: 1rem 0">
-                            <span> 버튼 공간 - layer0 </span>
                             <input id="openEditLi_btn_layer0" onClick="updateLiDept.openEditLi(0)" type="button" value="[수정하기]" style = "display: none;">
                             <input id="cancelEditLi_btn_layer0" onClick="updateLiDept.cancelEditLi(0)" type="button" value="[작성(수정) 취소하기]" style = "display: none;">
                             <input id="saveEditedLi_btn_layer0" onClick="updateLiDept.saveEditedLi(0)" type="button" value="[수정본 저장하기]" style = "display: none;">
@@ -69,11 +63,10 @@
                     <div id="list_layer1" style = "display: none;"></div>
                 </div>
                 <div class="gridMainContents" id="editLi_layer1" style = "display: none;">
-                    <div class="1">
+                    <div class="layer1">
                         <input type="hidden" id="liId_layer1"></input>
                         <input type="hidden" id="liParentsId_layer1"></input>
                         <div style="margin: 1rem 0">
-                            <span> 버튼 공간 - layer1 </span>
                             <input id="openEditLi_btn_layer1" onClick="updateLiDept.openEditLi(1)" type="button" value="[수정하기]" style = "display: none;">
                             <input id="cancelEditLi_btn_layer1" onClick="updateLiDept.cancelEditLi(1)" type="button" value="[작성(수정) 취소하기]" style = "display: none;">
                             <input id="saveEditedLi_btn_layer1" onClick="updateLiDept.saveEditedLi(1)" type="button" value="[수정본 저장하기]" style = "display: none;">
@@ -101,7 +94,6 @@
                         <input type="hidden" id="liId_layer2"></input>
                         <input type="hidden" id="liParentsId_layer2"></input>
                         <div style="margin: 1rem 0">
-                            <span> 버튼 공간 - layer2 </span>
                             <input id="openEditLi_btn_layer2" onClick="updateLiDept.openEditLi(2)" type="button" value="[수정하기]" style = "display: none;">
                             <input id="cancelEditLi_btn_layer2" onClick="updateLiDept.cancelEditLi(2)" type="button" value="[작성(수정) 취소하기]" style = "display: none;">
                             <input id="saveEditedLi_btn_layer2" onClick="updateLiDept.saveEditedLi(2)" type="button" value="[수정본 저장하기]" style = "display: none;">
@@ -114,7 +106,6 @@
             </div>
         </div>
     </div>
-
     <div id="gridWebInfo">
         <div>
             <div>
@@ -142,7 +133,6 @@
     </div>
 </body>
 
-
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
@@ -157,7 +147,6 @@
 <script type="text/javascript" src="dept_server_StoL.js"></script>
 <script type="text/javascript" src="dept_server_LtoS.js"></script>
 
-<script type="text/javascript" src="dept_li.js"></script>
 <script type="text/javascript" src="dept_li_create.js"></script>
 <script type="text/javascript" src="dept_li_read.js"></script>
 <script type="text/javascript" src="dept_li_update.js"></script>

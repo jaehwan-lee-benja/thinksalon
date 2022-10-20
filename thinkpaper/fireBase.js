@@ -1,6 +1,5 @@
 //var appFireBase = {};
 (function(){
-
     // var fireBase = fireBase || firebase;
     var hasInit = false;
     var config = {
@@ -19,22 +18,20 @@
     }
     //appFireBase = firebase;
 })();
-
 function logIn() {
 	firebase.auth().onAuthStateChanged(function (user) {
 		if (user != null) {
-			StoLDept.requestReadUserData(user);
-			StoLDept.requestReadBigPicture(user);
-			UIDept.showHideDiv(null);
-			UIDept.showHideMainImage();
-			// UIDept.setMainImage();
+			requestReadUserData(user);
+			requestReadBigPicture(user);
+			showHideDiv(null);
+			showHideMainImage();
+			// setMainImage();
 			// supportDept.getLayerByEventListenerByButton();
 		} else {
 			window.location.replace("login.html");
 		};
 	});
 };
-
 function logOut() {
 	firebase.auth().signOut();
 };
