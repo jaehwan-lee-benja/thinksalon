@@ -81,6 +81,7 @@ function requestUpdateLi(layerHere, packagedDataHere) {
 	});
 };
 function openEditLi(layerHere) {
+	// 이벤트 리스터를 넣을 수 있을까?
 	const id = getLiId(layerHere);
 	setupBtnShowOrHideByClassName(layerHere, "editLi", id);
 	// editLi_followup(layerHere);
