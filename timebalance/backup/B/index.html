@@ -20,7 +20,6 @@
         .attr("height", 500);
 
       d3.json("mydata.json", function (data) {
-        console.log(data);
 
         var treemap = d3.layout.treemap()
           .size([500, 500])

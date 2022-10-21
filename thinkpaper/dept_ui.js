@@ -1,4 +1,5 @@
 function showEmptyLi(idHere) {
+	console.log("idHere = ", idHere);
 	const liElement = document.getElementById(idHere);
 	const textareaElement = liElement.children[0];
 	textareaElement.value = "";
@@ -13,6 +14,7 @@ function showItOnUI(layerHere) {
 	setLiColorByLi(layerHere);
 };
 function showItOnUI_followup(layerHere) {
+	console.log("layerHere = ", layerHere);
 	let idThreadObjectKeysArray = [];
 	switch(layerHere) {
 		case 0 :

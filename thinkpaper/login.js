@@ -23,7 +23,6 @@
         var isNewUser = authResult.additionalUserInfo.isNewUser
 
         if (isNewUser) {
-          console.log("O")
 
           // Add this user to Firebase Database
           // Create User data
@@ -45,12 +44,9 @@
               window.location.replace("index.html")
             })
 
-          console.log("initialData = ", initialData)
-
           return false;
 
         } else {
-          console.log("X")
 
           return true;
 

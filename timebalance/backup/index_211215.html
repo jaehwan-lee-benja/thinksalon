@@ -82,18 +82,12 @@
     }
 
     var param = window.location.search.substr(1)
-    console.log(param)
     var jsonString = b64DecodeUnicode(param)
-    console.log(jsonString)
     var data = JSON.parse(jsonString)
-    console.log("data");
-    console.log(data);
 
     // debuging data..
     var author = data.author;
     var createdDate = data.createdDate;
-    console.log("author, createdDate");
-    console.log(author, createdDate);
 
     // dom을 사용해 데이터 쓰기.
     document.getElementById('author').innerHTML = author;
@@ -167,11 +161,9 @@
           //})
           //.on("mouseout", "unHighLight")
           .on("mouseover", function (d) {
-                    console.log("mouseover");
                     var opacity1 = d3.select(this).style("opacity")
                     d3.select(this).style("opacity", opacity1*1.5);
                     //d3.select(this).style("opacity", 10);
-                    console.log(d3.select(this).style("opacity"))
                     //d3.select(this).style("fill", "#344e41")
                 })
           //.on("mouseout", function (d) {
@@ -219,13 +211,9 @@
           .attr("x", function(d){ return d.x0})
           .attr("y", function(d){ return d.y0+21})
           .text(function(d){ 
-            console.log(d);
             var children = d.data.children
-            console.log(children);
             var mapValue = children.map(e => e.value)
-            console.log(mapValue);
             var sum = mapValue.reduce( (x,y) => x+y); // array
-            console.log(sum);
             if( sum > 0) return d.data.name 
           })
           .attr("font-size", "12px")

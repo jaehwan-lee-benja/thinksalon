@@ -64,49 +64,50 @@ function clickLi(layerHere) {
 
 	liArray.forEach((v)=>{
 
-		// v.addEventListener("click",(e)=>{
+		v.addEventListener("click",(e)=>{
 
-		// 	let id = ""
-		// 	const targetTagName = e.target.tagName;
+			let id = ""
+			const targetTagName = e.target.tagName;
 
-		// 	if(targetTagName == "LI") {
-		// 		id = e.target.getAttribute("id");
-		// 	} else {
-		// 		id = e.target.parentNode.getAttribute("id");	
-		// 	};
+			if(targetTagName == "LI") {
+				id = e.target.getAttribute("id");
+			} else {
+				id = e.target.parentNode.getAttribute("id");	
+			};
 
-		// 	const addLiId = "addLiBtn_"+layerHere;
+			const addLiId = "addLiBtn_"+layerHere;
 			
-		// 	const liElement = document.getElementById(id);
-		// 	const textareaElement = liElement.children[0];
-		// 	const isEditing = textareaElement.getAttribute("readOnly");
+			const liElement = document.getElementById(id);
+			const textareaElement = liElement.children[0];
+			const isEditing = textareaElement.getAttribute("readOnly");
 			
-		// 	if(!isEditing) {
+			if(!isEditing) {
 
-		// 		if(id != addLiId) {
+				if(id != addLiId) {
 
-		// 			showItOnUI(layerHere, id);
-		// 			showItOnUI_followup(layerHere);
-		// 			showHideDiv(layerHere);
+					showItOnUI(layerHere, id);
+					// showItOnUI_followup(layerHere);
+					showHideDiv(layerHere);
+					const seletedLi_layer0 = document.getElementById("seletedLi_layer0");
+					seletedLi_layer0.innerHTML = "id:" + id;
 
-		// 		} else {
+				} else {
 
-		// 			openNewLi(layerHere);
-		// 			const parentLayer = getParentsLayerBySwitchLayer(layerHere);
-		// 			showHideDiv(parentLayer);
-		// 			setLiColorByLi(layerHere);
+					openNewLi(layerHere);
+					const parentLayer = getParentsLayerBySwitchLayer(layerHere);
+					showHideDiv(parentLayer);
+					setLiColorByLi(layerHere);
 
-		// 		};
+				};
 
-		// 		resizeTextarea();
+				resizeTextarea();
 
-		// 	};
+			};
 
-		// });
+		});
 
 		v.addEventListener("dblclick",(e)=>{
 			
-			console.log("dblclick worked!");
 			const idByLi = e.target.getAttribute("id");
 			const idByTextarea = e.target.parentNode.getAttribute("id");					
 
@@ -117,20 +118,15 @@ function clickLi(layerHere) {
 				dblclickedId = idByTextarea;
 			};
 
-			console.log("dblclickedId = ", dblclickedId);
-
 			const liElement = document.getElementById(dblclickedId);
-			console.log("liElement = ", liElement);
 			const textareaElement = liElement.children[0];
 			const layer = liElement.getAttribute("layer");
 			const addLiId = "addLiBtn_"+layer;
 			const isEditing = textareaElement.getAttribute("readOnly");
 
 			if( isEditing != null && dblclickedId != addLiId){
-				console.log("test1");
 				openEditLi(layer);
 			} else if(isEditing != null && dblclickedId == addLiId){
-				console.log("test2");
 				openNewLi(layer, dblclickedId);
 			};
 		});

@@ -1,5 +1,4 @@
 function setupTextareaModeByClassName(idHere, liMode) {
-	console.log("idHere = ", idHere);
 	const liElement = document.getElementById(idHere);
 	const textareaElement = liElement.children[0];
 	if (liMode == "editing") {
@@ -16,7 +15,6 @@ function setupTextareaModeByClassName(idHere, liMode) {
 };
 function setupTextareaReadOnly(layerHere, trueOrFalse){
 	const textareaElement = document.getElementById(layerHere);
-	console.log("textareaElement = ", textareaElement);
 	textareaElement.readOnly = trueOrFalse;
 	if(trueOrFalse == false) {
 		setTimeout(()=>{

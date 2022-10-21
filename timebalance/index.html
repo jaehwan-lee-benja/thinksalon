@@ -68,9 +68,7 @@
 
     <h1 id="hello"></h1>
     <script>
-      console.log(document.getElementById('hello'))
       document.getElementById('hello').innerHTML='hello'
-      console.log(document.getElementById('hello'))
     </script>
 
     <script>
@@ -156,10 +154,8 @@
                 tool.html(d.children ? null : d.data.name + ' [우선순위 ' + d.data.value2 + ']');
               })
           .on("mouseover", function (d) {
-                    console.log("mouseover");
                     var opacity1 = d3.select(this).style("opacity")
                     d3.select(this).style("opacity", opacity1*1.5);
-                    console.log(d3.select(this).style("opacity"))
                 })
           .on("mouseout", function (d) {
                 tool.style("display", "none");
@@ -203,13 +199,9 @@
           .attr("x", function(d){ return d.x0})
           .attr("y", function(d){ return d.y0+21})
           .text(function(d){ 
-            console.log(d);
             var children = d.data.children
-            console.log(children);
             var mapValue = children.map(e => e.value)
-            console.log(mapValue);
             var sum = mapValue.reduce( (x,y) => x+y); // array
-            console.log(sum);
             if( sum > 0) return d.data.name 
           })
           .attr("font-size", "12px")

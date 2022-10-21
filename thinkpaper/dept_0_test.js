@@ -16,25 +16,5 @@ const testTitleHere = "li row 값 넣기";
 
 (function() {
     const testTitle = document.getElementById("testTitle");
-    testTitle.innerHTML = testTitleHere;
+    // testTitle.innerHTML = testTitleHere;
 })();
-
-// function countRow(layerHere) {
-//     const layer = 0; // layerHere 위치
-// 	const idArray = Object.keys(objectById);
-// 	console.log("idArray = ", idArray);
-//     const idArrayLength = idArray.length;
-//     console.log("idArrayLength = ", idArrayLength);
-//     const objectArrayFromSameLayer = [];
-//     idArray.forEach( eachId => {
-//         const layerOfEachObject = objectById[eachId].layer;
-//         console.log("layerOfEachObject = ", layerOfEachObject);
-//         if(layerOfEachObject == layer) {
-//             objectArrayFromSameLayer.push(layerOfEachObject);
-//         };
-//     });
-//     const liCount = objectArrayFromSameLayer.length;
-//     const newLiRow =  liCount + 1;
-//     console.log("newLiRow = ", newLiRow);
-//     return newLiRow;
-// };
