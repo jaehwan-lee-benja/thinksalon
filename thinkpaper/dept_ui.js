@@ -71,8 +71,9 @@ function setupBtnShowOrHideByClassName(layerHere, state, idHere) {
 			showUI("cancelEditLi_btn_layer"+layerHere);
 			showUI("saveNewLi_btn_layer"+layerHere);
 			showUI("removeLi_btn_layer"+layerHere);
+			console.log("idHere = ", idHere);
 			setupTextareaModeByClassName(idHere, "editing");
-			editLi_followup(layerHere);
+			// editLi_followup(layerHere);
 			break;
 		case "inactiveLi" :
 			// const parentsLayer = getParentsLayerBySwitchLayer(layerHere);

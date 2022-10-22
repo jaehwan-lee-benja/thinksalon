@@ -93,7 +93,8 @@ function clickLi(layerHere) {
 
 				} else {
 
-					openNewLi(layerHere);
+					// 새 리스트 추가하기 버튼을 누른 경우
+					openNewLi(layerHere, id);
 					const parentLayer = getParentsLayerBySwitchLayer(layerHere);
 					showHideDiv(parentLayer);
 					setLiColorByLi(layerHere);
@@ -125,7 +126,7 @@ function clickLi(layerHere) {
 			const isEditing = textareaElement.getAttribute("readOnly");
 
 			if( isEditing != null && dblclickedId != addLiId){
-				openEditLi(layer);
+				openEditLi(layer, dblclickedId);
 			} else if(isEditing != null && dblclickedId == addLiId){
 				openNewLi(layer, dblclickedId);
 			};
