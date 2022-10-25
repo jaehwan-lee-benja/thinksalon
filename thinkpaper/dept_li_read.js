@@ -66,12 +66,16 @@ function clickLi(layerHere) {
 
 		v.addEventListener("click",(e)=>{
 
+			console.log("checkpoint! - 1");
+
 			let id = ""
 			const targetTagName = e.target.tagName;
 
 			if(targetTagName == "LI") {
+				console.log("checkpoint! - 2");
 				id = e.target.getAttribute("id");
 			} else {
+				console.log("checkpoint! - 3");
 				id = e.target.parentNode.getAttribute("id");	
 			};
 
@@ -80,18 +84,29 @@ function clickLi(layerHere) {
 			const liElement = document.getElementById(id);
 			const textareaElement = liElement.children[0];
 			const isEditing = textareaElement.getAttribute("readOnly");
+
+			console.log("isEditing = ", isEditing);
 			
-			if(!isEditing) {
+			if(isEditing == null) {
+
+				console.log("checkpoint! - 4");
 
 				if(id != addLiId) {
 
-					showItOnUI(layerHere, id);
+					console.log("checkpoint! - 5");
+
+					// 텍스트 에어리어 버그 관련해서는 아랫쪽 부분은 문제가 없는 것으로 보임
+					// showItOnUI(layerHere, id);
 					// showItOnUI_followup(layerHere);
-					showHideDiv(layerHere);
+					// showHideDiv(layerHere);
+
+					// 선택된 li의 id 넣기
 					const seletedLi_layer0 = document.getElementById("seletedLi_layer0");
 					seletedLi_layer0.innerHTML = "id:" + id;
 
 				} else {
+
+					console.log("checkpoint! - 6");
 
 					// 새 리스트 추가하기 버튼을 누른 경우
 					openNewLi(layerHere, id);
