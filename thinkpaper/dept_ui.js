@@ -58,6 +58,7 @@ function setupBtnShowOrHideByClassName(layerHere, state, idHere) {
 		case "openNewLi" :
 			showUI("saveNewLi_btn_layer"+layerHere);
 			showUI("cancelEditLi_btn_layer"+layerHere);
+			console.log("setupBtnShowOrHideByClassName - openNewLi");
 			setupTextareaModeByClassName(idHere, "editing");
 			break;
 		case "readLi" :
@@ -72,6 +73,7 @@ function setupBtnShowOrHideByClassName(layerHere, state, idHere) {
 			showUI("saveNewLi_btn_layer"+layerHere);
 			showUI("removeLi_btn_layer"+layerHere);
 			console.log("idHere = ", idHere);
+			console.log("setupBtnShowOrHideByClassName - editLi");
 			setupTextareaModeByClassName(idHere, "editing");
 			// editLi_followup(layerHere);
 			break;
@@ -85,6 +87,7 @@ function setupBtnShowOrHideByClassName(layerHere, state, idHere) {
 				// setupTextareaModeByClassName(idHere, "editing");
 			// } else {
 				// emptyLiId(layerHere);
+				console.log("setupBtnShowOrHideByClassName - inactiveLi");
 				setupTextareaModeByClassName(idHere, "reading");
 				document.getElementById("alert_txt_"+layerHere).innerHTML = "(상위 카드 작성 후, 작성 가능)";
 			// };
