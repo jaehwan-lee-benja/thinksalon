@@ -3,6 +3,7 @@ const SELECTBOX_BPTITLE_VALUE_INIT = "INIT";
 const userData = {};
 let objectById = {};
 let eventListenerResult = {};
+let selectedLi = {};
 
 (function() {
 	logIn();

@@ -79,6 +79,9 @@ function clickLi(layerHere) {
 				id = e.target.parentNode.getAttribute("id");	
 			};
 
+			selectedLi = objectById[id]; // 수정 필요함 [질문]
+			console.log("selectedLi by click = ", selectedLi);
+
 			const addLiId = "addLiBtn_"+layerHere;
 			
 			const liElement = document.getElementById(id);
@@ -100,10 +103,6 @@ function clickLi(layerHere) {
 					// showItOnUI_followup(layerHere);
 					// showHideDiv(layerHere);
 
-					// 선택된 li의 id 넣기
-					const seletedLi_layer0 = document.getElementById("seletedLi_layer0");
-					seletedLi_layer0.innerHTML = "id:" + id;
-
 				} else {
 
 					console.log("checkpoint! - 6");
@@ -112,13 +111,17 @@ function clickLi(layerHere) {
 					openNewLi(layerHere, id);
 					const parentLayer = getParentsLayerBySwitchLayer(layerHere);
 					showHideDiv(parentLayer);
-					setLiColorByLi(layerHere);
+					// setLiColorByLi(layerHere);
 
 				};
 
-				resizeTextarea();
 
 			};
+
+			// 선택된 li의 id 넣기
+			const seletedLi_layer0 = document.getElementById("seletedLi_layer0");
+			seletedLi_layer0.innerHTML = "id:" + id;
+			resizeTextarea();
 
 		});
 
@@ -134,6 +137,9 @@ function clickLi(layerHere) {
 				dblclickedId = idByTextarea;
 			};
 
+			selectedLi = objectById[dblclickedId]; // 수정 필요함 [질문]
+			console.log("selectedLi by dblclick = ", selectedLi);
+
 			const liElement = document.getElementById(dblclickedId);
 			const textareaElement = liElement.children[0];
 			const layer = liElement.getAttribute("layer");
@@ -145,6 +151,12 @@ function clickLi(layerHere) {
 			} else if(isEditing != null && dblclickedId == addLiId){
 				openNewLi(layer, dblclickedId);
 			};
+
+			// 선택된 li의 id 넣기
+			const seletedLi_layer0 = document.getElementById("seletedLi_layer0");
+			seletedLi_layer0.innerHTML = "id:" + dblclickedId;
+			resizeTextarea();
+
 		});
 	});
 };
