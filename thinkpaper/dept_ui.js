@@ -189,7 +189,7 @@ function resizeTextarea() {
 	const tx = document.getElementsByTagName("textarea");
 	for (let i = 0; i < tx.length; i++) {
 		// tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px; overflow-y:auto;");
-		tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;");
+		tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;"); // [질문] 반영하기 - 스타일 전부를 덮어씌우지 않도록
 		tx[i].addEventListener("input", OnInput, false);
 	};
 	function OnInput() {

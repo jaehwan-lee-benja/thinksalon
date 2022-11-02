@@ -121,7 +121,7 @@ function clickLi(layerHere) {
 			// 선택된 li의 id 넣기
 			const seletedLi_layer0 = document.getElementById("seletedLi_layer0");
 			seletedLi_layer0.innerHTML = "id:" + id;
-			resizeTextarea();
+			// resizeTextarea();
 
 		});
 

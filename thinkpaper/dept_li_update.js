@@ -86,7 +86,9 @@ function requestUpdateLi(layerHere, packagedDataHere) {
 		console.log("*keep* update completed = ", e);
 	});
 };
-function openEditLi(layerHere, idHere) {
+function openEditLi() {
+	const layerHere = selectedLi.layer;
+	const idHere = selectedLi.id;
 	// 이벤트 리스터를 넣을 수 있을까?
 	// const id = getLiId(layerHere);
 	setupBtnShowOrHideByClassName(layerHere, "editLi", idHere);

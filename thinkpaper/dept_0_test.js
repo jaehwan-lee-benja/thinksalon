@@ -18,5 +18,5 @@ const testTitleHere = "li row 값 넣기";
     const testTitle = document.getElementById("testTitle");
     // testTitle.innerHTML = testTitleHere;
     const selectedLiViewer = document.getElementById("selectedLiViewer");
-    selectedLiViewer.innerHTML = "selectedLi"; // [질문] 오브젝트 코드를 화면에 어떻게 띄우지?
+    selectedLiViewer.innerHTML = JSON.stringify(selectedLi); // [질문] 오브젝트 코드를 화면에 어떻게 띄우지?
 })();
