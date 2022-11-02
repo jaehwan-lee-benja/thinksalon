@@ -1,5 +1,6 @@
 function removeLi(layerHere) {
-	const removeId = getLiId(layerHere);
+	// const removeId = getLiId(layerHere);
+	const removeId = selectedLi.id;
 	if (confirm("정말 삭제하시겠습니까? 삭제가 완료되면, 해당 내용은 다시 복구될 수 없습니다.")) {
 		requestRemoveLi(layerHere, removeId);
 	};
@@ -7,6 +8,7 @@ function removeLi(layerHere) {
 function requestRemoveLi(layerHere, idHere) {
 
 	const inputId = idHere;
+	console.log("inputId = ", inputId);
 	const packagedData = objectById[inputId];
 	packagedData.editedDate = getTimeStamp();
 
