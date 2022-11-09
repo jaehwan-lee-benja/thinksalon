@@ -183,20 +183,7 @@ function setupTextareaBorderColorByClass_li(idHere, px, color) {
 		};
 	},1);
 };
-function resizeTextarea() {
-	// 참고: https://stackoverflow.com/questions/454202/creating-a-textarea-with-auto-resize
-	// [질문] editLi가 늘어난 사이즈에서, 다른 li를 눌러서 내용을 볼 때, 크기가 큰 경우, 줄어들지 않음
-	const tx = document.getElementsByTagName("textarea");
-	for (let i = 0; i < tx.length; i++) {
-		// tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px; overflow-y:auto;");
-		tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;"); // [질문] 반영하기 - 스타일 전부를 덮어씌우지 않도록
-		tx[i].addEventListener("input", OnInput, false);
-	};
-	function OnInput() {
-		this.style.height = "auto";
-		this.style.height = (this.scrollHeight) + "px";
-	};
-};
+
 function showItIfNoLi(layerHere) {
 
 	showEmptyLi(layerHere);
@@ -322,7 +309,10 @@ function setLayerHighlight(layerHere, trueOrFalseHere) {
 	const elementId = "layer_"+layerHere;
 	const divSelector = document.getElementById(elementId);
 	if(trueOrFalseHere) {
-		divSelector.setAttribute("style", "background-color: "+COLOR_FOCUSED_YELLOW+";");
+		console.log("setLayerHighlight here!");
+		divSelector.style.backgroundColor = COLOR_FOCUSED_YELLOW;
+		// divSelector.style.backgroundColor = "'"+ COLOR_FOCUSED_YELLOW +"'" ;
+		// divSelector.setAttribute("style", "background-color: "+COLOR_FOCUSED_YELLOW+";");
 	} else {
 		divSelector.setAttribute("style", "background-color: '';");
 	}

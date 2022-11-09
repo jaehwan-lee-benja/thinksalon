@@ -4,7 +4,7 @@ function setupTextareaModeByClassName(idHere, liMode) {
 	console.log("setupTextareaModeByClassName");
 
 	if (liMode == "editing") {
-		textareaElement.style.color = COLOR_FOCUSED_YELLOW;
+		// textareaElement.style.color = COLOR_FOCUSED_YELLOW;
 		textareaElement.style.borderColor = COLOR_FOCUSED_YELLOW;
 		setupTextareaBorderColorByClass_li(idHere, "2px", COLOR_FOCUSED_YELLOW);
 		setupTextareaReadOnly(idHere, false);
@@ -26,4 +26,18 @@ function setupTextareaReadOnly(idHere, trueOrFalse){
 		textareaElement.style.border = "solid 2px" + COLOR_SELECTED_GRAYGREEN;
 		},1);
 	}
+};
+function resizeTextarea() {
+	// 참고: https://stackoverflow.com/questions/454202/creating-a-textarea-with-auto-resize
+	// [질문] editLi가 늘어난 사이즈에서, 다른 li를 눌러서 내용을 볼 때, 크기가 큰 경우, 줄어들지 않음
+	const tx = document.getElementsByTagName("textarea");
+	for (let i = 0; i < tx.length; i++) {
+		// tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px; overflow-y:auto;");
+		tx[i].style.height = (tx[i].scrollHeight) + "px;";
+		tx[i].addEventListener("input", OnInput, false);
+	};
+	function OnInput() {
+		this.style.height = "auto";
+		this.style.height = (this.scrollHeight) + "px";
+	};
 };
