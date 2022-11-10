@@ -2,11 +2,13 @@ body{
     font-size: 0.8rem;
     background-color: #FBFCF4;
     color: #2A2B2A;
+    margin: 0rem;
 }
 
 h1{
-    font-size: 3rem;
-    margin: 0 0 1rem 0;
+    font-size: 2rem;
+    font-family: 'EB Garamond', serif;
+    margin: 0.5rem 0;
 }
 
 h2{
@@ -70,6 +72,7 @@ input[type="button"] {
         padding: 3px 5px;
         cursor: pointer;
         width: 100%;
+        text-align: left;
         /* display: inline-block; */
 }
 
@@ -112,55 +115,49 @@ li:active {
         0 6px 6px rgba(0,0,0,0.23);
 } */
 
-#titleText{
-    font-family: 'EB Garamond', serif;
-    margin: 0 auto;
-}
-
 #date {
     width: 10rem;
 }
 
+header{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    margin: 0 2rem;
+    border-bottom: 0.5px solid #2A2B2A;
+}
+
+main{
+    height: 100%;
+    padding-top: 50px;
+}
+
 #divImageMain{
-    margin: 3rem auto;
     text-align: center;
 }
 
 #gridBody{
-    margin: 6rem;
+    margin: 2rem;
 }
 
-#divInfoTable{
-    margin: 1rem 0;
-    padding: 0.5rem;
-    border: 0.2px solid #C8C8C8;
-}
-
-#guideMessage{
-    display: block;
-    text-align: center;
-    font-style: italic;
-}
-
-#divNoticeMain {
-    text-align: center;
-}
-
-#gridMain{
-    display: grid;
-    grid-template-rows: 1fr 2rem;
-    grid-gap: 0.2rem;
-    margin: 3rem auto;
-    padding: 3rem 0;
-    border-Top: 1px solid rgb(220, 220, 220);
-    overflow-x: scroll;
+#divBtn{
+    position: fixed;
+    width: 150px;
+    padding-right: 1rem;
+    background-color: #FBFCF4;
 }
 
 #gridColumn{
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
     grid-gap: 1.2rem;
-    margin-bottom: 1rem;
+    margin-bottom: 10rem;
+    padding-left: 160px;
+    overflow-x: scroll;
 }
 
 .girdColumnForLayer{
@@ -184,7 +181,6 @@ li:active {
 .divList{
     width: 16rem;
     padding: 0 1rem;
-    margin: 2rem auto;
     align-content: center;
 }
 
@@ -244,7 +240,7 @@ li:active {
 }
 
 #imageMain{
-    width: 70%;
+    height: 100px;
 }
 
 /* #imageMain:hover{
@@ -296,11 +292,6 @@ li:active {
     }
     .button{
         text-align: left;
-    }
-
-    #divTop{
-        min-width: 12rem;
-        margin: 0 auto;
     }
 
     #gridMainFrame{
