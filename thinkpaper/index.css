@@ -2,7 +2,7 @@ body{
     font-size: 0.8rem;
     background-color: #FBFCF4;
     color: #2A2B2A;
-    margin: 0rem;
+    margin: 0rem 4rem;
 }
 
 h1{
@@ -125,23 +125,19 @@ header{
     left: 0;
     right: 0;
     display: flex;
-    justify-content: space-between;
-    align-items: end;
-    margin: 0 2rem;
-    border-bottom: 0.5px solid #2A2B2A;
+    align-content: center;
+    padding: 1rem 4rem 0 4rem;
+    border-bottom: 0.2px solid #C8C8C8;
+    backdrop-filter: blur(7px);
 }
 
 main{
     height: 100%;
-    padding-top: 50px;
+    padding-top: 140px;
 }
 
 #divImageMain{
     text-align: center;
-}
-
-#gridBody{
-    margin: 2rem;
 }
 
 #divBtn{
@@ -151,12 +147,15 @@ main{
     background-color: #FBFCF4;
 }
 
+#divMain{
+    padding-left: 160px;
+}
+
 #gridColumn{
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
     grid-gap: 1.2rem;
     margin-bottom: 10rem;
-    padding-left: 160px;
     overflow-x: scroll;
 }
 
@@ -231,6 +230,7 @@ main{
     border: 1px solid rgb(220, 220, 220);
     padding: 1rem;
     grid-gap: 0.2rem;
+    margin-left: 1rem;
 }
 
 #divCreateName{
@@ -263,9 +263,10 @@ main{
 }
 
 #divTest{
-    margin: 2rem;
+    margin: 15rem;
     padding: 1rem;
-    background-color: #F7DA7B;
+    border: 0.2px solid #2A2B2A;
+    background-color: #FFF;
 }
    
 
