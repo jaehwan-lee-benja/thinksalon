@@ -16,7 +16,6 @@ function logIn() {
 			requestReadBigPicture(user);
 
 			showHideDiv(null);
-			showHideMainImage();
 		} else {
 			window.location.replace("login.html");
 		};

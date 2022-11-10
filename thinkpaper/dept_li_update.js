@@ -1,7 +1,5 @@
 function saveEditedLi(layerHere) {
 
-	console.log("saveEditedLi here!");
-	console.log("layerHere = ", layerHere);
 
 	const packagedData = packageEditedLi(layerHere);
 	if (packagedData != null) {
@@ -18,7 +16,6 @@ function packageEditedLi(layerHere) {
 		const packagedData = {};
 		// const id = getLiId(layerHere); // [질문] pointed Y, N 중 어떤게 더 좋을까?
 		const id = selectedLi.id;
-		console.log("id @packageEditedLi =" , id);
 		packagedData["id"] = id;
 		if (layerHere == 0) {
 			packagedData["parentsId"] = "";

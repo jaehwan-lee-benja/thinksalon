@@ -1,5 +1,4 @@
 function showEmptyLi(idHere) {
-	console.log("idHere = ", idHere);
 	const liElement = document.getElementById(idHere);
 	const textareaElement = liElement.children[0];
 	textareaElement.value = "";
@@ -14,7 +13,6 @@ function showItOnUI(layerHere) {
 	setLiColorByLi(layerHere);
 };
 function showItOnUI_followup(layerHere) {
-	console.log("layerHere = ", layerHere);
 	let idThreadObjectKeysArray = [];
 	switch(layerHere) {
 		case 0 :
@@ -50,30 +48,27 @@ function setupBtnShowOrHideByClassName(layerHere, state, idHere) {
 	switch(state){
 		case "createFirstLi" :
 			// emptyLiId(layerHere);
-			showUI("saveNewLi_btn_layer"+layerHere);
+			// showUI("saveNewLi_btn_layer"+layerHere);
 			// setupTextareaModeByClassName(idHere, "editing");
 			// startList(layerHere);
 			updateList(layerHere);
 			break;
 		case "openNewLi" :
-			showUI("saveNewLi_btn_layer"+layerHere);
-			showUI("cancelEditLi_btn_layer"+layerHere);
-			console.log("setupBtnShowOrHideByClassName - openNewLi");
+			// showUI("saveNewLi_btn_layer"+layerHere);
+			// showUI("cancelEditLi_btn_layer"+layerHere);
 			setupTextareaModeByClassName(idHere, "editing");
 			break;
 		case "readLi" :
-			showUI("openEditLi_btn_layer"+layerHere);
-			showUI("openNewLi_btn_layer"+layerHere);
-			showUI("removeLi_btn_layer"+layerHere);
+			// showUI("openEditLi_btn_layer"+layerHere);
+			// showUI("openNewLi_btn_layer"+layerHere);
+			// showUI("removeLi_btn_layer"+layerHere);
 			// setupTextareaModeByClassName(idHere, "reading");
 			break;
 		case "editLi" :
-			showUI("saveEditedLi_btn_layer"+layerHere);
-			showUI("cancelEditLi_btn_layer"+layerHere);
-			showUI("saveNewLi_btn_layer"+layerHere);
-			showUI("removeLi_btn_layer"+layerHere);
-			console.log("idHere = ", idHere);
-			console.log("setupBtnShowOrHideByClassName - editLi");
+			// showUI("saveEditedLi_btn_layer"+layerHere);
+			// showUI("cancelEditLi_btn_layer"+layerHere);
+			// showUI("saveNewLi_btn_layer"+layerHere);
+			// showUI("removeLi_btn_layer"+layerHere);
 			setupTextareaModeByClassName(idHere, "editing");
 			// editLi_followup(layerHere);
 			break;
@@ -87,7 +82,6 @@ function setupBtnShowOrHideByClassName(layerHere, state, idHere) {
 				// setupTextareaModeByClassName(idHere, "editing");
 			// } else {
 				// emptyLiId(layerHere);
-				console.log("setupBtnShowOrHideByClassName - inactiveLi");
 				setupTextareaModeByClassName(idHere, "reading");
 				document.getElementById("alert_txt_"+layerHere).innerHTML = "(상위 카드 작성 후, 작성 가능)";
 			// };
@@ -210,106 +204,48 @@ function highLightBorder(id, color) {
 function showHideDiv(layerHere) {
 	switch(layerHere) {
 		case null :
-
 			showUI("list_layer0");
 			hideUI("list_layer1");
 			hideUI("list_layer2");
-
-			showUI("editLi_layer0");
-			hideUI("editLi_layer1");
-			hideUI("editLi_layer2");
-
 			break;
 		case 0 :
-			
 			showUI("list_layer1");
 			hideUI("list_layer2");
-
-			showUI("editLi_layer1");
-			hideUI("editLi_layer2");
-
 			break;
 		case 1 :
-
 			showUI("list_layer2");
-
-			showUI("editLi_layer2");
-
 			break;
 		case 2 :
-			
-			break;
-		case 3 :
-
 			break;
 		default : null;
 	};
 };
 function setLiColorByLi(layerHere) {
-	const id = getLiId(layerHere); // first number li로 바꾸기
-	const li = document.getElementsByTagName("li");
-	for (let i = 0; i < li.length; i++) {
-		const idOfLi = li[i].getAttribute("id");
-		const layerOfLi = getLayerById(idOfLi);
-		if(layerHere == layerOfLi) {
-			li[i].style.background = "";
-			if(id == idOfLi) {
-				li[i].style.background = COLOR_SELECTED_GRAYGREEN;
-				li[i].setAttribute("pointed", "Y");
-			} else {
+	if(selectedLi != undefined) {
+		const id = selectedLi.id;
+		console.log("id =", id);
+		const li = document.getElementsByTagName("li");
+		for (let i = 0; i < li.length; i++) {
+			const idOfLi = li[i].getAttribute("id");
+			const layerOfLi = selectedLi.layer;
+			if(layerHere == layerOfLi) {
 				li[i].style.background = "";
-				li[i].setAttribute("pointed", "N");
+				if(id == idOfLi) {
+					li[i].style.background = COLOR_SELECTED_GRAYGREEN;
+					li[i].setAttribute("pointed", "Y");
+				} else {
+					li[i].style.background = "";
+					li[i].setAttribute("pointed", "N");
+				};
 			};
 		};
 	};
 };
-function showHideMainImage(layerHere){
 
-	hideUI("image01");
-	// hideUI("image02");
-	// hideUI("image03");
-	// hideUI("image04");
-
-	switch(layerHere) {
-		case undefined :
-			showUI("image01");
-			break;
-		case 0 :
-			showUI("image02");
-			break;
-		case 1 :
-			showUI("image03");
-			break;
-		case 2 :
-			showUI("image04");
-			break;
-		case 3 :
-			showUI("image05");
-			break;
-		default : null;
-	};
-};
-function setMainImage() {
-	const divSelector = document.getElementsByClassName("girdColumnForLayer");
-	for (let i = 0; i < divSelector.length; i++) {
-		divSelector[i].addEventListener("mouseover", function (e) {
-			const layer = e.currentTarget.getAttribute("id").substr(4);
-			showHideMainImage(layer);
-		});
-		divSelector[i].addEventListener("mouseout", function (e) {
-			const layer = e.currentTarget.getAttribute("id").substr(4);
-			showUI("image01");
-			hideUI("image02");
-			hideUI("image03");
-			hideUI("image04");
-		});
-	};
-};
 function setLayerHighlight(layerHere, trueOrFalseHere) {
 	const elementId = "layer_"+layerHere;
 	const divSelector = document.getElementById(elementId);
 	if(trueOrFalseHere) {
-		console.log("setLayerHighlight here!");
 		divSelector.style.backgroundColor = COLOR_FOCUSED_YELLOW;
 		// divSelector.style.backgroundColor = "'"+ COLOR_FOCUSED_YELLOW +"'" ;
 		// divSelector.setAttribute("style", "background-color: "+COLOR_FOCUSED_YELLOW+";");

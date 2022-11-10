@@ -8,7 +8,6 @@ function removeLi(layerHere) {
 function requestRemoveLi(layerHere, idHere) {
 
 	const inputId = idHere;
-	console.log("inputId = ", inputId);
 	const packagedData = objectById[inputId];
 	packagedData.editedDate = getTimeStamp();
 

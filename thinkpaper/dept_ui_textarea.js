@@ -1,7 +1,6 @@
 function setupTextareaModeByClassName(idHere, liMode) {
 	const liElement = document.getElementById(idHere);
 	const textareaElement = liElement.children[0];
-	console.log("setupTextareaModeByClassName");
 
 	if (liMode == "editing") {
 		// textareaElement.style.color = COLOR_FOCUSED_YELLOW;
@@ -21,7 +20,6 @@ function setupTextareaReadOnly(idHere, trueOrFalse){
 	textareaElement.readOnly = trueOrFalse;
 	if(trueOrFalse == false) {
 		setTimeout(()=>{
-		console.log("setupTextareaReadOnly");
 		textareaElement.style.backgroundColor = "#FFF";
 		textareaElement.style.border = "solid 2px" + COLOR_SELECTED_GRAYGREEN;
 		},1);
