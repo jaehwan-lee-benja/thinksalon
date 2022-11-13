@@ -148,7 +148,7 @@ main{
 }
 
 #divMain{
-    padding-left: 160px;
+    padding-left: 170px;
 }
 
 #gridColumn{
@@ -171,7 +171,6 @@ main{
     grid-template-rows: 2rem 1fr;
     grid-gap: 0.2rem;
     width: 16rem;
-    /*최대 높이에 맞춰서 진행방법? flex 스터디하기*/
     padding: 0 1rem;
     margin: 0 auto;
     align-content: center;
