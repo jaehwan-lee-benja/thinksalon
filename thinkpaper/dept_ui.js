@@ -16,23 +16,17 @@ function showItOnUI_followup(layerHere) {
 	let idThreadObjectKeysArray = [];
 	switch(layerHere) {
 		case 0 :
-			idThreadObjectKeysArray = [1, 2, 3];
+			idThreadObjectKeysArray = [1, 2];
 			break;
 		case 1 :
-			idThreadObjectKeysArray = [2, 3];
+			idThreadObjectKeysArray = [2];
 			break;
 		case 2 :
-			idThreadObjectKeysArray = [3];
 			break;
 		default : null;
 	};
 	idThreadObjectKeysArray.forEach(eachLayer => {
-		const latestIdOfEachLayer = getLatestIdByLayer(eachLayer);
-		if(latestIdOfEachLayer != null) {
-			showItOnUI(eachLayer, latestIdOfEachLayer);
-		} else {
-			showItIfNoLi(eachLayer);
-		};
+		console.log("eachLayer = ", eachLayer);
 		updateList(eachLayer);
 	});
 };
@@ -234,11 +228,9 @@ function setLiColorByLi(layerHere) {
 					li[i].style.background = COLOR_SELECTED_GRAYGREEN;
 					li[i].setAttribute("pointed", "Y");
 					eventListenerCell = {selected: "Y"}
-					console.log("isPointed1 = ", isPointed);
 				} else {
 					li[i].style.background = "";
 					li[i].setAttribute("pointed", "N");
-					console.log("isPointed2 = ", isPointed);
 				};
 			};
 		};
@@ -247,23 +239,18 @@ function setLiColorByLi(layerHere) {
 
 // function cancelLiColor() {
 // 	const bg = document.body;
-// 	console.log("bg = ", bg);
 // 	bg.addEventListener("click",(e)=>{
-// 		console.log("e =", e);
 // 		if (eventListenerCell.selected == "Y") {
 // 			const li = document.getElementsByTagName("li");
 // 			for (let i = 0; i < li.length; i++) {
 // 				const isPointed = li[i].getAttribute("pointed");
-// 				console.log("isPointed3 = ", isPointed);
 // 				if( isPointed == "Y") {
-// 					console.log("check_cancelLiColor");
 // 					li[i].style.background = "";
 // 					li[i].setAttribute("pointed", "N");
 // 					eventListenerCell = {selected: "N"};
 // 				};
 // 			};
 // 		};
-// 		console.log("eventListenerCell.selected = ", eventListenerCell.selected);
 // 	});
 // }; [질문]
 

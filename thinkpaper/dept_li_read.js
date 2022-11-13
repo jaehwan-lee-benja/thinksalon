@@ -1,6 +1,11 @@
 function updateList(layerHere) {
 	const listId = "list_layer"+layerHere;
 	const list = document.getElementById(listId);
+	const isDisplay = list.style.display;
+	console.log("isDisplay = ", isDisplay);
+	// if(isDisplay == "none") {
+	// 	isDisplay = "initial";
+	// };
 	const liElements = list.getElementsByTagName("LI");
 	// list 초기화하기
 	for(let i=liElements.length-1; i>=0; i-- ){
@@ -112,42 +117,29 @@ function clickLi(layerHere) {
 			const liElement = document.getElementById(id);
 			const textareaElement = liElement.children[0];
 			const isEditing = textareaElement.getAttribute("readOnly");
-
-			console.log("check1");
 			
-			if(isEditing == null) {
+			setLiColorByLi(layerHere);
+
+			if(isEditing != null) {
 
 				if(id != addLiId) {
 
-					console.log("check2");
-
-					// 텍스트 에어리어 버그 관련해서는 아랫쪽 부분은 문제가 없는 것으로 보임
 					// showItOnUI(layerHere, id);
-					// showItOnUI_followup(layerHere);
+					console.log("checkpoint1");
+					showItOnUI_followup(layerHere);
 					// showHideDiv(layerHere);
 
 				} else {
 
-					console.log("check3");
-
 					// 새 리스트 추가하기 버튼을 누른 경우
-					openNewLi(layerHere, id);
-					const parentLayer = getParentsLayerBySwitchLayer(layerHere);
-					showHideDiv(parentLayer);
-
-				};
-
-
-			} else {
-
-				if(id == addLiId) {
-					console.log("check4");
+					// openNewLi(layerHere, id);
+					// const parentLayer = getParentsLayerBySwitchLayer(layerHere);
+					// showHideDiv(parentLayer);
 					makeEditModeByDbclick(e);
-				};
 
+				};
 			};
 
-			setLiColorByLi(layerHere);
 
 			// 선택된 li의 id 넣기
 			const seletedLi_layer0 = document.getElementById("seletedLi_layer0");
