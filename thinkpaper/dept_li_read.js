@@ -62,7 +62,6 @@ function clickLi(layerHere) {
 		liArray.push(li[i]);
 	};
 
-	//dbclick function
 	function makeEditModeByDbclick(eHere) {
 		const idByLi = eHere.target.getAttribute("id");
 		const idByTextarea = eHere.target.parentNode.getAttribute("id");					
