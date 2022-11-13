@@ -62,10 +62,40 @@ function clickLi(layerHere) {
 		liArray.push(li[i]);
 	};
 
+	//dbclick function
+	function makeEditModeByDbclick(eHere) {
+		const idByLi = eHere.target.getAttribute("id");
+		const idByTextarea = eHere.target.parentNode.getAttribute("id");					
+
+		let dblclickedId = ""
+		if(idByLi != null) {
+			dblclickedId = idByLi;
+		} else {
+			dblclickedId = idByTextarea;
+		};
+
+		selectedLi = objectById[dblclickedId]; // 수정 필요함 [질문]
+
+		const liElement = document.getElementById(dblclickedId);
+		const textareaElement = liElement.children[0];
+		const layer = liElement.getAttribute("layer");
+		const addLiId = "addLiBtn_"+layer;
+		const isEditing = textareaElement.getAttribute("readOnly");
+
+		if( isEditing != null && dblclickedId != addLiId){
+			openEditLi(layer, dblclickedId);
+		} else if(isEditing != null && dblclickedId == addLiId){
+			openNewLi(layer, dblclickedId);
+		};
+
+		// 선택된 li의 id 넣기
+		const seletedLi_layer0 = document.getElementById("seletedLi_layer0");
+		seletedLi_layer0.innerHTML = "id:" + dblclickedId;
+		resizeTextarea();
+	};
+
 	liArray.forEach((v)=>{
-
 		v.addEventListener("click",(e)=>{
-
 
 			let id = ""
 			const targetTagName = e.target.tagName;
@@ -90,12 +120,16 @@ function clickLi(layerHere) {
 
 				if(id != addLiId) {
 
+					console.log("check2");
+
 					// 텍스트 에어리어 버그 관련해서는 아랫쪽 부분은 문제가 없는 것으로 보임
 					// showItOnUI(layerHere, id);
 					// showItOnUI_followup(layerHere);
 					// showHideDiv(layerHere);
 
 				} else {
+
+					console.log("check3");
 
 					// 새 리스트 추가하기 버튼을 누른 경우
 					openNewLi(layerHere, id);
@@ -104,6 +138,13 @@ function clickLi(layerHere) {
 
 				};
 
+
+			} else {
+
+				if(id == addLiId) {
+					console.log("check4");
+					makeEditModeByDbclick(e);
+				};
 
 			};
 
@@ -118,35 +159,8 @@ function clickLi(layerHere) {
 
 		v.addEventListener("dblclick",(e)=>{
 			
-			const idByLi = e.target.getAttribute("id");
-			const idByTextarea = e.target.parentNode.getAttribute("id");					
-
-			let dblclickedId = ""
-			if(idByLi != null) {
-				dblclickedId = idByLi;
-			} else {
-				dblclickedId = idByTextarea;
-			};
-
-			selectedLi = objectById[dblclickedId]; // 수정 필요함 [질문]
-
-			const liElement = document.getElementById(dblclickedId);
-			const textareaElement = liElement.children[0];
-			const layer = liElement.getAttribute("layer");
-			const addLiId = "addLiBtn_"+layer;
-			const isEditing = textareaElement.getAttribute("readOnly");
-
-			if( isEditing != null && dblclickedId != addLiId){
-				openEditLi(layer, dblclickedId);
-			} else if(isEditing != null && dblclickedId == addLiId){
-				openNewLi(layer, dblclickedId);
-			};
-
-			// 선택된 li의 id 넣기
-			const seletedLi_layer0 = document.getElementById("seletedLi_layer0");
-			seletedLi_layer0.innerHTML = "id:" + dblclickedId;
-			resizeTextarea();
-
+			makeEditModeByDbclick(e);
+		
 		});
 	});
 };
