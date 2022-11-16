@@ -15,7 +15,7 @@ function logIn() {
 			requestReadUserData(user);
 			requestReadBigPicture(user);
 			showHideDiv(null);
-			// cancelLiColor();
+			cancelLiSelected();
 		} else {
 			window.location.replace("login.html");
 		};

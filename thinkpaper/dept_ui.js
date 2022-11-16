@@ -232,22 +232,26 @@ function setLiColorByLi(layerHere) {
 	};
 };
 
-// function cancelLiColor() {
-// 	const bg = document.body;
-// 	bg.addEventListener("click",(e)=>{
-// 		if (eventListenerCell.selected == "Y") {
-// 			const li = document.getElementsByTagName("li");
-// 			for (let i = 0; i < li.length; i++) {
-// 				const isPointed = li[i].getAttribute("pointed");
-// 				if( isPointed == "Y") {
-// 					li[i].style.background = "";
-// 					li[i].setAttribute("pointed", "N");
-// 					eventListenerCell = {selected: "N"};
-// 				};
-// 			};
-// 		};
-// 	});
-// }; [질문]
+function cancelLiSelected() {
+	const bg = document.body;
+	bg.addEventListener("click",(e)=>{
+		console.log("cancelLiSelected here");
+		console.log("e = ", e);
+		console.log("e.target = ", e.target);
+		console.log("e.target.tagName = ", e.target.tagName);
+		if (eventListenerCell.selected == "Y") {
+			const li = document.getElementsByTagName("li");
+			for (let i = 0; i < li.length; i++) {
+				const isPointed = li[i].getAttribute("pointed");
+				if( isPointed == "Y") {
+					li[i].style.background = "";
+					li[i].setAttribute("pointed", "N");
+					eventListenerCell = {selected: "N"};
+				};
+			};
+		};
+	});
+}; // [질문]
 
 function setLayerHighlight(layerHere, trueOrFalseHere) {
 	const elementId = "layer_"+layerHere;

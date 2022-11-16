@@ -156,7 +156,12 @@ main{
     grid-template-columns: 1fr 1fr 1fr 1fr;
     grid-gap: 1.2rem;
     margin-bottom: 10rem;
+    transform: rotateX(180deg);
+}
+
+#gridBox {
     overflow-x: scroll;
+    transform: rotateX(180deg);
 }
 
 .girdColumnForLayer{
@@ -170,7 +175,7 @@ main{
     display: grid;
     grid-template-rows: 2rem 1fr;
     grid-gap: 0.2rem;
-    width: 16rem;
+    width: 100%;
     padding: 0 1rem;
     margin: 0 auto;
     align-content: center;
