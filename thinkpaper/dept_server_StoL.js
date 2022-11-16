@@ -39,6 +39,19 @@ function requestReadBigPicture(user) {
 			});
 		};
 
+		// function requestReadIdAndObjectFromChildren(o) {
+		// 	if(!o) return;
+		
+		// 	const ids = Object.keys(o);
+		// 	if(ids.length == undefined) return;
+		
+		// 	ids.forEach( id => {
+		// 		const v = o[id];
+		// 		objectById[id] = v;
+		// 		requestReadIdAndObjectFromChildren(v);
+		// 	});
+		// };
+
 		requestReadIdAndObjectFromChildren(v);
 
 		const count = Object.keys(objectById).length; 

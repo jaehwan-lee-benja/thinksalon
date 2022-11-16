@@ -2,9 +2,9 @@ function updateList(layerHere) {
 	const listId = "list_layer"+layerHere;
 	const list = document.getElementById(listId);
 	let isDisplay = list.style.display;
-	if(isDisplay == "none") {
-		showUI(listId);
-	};
+	// if(isDisplay == "none") {
+	// 	showUI(listId);
+	// };
 	const liElements = list.getElementsByTagName("LI");
 	// list 초기화하기
 	for(let i=liElements.length-1; i>=0; i-- ){
@@ -125,7 +125,7 @@ function clickLi(layerHere) {
 
 					// showItOnUI(layerHere, id);
 					showItOnUI_followup(layerHere);
-					// showHideDiv(layerHere);
+					showHideDiv(layerHere);
 
 					setLiColorByLi(layerHere);
 
