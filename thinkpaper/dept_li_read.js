@@ -149,6 +149,9 @@ function clickLi(layerHere) {
 			seletedLi_layer0.innerHTML = "id:" + id;
 			// resizeTextarea();
 
+			const selectedLiViewer = document.getElementById("selectedLiViewer");
+   			selectedLiViewer.innerHTML = JSON.stringify(selectedLi);
+
 		});
 
 		v.addEventListener("dblclick",(e)=>{
