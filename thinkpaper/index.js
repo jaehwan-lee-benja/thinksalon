@@ -14,7 +14,6 @@ function logIn() {
 		if (user != null) {
 			requestReadUserData(user);
 			requestReadBigPicture(user);
-
 			showHideDiv(null);
 			// cancelLiColor();
 		} else {

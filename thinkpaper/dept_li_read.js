@@ -1,7 +1,7 @@
 function updateList(layerHere) {
 	const listId = "list_layer"+layerHere;
 	const list = document.getElementById(listId);
-	let isDisplay = list.style.display;
+	// let isDisplay = list.style.display;
 	// if(isDisplay == "none") {
 	// 	showUI(listId);
 	// };
@@ -14,6 +14,7 @@ function updateList(layerHere) {
 	const mappedArray = getMappedObject_idEditedDateContents(layerHere);
 	// list 순서 잡기(최근 편집 순서)
 	const sortedArray = sortingArray(mappedArray);
+
 	// li 생성하기
 	for (let i = 0; i < sortedArray.length; i++) {
 		const liValue = sortedArray[i][layerHere];
@@ -124,7 +125,8 @@ function clickLi(layerHere) {
 					selectedLi = objectById[id];
 
 					// showItOnUI(layerHere, id);
-					showItOnUI_followup(layerHere);
+					// showItOnUI_followup(layerHere);
+					showChildernList(layerHere, id);
 					showHideDiv(layerHere);
 
 					setLiColorByLi(layerHere);
@@ -167,4 +169,65 @@ function getLastLi(layerHere) {
 	const last = liArray[liArray.length - 1];
 	
 	return last;
+};
+
+function showChildernList(layerHere, parentsIdHere) {
+	const layer = layerHere + 1;
+	const listId = "list_layer"+layer;
+	const list = document.getElementById(listId);
+	const liElements = list.getElementsByTagName("LI");
+	// list 초기화하기
+	for(let i=liElements.length-1; i>=0; i-- ){
+		liElements[i].remove();
+	};
+	// Array 만들기
+	const mappedArray = getMappedObjectByParentsId(layer, parentsIdHere);
+
+	// list 순서 잡기(최근 편집 순서)
+	const sortedArray = sortingArray(mappedArray);
+	
+	console.log("sortedArray = ", sortedArray);
+
+	// li 생성하기
+	for (let i = 0; i < sortedArray.length; i++) {
+		const liValue = sortedArray[i][layer];
+		const listItem = document.createElement('li');
+		listItem.innerHTML = "<textarea readonly>"+ liValue +"</textarea>";
+		list.appendChild(listItem);
+		const liId = sortedArray[i].id;
+		listItem.setAttribute("id", liId);
+		listItem.setAttribute("layer", layer);
+	};
+	addOpenAddLi(layer);
+	clickLi(layer);
+};
+
+function getChildrenIdArray(parentsIdHere) {
+	console.log("parentsIdHere = ", parentsIdHere);
+	const idArray = Object.keys(objectById);
+	const childrenIdArray = [];
+	idArray.forEach(eachId => {
+		const eachParentsIdFromObjectById = objectById[eachId].parentsId;
+		console.log("eachParentsIdFromObjectById = ", eachParentsIdFromObjectById);
+		if(eachParentsIdFromObjectById == parentsIdHere){
+			 console.log("checkpoint!");
+			childrenIdArray.push(eachId);
+		};
+	});
+	console.log("childrenIdArray = ", childrenIdArray);
+	return childrenIdArray;
+};
+
+function getMappedObjectByParentsId(layerHere, parentsIdHere) {		
+	const returnArray = [];
+	const eachIdArrayByLayer = getChildrenIdArray(parentsIdHere);
+	console.log("eachIdArrayByLayer = ", eachIdArrayByLayer);
+	eachIdArrayByLayer.forEach(EachId => {
+		let returnObject = {};
+		returnObject["id"] = objectById[EachId].id;
+		returnObject["editedDate"] = objectById[EachId].editedDate;
+		returnObject[layerHere] = objectById[EachId].contents["txt"];
+		returnArray.push(returnObject);
+	});
+	return returnArray;
 };

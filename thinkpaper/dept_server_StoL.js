@@ -15,44 +15,18 @@ function requestReadUserData(user) {
 
 function requestReadBigPicture(user) {
 
-	const userRef = db.ref("users")
+	const bpRef = db.ref("users")
 					.child(user.uid)
 					.child("bigPicture");
 	
-	userRef.on("value", (snapshot) => {
+	bpRef.on("value", (snapshot) => {
 		console.log("*keep* ===== .on is here =====");
 
-		const v = snapshot.val();
-		objectById = {};
-
-		function requestReadIdAndObjectFromChildren(o) {
-			const c = o.children;
-			if(!c) return;
-		
-			const ids = Object.keys(c);
-			if(ids.length == undefined) return;
-		
-			ids.forEach( id => {
-				const v = c[id];
-				objectById[id] = v;
-				requestReadIdAndObjectFromChildren(v);
-			});
-		};
-
-		// function requestReadIdAndObjectFromChildren(o) {
-		// 	if(!o) return;
-		
-		// 	const ids = Object.keys(o);
-		// 	if(ids.length == undefined) return;
-		
-		// 	ids.forEach( id => {
-		// 		const v = o[id];
-		// 		objectById[id] = v;
-		// 		requestReadIdAndObjectFromChildren(v);
-		// 	});
-		// };
-
-		requestReadIdAndObjectFromChildren(v);
+		snapshot.forEach(childSnap => {
+			const key = childSnap.key;
+			const value = childSnap.val();
+			objectById[key] = value;
+		});
 
 		const count = Object.keys(objectById).length; 
 		const layers = [0, 1, 2];

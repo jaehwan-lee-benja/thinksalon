@@ -3,7 +3,7 @@ function saveNewLi() {
 	const selectedLayer = selectedLi.layer;
 	const packagedData = packageNewLi(selectedLayer);
 	if (packagedData != null) {
-		requestSetLi(selectedLayer, packagedData);
+		requestSetLi(packagedData);
 		// showItOnUI_followup(selectedLayer);
 	};
 };
@@ -13,7 +13,6 @@ function packageNewLi(layerHere) {
 		const catchedData = catchContentsDataBySwitchLayer(layerHere);
 		const idNew = getUuidv4();
 		catchedData["id"] = idNew;
-		catchedData["children"] = "";
 		catchedData["createdDate"] = getTimeStamp();
 		catchedData["editedDate"] = getTimeStamp();
 		catchedData["main"] = "";
@@ -35,6 +34,8 @@ function catchContentsDataBySwitchLayer(layerHere) {
 		catchContentsData["parentsId"] = parentsId;
 	};
 
+	console.log("parentsId @catchContentsDataBySwitchLayer = ", catchContentsData.parentsId);
+
 	const contents = catchContentsData["contents"];
 	const lastLiContents = getLastLi(layerHere).children[0].value;
 	contents["txt"] = lastLiContents.trim();
@@ -46,18 +47,20 @@ function getUuidv4() {
 	(c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
 	);
 };
-function requestSetLi(layerHere, packagedDataHere) {
+function requestSetLi(packagedDataHere) {
 	const inputId = packagedDataHere.id;
-	const idThreadObject = getIdThreadObjectByPackagedData(layerHere, packagedDataHere);
-	console.log("idThreadObject @requestSetLi= ", idThreadObject);
-	const switchedRef = getRefBySwitchLayer(layerHere, idThreadObject);
+	console.log("inputId =", inputId);
 
-	switchedRef.child(inputId)
+	const bigPictureRef = db.ref("users")
+					.child(userData.uid)
+					.child("bigPicture");
+
+	bigPictureRef.child(inputId)
 	.set(packagedDataHere)
 	.then((e) => {
-		request_followupEditedDate(layerHere, packagedDataHere, function(){
+		// request_followupEditedDate(packagedDataHere, function(){
 			alert("저장되었습니다.");
-		});
+		// });
 	});
 
 };

@@ -34,7 +34,6 @@
               lastLogin: Date.now()
             },
             bigPicture: {
-              children: ""
             }          
           }
 
