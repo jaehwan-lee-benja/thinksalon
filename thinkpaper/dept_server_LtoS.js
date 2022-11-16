@@ -23,7 +23,9 @@ function request_followupEditedDate(layerHere, packagedDataHere, cb) {
 			idThreadObjectKeysArray.forEach(eachLayer => {
 				const editedDateForParents = {"editedDate": packagedDataHere.editedDate};
 				const eachId = idThreadObject[eachLayer+"Id"];
-				const switchedRef = getRefBySwitchLayer(eachLayer, idThreadObject);
+				const switchedRef = db.ref("users")
+									.child(userData.uid)
+									.child("bigPicture");
 				switchedRef.child(eachId)
 				.update(editedDateForParents, (e) => {
 					console.log("*keep* followupEditedDate completed = ", e);

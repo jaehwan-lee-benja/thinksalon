@@ -186,8 +186,6 @@ function showChildernList(layerHere, parentsIdHere) {
 	// list 순서 잡기(최근 편집 순서)
 	const sortedArray = sortingArray(mappedArray);
 	
-	console.log("sortedArray = ", sortedArray);
-
 	// li 생성하기
 	for (let i = 0; i < sortedArray.length; i++) {
 		const liValue = sortedArray[i][layer];
@@ -203,25 +201,20 @@ function showChildernList(layerHere, parentsIdHere) {
 };
 
 function getChildrenIdArray(parentsIdHere) {
-	console.log("parentsIdHere = ", parentsIdHere);
 	const idArray = Object.keys(objectById);
 	const childrenIdArray = [];
 	idArray.forEach(eachId => {
 		const eachParentsIdFromObjectById = objectById[eachId].parentsId;
-		console.log("eachParentsIdFromObjectById = ", eachParentsIdFromObjectById);
 		if(eachParentsIdFromObjectById == parentsIdHere){
-			 console.log("checkpoint!");
 			childrenIdArray.push(eachId);
 		};
 	});
-	console.log("childrenIdArray = ", childrenIdArray);
 	return childrenIdArray;
 };
 
 function getMappedObjectByParentsId(layerHere, parentsIdHere) {		
 	const returnArray = [];
 	const eachIdArrayByLayer = getChildrenIdArray(parentsIdHere);
-	console.log("eachIdArrayByLayer = ", eachIdArrayByLayer);
 	eachIdArrayByLayer.forEach(EachId => {
 		let returnObject = {};
 		returnObject["id"] = objectById[EachId].id;

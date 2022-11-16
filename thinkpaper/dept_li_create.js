@@ -34,8 +34,6 @@ function catchContentsDataBySwitchLayer(layerHere) {
 		catchContentsData["parentsId"] = parentsId;
 	};
 
-	console.log("parentsId @catchContentsDataBySwitchLayer = ", catchContentsData.parentsId);
-
 	const contents = catchContentsData["contents"];
 	const lastLiContents = getLastLi(layerHere).children[0].value;
 	contents["txt"] = lastLiContents.trim();
@@ -49,7 +47,6 @@ function getUuidv4() {
 };
 function requestSetLi(packagedDataHere) {
 	const inputId = packagedDataHere.id;
-	console.log("inputId =", inputId);
 
 	const bigPictureRef = db.ref("users")
 					.child(userData.uid)

@@ -1,9 +1,8 @@
-function saveEditedLi(layerHere) {
-
-
-	const packagedData = packageEditedLi(layerHere);
+function saveEditedLi() {
+	const layer = selectedLi.layer;
+	const packagedData = packageEditedLi(layer);
 	if (packagedData != null) {
-		requestUpdateLi(layerHere, packagedData);
+		requestUpdateLi(packagedData);
 	};
 };
 function packageEditedLi(layerHere) {	
@@ -17,11 +16,11 @@ function packageEditedLi(layerHere) {
 		// const id = getLiId(layerHere); // [질문] pointed Y, N 중 어떤게 더 좋을까?
 		const id = selectedLi.id;
 		packagedData["id"] = id;
+		console.log("layerHere = ", layerHere);
 		if (layerHere == 0) {
 			packagedData["parentsId"] = "";
 		} else {
-			const parentsLayer = getParentsLayerBySwitchLayer(layerHere);
-			packagedData["parentsId"] = getLiId(parentsLayer);
+			packagedData["parentsId"] = selectedLi.parentsId;
 		}
 		packagedData["editedDate"] = getTimeStamp();
 		packagedData["contents"] = {};
@@ -71,23 +70,23 @@ function getMoniterResult(layerHere, isChangedHere) {
 		return true;
 	};
 };
-function requestUpdateLi(layerHere, packagedDataHere) {
+function requestUpdateLi(packagedDataHere) {
+	console.log("packagedDataHere = ", packagedDataHere);
 	const inputId = packagedDataHere.id;
-	const idThreadObject = getIdThreadObjectByPackagedData(layerHere, packagedDataHere);
-	const switchedRef = getRefBySwitchLayer(layerHere, idThreadObject);
+	const switchedRef = db.ref("users")
+						.child(userData.uid)
+						.child("bigPicture");
 	switchedRef.child(inputId)
-	.update(packagedDataHere, (e) => {
-		request_followupEditedDate(layerHere, packagedDataHere, function(){
+		.update(packagedDataHere, (e) => {
+		// request_followupEditedDate(layerHere, packagedDataHere, function(){
 			alert("수정되었습니다.");
-		});
+		// });
 		console.log("*keep* update completed = ", e);
 	});
 };
 function openEditLi() {
 	const layerHere = selectedLi.layer;
 	const idHere = selectedLi.id;
-	// 이벤트 리스터를 넣을 수 있을까?
-	// const id = getLiId(layerHere);
 	setupBtnShowOrHideByClassName(layerHere, "editLi", idHere);
 	// editLi_followup(layerHere);
 };

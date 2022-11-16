@@ -13,7 +13,10 @@ function requestRemoveLi(layerHere, idHere) {
 
 	const idThreadObject = getIdThreadObjectByPackagedData(layerHere, packagedData);
 
-	const switchedRef = getRefBySwitchLayer(layerHere, idThreadObject);
+	const switchedRef = db.ref("users")
+						.child(userData.uid)
+						.child("bigPicture");
+						
 	const idArrayLength = getEveryIdArrayOfLayer(layerHere).length;
 
 	if(layerHere == 0 && idArrayLength == 1) {
