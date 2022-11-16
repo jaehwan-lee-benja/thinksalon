@@ -26,7 +26,6 @@ function showItOnUI_followup(layerHere) {
 		default : null;
 	};
 	idThreadObjectKeysArray.forEach(eachLayer => {
-		console.log("eachLayer = ", eachLayer);
 		updateList(eachLayer);
 	});
 };
@@ -221,17 +220,13 @@ function setLiColorByLi(layerHere) {
 		for (let i = 0; i < li.length; i++) {
 			const idOfLi = li[i].getAttribute("id");
 			const layerOfLi = selectedLi.layer;
-			if(layerHere == layerOfLi) {
+			if(id == idOfLi && layerHere == layerOfLi) {
+				li[i].style.background = COLOR_SELECTED_GRAYGREEN;
+				li[i].setAttribute("pointed", "Y");
+				eventListenerCell = {selected: "Y"}
+			} else if (layerHere == layerOfLi){
 				li[i].style.background = "";
-				const isPointed = li[i].getAttribute("pointed");
-				if(id == idOfLi) {
-					li[i].style.background = COLOR_SELECTED_GRAYGREEN;
-					li[i].setAttribute("pointed", "Y");
-					eventListenerCell = {selected: "Y"}
-				} else {
-					li[i].style.background = "";
-					li[i].setAttribute("pointed", "N");
-				};
+				li[i].setAttribute("pointed", "N");
 			};
 		};
 	};
@@ -262,6 +257,6 @@ function setLayerHighlight(layerHere, trueOrFalseHere) {
 		// divSelector.style.backgroundColor = "'"+ COLOR_FOCUSED_YELLOW +"'" ;
 		// divSelector.setAttribute("style", "background-color: "+COLOR_FOCUSED_YELLOW+";");
 	} else {
-		divSelector.setAttribute("style", "background-color: '';");
+		divSelector.style.backgroundColor ="";
 	}
 };

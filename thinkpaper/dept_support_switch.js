@@ -1,8 +1,9 @@
 function getRefBySwitchLayer(layerHere, idThreadObjectHere) {
 	
 	const parentsLayer = getParentsLayerBySwitchLayer(layerHere);
-	const parentsId = idThreadObjectHere[parentsLayer+"Id"];
-
+	console.log("parentsLayer = ", parentsLayer);
+	const parentsId = idThreadObjectHere["layer"+parentsLayer+"Id"];
+	console.log("idThreadObjectHere = ", idThreadObjectHere);
 	const userRef = db.ref("users").child(userData.uid);
 	const bigPictureRef = userRef.child("bigPicture");
 	const layer0Ref = bigPictureRef.child("children");
@@ -12,7 +13,7 @@ function getRefBySwitchLayer(layerHere, idThreadObjectHere) {
 			return layer0Ref;
 		case 1 : 
 			const layer0Id = parentsId;
-
+			console.log("layer0Id = ", layer0Id);
 			const layer1Ref = layer0Ref.child(layer0Id).child("children");
 			return layer1Ref;
 
@@ -53,14 +54,9 @@ function getIdThreadObjectById(layerHere, inputIdhere) {
 	return returnObject;
 };
 function getParentsLayerBySwitchLayer(layerHere) {
-	switch(layerHere){
-		case 0 : 
-			return null;
-		case 1 :
-			return 0;
-		case 2 :
-			return 1;
-		default : return null; 
+	if(layerHere > 0){
+		const parentsLayer = layerHere - 1;
+		return parentsLayer;
 	};
 };
 function getChildrenLayerBySwitchLayer(layerHere) {

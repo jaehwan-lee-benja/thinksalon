@@ -135,7 +135,7 @@ function getLiId(layerHere) {
 		if (isPointed == "Y") {
 			const valueOfLi = li[i].id;
 			return valueOfLi;
-		};			
+		};
 	};
 
 };

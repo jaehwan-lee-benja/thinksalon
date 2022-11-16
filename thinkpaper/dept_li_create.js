@@ -1,8 +1,10 @@
-function saveNewLi(layerHere) {
-	const packagedData = packageNewLi(layerHere);
+function saveNewLi() {
+	// 이것의 layer를 받아오는 방법이 필요하다.
+	const selectedLayer = selectedLi.layer;
+	const packagedData = packageNewLi(selectedLayer);
 	if (packagedData != null) {
-		requestSetLi(layerHere, packagedData);
-		// showItOnUI_followup(layerHere);
+		requestSetLi(selectedLayer, packagedData);
+		// showItOnUI_followup(selectedLayer);
 	};
 };
 function packageNewLi(layerHere) {
@@ -28,8 +30,9 @@ function catchContentsDataBySwitchLayer(layerHere) {
 	if (layerHere == 0) {
 		catchContentsData["parentsId"] = "";
 	} else {
-		const parentsLayer = getParentsLayerBySwitchLayer(layerHere);
-		catchContentsData["parentsId"] = getLiId(parentsLayer);
+		const parentsLayer = layerHere - 1;
+		const parentsId = getLiId(parentsLayer);
+		catchContentsData["parentsId"] = parentsId;
 	};
 
 	const contents = catchContentsData["contents"];
@@ -46,7 +49,7 @@ function getUuidv4() {
 function requestSetLi(layerHere, packagedDataHere) {
 	const inputId = packagedDataHere.id;
 	const idThreadObject = getIdThreadObjectByPackagedData(layerHere, packagedDataHere);
-
+	console.log("idThreadObject @requestSetLi= ", idThreadObject);
 	const switchedRef = getRefBySwitchLayer(layerHere, idThreadObject);
 
 	switchedRef.child(inputId)

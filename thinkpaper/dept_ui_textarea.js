@@ -27,7 +27,6 @@ function setupTextareaReadOnly(idHere, trueOrFalse){
 };
 function resizeTextarea() {
 	// 참고: https://stackoverflow.com/questions/454202/creating-a-textarea-with-auto-resize
-	// [질문] editLi가 늘어난 사이즈에서, 다른 li를 눌러서 내용을 볼 때, 크기가 큰 경우, 줄어들지 않음
 	const tx = document.getElementsByTagName("textarea");
 	for (let i = 0; i < tx.length; i++) {
 		// tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px; overflow-y:auto;");

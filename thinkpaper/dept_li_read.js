@@ -1,11 +1,10 @@
 function updateList(layerHere) {
 	const listId = "list_layer"+layerHere;
 	const list = document.getElementById(listId);
-	const isDisplay = list.style.display;
-	console.log("isDisplay = ", isDisplay);
-	// if(isDisplay == "none") {
-	// 	isDisplay = "initial";
-	// };
+	let isDisplay = list.style.display;
+	if(isDisplay == "none") {
+		showUI(listId);
+	};
 	const liElements = list.getElementsByTagName("LI");
 	// list 초기화하기
 	for(let i=liElements.length-1; i>=0; i-- ){
@@ -38,7 +37,7 @@ function addOpenAddLi(layerHere) {
 	const liId_addLi = "addLiBtn_"+layerHere;
 	listItem.setAttribute("id", liId_addLi);
 	listItem.setAttribute("layer", layerHere);
-	listItem.setAttribute("style", COLORSET_ADDLI);
+	listItem.style.color = COLORSET_ADDLI;
 };
 function getMappedObject_idEditedDateContents(layerHere) {		
 	const returnArray = [];
@@ -78,7 +77,6 @@ function clickLi(layerHere) {
 			dblclickedId = idByTextarea;
 		};
 
-		selectedLi = objectById[dblclickedId]; // 수정 필요함 [질문]
 
 		const liElement = document.getElementById(dblclickedId);
 		const textareaElement = liElement.children[0];
@@ -87,8 +85,10 @@ function clickLi(layerHere) {
 		const isEditing = textareaElement.getAttribute("readOnly");
 
 		if( isEditing != null && dblclickedId != addLiId){
+			selectedLi = objectById[dblclickedId];
 			openEditLi(layer, dblclickedId);
 		} else if(isEditing != null && dblclickedId == addLiId){
+			selectedLi = {layer: layerHere};
 			openNewLi(layer, dblclickedId);
 		};
 
@@ -110,7 +110,6 @@ function clickLi(layerHere) {
 				id = e.target.parentNode.getAttribute("id");	
 			};
 
-			selectedLi = objectById[id]; // 수정 필요함 [질문]
 
 			const addLiId = "addLiBtn_"+layerHere;
 			
@@ -118,16 +117,17 @@ function clickLi(layerHere) {
 			const textareaElement = liElement.children[0];
 			const isEditing = textareaElement.getAttribute("readOnly");
 			
-			setLiColorByLi(layerHere);
-
 			if(isEditing != null) {
 
 				if(id != addLiId) {
 
+					selectedLi = objectById[id];
+
 					// showItOnUI(layerHere, id);
-					console.log("checkpoint1");
 					showItOnUI_followup(layerHere);
 					// showHideDiv(layerHere);
+
+					setLiColorByLi(layerHere);
 
 				} else {
 
@@ -135,6 +135,7 @@ function clickLi(layerHere) {
 					// openNewLi(layerHere, id);
 					// const parentLayer = getParentsLayerBySwitchLayer(layerHere);
 					// showHideDiv(parentLayer);
+					selectedLi = {layer: layerHere};
 					makeEditModeByDbclick(e);
 
 				};
