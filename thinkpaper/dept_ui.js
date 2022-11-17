@@ -235,18 +235,23 @@ function setLiColorByLi(layerHere) {
 function cancelLiSelected() {
 	const bg = document.body;
 	bg.addEventListener("click",(e)=>{
-		console.log("cancelLiSelected here");
-		console.log("e = ", e);
-		console.log("e.target = ", e.target);
-		console.log("e.target.tagName = ", e.target.tagName);
-		if (eventListenerCell.selected == "Y") {
-			const li = document.getElementsByTagName("li");
-			for (let i = 0; i < li.length; i++) {
-				const isPointed = li[i].getAttribute("pointed");
-				if( isPointed == "Y") {
-					li[i].style.background = "";
-					li[i].setAttribute("pointed", "N");
-					eventListenerCell = {selected: "N"};
+		const tagName = e.target.tagName;
+		let isBg = "";
+		if (tagName == "TEXTAREA" || tagName == "LI") {
+			isBg = false;
+		} else {
+			isBg = true;
+		};
+		if(isBg) {
+			if (eventListenerCell.selected == "Y") {
+				const li = document.getElementsByTagName("li");
+				for (let i = 0; i < li.length; i++) {
+					const isPointed = li[i].getAttribute("pointed");
+					if( isPointed == "Y") {
+						li[i].style.background = "";
+						li[i].setAttribute("pointed", "N");
+						eventListenerCell = {selected: "N"};
+					};
 				};
 			};
 		};
