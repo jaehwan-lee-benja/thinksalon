@@ -253,6 +253,7 @@ function cancelLiSelected() {
 						eventListenerCell = {selected: "N"};
 					};
 				};
+				cancelEditLi();
 			};
 		};
 	});
