@@ -16,7 +16,6 @@ function packageEditedLi(layerHere) {
 		// const id = getLiId(layerHere); // [질문] pointed Y, N 중 어떤게 더 좋을까?
 		const id = selectedLi.id;
 		packagedData["id"] = id;
-		console.log("layerHere = ", layerHere);
 		if (layerHere == 0) {
 			packagedData["parentsId"] = "";
 		} else {
@@ -71,7 +70,6 @@ function getMoniterResult(layerHere, isChangedHere) {
 	};
 };
 function requestUpdateLi(packagedDataHere) {
-	console.log("packagedDataHere = ", packagedDataHere);
 	const inputId = packagedDataHere.id;
 	const switchedRef = db.ref("users")
 						.child(userData.uid)
@@ -90,21 +88,10 @@ function openEditLi() {
 	setupBtnShowOrHideByClassName(layerHere, "editLi", idHere);
 	// editLi_followup(layerHere);
 };
-function cancelEditLi(layerHere) {
-	const liId = getLiId(layerHere);
-	if(liId != ""){
-		showItOnUI(layerHere, liId);
-		const childrenLayer = getChildrenLayerBySwitchLayer(layerHere);
-		if (childrenLayer != null) {
-			const idArray = getEveryIdArrayOfLayer(childrenLayer);
-			if(idArray.length == 0) {
-				setupBtnShowOrHideByClassName(childrenLayer, "createFirstLi");
-			};
-		};
-	} else {
-		// 기존 카드가 있는 상태에서, 새 카드 만들기 후, 편집 취소를 할 때의 경우, 최신 lastest 카드를 보여주기
-		// 기존 카드가 없는 경우에는 cancelEditLi 버튼이 나타나지 않음.
-		const id = getLatestIdByLayer(layerHere);
-		showItOnUI(layerHere, id);
-	};
+function cancelEditLi() {
+
+	const layer = selectedLi.layer;
+	updateList(layer);
+	setLiColorByLi(layer);
+
 };

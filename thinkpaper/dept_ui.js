@@ -223,7 +223,7 @@ function setLiColorByLi(layerHere) {
 			if(id == idOfLi && layerHere == layerOfLi) {
 				li[i].style.background = COLOR_SELECTED_GRAYGREEN;
 				li[i].setAttribute("pointed", "Y");
-				eventListenerCell = {selected: "Y"}
+				eventListenerCell = {selected: "Y"};
 			} else if (layerHere == layerOfLi){
 				li[i].style.background = "";
 				li[i].setAttribute("pointed", "N");
@@ -237,7 +237,7 @@ function cancelLiSelected() {
 	bg.addEventListener("click",(e)=>{
 		const tagName = e.target.tagName;
 		let isBg = "";
-		if (tagName == "TEXTAREA" || tagName == "LI") {
+		if (tagName == "TEXTAREA" || tagName == "LI" || tagName == "INPUT") {
 			isBg = false;
 		} else {
 			isBg = true;
