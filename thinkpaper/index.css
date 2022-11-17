@@ -3,6 +3,8 @@ body{
     background-color: #FBFCF4;
     color: #2A2B2A;
     margin: 0rem 4rem;
+    overflow: auto;
+    height: 100%;
 }
 
 h1{
@@ -129,6 +131,8 @@ header{
     align-content: center;
     padding: 1rem 4rem 0 4rem;
     border-bottom: 0.2px solid #C8C8C8;
+    align-content: center;
+    padding: 1rem 4rem 0 4rem;
     backdrop-filter: blur(7px);
 }
 
@@ -152,7 +156,22 @@ main{
     padding-left: 170px;
 }
 
+#divBox {
+    position: static;
+    overflow-x: overlay;
+    transform: rotateX(180deg);
+    padding-bottom: 10px;
+    height: 80%;
+}
+
+/* #divColumn{
+    position: sticky;
+    top: 30px;
+} */
+
 #gridColumn{
+    position: sticky;
+    top: 30px;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
     grid-gap: 1.2rem;
@@ -161,27 +180,22 @@ main{
     transform: rotateX(180deg);
 }
 
-#gridBox {
-    overflow-x: scroll;
-    transform: rotateX(180deg);
-}
-
-#gridBox::-webkit-scrollbar {
+#divBox::-webkit-scrollbar {
     height: 5px;
     background-color: #e3e3e3; 
 }
 
-#gridBox::-webkit-scrollbar-thumb {
+#divBox::-webkit-scrollbar-thumb {
     border-radius: 5px;
     background-color: #a5a5a5; 
 }
 
-#gridBox::-webkit-scrollbar-thumb:hover {
+#divBox::-webkit-scrollbar-thumb:hover {
     height: 10px;
-    background-color: #F7DA7B; 
+    background-color: #2A2B2A; 
 }
 
-#gridBox::-webkit-scrollbar:hover {
+#divBox::-webkit-scrollbar:hover {
     height: 10px;
 }
 
