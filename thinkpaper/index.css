@@ -55,7 +55,8 @@ textarea {
 
 textarea::-webkit-scrollbar {
     width: 0.5rem;
-    background-color: #FBFCF4; }
+    background-color: #FBFCF4; 
+}
 
 textarea::-webkit-scrollbar-thumb {
     border-radius: 0.5rem;
@@ -133,7 +134,7 @@ header{
 
 main{
     height: 100%;
-    padding-top: 140px;
+    padding-top: 100px;
 }
 
 #divImageMain{
@@ -155,13 +156,33 @@ main{
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
     grid-gap: 1.2rem;
-    margin-bottom: 10rem;
+    margin-top: 10rem;
+    margin-bottom: 2rem;
     transform: rotateX(180deg);
 }
 
 #gridBox {
     overflow-x: scroll;
     transform: rotateX(180deg);
+}
+
+#gridBox::-webkit-scrollbar {
+    height: 5px;
+    background-color: #e3e3e3; 
+}
+
+#gridBox::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background-color: #a5a5a5; 
+}
+
+#gridBox::-webkit-scrollbar-thumb:hover {
+    height: 10px;
+    background-color: #F7DA7B; 
+}
+
+#gridBox::-webkit-scrollbar:hover {
+    height: 10px;
 }
 
 .girdColumnForLayer{
