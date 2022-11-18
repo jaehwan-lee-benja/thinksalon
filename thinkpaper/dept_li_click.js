@@ -114,14 +114,12 @@ function makeEditModeByDbclick(eHere) {
 };
 
 function cancelLiEditModeBack() {
-	console.log("cancelLiEditModeBack here!");
 	const li = document.getElementsByTagName("li");
 	for (let i = 0; i < li.length; i++) {
 		const eachTextarea = li[i].children[0];
 		const eachValueOfReadOnly = eachTextarea.getAttribute("readOnly");
 		if(eachValueOfReadOnly == null){
 			// if (confirm("편집을 취소하시겠습니까?")) {
-				console.log("check!");
 				const idOfReadOnly = li[i].getAttribute("id");
 				eachTextarea.readOnly = true;
 				eachTextarea.setAttribute("style", "");

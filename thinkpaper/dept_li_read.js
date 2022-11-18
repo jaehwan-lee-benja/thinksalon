@@ -109,32 +109,34 @@ function getLastLi(layerHere) {
 };
 
 function showChildernList(layerHere, parentsIdHere) {
-	const layer = layerHere + 1;
-	const listId = "list_layer"+layer;
-	const list = document.getElementById(listId);
-	const liElements = list.getElementsByTagName("LI");
-	// list 초기화하기
-	for(let i=liElements.length-1; i>=0; i-- ){
-		liElements[i].remove();
-	};
-	// Array 만들기
-	const mappedArray = getMappedObjectByParentsId(layer, parentsIdHere);
+	if(layerHere < 2) {
+		const layer = layerHere + 1;
+		const listId = "list_layer"+layer;
+		const list = document.getElementById(listId);
+		const liElements = list.getElementsByTagName("LI");
+		// list 초기화하기
+		for(let i=liElements.length-1; i>=0; i-- ){
+			liElements[i].remove();
+		};
+		// Array 만들기
+		const mappedArray = getMappedObjectByParentsId(layer, parentsIdHere);
 
-	// list 순서 잡기(최근 편집 순서)
-	const sortedArray = sortingArray(mappedArray);
-	
-	// li 생성하기
-	for (let i = 0; i < sortedArray.length; i++) {
-		const liValue = sortedArray[i].txt;
-		const listItem = document.createElement('li');
-		listItem.innerHTML = "<textarea readonly>"+ liValue +"</textarea>";
-		list.appendChild(listItem);
-		const liId = sortedArray[i].id;
-		listItem.setAttribute("id", liId);
-		listItem.setAttribute("layer", layer);
+		// list 순서 잡기(최근 편집 순서)
+		const sortedArray = sortingArray(mappedArray);
+
+		// li 생성하기
+		for (let i = 0; i < sortedArray.length; i++) {
+			const liValue = sortedArray[i].txt;
+			const listItem = document.createElement('li');
+			listItem.innerHTML = "<textarea readonly>"+ liValue +"</textarea>";
+			list.appendChild(listItem);
+			const liId = sortedArray[i].id;
+			listItem.setAttribute("id", liId);
+			listItem.setAttribute("layer", layer);
+		};
+		addOpenAddLi(layer);
+		clickLi(layer);
 	};
-	addOpenAddLi(layer);
-	clickLi(layer);
 };
 
 function getChildrenIdArray(parentsIdHere) {
