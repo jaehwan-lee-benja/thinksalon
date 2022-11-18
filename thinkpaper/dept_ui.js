@@ -195,20 +195,20 @@ function highLightBorder(id, color) {
 	return document.getElementById(id).style.borderColor = color;
 };
 function showHideDiv(layerHere) {
-	switch(layerHere) {
-		case null :
+	switch(layerHere+1) {
+		case 0 :
 			showUI("list_layer0");
 			hideUI("list_layer1");
 			hideUI("list_layer2");
 			break;
-		case 0 :
+		case 1 :
 			showUI("list_layer1");
 			hideUI("list_layer2");
 			break;
-		case 1 :
+		case 2 :
 			showUI("list_layer2");
 			break;
-		case 2 :
+		case 3 :
 			break;
 		default : null;
 	};

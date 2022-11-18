@@ -8,14 +8,7 @@ function updateList(layerHere) {
 		liElements[i].remove();
 	};
 
-	// // Array 만들기
-	// const mappedArray = getMappedObject_idEditedDateContents(layerHere);
-	// // list 순서 잡기(최근 편집 순서)
-	// const sortedArray = sortingArray(mappedArray);
-	// console.log("sortedArray = ", sortedArray);
-
 	const liArray = getLiArray(layerHere);
-
 	const sortedArray = sortingArray(liArray);
 
 	// li 생성하기
@@ -72,7 +65,7 @@ function getLiArray(layerHere) {
 function addOpenAddLi(layerHere) {
 	const listId = "list_layer"+layerHere;
 	const list = document.getElementById(listId);
-	const liValue_addLi = "(+ 새 리스트 추가하기)";
+	const liValue_addLi = "(추가하기: 더블 클릭)";
 	const listItem = document.createElement('li');
 	listItem.innerHTML = "<textarea readonly>"+ liValue_addLi +"</textarea>";
 	list.appendChild(listItem);

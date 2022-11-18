@@ -26,35 +26,29 @@ function clickLi(layerHere) {
 
 			if(isEditing != null) {
 
-				cancelEditModeOtherLi(layerHere);
-
 				if(id != addLiId) {
 
-					selectedLi = objectById[id];
-					// updateList(layerHere);
+					keepSelectedData(layerHere, id);
 					showChildernList(layerHere, id);
 					showHideDiv(layerHere);
+					setLiColorByLi(layerHere);
 
 				} else {
 
 					// 새 리스트 추가하기 버튼을 누른 경우
-					// openNewLi(layerHere, id);
-					// const parentLayer = getParentsLayerBySwitchLayer(layerHere);
-					// showHideDiv(parentLayer);
-					makeEditModeByDbclick(e);
+					keepSelectedData(layerHere, "addLiBtn_"+layerHere);
+					// showEmptyLi(addLiId);
+					const parentLayer = layerHere - 1;
+					showHideDiv(parentLayer);
+					// makeEditModeByDbclick(e);
+					setLiColorByLi(layerHere);
 
 				};
+				cancelLiEditModeBack();
 			};
 
-            setLiColorByLi();
 
-			// 선택된 li의 id 넣기
-			const seletedLi_layer0 = document.getElementById("seletedLi_layer0");
-			seletedLi_layer0.innerHTML = "id:" + id;
 			// resizeTextarea();
-
-			const selectedLiViewer = document.getElementById("selectedLiViewer");
-   			selectedLiViewer.innerHTML = JSON.stringify(selectedLi);
 
 		});
 
@@ -64,6 +58,25 @@ function clickLi(layerHere) {
 		
 		});
 	});
+};
+
+function keepSelectedData(layerHere, idHere) {
+	if(layerHere != undefined) {
+		const dataFromObjectById = objectById[idHere];
+		if(dataFromObjectById != undefined) {
+			selectedLi = dataFromObjectById;
+			selectedLiByLayer[layerHere] = dataFromObjectById;
+		} else {
+			const dataForAddLiBtn = {layer: layerHere, id: idHere, contents:{txt:""}};
+			selectedLi = dataForAddLiBtn;
+			selectedLiByLayer[layerHere] = dataForAddLiBtn;
+		};
+	} else {
+		selectedLi = {};
+		selectedLiByLayer = {0: "", 1:"", 2:""};
+	};
+	const seletedLi_layer0 = document.getElementById("seletedLi_layer0");
+	seletedLi_layer0.innerHTML = "id: " + selectedLi.id;
 };
 
 function makeEditModeByDbclick(eHere) {
@@ -85,29 +98,51 @@ function makeEditModeByDbclick(eHere) {
 
 	if(isEditing != null) {
 
-		// cancelEditModeOtherLi(layer);
-
 		if(dblclickedId != addLiId){
-			selectedLi = objectById[dblclickedId];
+			keepSelectedData(layer, dblclickedId);
 			openEditLi(layer, dblclickedId);
 		} else {
-			selectedLi = {layer: layer, id: "addLiBtn_"+layer};
+			keepSelectedData(layer, "addLiBtn_"+layer);
+			textareaElement.readOnly = true;
 			openNewLi(layer, dblclickedId);
 		};
 	};
 
-	
-
 	resizeTextarea();
-	setLiColorByLi();
-
-	// 선택된 li의 id 넣기
-	const seletedLi_layer0 = document.getElementById("seletedLi_layer0");
-	seletedLi_layer0.innerHTML = "id:" + dblclickedId;
+	setLiColorByLi(layer);
 
 };
 
-function setLiColorByLi() {
+function cancelLiEditModeBack() {
+	console.log("cancelLiEditModeBack here!");
+	const li = document.getElementsByTagName("li");
+	for (let i = 0; i < li.length; i++) {
+		const eachTextarea = li[i].children[0];
+		const eachValueOfReadOnly = eachTextarea.getAttribute("readOnly");
+		if(eachValueOfReadOnly == null){
+			// if (confirm("편집을 취소하시겠습니까?")) {
+				console.log("check!");
+				const idOfReadOnly = li[i].getAttribute("id");
+				eachTextarea.readOnly = true;
+				eachTextarea.setAttribute("style", "");
+				const dataFromObjectById = objectById[idOfReadOnly];
+				let liValue = "";
+				if( dataFromObjectById != undefined){
+					liValue = dataFromObjectById.contents.txt;
+				} else {
+					liValue = "(추가하기: 더블 클릭)";
+				};
+				eachTextarea.value = liValue;
+			// };
+		};
+	};
+};
+function setLiColorByLi(layerHere) {
+	setLiBgColor();
+	setLiBorderColor(layerHere);
+};
+
+function setLiBgColor() {
 	if(selectedLi != undefined) {
         const li = document.getElementsByTagName("li");
         for (let i = 0; i < li.length; i++) {
@@ -129,48 +164,54 @@ function setLiColorByLi() {
 	};
 };
 
-function cancelLiSelected() {
-	const bg = document.body;
-	bg.addEventListener("click",(e)=>{
-		const tagName = e.target.tagName;
-		let isBg = "";
-		
-		if (tagName == "TEXTAREA" || tagName == "LI" || tagName == "INPUT") {
-			isBg = false;
-		} else {
-			isBg = true;
-		};
-
-		if(isBg) {
-			if (eventListenerCell.selected == "Y") {
-				const li = document.getElementsByTagName("li");
-				for (let i = 0; i < li.length; i++) {
-					const isPointed = li[i].getAttribute("pointed");
-					if( isPointed == "Y") {
-						li[i].style.background = "";
-						li[i].setAttribute("pointed", "N");
-						eventListenerCell = {selected: "N"};
-					};
-				};
-				cancelEditLi();
+function setLiBorderColor(layerHere) {
+	const dataFromSelectedLi = selectedLi.id;
+	const dataFromSelectedLiByLayer = selectedLiByLayer[layerHere].id;
+	if(dataFromSelectedLi == dataFromSelectedLiByLayer) {
+		const li = document.getElementsByTagName("li");
+		for (let i = 0; i < li.length; i++) {
+			const selectedId = selectedLi.id;
+			const eachId = li[i].getAttribute("id");
+			if(selectedId == eachId) {
+				li[i].style.borderRight = "10px solid" + COLOR_FOCUSED_YELLOW;
+				li[i].setAttribute("pointedNow", "Y");
+			} else {
+				li[i].style.borderRight = "";
+				li[i].setAttribute("pointedNow", "N");
 			};
-		};
-	});
+		};	
+	};
 };
 
-function cancelEditModeOtherLi(layerHere) {
-	const li = document.getElementsByTagName("li");
-	for (let i = 0; i < li.length; i++) {
-		const isEditingEachLi = li[i].getAttribute("readOnly");
-		if(isEditingEachLi != null) {
-		} else {
-			// if(layerHere > 0) {
-			// 	for(let j = 0; j < layerHere; j++) {
-			// 		const parentsLayer = layerHere - 1;
-			// 		// updateList(parentsLayer);
-			// 	};
-			// };
-			updateList(layerHere);
-		};
-	};
-}
+// 배경 클릭하면 취소되는 기능(편의성을 올릴 때 다시 살리기)
+// function cancelLiSelected() {
+// 	const bg = document.body;
+// 	bg.addEventListener("click",(e)=>{
+// 		const tagName = e.target.tagName;
+// 		let isBg = "";
+		
+// 		if (tagName == "TEXTAREA" || tagName == "LI" || tagName == "INPUT") {
+// 			isBg = false;
+// 		} else {
+// 			isBg = true;
+// 		};
+
+// 		if(isBg) {
+// 			if (eventListenerCell.selected == "Y") {
+// 				keepSelectedData();
+// 				const li = document.getElementsByTagName("li");
+// 				for (let i = 0; i < li.length; i++) {
+// 					const isPointed = li[i].getAttribute("pointed");
+// 					if( isPointed == "Y") {
+// 						li[i].style.background = "";
+// 						li[i].setAttribute("pointed", "N");
+// 						li[i].style.borderRight = "";
+// 						li[i].setAttribute("pointedNow", "N");
+// 						eventListenerCell = {selected: "N"};
+// 						// cancelEditLi();
+// 					};
+// 				};
+// 			};
+// 		};
+// 	});
+// };
