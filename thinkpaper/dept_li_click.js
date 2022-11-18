@@ -65,7 +65,7 @@ function clickLi(layerHere) {
 					const isEditingEachLi = li[i].getAttribute("readOnly");
 					if( isEditingEachLi != null) {
 					} else {
-						updateList();
+						updateList(layerHere);
 					};
 				};
 
