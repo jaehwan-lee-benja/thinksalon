@@ -91,7 +91,7 @@ function openEditLi() {
 function cancelEditLi() {
 
 	const layer = selectedLi.layer;
-	updateList(layer);
+	updateList();
 	setLiColorByLi(layer);
 
 };

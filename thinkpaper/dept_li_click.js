@@ -18,18 +18,19 @@ function clickLi(layerHere) {
 			dblclickedId = idByTextarea;
 		};
 
-
 		const liElement = document.getElementById(dblclickedId);
 		const textareaElement = liElement.children[0];
 		const layer = liElement.getAttribute("layer");
 		const addLiId = "addLiBtn_"+layer;
 		const isEditing = textareaElement.getAttribute("readOnly");
 
+		// updateList(layer);
+
 		if( isEditing != null && dblclickedId != addLiId){
 			selectedLi = objectById[dblclickedId];
 			openEditLi(layer, dblclickedId);
 		} else if(isEditing != null && dblclickedId == addLiId){
-			selectedLi = {layer: layerHere};
+			selectedLi = {layer: layerHere, id: "addLiBtn_"+layerHere};
 			openNewLi(layer, dblclickedId);
 		};
 
@@ -37,12 +38,11 @@ function clickLi(layerHere) {
 		const seletedLi_layer0 = document.getElementById("seletedLi_layer0");
 		seletedLi_layer0.innerHTML = "id:" + dblclickedId;
 		resizeTextarea();
+		setLiColorByLi();
 	};
 
 	liArray.forEach((v)=>{
 		v.addEventListener("click",(e)=>{
-
-            // console.log("==========li clicked! - 0 ==========")
 
 			let id = ""
 			const targetTagName = e.target.tagName;
@@ -57,14 +57,19 @@ function clickLi(layerHere) {
 			const liElement = document.getElementById(id);
 			const textareaElement = liElement.children[0];
 			const isEditing = textareaElement.getAttribute("readOnly");
-			
+
 			if(isEditing != null) {
 
-                // console.log("==========li clicked! - 1 ==========")
+				const li = document.getElementsByTagName("li");
+				for (let i = 0; i < li.length; i++) {
+					const isEditingEachLi = li[i].getAttribute("readOnly");
+					if( isEditingEachLi != null) {
+					} else {
+						updateList();
+					};
+				};
 
 				if(id != addLiId) {
-
-                    // console.log("==========li clicked! - 2 ==========")
 
 					selectedLi = objectById[id];
 					showChildernList(layerHere, id);
@@ -72,19 +77,16 @@ function clickLi(layerHere) {
 
 				} else {
 
-                    // console.log("==========li clicked! - 3 ==========")
-
 					// 새 리스트 추가하기 버튼을 누른 경우
 					// openNewLi(layerHere, id);
 					// const parentLayer = getParentsLayerBySwitchLayer(layerHere);
 					// showHideDiv(parentLayer);
-					selectedLi = {layer: layerHere};
 					makeEditModeByDbclick(e);
 
 				};
 			};
 
-            setLiColorByLi(layerHere);
+            setLiColorByLi();
 
 			// 선택된 li의 id 넣기
 			const seletedLi_layer0 = document.getElementById("seletedLi_layer0");
@@ -129,7 +131,6 @@ function setLiColorByLi() {
 function cancelLiSelected() {
 	const bg = document.body;
 	bg.addEventListener("click",(e)=>{
-		console.log("cancelLiSelected here");
 		const tagName = e.target.tagName;
 		let isBg = "";
 		
@@ -140,7 +141,6 @@ function cancelLiSelected() {
 		};
 
 		if(isBg) {
-			console.log("isBg = true");
 			if (eventListenerCell.selected == "Y") {
 				const li = document.getElementsByTagName("li");
 				for (let i = 0; i < li.length; i++) {
@@ -153,6 +153,6 @@ function cancelLiSelected() {
 				};
 				cancelEditLi();
 			};
-		} else { console.log("isBg = false")};
+		};
 	});
 };
