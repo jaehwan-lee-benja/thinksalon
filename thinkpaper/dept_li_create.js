@@ -1,9 +1,13 @@
 function saveNewLi() {
-	// 이것의 layer를 받아오는 방법이 필요하다.
-	const selectedLayer = selectedLi.layer;
+	const selectedLayer = Number(selectedLi.layer);
 	const packagedData = packageNewLi(selectedLayer);
 	if (packagedData != null) {
 		requestSetLi(packagedData);
+		console.log("selectedLayer = ", selectedLayer);
+		showHideDiv(selectedLayer);
+		updateList(selectedLayer);
+		keepSelectedData(selectedLayer, packagedData.id);
+		setLiColorByLi(selectedLayer);
 		// showItOnUI_followup(selectedLayer);
 	};
 };
@@ -55,9 +59,7 @@ function requestSetLi(packagedDataHere) {
 	bigPictureRef.child(inputId)
 	.set(packagedDataHere)
 	.then((e) => {
-		// request_followupEditedDate(packagedDataHere, function(){
-			alert("저장되었습니다.");
-		// });
+		alert("저장되었습니다.");
 	});
 
 };

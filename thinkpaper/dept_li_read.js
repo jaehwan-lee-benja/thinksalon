@@ -1,4 +1,5 @@
 function updateList(layerHere) {
+	console.log("layerHere @updateList= ", layerHere);
 	const listId = "list_layer"+layerHere;
 	const list = document.getElementById(listId);
 	const liElements = list.getElementsByTagName("LI");
@@ -110,16 +111,19 @@ function getLastLi(layerHere) {
 
 function showChildernList(layerHere, parentsIdHere) {
 	if(layerHere < 2) {
+		console.log("layerHere = ", layerHere);
 		const layer = layerHere + 1;
 		const listId = "list_layer"+layer;
+		console.log("listId = ", listId);
 		const list = document.getElementById(listId);
+		console.log("list = ", list);
 		const liElements = list.getElementsByTagName("LI");
 		// list 초기화하기
 		for(let i=liElements.length-1; i>=0; i-- ){
 			liElements[i].remove();
 		};
 		// Array 만들기
-		const mappedArray = getMappedObjectByParentsId(layer, parentsIdHere);
+		const mappedArray = getMappedObjectByParentsId(parentsIdHere);
 
 		// list 순서 잡기(최근 편집 순서)
 		const sortedArray = sortingArray(mappedArray);
@@ -151,7 +155,7 @@ function getChildrenIdArray(parentsIdHere) {
 	return childrenIdArray;
 };
 
-function getMappedObjectByParentsId(layerHere, parentsIdHere) {		
+function getMappedObjectByParentsId(parentsIdHere) {		
 	const returnArray = [];
 	const eachIdArrayByLayer = getChildrenIdArray(parentsIdHere);
 	eachIdArrayByLayer.forEach(eachId => {

@@ -28,10 +28,12 @@ function clickLi(layerHere) {
 
 				if(id != addLiId) {
 
+					// console.log("layerHere = ", layerHere);
+					// console.log("id = ", id);
 					keepSelectedData(layerHere, id);
-					showChildernList(layerHere, id);
 					showHideDiv(layerHere);
 					setLiColorByLi(layerHere);
+					showChildernList(layerHere, id);
 
 				} else {
 
