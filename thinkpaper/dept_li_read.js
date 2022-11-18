@@ -2,18 +2,25 @@ function updateList(layerHere) {
 	const listId = "list_layer"+layerHere;
 	const list = document.getElementById(listId);
 	const liElements = list.getElementsByTagName("LI");
+
 	// list 초기화하기
 	for(let i=liElements.length-1; i>=0; i-- ){
 		liElements[i].remove();
 	};
-	// Array 만들기
-	const mappedArray = getMappedObject_idEditedDateContents(layerHere);
-	// list 순서 잡기(최근 편집 순서)
-	const sortedArray = sortingArray(mappedArray);
+
+	// // Array 만들기
+	// const mappedArray = getMappedObject_idEditedDateContents(layerHere);
+	// // list 순서 잡기(최근 편집 순서)
+	// const sortedArray = sortingArray(mappedArray);
+	// console.log("sortedArray = ", sortedArray);
+
+	const liArray = getLiArray(layerHere);
+
+	const sortedArray = sortingArray(liArray);
 
 	// li 생성하기
 	for (let i = 0; i < sortedArray.length; i++) {
-		const liValue = sortedArray[i][layerHere];
+		const liValue = sortedArray[i].txt;
 		const listItem = document.createElement('li');
 		listItem.innerHTML = "<textarea readonly>"+ liValue +"</textarea>";
 		list.appendChild(listItem);
@@ -24,6 +31,44 @@ function updateList(layerHere) {
 	addOpenAddLi(layerHere);
 	clickLi(layerHere);
 };
+
+function getLiArray(layerHere) {
+	const liArray = [];
+	const idArray = Object.keys(objectById);
+	idArray.forEach(eachId => {
+
+		let parentsId = "";
+		let parentsIdFromObjectById = objectById[eachId].parentsId;
+
+		if(layerHere > 0) {
+			if (eventListenerCell.selected == "Y") {
+				let parentsLayer = layerHere - 1;
+				const li = document.getElementsByTagName("li");
+				for (let i = 0; i < li.length; i++) {
+					const isPointed = li[i].getAttribute("pointed");
+					const layerFromLi = li[i].getAttribute("layer");
+					if(layerFromLi == parentsLayer && isPointed == "Y") {
+						parentsId = li[i].getAttribute("id");
+					};
+				};
+			};
+		} else {
+			// layer = 0 인 경우 예외처리
+			parentsIdFromObjectById = "";
+		};
+		
+		const layerFromObjectById = objectById[eachId].layer;
+		if (layerHere == layerFromObjectById && parentsId == parentsIdFromObjectById) {
+			const eachObjects = {};
+			eachObjects.id = objectById[eachId].id;
+			eachObjects.layer = objectById[eachId].layer;
+			eachObjects.row = objectById[eachId].row;
+			eachObjects.txt = objectById[eachId].contents.txt;
+			liArray.push(eachObjects);
+		};
+	});
+	return liArray;
+}
 function addOpenAddLi(layerHere) {
 	const listId = "list_layer"+layerHere;
 	const list = document.getElementById(listId);
@@ -48,11 +93,11 @@ function getMappedObject_idEditedDateContents(layerHere) {
 	});
 	return returnArray;
 };
-function sortingArray(mappedArrayHere){
-	mappedArrayHere.sort(
-		(a,b) => new Date(b.editedDate) - new Date(a.editedDate)
+function sortingArray(arrayHere){
+	arrayHere.sort(
+		(a,b) => b.row - a.row
 	);
-	return mappedArrayHere;
+	return arrayHere;
 };
 
 
@@ -87,7 +132,7 @@ function showChildernList(layerHere, parentsIdHere) {
 	
 	// li 생성하기
 	for (let i = 0; i < sortedArray.length; i++) {
-		const liValue = sortedArray[i][layer];
+		const liValue = sortedArray[i].txt;
 		const listItem = document.createElement('li');
 		listItem.innerHTML = "<textarea readonly>"+ liValue +"</textarea>";
 		list.appendChild(listItem);
@@ -114,11 +159,12 @@ function getChildrenIdArray(parentsIdHere) {
 function getMappedObjectByParentsId(layerHere, parentsIdHere) {		
 	const returnArray = [];
 	const eachIdArrayByLayer = getChildrenIdArray(parentsIdHere);
-	eachIdArrayByLayer.forEach(EachId => {
+	eachIdArrayByLayer.forEach(eachId => {
 		let returnObject = {};
-		returnObject["id"] = objectById[EachId].id;
-		returnObject["editedDate"] = objectById[EachId].editedDate;
-		returnObject[layerHere] = objectById[EachId].contents["txt"];
+		returnObject.id = objectById[eachId].id;
+		returnObject.layer = objectById[eachId].layer;
+		returnObject.row = objectById[eachId].row;
+		returnObject.txt = objectById[eachId].contents.txt;
 		returnArray.push(returnObject);
 	});
 	return returnArray;

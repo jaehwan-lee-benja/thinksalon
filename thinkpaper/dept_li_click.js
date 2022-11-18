@@ -7,40 +7,6 @@ function clickLi(layerHere) {
 		liArray.push(li[i]);
 	};
 
-	function makeEditModeByDbclick(eHere) {
-		const idByLi = eHere.target.getAttribute("id");
-		const idByTextarea = eHere.target.parentNode.getAttribute("id");					
-
-		let dblclickedId = ""
-		if(idByLi != null) {
-			dblclickedId = idByLi;
-		} else {
-			dblclickedId = idByTextarea;
-		};
-
-		const liElement = document.getElementById(dblclickedId);
-		const textareaElement = liElement.children[0];
-		const layer = liElement.getAttribute("layer");
-		const addLiId = "addLiBtn_"+layer;
-		const isEditing = textareaElement.getAttribute("readOnly");
-
-		// updateList(layer);
-
-		if( isEditing != null && dblclickedId != addLiId){
-			selectedLi = objectById[dblclickedId];
-			openEditLi(layer, dblclickedId);
-		} else if(isEditing != null && dblclickedId == addLiId){
-			selectedLi = {layer: layerHere, id: "addLiBtn_"+layerHere};
-			openNewLi(layer, dblclickedId);
-		};
-
-		// 선택된 li의 id 넣기
-		const seletedLi_layer0 = document.getElementById("seletedLi_layer0");
-		seletedLi_layer0.innerHTML = "id:" + dblclickedId;
-		resizeTextarea();
-		setLiColorByLi();
-	};
-
 	liArray.forEach((v)=>{
 		v.addEventListener("click",(e)=>{
 
@@ -60,18 +26,12 @@ function clickLi(layerHere) {
 
 			if(isEditing != null) {
 
-				const li = document.getElementsByTagName("li");
-				for (let i = 0; i < li.length; i++) {
-					const isEditingEachLi = li[i].getAttribute("readOnly");
-					if( isEditingEachLi != null) {
-					} else {
-						updateList(layerHere);
-					};
-				};
+				cancelEditModeOtherLi(layerHere);
 
 				if(id != addLiId) {
 
 					selectedLi = objectById[id];
+					// updateList(layerHere);
 					showChildernList(layerHere, id);
 					showHideDiv(layerHere);
 
@@ -104,6 +64,47 @@ function clickLi(layerHere) {
 		
 		});
 	});
+};
+
+function makeEditModeByDbclick(eHere) {
+
+	let dblclickedId = ""
+	const targetTagName = eHere.target.tagName;
+
+	if(targetTagName == "LI") {
+		dblclickedId = eHere.target.getAttribute("id");
+	} else {
+		dblclickedId = eHere.target.parentNode.getAttribute("id");	
+	};
+
+	const liElement = document.getElementById(dblclickedId);
+	const textareaElement = liElement.children[0];
+	const layer = liElement.getAttribute("layer");
+	const addLiId = "addLiBtn_"+layer;
+	const isEditing = textareaElement.getAttribute("readOnly");
+
+	if(isEditing != null) {
+
+		// cancelEditModeOtherLi(layer);
+
+		if(dblclickedId != addLiId){
+			selectedLi = objectById[dblclickedId];
+			openEditLi(layer, dblclickedId);
+		} else {
+			selectedLi = {layer: layer, id: "addLiBtn_"+layer};
+			openNewLi(layer, dblclickedId);
+		};
+	};
+
+	
+
+	resizeTextarea();
+	setLiColorByLi();
+
+	// 선택된 li의 id 넣기
+	const seletedLi_layer0 = document.getElementById("seletedLi_layer0");
+	seletedLi_layer0.innerHTML = "id:" + dblclickedId;
+
 };
 
 function setLiColorByLi() {
@@ -156,3 +157,20 @@ function cancelLiSelected() {
 		};
 	});
 };
+
+function cancelEditModeOtherLi(layerHere) {
+	const li = document.getElementsByTagName("li");
+	for (let i = 0; i < li.length; i++) {
+		const isEditingEachLi = li[i].getAttribute("readOnly");
+		if(isEditingEachLi != null) {
+		} else {
+			// if(layerHere > 0) {
+			// 	for(let j = 0; j < layerHere; j++) {
+			// 		const parentsLayer = layerHere - 1;
+			// 		// updateList(parentsLayer);
+			// 	};
+			// };
+			updateList(layerHere);
+		};
+	};
+}

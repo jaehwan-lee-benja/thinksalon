@@ -49,7 +49,7 @@ function getEveryIdArrayOfLayer(layerHere) {
 	if(layerHere != 0) {
 		const everyIdArrayOfLayerFromSameParents = [];
 		for(let j = 0; j < everyIdArrayOfLayer.length; j++) {
-			const parentsLayer = getParentsLayerBySwitchLayer(layerHere);
+			const parentsLayer = layerHere - 1;
 			const parentsId = getLiId(parentsLayer);
 			if (objectById[everyIdArrayOfLayer[j]].parentsId == parentsId){
 				everyIdArrayOfLayerFromSameParents.push(everyIdArrayOfLayer[j]);
