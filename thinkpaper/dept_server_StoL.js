@@ -15,12 +15,15 @@ function requestReadUserData(user) {
 
 function requestReadBigPicture(user) {
 
+	
 	const bpRef = db.ref("users")
 					.child(user.uid)
 					.child("bigPicture");
 	
 	bpRef.on("value", (snapshot) => {
 		console.log("*keep* ===== .on is here =====");
+
+		objectById = {};
 
 		snapshot.forEach(childSnap => {
 			const key = childSnap.key;

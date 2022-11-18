@@ -71,10 +71,10 @@ function getMoniterResult(layerHere, isChangedHere) {
 };
 function requestUpdateLi(packagedDataHere) {
 	const inputId = packagedDataHere.id;
-	const switchedRef = db.ref("users")
+	const bpRef = db.ref("users")
 						.child(userData.uid)
 						.child("bigPicture");
-	switchedRef.child(inputId)
+	bpRef.child(inputId)
 		.update(packagedDataHere, (e) => {
 		// request_followupEditedDate(layerHere, packagedDataHere, function(){
 			alert("수정되었습니다.");

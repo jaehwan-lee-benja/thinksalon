@@ -213,51 +213,6 @@ function showHideDiv(layerHere) {
 		default : null;
 	};
 };
-function setLiColorByLi(layerHere) {
-	if(selectedLi != undefined) {
-		const id = selectedLi.id;
-		const li = document.getElementsByTagName("li");
-		for (let i = 0; i < li.length; i++) {
-			const idOfLi = li[i].getAttribute("id");
-			const layerOfLi = selectedLi.layer;
-			if(id == idOfLi && layerHere == layerOfLi) {
-				li[i].style.background = COLOR_SELECTED_GRAYGREEN;
-				li[i].setAttribute("pointed", "Y");
-				eventListenerCell = {selected: "Y"};
-			} else if (layerHere == layerOfLi){
-				li[i].style.background = "";
-				li[i].setAttribute("pointed", "N");
-			};
-		};
-	};
-};
-
-function cancelLiSelected() {
-	const bg = document.body;
-	bg.addEventListener("click",(e)=>{
-		const tagName = e.target.tagName;
-		let isBg = "";
-		if (tagName == "TEXTAREA" || tagName == "LI" || tagName == "INPUT") {
-			isBg = false;
-		} else {
-			isBg = true;
-		};
-		if(isBg) {
-			if (eventListenerCell.selected == "Y") {
-				const li = document.getElementsByTagName("li");
-				for (let i = 0; i < li.length; i++) {
-					const isPointed = li[i].getAttribute("pointed");
-					if( isPointed == "Y") {
-						li[i].style.background = "";
-						li[i].setAttribute("pointed", "N");
-						eventListenerCell = {selected: "N"};
-					};
-				};
-				cancelEditLi();
-			};
-		};
-	});
-}; // [질문]
 
 function setLayerHighlight(layerHere, trueOrFalseHere) {
 	const elementId = "layer_"+layerHere;
