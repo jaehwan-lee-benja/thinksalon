@@ -1,15 +1,34 @@
-function removeLi(layerHere) {
-	// const removeId = getLiId(layerHere);
+function removeLi() {
 	const removeId = selectedLi.id;
+	const layer = Number(selectedLi.layer);
+	
 	if (confirm("정말 삭제하시겠습니까? 삭제가 완료되면, 해당 내용은 다시 복구될 수 없습니다.")) {
-		requestRemoveLi(layerHere, removeId);
+		requestRemoveLi(removeId);
+		const layerArray = [0, 1, 2];
+		layerArray.forEach(eachLayer => {
+			if (eachLayer >= layer){
+				console.log("eachLayer = ", eachLayer);
+				updateList(eachLayer);
+			};
+		});
 	};
 };
-function requestRemoveLi(layerHere, idHere) {
+function requestRemoveLi(idHere) {
 
 	const inputId = idHere;
-	const packagedData = objectById[inputId];
-	packagedData.editedDate = getTimeStamp();
+	const layer = objectById[inputId].layer;
+
+	//자식 요소 삭제하기
+	let childrenIdArray = [];
+	if(layer < 2) {
+		const idArray = Object.keys(objectById);
+		idArray.forEach(eachId => {
+			const childrenFromObjectById = objectById[eachId].parentsId;
+			if(childrenFromObjectById == inputId) {
+				childrenIdArray.push(eachId);
+			};
+		});
+	};
 
 	const bpRef = db.ref("users")
 						.child(userData.uid)
@@ -17,9 +36,11 @@ function requestRemoveLi(layerHere, idHere) {
 						
 	bpRef.child(inputId)
 	.remove((e) => {
-		request_followupEditedDate(layerHere, packagedData, function(){
-			alert("삭제되었습니다.");
-		});
+		childrenIdArray.forEach(eachChildrenId => {
+			console.log("deleted: ", objectById[eachChildrenId].contents.txt);
+			bpRef.child(eachChildrenId).remove();
+			});
+		alert("삭제되었습니다.");
 		console.log("*keep* remove completed B = ", e);
 		});
 };

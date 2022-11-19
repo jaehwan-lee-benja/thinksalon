@@ -45,7 +45,6 @@ function requestReadBigPicture(user) {
 			showHideDiv(-1);
 		} else {
 			// 두번째 이후 on, li가 기존에 선택되어 있는 경우
-			console.log("here!");
 		};
 
 	});

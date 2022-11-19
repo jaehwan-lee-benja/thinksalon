@@ -76,9 +76,7 @@ function requestUpdateLi(packagedDataHere) {
 						.child("bigPicture");
 	bpRef.child(inputId)
 		.update(packagedDataHere, (e) => {
-		// request_followupEditedDate(layerHere, packagedDataHere, function(){
-			alert("수정되었습니다.");
-		// });
+		alert("수정되었습니다.");
 		console.log("*keep* update completed = ", e);
 	});
 };

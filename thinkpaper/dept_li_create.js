@@ -3,7 +3,6 @@ function saveNewLi() {
 	const packagedData = packageNewLi(selectedLayer);
 	if (packagedData != null) {
 		requestSetLi(packagedData);
-		console.log("selectedLayer = ", selectedLayer);
 		showHideDiv(selectedLayer);
 		updateList(selectedLayer);
 		keepSelectedData(selectedLayer, packagedData.id);
