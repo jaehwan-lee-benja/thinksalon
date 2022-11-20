@@ -37,9 +37,9 @@ function requestReadBigPicture(user) {
 			layers.forEach(eachLayer => {
 				if(count > 0) {
 					showItOnUI(eachLayer);
-					setupBtnShowOrHideByClassName(eachLayer, "createFirstLi");
 				} else {
-					setupBtnShowOrHideByClassName(eachLayer, "createFirstLi");
+					setupBtnShowOrHideByClassName("createFirstLi");
+					updateList(eachLayer);
 				};
 			});
 			showHideDiv(-1);

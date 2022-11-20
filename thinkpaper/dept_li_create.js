@@ -7,7 +7,6 @@ function saveNewLi() {
 		updateList(selectedLayer);
 		keepSelectedData(selectedLayer, packagedData.id);
 		setLiColorByLi(selectedLayer);
-		// showItOnUI_followup(selectedLayer);
 	};
 };
 function packageNewLi(layerHere) {
@@ -62,33 +61,7 @@ function requestSetLi(packagedDataHere) {
 	});
 
 };
-function openNewLi(layerHere, idHere) {
+function openNewLi(idHere) {
 	showEmptyLi(idHere);
-	// addOpenAddLi(layerHere);
-	setupBtnShowOrHideByClassName(layerHere, "openNewLi", idHere);
-	// openNewLi_followup(layerHere);
-};
-function openNewLi_followup(layerHere) {			
-	switch(layerHere) {
-		case 0 :
-			openNewLi_followupBySwitchLayer(1, 2, 3);
-			break;
-		case 1 :
-			openNewLi_followupBySwitchLayer(2, 3);
-			break;
-		case 2 :
-			openNewLi_followupBySwitchLayer(3);
-			break;
-		default : null;
-	};
-};
-function openNewLi_followupBySwitchLayer(layer1, layer2) {
-	const idThreadObjectKeysArray = [layer1, layer2];
-	idThreadObjectKeysArray.forEach(eachLayer => {
-		if (eachLayer != undefined) {
-			showEmptyLi(eachLayer);
-			setupBtnShowOrHideByClassName(eachLayer, "inactiveLi");
-			hideUI("list_"+eachLayer);
-		};
-	});
+	setupBtnShowOrHideByClassName("openNewLi", idHere);
 };

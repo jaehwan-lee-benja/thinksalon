@@ -1,9 +1,9 @@
 function setupTextareaModeByClassName(idHere, liMode) {
+	console.log("setupTextareaModeByClassName here!");
 	const liElement = document.getElementById(idHere);
 	const textareaElement = liElement.children[0];
 
 	if (liMode == "editing") {
-		// textareaElement.style.color = COLOR_FOCUSED_YELLOW;
 		textareaElement.style.borderColor = COLOR_FOCUSED_YELLOW;
 		setupTextareaBorderColorByClass_li(idHere, "2px", COLOR_FOCUSED_YELLOW);
 		setupTextareaReadOnly(idHere, false);

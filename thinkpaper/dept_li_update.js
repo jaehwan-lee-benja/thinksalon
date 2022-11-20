@@ -81,10 +81,8 @@ function requestUpdateLi(packagedDataHere) {
 	});
 };
 function openEditLi() {
-	const layerHere = selectedLi.layer;
 	const idHere = selectedLi.id;
-	setupBtnShowOrHideByClassName(layerHere, "editLi", idHere);
-	// editLi_followup(layerHere);
+	setupBtnShowOrHideByClassName("editLi", idHere);
 };
 function cancelEditLi() {
 

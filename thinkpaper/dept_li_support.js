@@ -114,17 +114,7 @@ function getIdThreadObjectByPackagedData(layerHere, packagedDataHere) {
 	};
 	return idThreadObject;
 };
-function emptyLiId(layerHere) {
-	const liElementId = "liId_layer"+layerHere;
-	document.getElementById(liElementId).value = "";
-	const liElementParentsId = "liParentsId_"+layerHere;
-	document.getElementById(liElementParentsId).value = "";
-};
-// 	function getLiId(layerHere) {
-// 		const liElementId = "liId_layer"+layerHere;
-// 		const result = document.getElementById(liElementId).value;
-// 		return result;
-// 	};
+
 function getLiId(layerHere) {
 
 	const listElement = document.getElementById("list_layer"+layerHere);

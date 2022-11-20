@@ -104,7 +104,7 @@ function makeEditModeByDbclick(eHere) {
 		} else {
 			keepSelectedData(layer, "addLiBtn_"+layer);
 			textareaElement.readOnly = true;
-			openNewLi(layer, dblclickedId);
+			openNewLi(dblclickedId);
 		};
 	};
 
