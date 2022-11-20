@@ -3,7 +3,7 @@ function saveNewLi() {
 	const packagedData = packageNewLi(selectedLayer);
 	if (packagedData != null) {
 		requestSetLi(packagedData);
-		showHideDiv(selectedLayer);
+		showHideDiv(selectedLayer-1);
 		updateList(selectedLayer);
 		keepSelectedData(selectedLayer, packagedData.id);
 		setLiColorByLi(selectedLayer);

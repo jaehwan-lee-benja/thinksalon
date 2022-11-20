@@ -1,5 +1,4 @@
 function setupTextareaModeByClassName(idHere, liMode) {
-	console.log("setupTextareaModeByClassName here!");
 	const liElement = document.getElementById(idHere);
 	const textareaElement = liElement.children[0];
 

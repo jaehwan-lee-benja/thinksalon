@@ -45,10 +45,10 @@ function clickLi(layerHere) {
 
 				};
 				cancelLiEditModeBack();
+				setupBtnShowOrHideByClassName("readLi");
 			};
 
-
-			// resizeTextarea();
+			resizeTextarea();
 
 		});
 

@@ -20,7 +20,13 @@ function showUI(idHere) {
 	document.getElementById(idHere).style.display = "initial";
 };
 function setupBtnShowOrHideByClassName(state, idHere) {
-	console.log("state = ", state);
+		
+	hideUI("openEditLi_btn");
+	hideUI("cancelEditLi_btn");
+	hideUI("saveEditedLi_btn");
+	hideUI("saveNewLi_btn");
+	hideUI("removeLi_btn");
+
 	// 모드에 따라 설정하기
 	switch(state){
 		case "createFirstLi" :

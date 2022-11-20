@@ -3,7 +3,10 @@ function saveEditedLi() {
 	const packagedData = packageEditedLi(layer);
 	if (packagedData != null) {
 		requestUpdateLi(packagedData);
-	};
+		showHideDiv(layer);
+		updateList(layer);
+		keepSelectedData(layer, packagedData.id);
+		setLiColorByLi(layer);	};
 };
 function packageEditedLi(layerHere) {	
 
@@ -85,9 +88,19 @@ function openEditLi() {
 	setupBtnShowOrHideByClassName("editLi", idHere);
 };
 function cancelEditLi() {
+	// const layer = selectedLi.layer;
+	// updateList(layer);
+	// setLiColorByLi(layer);
 
-	const layer = selectedLi.layer;
-	updateList(layer);
-	setLiColorByLi(layer);
-
+	const count = Object.keys(objectById).length; 
+	const layers = [0, 1, 2];
+	layers.forEach(eachLayer => {
+		if(count > 0) {
+			showItOnUI(eachLayer);
+		} else {
+			setupBtnShowOrHideByClassName("createFirstLi");
+			updateList(eachLayer);
+		};
+	});
+	showHideDiv(-1);
 };
