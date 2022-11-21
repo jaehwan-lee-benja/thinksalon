@@ -30,21 +30,25 @@ function requestReadBigPicture(user) {
 			objectById[key] = value;
 		});
 
+		const count = Object.keys(objectById).length; 
+		const layers = [0, 1, 2];
+
 		if (eventListenerCell.selected == "N") {
 			// 첫 on, 아무 li도 선택되지 않은 경우
-			const count = Object.keys(objectById).length; 
-			const layers = [0, 1, 2];
 			layers.forEach(eachLayer => {
 				if(count > 0) {
 					showItOnUI(eachLayer);
 				} else {
-					setupBtnShowOrHideByClassName("createFirstLi");
+					setupBtnShowOrHideByClassName();
 					updateList(eachLayer);
 				};
 			});
 			showHideDiv(-1);
 		} else {
-			// 두번째 이후 on, li가 기존에 선택되어 있는 경우
+			setupBtnShowOrHideByClassName("readLi");
+			// layers.forEach(eachLayer => {
+			// 	showItOnUI(eachLayer);
+			// });	
 		};
 
 	});

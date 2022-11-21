@@ -72,7 +72,7 @@ function addOpenAddLi(layerHere) {
 	const liId_addLi = "addLiBtn_"+layerHere;
 	listItem.setAttribute("id", liId_addLi);
 	listItem.setAttribute("layer", layerHere);
-	listItem.style.color = COLORSET_ADDLI;
+	listItem.children[0].style.color = COLOR_TXT_GRAY;
 };
 function getMappedObject_idEditedDateContents(layerHere) {		
 	const returnArray = [];

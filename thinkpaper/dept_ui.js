@@ -20,6 +20,7 @@ function showUI(idHere) {
 };
 function setupBtnShowOrHideByClassName(state, idHere) {
 		
+	hideUI("guideMessage");
 	hideUI("openEditLi_btn");
 	hideUI("cancelEditLi_btn");
 	hideUI("saveEditedLi_btn");
@@ -28,6 +29,11 @@ function setupBtnShowOrHideByClassName(state, idHere) {
 
 	// 모드에 따라 설정하기
 	switch(state){
+		case undefined :
+			showUI("guideMessage");
+			const guideMessage = document.getElementById("guideMessage");
+			guideMessage.innerHTML = "*화면 블럭을 클릭/더블클릭하여 내용을 추가/편집할 수 있습니다.";
+			break;
 		case "createFirstLi" :
 			showUI("saveNewLi_btn");
 			// setupTextareaModeByClassName(idHere, "editing");

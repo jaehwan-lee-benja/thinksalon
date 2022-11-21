@@ -17,9 +17,9 @@ function monitorLiBlankOrDuplicates(layerHere) {
 };
 function getSameTextArray(layerHere2, liValueHere) {
 	const idArray = getEveryIdArrayOfLayer(layerHere2);
-	const mappedIdArray = idArray.map( id => {
-		const mappingObject = {"id":id};
-		mappingObject[layerHere2] = objectById[id].contents["txt"];	
+	const mappedIdArray = idArray.map( eachId => {
+		const mappingObject = {"id":eachId};
+		mappingObject[layerHere2] = objectById[eachId].contents["txt"];	
 		return mappingObject;
 		});
 	const valueArray = [];

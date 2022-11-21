@@ -11,6 +11,7 @@ function removeLi() {
 			};
 		});
 		showHideDiv(layer-1);
+		setupBtnShowOrHideByClassName();
 	};
 };
 function requestRemoveLi(idHere) {
