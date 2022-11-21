@@ -1,31 +1,16 @@
 function monitorLiBlankOrDuplicates(layerHere) {
-	const liValue = document.getElementById(layerHere).value.trim();
+	const liId = selectedLi.id;
+	const liValue = document.getElementById(liId).children[0].value.trim();
 	if (liValue != "") {		
 		const sameTextArray = getSameTextArray(layerHere, liValue);
 		if (sameTextArray == undefined) {
 			return true;
 		} else {
-			highLightBorder(layerHere, "red");
+			highLightBorder(liId, "red");
 			alert("중복된 카드가 있습니다. 내용을 수정해주시기 바랍니다.");
 		};
 	} else {
-		highLightBorder(layerHere, "red");
-		alert("카드가 비어있습니다. 내용을 입력해주시기 바랍니다.");
-	};
-	return false;
-};
-function monitorLiBlankOrDuplicates(layerHere) {
-	const liValue = document.getElementById(layerHere).value.trim();
-	if (liValue != "") {		
-		const sameTextArray = getSameTextArray(layerHere, liValue);
-		if (sameTextArray == undefined) {
-			return true;
-		} else {
-			highLightBorder(layerHere, "red");
-			alert("중복된 카드가 있습니다. 내용을 수정해주시기 바랍니다.");
-		};
-	} else {
-		highLightBorder(layerHere, "red");
+		highLightBorder(liId, "red");
 		alert("카드가 비어있습니다. 내용을 입력해주시기 바랍니다.");
 	};
 	return false;

@@ -73,8 +73,11 @@ function setupTextareaBorderColorByClass_li(idHere, px, color) {
 	},1);
 };
 
-function highLightBorder(id, color) {
-	return document.getElementById(id).style.borderColor = color;
+function highLightBorder(idHere, color) {
+	console.log("idHere = ", idHere);
+	const element = document.getElementById(idHere).children[0];
+	console.log("element = ", element);
+	element.style.borderColor = color;
 };
 
 function showHideDiv(layerHere) {
