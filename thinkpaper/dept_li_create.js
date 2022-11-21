@@ -10,6 +10,7 @@ function saveNewLi() {
 	};
 };
 function packageNewLi(layerHere) {
+
 	const monitorResult = monitorLiBlankOrDuplicates(layerHere);
 	if (monitorResult) {
 		const catchedData = catchContentsDataBySwitchLayer(layerHere);
@@ -23,6 +24,28 @@ function packageNewLi(layerHere) {
 		return catchedData;
 	};
 };
+
+function monitorIfLiChanged(layerHere) {
+	
+	// 현재 UI에 띄워진 값 포착하기
+	const id = selectedLi.id;
+	const value = document.getElementById(id).children[0].value.trim();
+	const object = {"id": id, [layerHere]: value};
+	
+	// 로컬 데이터에 있는 값 포착하기
+	const arrayWithId = getMappedObject_idContents(layerHere);
+
+	// 위 두가지가 같은 경우의 수라면, 수정이 이뤄지지 않은 상태
+	for(let i = 0; i < arrayWithId.length; i++) {
+		if(JSON.stringify(object) === JSON.stringify(arrayWithId[i])) {
+			// 내용이 바뀌지 않았음
+			return false;
+		};
+	};
+	// 내용이 바뀌었음
+	return true;
+};
+
 function catchContentsDataBySwitchLayer(layerHere) {
 	
 	const catchContentsData = {};

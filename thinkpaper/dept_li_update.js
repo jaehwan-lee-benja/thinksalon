@@ -10,7 +10,6 @@ function saveEditedLi() {
 };
 function packageEditedLi(layerHere) {	
 
-	// CRUD 후 진행하기
 	const resultIsChanged = monitorIfLiChanged(layerHere);
 	const monitorResult = getMoniterResult(layerHere, resultIsChanged);
 	

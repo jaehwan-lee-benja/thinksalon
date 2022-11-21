@@ -32,20 +32,19 @@ function clickLi(layerHere) {
 					showHideDiv(layerHere);
 					setLiColorByLi(layerHere);
 					showChildernList(layerHere, id);
+					setupBtnShowOrHideByClassName("readLi");
 
 				} else {
 
 					// 새 리스트 추가하기 버튼을 누른 경우
 					keepSelectedData(layerHere, "addLiBtn_"+layerHere);
-					// showEmptyLi(addLiId);
 					const parentLayer = layerHere - 1;
 					showHideDiv(parentLayer);
-					// makeEditModeByDbclick(e);
 					setLiColorByLi(layerHere);
+					setupBtnShowOrHideByClassName();
 
 				};
 				cancelLiEditModeBack();
-				setupBtnShowOrHideByClassName("readLi");
 			};
 
 			resizeTextarea();
