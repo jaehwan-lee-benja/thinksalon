@@ -23,7 +23,6 @@
         var isNewUser = authResult.additionalUserInfo.isNewUser
 
         if (isNewUser) {
-          console.log("O")
 
           // Add this user to Firebase Database
           // Create User data
@@ -35,7 +34,6 @@
               lastLogin: Date.now()
             },
             bigPicture: {
-              children: ""
             }          
           }
 
@@ -45,12 +43,9 @@
               window.location.replace("index.html")
             })
 
-          console.log("initialData = ", initialData)
-
           return false;
 
         } else {
-          console.log("X")
 
           return true;
 
@@ -85,5 +80,4 @@
   // The start method will wait until the DOM is loaded.
   ui.start('#firebaseui-auth-container', uiConfig);
 
-})()
-
+})();

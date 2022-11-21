@@ -9,240 +9,107 @@
     <link rel="stylesheet" href="index.css">
 </head>
 
-<body id="gridBody">
-
-    <div id="divTop">
-        <div style="text-align: center;">
-            <div id = "titleText">
-                <h1>see the big picture</h1>
-            </div>
-            <span>내 삶의 큰그림 정리하기</span>
-            <div id="divImageMain">
-                <img id="image01" src="images/01_basic.png">
-                <img id="image02" style = "display: none;" src="images/02_character_Y.png">
-                <img id="image03" style = "display: none;" src="images/03_direction_Y.png">
-                <img id="image04" style = "display: none;" src="images/04_roadmap_Y.png">
-                <img id="image05" style = "display: none;" src="images/05_actionPlan_Y.png">
-            </div>
-        </div>
-    </div>
-
-    <div id="gridMain">
-        <div id="gridColumn">
-            <div id="div_character" class="girdColumnForLayer">
-                <div class="gridMainTop">
-                    <div>
-                        <h2 id="layer_character">캐릭터</h2>
-                    </div>
-                    <div>
-                        <span>나는 어떤 역할들을 지니고 있는가?</span>
-                    </div>
-                    <!-- <div class="gridMainIndex">
-                        <div>
-                            <span>[목록 선택하기]<br></span>
-                            <select style="width: 100%; font-size: 0.8rem;" id="selectbox_character"
-                                onchange="selectboxDept.selectBySelectbox('character');">
-                                <option value="INIT">클릭하여 이동</option>
-                            </select>
-                        </div>
-                        <div>
-                        </div>
-                    </div> -->
+<body>
+    <header>
+        <h1>see the big picture</h1>
+    </header>
+    <main>
+        <div id="gridBody">
+            <div id="divBtn">
+                <div id="divImageMain">
+                    <img id="imageMain" src="images/01_basic.png">
                 </div>
-                <div class="divList">
-                    <div id="list_character"  style = "display: none;"></div>
+                <div style="margin: 1rem 0">
+                    <input id="openEditLi_btn" onClick="openEditLi()" type="button" value="수정하기" style = "display: none;">
+                    <input id="cancelEditLi_btn" onClick="cancelEditLi()" type="button" value="작성(수정) 취소하기" style = "display: none;">
+                    <input id="saveEditedLi_btn" onClick="saveEditedLi()" type="button" value="수정본 저장하기" style = "display: none;">
+                    <input id="saveNewLi_btn" onClick="saveNewLi()" type="button" value="새 카드로 저장하기" style = "display: none;">
+                    <input id="removeLi_btn" onClick="removeLi()" type="button" value="삭제하기" style = "display: none;">
                 </div>
-                <div class="gridMainContents" id="editCard_character"  style = "display: none;">
-                    <div class="character">
-                        <input type="hidden" id="cardId_character"></input>
-                        <input type="hidden" id="cardParentsId_character"></input>
-                        <textarea id="character" placeholder="예)개인으로서의 나" readonly></textarea>
-                        <div style="margin: 1rem 0">
-                            <input id="openEditCard_btn_character" onClick="updateCardDept.openEditCard('character')" type="button" style = "display: none;" value="수정하기">
-                            <input id="cancelEditCard_btn_character" onClick="updateCardDept.cancelEditCard('character')" type="button" style = "display: none;" value="작성(수정) 취소하기">
-                            <input id="saveEditedCard_btn_character" onClick="updateCardDept.saveEditedCard('character')" type="button" style = "display: none;" value="수정본 저장하기">
-                            <input id="saveNewCard_btn_character" onClick="newCardDept.saveNewCard('character')" type="button" style = "display: none;" value="새 카드로 저장하기">
-                            <input id="removeCard_btn_character" onClick="removeCardDept.removeCard('character')" type="button" style = "display: none;" value="삭제하기">
-                            <input id="openNewCard_btn_character" onClick="newCardDept.openNewCard('character')" type="button" style = "display: none;" value="새 카드 작성하기">
-                        </div>
-                    </div>
-                    <div>
-                        <div>
-                            <input id="gotoMainCard_btn_character" onClick="mainCardDept.gotoMainCard()" type="button" style = "display: none;" value="메인 카드로 이동하기">
-                        </div>
-                        <div id = "gridMainEdit">
-                            <input id="setMainCard_btn_character" onClick="mainCardDept.setMainCard()" type="button" style = "display: none;" value="메인 카드로 설정하기">
-                            <div id="mainCard_txt">
-                                <span id="setMainCard_txt_character">
-                                    <!-- 현재 카드는 '메인 카드(★)'입니다. -->
-                                </span>
+                <span id="seletedLi_layer0"></span>
+            </div>
+            <div id="divMain">
+                <div id="divBox">
+                    <div id = "divColumn">
+                        <div id="gridColumn">
+                            <div id="div_layer0" class="girdColumnForLayer">
+                                <div class="gridMainTop">
+                                    <div>
+                                        <h2 id="layer_layer0">역할</h2>
+                                    </div>
+                                    <div>
+                                        <span>나는 어떤 역할들을 지니고 있는가?</span>
+                                    </div>
+                                </div>
+                                <div class="divList">
+                                    <div id="list_layer0"  style = "display: none;"></div>
+                                </div>
+                            </div>
+                            <div id="div_layer1" class="girdColumnForLayer">
+                                <div class="gridMainTop">
+                                    <div>
+                                        <h2 id="layer_layer1">방향성</h2>
+                                    </div>
+                                    <div>
+                                        <span>이 길은 왜 가는가? '본질 가치'는 무엇인가?(목적, 의미, Why)</span>
+                                    </div>
+                                </div>
+                                <div class="divList">
+                                    <div id="list_layer1" style = "display: none;"></div>
+                                </div>
+                            </div>
+                            <div id="div_layer2" class="girdColumnForLayer">
+                                <div class="gridMainTop">
+                                    <div>
+                                        <h2 id="layer_layer2">로드맵</h2>
+                                    </div>
+                                    <div>
+                                        <span>방향성 아래에 있는, '궁극적인' 또는 '중간' 도달 지점은 어디인가?</span>
+                                    </div>
+                                </div>
+                                <div class="divList">
+                                    <div id="list_layer2" style = "display: none;"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div id="div_direction" class="girdColumnForLayer">
-                <div class="gridMainTop">
+                <div id="gridWebInfo">
                     <div>
-                        <h2 id="layer_direction">방향성</h2>
-                    </div>
-                    <div>
-                        <span>이 길은 왜 가는가? '본질 가치'는 무엇인가?(목적, 의미, Why)</span>
-                    </div>
-                    <!-- <div class="gridMainIndex">
                         <div>
-                            <span>[목록 선택하기]<br></span>
-                            <select style="width: 100%; font-size: 0.8rem;" id="selectbox_direction"
-                                onchange="selectboxDept.selectBySelectbox('direction');">
-                                <option value="INIT">클릭하여 이동</option>
-                            </select>
+                            <span>
+                                <b>Life Design Park</b><br>
+                                라이프 디자인 파크는 '생각정리 놀이공원'입니다.<br> 
+                                내 삶에 대한 생각 짜임새를 기록, 관리할 수 있는 곳입니다.
+                            </span>
                         </div>
-                        <div>
-                        </div>
-                    </div> -->
-                </div>
-                <div class="divList">
-                    <div id="list_direction" style = "display: none;"></div>
-                </div>
-                <div class="gridMainContents" id="editCard_direction" style = "display: none;">
-                    <div class="direction">
-                        <input type="hidden" id="cardId_direction"></input>
-                        <input type="hidden" id="cardParentsId_direction"></input>
-                        <textarea id="direction" placeholder="예)건강한 삶 살기" readonly></textarea>
-                        <div style="margin: 1rem 0">
-                            <input id="openEditCard_btn_direction" onClick="updateCardDept.openEditCard('direction')" type="button" style = "display: none;" value="수정하기">
-                            <input id="cancelEditCard_btn_direction" onClick="updateCardDept.cancelEditCard('direction')" type="button" style = "display: none;" value="작성(수정) 취소하기">
-                            <input id="saveEditedCard_btn_direction" onClick="updateCardDept.saveEditedCard('direction')" type="button" style = "display: none;" value="수정본 저장하기">
-                            <input id="saveNewCard_btn_direction" onClick="newCardDept.saveNewCard('direction')" type="button" style = "display: none;" value="새 카드로 저장하기">
-                            <input id="removeCard_btn_direction" onClick="removeCardDept.removeCard('direction')" type="button" style = "display: none;" value="삭제하기">
-                            <input id="openNewCard_btn_direction" onClick="newCardDept.openNewCard('direction')" type="button" style = "display: none;" value="새 카드 작성하기">
-                        </div>
-                        <div style="text-align: center; font-style: italic; color: #9c9c9c;">
-                            <span type="text" id="alert_txt_direction"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div id="div_roadmap" class="girdColumnForLayer">
-                <div class="gridMainTop">
-                    <div>
-                        <h2 id="layer_roadmap">로드맵</h2>
                     </div>
                     <div>
-                        <span>방향성 아래에 있는, '궁극적인' 또는 '중간' 도달 지점은 어디인가?</span>
-                    </div>
-                    <!-- <div class="gridMainIndex">
                         <div>
-                            <span>[목록 선택하기]<br></span>
-                            <select style="width: 100%; font-size: 0.8rem;" id="selectbox_roadmap"
-                                onchange="selectboxDept.selectBySelectbox('roadmap');">
-                                <option value="INIT">클릭하여 이동</option>
-                            </select>
-                        </div>
-                        <div>
-                        </div>
-                    </div> -->
-                </div>
-                <div class="divList">
-                    <div id="list_roadmap" style = "display: none;"></div>
-                </div>
-                <div class="gridMainContents" id="editCard_roadmap" style = "display: none;">
-                    <div class="roadmap">
-                        <input type="hidden" id="cardId_roadmap"></input>
-                        <input type="hidden" id="cardParentsId_roadmap"></input>
-                        <textarea id="roadmap" placeholder="예)주4회 아침 스트레칭 습관화" readonly></textarea>
-                        <div style="margin: 1rem 0">
-                            <input id="openEditCard_btn_roadmap" onClick="updateCardDept.openEditCard('roadmap')" type="button" style = "display: none;" value="수정하기">
-                            <input id="cancelEditCard_btn_roadmap" onClick="updateCardDept.cancelEditCard('roadmap')" type="button" style = "display: none;" value="작성(수정) 취소하기">
-                            <input id="saveEditedCard_btn_roadmap" onClick="updateCardDept.saveEditedCard('roadmap')" type="button" style = "display: none;" value="수정본 저장하기">
-                            <input id="saveNewCard_btn_roadmap" onClick="newCardDept.saveNewCard('roadmap')" type="button" style = "display: none;" value="새 카드로 저장하기">
-                            <input id="removeCard_btn_roadmap" onClick="removeCardDept.removeCard('roadmap')" type="button" style = "display: none;" value="삭제하기">
-                            <input id="openNewCard_btn_roadmap" onClick="newCardDept.openNewCard('roadmap')" type="button" style = "display: none;" value="새 카드 작성하기">
-                        </div>
-                        <div style="text-align: center; font-style: italic; color: #9c9c9c;">
-                            <span type="text" id="alert_txt_roadmap"></span>
+                            <p>
+                                <span type="text" id="nameChecked">로딩중...</span>
+                                <span type="text" id="emailChecked"></span>
+                                <input style="width: 5rem;" onClick="logOut()" type="button" value="로그아웃"></input>
+                            </p>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div id="div_actionPlan" class="girdColumnForLayer">
-                <div class="gridMainTop">
-                    <div>
-                        <h2 id="layer_actionPlan">액션플랜</h2>
-                    </div>
-                    <div>
-                        <span>길을 가기위해, 내가 지금 할 수 있는 '행동'은 무엇인가?</span>
-                    </div>
-                    <!-- <div class="gridMainIndex">
-                        <div>
-                            <span>[목록 선택하기]<br></span>
-                            <select style="width: 100%; font-size: 0.8rem;" id="selectbox_actionPlan"
-                                onchange="selectboxDept.selectBySelectbox('actionPlan');">
-                                <option value="INIT">클릭하여 이동</option>
-                            </select>
-                        </div>
-                        <div>
-                        </div>
-                    </div> -->
-                </div>
-                <div class="divList">
-                    <div id="list_actionPlan" style = "display: none;"></div>
-                </div>
-                <div class="gridMainContents" id="editCard_actionPlan" style = "display: none;">
-                    <div class="actionPlan">
-                        <input type="hidden" id="cardId_actionPlan"></input>
-                        <input type="hidden" id="cardParentsId_actionPlan"></input>
-                        <textarea id="actionPlan" placeholder="예)취침시간 조정하기" readonly></textarea>
-                        <div style="margin: 1rem 0">
-                            <input id="openEditCard_btn_actionPlan" onClick="updateCardDept.openEditCard('actionPlan')" type="button" style = "display: none;" value="수정하기">
-                            <input id="cancelEditCard_btn_actionPlan" onClick="updateCardDept.cancelEditCard('actionPlan')" type="button" style = "display: none;" value="작성(수정) 취소하기">
-                            <input id="saveEditedCard_btn_actionPlan" onClick="updateCardDept.saveEditedCard('actionPlan')" type="button" style = "display: none;" value="수정본 저장하기">
-                            <input id="saveNewCard_btn_actionPlan" onClick="newCardDept.saveNewCard('actionPlan')" type="button" style = "display: none;" value="새 카드로 저장하기">
-                            <input id="removeCard_btn_actionPlan" onClick="removeCardDept.removeCard('actionPlan')" type="button" style = "display: none;" value="삭제하기">
-                            <input id="openNewCard_btn_actionPlan" onClick="newCardDept.openNewCard('actionPlan')" type="button" style = "display: none;" value="새 카드 작성하기">
-                        </div>
-                        <div style="text-align: center; font-style: italic; color: #9c9c9c;">
-                            <span type="text" id="alert_txt_actionPlan"></span>
-                        </div>
-                    </div>
+                    <span>
+                        This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+                        License.<br>
+                        <a href="http://creativecommons.org/licenses/by-nc-sa/2.0/kr/">더 알아보기(More information)</a><br>
+                    </span>
                 </div>
             </div>
         </div>
-        <div id="divNoticeMain">
-            <p type="text" id="guideMessage"></p>
+        <div id="divTest">
+            <h2>테스트 영역</h2>
+            <h3>테스트 명: <span id="testTitle"></span> </h3>
+            <input id="testButton" onClick="countRow()" type="button" value="[테스트]">
+            <p></p>
+            <h5>selectedLi: <span id="selectedLiViewer"></span> </h5>
         </div>
-    </div>
-
-    <div id="gridWebInfo">
-        <div>
-            <div>
-                <span>
-                    <b>Life Design Park</b><br>
-                    라이프 디자인 파크는 '생각정리 놀이공원'입니다.<br> 
-                    내 삶에 대한 생각 짜임새를 기록, 관리할 수 있는 곳입니다.
-                </span>
-            </div>
-        </div>
-        <!-- <div class="button">
-            <input id="darkMode" type="button" value="다크모드 켜기" onclick="darkmode()">
-        </div> -->
-        <div>
-            <div>
-                <p>
-                    <span type="text" id="nameChecked">로딩중...</span>
-                    <span type="text" id="emailChecked"></span>
-                    <input style="width: 5rem;" onClick="logOut()" type="button" value="로그아웃"></input>
-                </p>
-            </div>
-        </div>
-        <span>
-            This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
-            License.<br>
-            <a href="http://creativecommons.org/licenses/by-nc-sa/2.0/kr/">더 알아보기(More information)</a><br>
-        </span>
-    </div>
+    </main>
 </body>
-
 
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
@@ -252,6 +119,28 @@
 
 <script type="text/javascript" src='fireBase.js'></script>
 <script type="text/javascript" src="index.js"></script>
+
+<script type="text/javascript" src="dept_user.js"></script>
+
+<script type="text/javascript" src="dept_server_StoL.js"></script>
+<script type="text/javascript" src="dept_server_LtoS.js"></script>
+
+<script type="text/javascript" src="dept_li_create.js"></script>
+<script type="text/javascript" src="dept_li_read.js"></script>
+<script type="text/javascript" src="dept_li_update.js"></script>
+<script type="text/javascript" src="dept_li_delete.js"></script>
+<script type="text/javascript" src="dept_li_support.js"></script>
+<script type="text/javascript" src="dept_li_click.js"></script>
+
+<script type="text/javascript" src="dept_support.js"></script>
+<script type="text/javascript" src="dept_support_monitor.js"></script>
+<script type="text/javascript" src="dept_support_switch.js"></script>
+
+<script type="text/javascript" src="dept_ui.js"></script>
+<script type="text/javascript" src="dept_ui_colors.js"></script>
+<script type="text/javascript" src="dept_ui_textarea.js"></script>
+
+<script type="text/javascript" src="dept_0_test.js"></script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

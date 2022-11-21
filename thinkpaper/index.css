@@ -1,12 +1,20 @@
+* { 
+    box-sizing: border-box;
+}
+
 body{
     font-size: 0.8rem;
     background-color: #FBFCF4;
     color: #2A2B2A;
+    margin: 0rem 4rem;
+    overflow: auto;
+    height: 100%;
 }
 
 h1{
-    font-size: 3rem;
-    margin: 0 0 1rem 0;
+    font-size: 2rem;
+    font-family: 'EB Garamond', serif;
+    margin: 0.5rem 0;
 }
 
 h2{
@@ -34,7 +42,6 @@ textarea {
     background-color: transparent;
     font-size: 0.8rem;
     color: #2A2B2A;
-    box-sizing: border-box;
     /* resize: vertical;  */
     /* 상하만 가능 */
     border-radius: 0.2rem;
@@ -53,7 +60,8 @@ textarea {
 
 textarea::-webkit-scrollbar {
     width: 0.5rem;
-    background-color: #FBFCF4; }
+    background-color: #FBFCF4; 
+}
 
 textarea::-webkit-scrollbar-thumb {
     border-radius: 0.5rem;
@@ -70,6 +78,7 @@ input[type="button"] {
         padding: 3px 5px;
         cursor: pointer;
         width: 100%;
+        text-align: left;
         /* display: inline-block; */
 }
 
@@ -112,54 +121,85 @@ li:active {
         0 6px 6px rgba(0,0,0,0.23);
 } */
 
-#titleText{
-    font-family: 'EB Garamond', serif;
-    margin: 0 auto;
-}
-
 #date {
     width: 10rem;
 }
 
+header{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-content: center;
+    padding: 1rem 4rem 0 4rem;
+    border-bottom: 0.2px solid #C8C8C8;
+    align-content: center;
+    padding: 1rem 4rem 0 4rem;
+    backdrop-filter: blur(7px);
+}
+
+main{
+    height: 100%;
+    padding-top: 100px;
+}
+
 #divImageMain{
-    margin: 3rem auto;
     text-align: center;
 }
 
-#gridBody{
-    margin: 6rem;
+#divBtn{
+    position: fixed;
+    width: 150px;
+    padding-right: 1rem;
+    background-color: #FBFCF4;
 }
 
-#divInfoTable{
-    margin: 1rem 0;
-    padding: 0.5rem;
-    border: 0.2px solid #C8C8C8;
+#divMain{
+    padding-left: 170px;
 }
 
-#guideMessage{
-    display: block;
-    text-align: center;
-    font-style: italic;
+#divBox {
+    position: static;
+    overflow-x: overlay;
+    transform: rotateX(180deg);
+    padding-bottom: 10px;
+    height: 80%;
 }
 
-#divNoticeMain {
-    text-align: center;
-}
-
-#gridMain{
-    display: grid;
-    grid-template-rows: 1fr 2rem;
-    grid-gap: 0.2rem;
-    margin: 3rem auto;
-    padding: 3rem 0;
-    border-Top: 1px solid rgb(220, 220, 220);
-}
+/* #divColumn{
+    position: sticky;
+    top: 30px;
+} */
 
 #gridColumn{
+    position: sticky;
+    top: 30px;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
     grid-gap: 1.2rem;
-    margin-bottom: 1rem;
+    margin-top: 10rem;
+    margin-bottom: 2rem;
+    transform: rotateX(180deg);
+}
+
+#divBox::-webkit-scrollbar {
+    height: 5px;
+    background-color: #e3e3e3; 
+}
+
+#divBox::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background-color: #a5a5a5; 
+}
+
+#divBox::-webkit-scrollbar-thumb:hover {
+    height: 10px;
+    background-color: #2A2B2A; 
+}
+
+#divBox::-webkit-scrollbar:hover {
+    height: 10px;
 }
 
 .girdColumnForLayer{
@@ -173,8 +213,7 @@ li:active {
     display: grid;
     grid-template-rows: 2rem 1fr;
     grid-gap: 0.2rem;
-    width: 16rem;
-    /*[질문] 최대 높이에 맞춰서 진행방법? flex 스터디하기*/
+    width: 100%;
     padding: 0 1rem;
     margin: 0 auto;
     align-content: center;
@@ -183,7 +222,6 @@ li:active {
 .divList{
     width: 16rem;
     padding: 0 1rem;
-    margin: 2rem auto;
     align-content: center;
 }
 
@@ -234,6 +272,7 @@ li:active {
     border: 1px solid rgb(220, 220, 220);
     padding: 1rem;
     grid-gap: 0.2rem;
+    margin-left: 1rem;
 }
 
 #divCreateName{
@@ -243,7 +282,7 @@ li:active {
 }
 
 #imageMain{
-    width: 70%;
+    height: 100px;
 }
 
 /* #imageMain:hover{
@@ -265,11 +304,12 @@ li:active {
     text-align: center;
 }
 
-/*to do list
-https://www.w3schools.com/howto/howto_js_todolist.asp
-*/
-
-
+#divTest{
+    margin: 30%;
+    padding: 1rem;
+    border: 0.2px solid #2A2B2A;
+    background-color: #FFF;
+}
    
 
 @media(max-width:700px){
@@ -295,11 +335,6 @@ https://www.w3schools.com/howto/howto_js_todolist.asp
     }
     .button{
         text-align: left;
-    }
-
-    #divTop{
-        min-width: 12rem;
-        margin: 0 auto;
     }
 
     #gridMainFrame{

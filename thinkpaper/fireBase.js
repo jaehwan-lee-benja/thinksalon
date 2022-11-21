@@ -1,6 +1,5 @@
 //var appFireBase = {};
 (function(){
-
     // var fireBase = fireBase || firebase;
     var hasInit = false;
     var config = {
@@ -18,7 +17,4 @@
         hasInit = true;
     }
     //appFireBase = firebase;
-    // [질문] appFireBase가 꼭 필요한가?
-})()
-
-
+})();

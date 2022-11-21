@@ -144,11 +144,9 @@
           //})
           //.on("mouseout", "unHighLight")
           .on("mouseover", function (d) {
-                    console.log("mouseover");
                     var opacity1 = d3.select(this).style("opacity")
                     d3.select(this).style("opacity", opacity1*1.5);
                     //d3.select(this).style("opacity", 10);
-                    console.log(d3.select(this).style("opacity"))
                     //d3.select(this).style("fill", "#344e41")
                 })
           //.on("mouseout", function (d) {

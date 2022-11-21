@@ -10,55 +10,16 @@
     },
     "bigPicture": {
         "children": {
-            "#$characterId": {
+            "#$Id": {
                 "id": "",
                 "parentsId": "",
                 "createdDate": "",
                 "editedDate": "",
-                "readDate": "",
                 "main": "",
-                "layer": "character",
-                "contents": {"character":""},
-                "children": {
-                    "#$directionId": {
-                        "id": "",
-                        "parentsId": "",
-                        "createdDate": "",
-                        "editedDate": "",
-                        "readDate": "",
-                        "main": "",
-                        "layer": "direction",
-                        "contents": {"direction":""},
-                        "children": {
-                            "#$roadmapId": {
-                                "id": "",
-                                "parentsId": "",
-                                "createdDate": "",
-                                "editedDate": "",
-                                "readDate": "",
-                                "main": "",
-                                "layer": "roadmap",
-                                "contents": {
-                                    "roadmap":"",
-                                    "roadmapA":"",
-                                    "roadmapB":""},
-                                "children": {
-                                    "#$actionPlanId": {
-                                        "id": "",
-                                        "parentsId": "",
-                                        "createdDate": "",
-                                        "editedDate": "",
-                                        "readDate": "",
-                                        "main": "",
-                                        "layer": "actionPlan",
-                                        "contents": {"actionPlan":""},
-                                        "children": ""
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                "layer": "",
+                "row": "",
+                "contents": {"txt":""},
+                "children": { }
             }
         }
     }
