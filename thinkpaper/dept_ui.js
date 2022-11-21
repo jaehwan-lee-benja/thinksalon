@@ -10,7 +10,6 @@ function showNewLi(idHere) {
 }
 function showItOnUI(layerHere) {
 	updateList(layerHere);
-	setupBtnShowOrHideByClassName("readLi");
 	setLiColorByLi(layerHere);
 };
 function hideUI(idHere) {
@@ -74,9 +73,7 @@ function setupTextareaBorderColorByClass_li(idHere, px, color) {
 };
 
 function highLightBorder(idHere, color) {
-	console.log("idHere = ", idHere);
 	const element = document.getElementById(idHere).children[0];
-	console.log("element = ", element);
 	element.style.borderColor = color;
 };
 

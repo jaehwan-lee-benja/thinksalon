@@ -12,7 +12,6 @@ function packageEditedLi(layerHere) {
 
 	// CRUD 후 진행하기
 	const resultIsChanged = monitorIfLiChanged(layerHere);
-	console.log("resultIsChanged = ", resultIsChanged);
 	const monitorResult = getMoniterResult(layerHere, resultIsChanged);
 	
 	if (monitorResult) {
@@ -48,9 +47,6 @@ function monitorIfLiChanged(layerHere) {
 	// 위 두가지가 같은 경우의 수라면, 수정이 이뤄지지 않은 상태
 	for(let i = 0; i < arrayWithId.length; i++) {
 		if(JSON.stringify(object) === JSON.stringify(arrayWithId[i])) {
-			// const selectedData = JSON.stringify(object);
-			// const existedData = JSON.stringify(arrayWithId[i])
-			// console.log(selectedData, " | ", existedData);
 			console.log("내용이 바뀌지 않았음!");
 			return false;
 		};

@@ -10,8 +10,9 @@ function saveNewLi() {
 	};
 };
 function packageNewLi(layerHere) {
-	// const monitorResult = monitorLiBlankOrDuplicates(layerHere);
-	// if (monitorResult) {
+	const monitorResult = monitorLiBlankOrDuplicates(layerHere);
+	console.log("monitorResult = ", monitorResult);
+	if (monitorResult) {
 		const catchedData = catchContentsDataBySwitchLayer(layerHere);
 		const idNew = getUuidv4();
 		catchedData["id"] = idNew;
@@ -21,7 +22,7 @@ function packageNewLi(layerHere) {
 		catchedData["layer"] = layerHere;
 		catchedData["row"] = countRow(layerHere);
 		return catchedData;
-	// };
+	};
 };
 function catchContentsDataBySwitchLayer(layerHere) {
 	
