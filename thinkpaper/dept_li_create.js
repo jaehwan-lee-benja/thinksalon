@@ -11,7 +11,6 @@ function saveNewLi() {
 };
 function packageNewLi(layerHere) {
 	const monitorResult = monitorLiBlankOrDuplicates(layerHere);
-	console.log("monitorResult = ", monitorResult);
 	if (monitorResult) {
 		const catchedData = catchContentsDataBySwitchLayer(layerHere);
 		const idNew = getUuidv4();

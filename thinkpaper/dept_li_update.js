@@ -47,11 +47,11 @@ function monitorIfLiChanged(layerHere) {
 	// 위 두가지가 같은 경우의 수라면, 수정이 이뤄지지 않은 상태
 	for(let i = 0; i < arrayWithId.length; i++) {
 		if(JSON.stringify(object) === JSON.stringify(arrayWithId[i])) {
-			console.log("내용이 바뀌지 않았음!");
+			// 내용이 바뀌지 않았음
 			return false;
 		};
 	};
-	console.log("내용이 바뀌었음!");
+	// 내용이 바뀌었음
 	return true;
 };
 function getMappedObject_idContents(layerHere) {		
@@ -67,11 +67,9 @@ function getMappedObject_idContents(layerHere) {
 };
 function getMoniterResult(layerHere, isChangedHere) {
 	if (isChangedHere) {
-		console.log("getMoniterResult 1");
 		const monitorResultInFunction = monitorLiBlankOrDuplicates(layerHere);
 		return monitorResultInFunction;
 	} else {
-		console.log("getMoniterResult 2");
 		const id = selectedLi.id;
 		highLightBorder(id, "red");
 		alert("수정된 내용이 없습니다.");
