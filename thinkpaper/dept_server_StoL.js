@@ -37,10 +37,8 @@ function requestReadBigPicture(user) {
 			// 첫 on, 아무 li도 선택되지 않은 경우
 			layers.forEach(eachLayer => {
 				if(count > 0) {
-					console.log("checkpoint! - 1");
 					showItOnUI(eachLayer);
 				} else {
-					console.log("checkpoint! - 2");
 					updateList(eachLayer);
 				};
 				setupBtnShowOrHideByClassName();

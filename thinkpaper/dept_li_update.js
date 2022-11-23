@@ -2,11 +2,14 @@ function saveEditedLi() {
 	const layer = selectedLi.layer;
 	const packagedData = packageEditedLi(layer);
 	if (packagedData != null) {
+
 		requestUpdateLi(packagedData);
 		showHideDiv(layer);
 		updateList(layer);
 		keepSelectedData(layer, packagedData.id);
-		setLiColorByLi(layer);	};
+		setLiColorByLi(layer);	
+
+	};
 };
 function packageEditedLi(layerHere) {	
 
@@ -14,23 +17,27 @@ function packageEditedLi(layerHere) {
 	const monitorResult = getMoniterResult(layerHere, resultIsChanged);
 	
 	if (monitorResult) {
-		const packagedData = {};
-		const id = selectedLi.id;
-		packagedData["id"] = id;
-		if (layerHere == 0) {
-			packagedData["parentsId"] = "";
-		} else {
-			packagedData["parentsId"] = selectedLi.parentsId;
-		}
-		packagedData["editedDate"] = getTimeStamp();
-		packagedData["contents"] = {};
+		if (confirm("수정된 내용을 저장하시겠습니까?")) {
 
-		const contents = packagedData["contents"];
-		const pointedLi = document.getElementById(id);
-		const pointedTextarea = pointedLi.children[0];
-		contents["txt"] = pointedTextarea.value.trim();
+			const packagedData = {};
+			const id = selectedLi.id;
+			packagedData["id"] = id;
+			if (layerHere == 0) {
+				packagedData["parentsId"] = "";
+			} else {
+				packagedData["parentsId"] = selectedLi.parentsId;
+			}
+			packagedData["editedDate"] = getTimeStamp();
+			packagedData["contents"] = {};
 
-		return packagedData;
+			const contents = packagedData["contents"];
+			const pointedLi = document.getElementById(id);
+			const pointedTextarea = pointedLi.children[0];
+			contents["txt"] = pointedTextarea.value.trim();
+
+			return packagedData;
+
+		};
 	};
 };
 function monitorIfLiChanged(layerHere) {

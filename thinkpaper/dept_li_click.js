@@ -129,7 +129,7 @@ function cancelLiEditModeBack() {
 					liValue = dataFromObjectById.contents.txt;
 				} else {
 					liValue = "(추가하기: 더블 클릭)";
-					eachTextarea.setAttribute("style", "color: #95948F"); //COLOR_TXT_GRAY
+					eachTextarea.setAttribute("style", "color: "+COLOR_TXT_GRAY);
 				};
 				eachTextarea.value = liValue;
 			// };
