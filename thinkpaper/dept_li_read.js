@@ -34,7 +34,7 @@ function getLiArray(layerHere) {
 		let parentsIdFromObjectById = objectById[eachId].parentsId;
 
 		if(layerHere > 0) {
-			if (eventListenerCell.selected == "Y") {
+			if (eventListenerBox_selected == "Y") {
 				let parentsLayer = layerHere - 1;
 				const li = document.getElementsByTagName("li");
 				for (let i = 0; i < li.length; i++) {

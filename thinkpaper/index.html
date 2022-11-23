@@ -28,8 +28,12 @@
                     <input id="saveNewLi_btn" onClick="saveNewLi()" type="button" value="새 카드로 저장하기" style = "display: none;">
                     <input id="removeLi_btn" onClick="removeLi()" type="button" value="삭제하기" style = "display: none;">
                     <div id="upDownRow_btn">
-                        <input id="upRow_btn" onClick="upRow()" type="button" value="up">
-                        <input id="downRow_btn" onClick="downRow()" type="button" value="down">
+                        <input id="rowEditStart_btn" onClick="rowEditStart()" type="button" value="순서 변경하기">
+                        <div>
+                            <input id="upRow_btn" type="button" value="up">
+                            <input id="downRow_btn" type="button" value="down">
+                        </div>
+                        <input id="rowEditUpdate_btn" onClick="rowEditUpdate()" type="button" value="순서 저장하기">
                     </div>
                 </div>
                 <span id="seletedLi_layer0" style = "color: rgb(190, 190, 190);"></span>
@@ -137,6 +141,7 @@
 <script type="text/javascript" src="dept_li_delete.js"></script>
 <script type="text/javascript" src="dept_li_support.js"></script>
 <script type="text/javascript" src="dept_li_click.js"></script>
+<script type="text/javascript" src="dept_li_upDownRow.js"></script>
 
 <script type="text/javascript" src="dept_support.js"></script>
 <script type="text/javascript" src="dept_support_monitor.js"></script>

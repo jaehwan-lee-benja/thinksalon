@@ -153,7 +153,7 @@ function setLiBgColor() {
                 if(selectedId == eachId) {
                     li[i].style.background = COLOR_SELECTED_GRAYGREEN;
                     li[i].setAttribute("pointed", "Y");
-                    eventListenerCell = {selected: "Y"};
+                    eventListenerBox_selected = "Y";
                 } else {
                     li[i].style.background = "";
                     li[i].setAttribute("pointed", "N");
@@ -199,7 +199,7 @@ function setLiBorderColor(layerHere) {
 // 		};
 
 // 		if(isBg) {
-// 			if (eventListenerCell.selected == "Y") {
+// 			if (eventListenerBox_selected == "Y") {
 // 				keepSelectedData();
 // 				const li = document.getElementsByTagName("li");
 // 				for (let i = 0; i < li.length; i++) {
@@ -209,7 +209,7 @@ function setLiBorderColor(layerHere) {
 // 						li[i].setAttribute("pointed", "N");
 // 						li[i].style.borderRight = "";
 // 						li[i].setAttribute("pointedNow", "N");
-// 						eventListenerCell = {selected: "N"};
+// 						eventListenerBox_selected = "N";
 // 						// cancelEditLi();
 // 					};
 // 				};

@@ -104,15 +104,5 @@ function cancelEditLi() {
 	updateList(selectedLayer);
 	showHideDiv(selectedLayer);
 
-	// const count = Object.keys(objectById).length; 
-	// const layers = [0, 1, 2];
-	// layers.forEach(eachLayer => {
-	// 	if(count > 0) {
-	// 		showItOnUI(eachLayer);
-	// 	} else {
-	// 		setupBtnShowOrHideByClassName();
-	// 		updateList(eachLayer);
-	// 	};
-	// });
-	// 	showHideDiv(-1);
 };
+

@@ -33,7 +33,7 @@ function requestReadBigPicture(user) {
 		const count = Object.keys(objectById).length; 
 		const layers = [0, 1, 2];
 
-		if (eventListenerCell.selected == "N") {
+		if (eventListenerBox_selected == "N") {
 			// 첫 on, 아무 li도 선택되지 않은 경우
 			layers.forEach(eachLayer => {
 				if(count > 0) {
