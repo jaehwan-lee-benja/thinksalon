@@ -1,4 +1,8 @@
 function rowEditStart() {
+
+    const selectedLayer = selectedLi.layer;
+    eventListenerBox_row.before = getIdRowArray(selectedLayer);
+
 	simulateRow();
 };
 
@@ -34,25 +38,90 @@ function simulateRow(upOrDownHere) {
 function eventListener_upRow_btn() {
     const upRow_btn = document.getElementById("upRow_btn");
     upRow_btn.addEventListener("click", (e) => {
-        eventListenerBox_row.before = {id: selectedLi.id, row: selectedLi.row};
-        console.log("eventListenerBox_row.before = ", eventListenerBox_row.before, " | txt = ", selectedLi.contents.txt);
+        
         const selectedLayer = selectedLi.layer;
+        eventListenerBox_row.before = getIdRowArray(selectedLayer);
+
+        // 바뀌는 id row 정립하기
         const everyIdArrayOfLayer = getEveryIdArrayOfLayer(selectedLayer);
         const maxRow = everyIdArrayOfLayer.length - 1;
+        const selectedId = selectedLi.id;
         const selectedRow = selectedLi.row;
-        console.log("selectedRow = ", selectedRow);
         const uppedRow = selectedRow + 1;
+        let downedIdRow = {};
+        let uppedIdRow = {};
+        
+        // 값 내리기
+        everyIdArrayOfLayer.forEach(eachId => {
+            if(objectById[eachId].row == uppedRow) {
+                downedIdRow = {id: eachId, row: uppedRow - 1}
+            };
+        });
+        console.log("downedIdRow = ", downedIdRow);
+
+        // 값 올리기
         if(uppedRow < maxRow) {
-            console.log("uppedRow = ", uppedRow);
-            eventListenerBox_row.after = {id: selectedLi.id, row: uppedRow};
+            uppedIdRow = {id: selectedId, row: uppedRow};
         } else {
-            console.log("maxRow = ", maxRow);
-            eventListenerBox_row.after = {id: selectedLi.id, row: maxRow};
+            uppedIdRow = {id: selectedId, row: maxRow};
         };
-        simulateRow("up");
-        console.log("eventListenerBox_row = ", eventListenerBox_row);
+        console.log("uppedIdRow = ", uppedIdRow);
+
+        // eventListenerBox_row.after 업데이트하기
+        let idRowArray_after = [];
+
+        console.log("eventListenerBox_row.before = ", eventListenerBox_row.before);
+        eventListenerBox_row.before.forEach(eachObject => {
+            if(eachObject.id == downedIdRow.id) {
+                console.log("push_downed!");
+                idRowArray_after.push(downedIdRow);
+            };
+            if(eachObject.id == uppedIdRow.id) {
+                console.log("push_upped!");
+                idRowArray_after.push(uppedRow);
+            };
+        });
+
+        idRowArray_after.forEach(eachObject_after => {
+            eventListenerBox_row.before.forEach(eachObject_before => {
+                if(eachObject_before != eachObject_after) {
+                    idRowArray_after.push(eachObject_before);
+                };
+            });
+        });
+
+        eventListenerBox_row.after = idRowArray_after;
+        console.log("idRowArray_after = ", idRowArray_after);
+        // 위 값부터 꼬였음. 확인 필요!
+        
+        // objectById 업데이트하기
+        everyIdArrayOfLayer.forEach(eachId => {
+            // console.log("eachRow = ", objectById[eachId].row);
+            idRowArray_after.forEach(eachObjectForUpdate => {
+                const eachIdFormObject = eachObjectForUpdate.id;
+                const eachRowFormObject = eachObjectForUpdate.row;
+                // console.log("eachRowFormObject = ", eachRowFormObject);
+                if(eachId == eachIdFormObject) {
+                    // console.log("checkpoint!");
+                    objectById[eachId].row = eachRowFormObject;
+                };
+            });
+        });
+
+        // updateList
+        updateList(selectedLayer);
     });
 };
+
+function getIdRowArray(layerHere) {
+    const everyIdArrayOfLayer = getEveryIdArrayOfLayer(layerHere);
+    const idRowArray = [];
+    everyIdArrayOfLayer.forEach(eachId => {
+        const objectForArray = {id: eachId, row: objectById[eachId].row};
+        idRowArray.push(objectForArray);
+    });
+    return idRowArray;
+}
 
 function downRow() {
 
