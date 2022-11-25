@@ -2,116 +2,120 @@ function rowEditStart() {
 
     const selectedLayer = selectedLi.layer;
     eventListenerBox_row.before = getIdRowArray(selectedLayer);
-
-	simulateRow();
+    
 };
 
-function simulateRow(upOrDownHere) {
-
-	const layer = selectedLi.layer;
-    const rowBefore = eventListenerBox_row.before.row;
-    const rowAfter = eventListenerBox_row.after.row;
-    if(upOrDownHere == "up") {
-        objectById[selectedLi.id].row = rowAfter;
-        selectedLi.row = rowAfter;
-        const everyIdArrayOfLayer = getEveryIdArrayOfLayer(layer);
-        everyIdArrayOfLayer.forEach(eachId => {
-            const eachRow = objectById[eachId].row;
-
-            console.log("eachRow1 = ", eachRow);
-            console.log("rowBefore = ", rowBefore);
-            console.log("rowAfter = ", rowAfter);
-
-            if (eachRow == rowAfter) {
-                console.log("eachRow2 = ", eachRow);
-                objectById[eachId].row = rowAfter - 1;
-                console.log("eachRow3 = ", eachRow);
-            };
-        })
-    };
-    console.log("it worked!");
-    updateList(layer);
-    keepSelectedData(layer, selectedLi.id);
-    setLiColorByLi(layer);
-};
-
-function eventListener_upRow_btn() {
-    const upRow_btn = document.getElementById("upRow_btn");
-    upRow_btn.addEventListener("click", (e) => {
-        
-        const selectedLayer = selectedLi.layer;
-        eventListenerBox_row.before = getIdRowArray(selectedLayer);
+function simulateUpDownLi(plusOrMinus) {
+    const selectedLayer = selectedLi.layer;
+        let idRowArray_before = getIdRowArray(selectedLayer);
 
         // 바뀌는 id row 정립하기
         const everyIdArrayOfLayer = getEveryIdArrayOfLayer(selectedLayer);
-        const maxRow = everyIdArrayOfLayer.length - 1;
         const selectedId = selectedLi.id;
         const selectedRow = selectedLi.row;
-        const uppedRow = selectedRow + 1;
-        let downedIdRow = {};
-        let uppedIdRow = {};
         
-        // 값 내리기
-        everyIdArrayOfLayer.forEach(eachId => {
-            if(objectById[eachId].row == uppedRow) {
-                downedIdRow = {id: eachId, row: uppedRow - 1}
-            };
-        });
-        console.log("downedIdRow = ", downedIdRow);
 
-        // 값 올리기
-        if(uppedRow < maxRow) {
-            uppedIdRow = {id: selectedId, row: uppedRow};
-        } else {
-            uppedIdRow = {id: selectedId, row: maxRow};
-        };
-        console.log("uppedIdRow = ", uppedIdRow);
-
-        // eventListenerBox_row.after 업데이트하기
+        // 변경된 row값 idRowArray_after로 묶기
         let idRowArray_after = [];
 
-        console.log("eventListenerBox_row.before = ", eventListenerBox_row.before);
-        eventListenerBox_row.before.forEach(eachObject => {
-            if(eachObject.id == downedIdRow.id) {
-                console.log("push_downed!");
-                idRowArray_after.push(downedIdRow);
+        if(plusOrMinus == "plus") {
+            // plus된 값 맞추기
+            const maxRow = everyIdArrayOfLayer.length - 1;
+            const uppedRowByPlus = selectedRow + 1;
+            let downedIdRowByPlus = {};
+            let uppedIdRowByPlus = {};
+
+            // up 버튼에 따라서, 값 올리기
+            if(uppedRowByPlus < maxRow) {
+                uppedIdRowByPlus = {id: selectedId, row: uppedRowByPlus};
+            } else {
+                uppedIdRowByPlus = {id: selectedId, row: maxRow};
             };
-            if(eachObject.id == uppedIdRow.id) {
-                console.log("push_upped!");
-                idRowArray_after.push(uppedRow);
+
+            // up 버튼에 따라서, 값 내리기
+            everyIdArrayOfLayer.forEach(eachId => {
+                if(objectById[eachId].row == uppedRowByPlus) {
+                    downedIdRowByPlus = {id: eachId, row: uppedRowByPlus - 1}
+                };
+            });
+
+            idRowArray_before.forEach(eachObject => {
+                if(eachObject.id == downedIdRowByPlus.id) {
+                    idRowArray_after.push(downedIdRowByPlus);
+                } else if (eachObject.id == uppedIdRowByPlus.id) {
+                    idRowArray_after.push(uppedIdRowByPlus);
+                };
+            });
+        } else {
+            // minus된 값 맞추기
+            const downedRowByMinus = selectedRow - 1;
+            let downedIdRowByMinus = {};
+            let uppedIdRowByMinus = {};
+
+            // down 버튼에 따라서, 값 내리기
+            if(downedRowByMinus > 0) {
+                downedIdRowByMinus = {id: selectedId, row: downedRowByMinus};
+            } else {
+                downedIdRowByMinus = {id: selectedId, row: 0};
             };
+
+            // down 버튼에 따라서, 값 올리기
+            everyIdArrayOfLayer.forEach(eachId => {
+                if(objectById[eachId].row == downedRowByMinus) {
+                    uppedIdRowByMinus = {id: eachId, row: downedRowByMinus + 1}
+                };
+            });
+
+            idRowArray_before.forEach(eachObject => {
+                if(eachObject.id == uppedIdRowByMinus.id) {
+                    idRowArray_after.push(uppedIdRowByMinus);
+                } else if (eachObject.id == downedIdRowByMinus.id) {
+                    idRowArray_after.push(downedIdRowByMinus);
+                };
+            });
+        };
+
+        // 변경된 id값 idArrayForm_after로 묶기
+        const idArrayForm_after = [];
+        idRowArray_after.forEach(eachObject2 => {
+            idArrayForm_after.push(eachObject2.id);
         });
 
-        idRowArray_after.forEach(eachObject_after => {
-            eventListenerBox_row.before.forEach(eachObject_before => {
-                if(eachObject_before != eachObject_after) {
-                    idRowArray_after.push(eachObject_before);
+        // 변경된 idRowObject idRowArray_before_edited로 묶기
+        const idRowArray_before_edited = [];
+        idRowArray_before.forEach(eachObject3 => {
+            idArrayForm_after.forEach(eachIdFrom_after => {
+                if(eachObject3.id == eachIdFrom_after) {
+                    idRowArray_before_edited.push(eachObject3);
                 };
             });
         });
-
-        eventListenerBox_row.after = idRowArray_after;
-        console.log("idRowArray_after = ", idRowArray_after);
-        // 위 값부터 꼬였음. 확인 필요!
         
+        // idRowArray_before에서 idRowArray_before_edited 빼기
+        idRowArray_before_edited.forEach(function(item) {
+            const index = idRowArray_before.indexOf(item);
+            if(index !== -1) {
+                idRowArray_before.splice(index, 1);
+            };
+        });
+
+        // idRowArray_before와  idRowArray_after 더하기
+        const idRowArray_result = idRowArray_before.concat(idRowArray_after);
+        eventListenerBox_row.after = idRowArray_result;
+
         // objectById 업데이트하기
-        everyIdArrayOfLayer.forEach(eachId => {
-            // console.log("eachRow = ", objectById[eachId].row);
-            idRowArray_after.forEach(eachObjectForUpdate => {
-                const eachIdFormObject = eachObjectForUpdate.id;
-                const eachRowFormObject = eachObjectForUpdate.row;
-                // console.log("eachRowFormObject = ", eachRowFormObject);
-                if(eachId == eachIdFormObject) {
-                    // console.log("checkpoint!");
-                    objectById[eachId].row = eachRowFormObject;
+        everyIdArrayOfLayer.forEach(eachId2 => {
+            idRowArray_result.forEach(eachObject4 => {
+                if(eachId2 == eachObject4.id) {
+                    objectById[eachId2].row = eachObject4.row;
                 };
             });
         });
 
         // updateList
         updateList(selectedLayer);
-    });
-};
+        setLiColorByLi(selectedLayer);
+}
 
 function getIdRowArray(layerHere) {
     const everyIdArrayOfLayer = getEveryIdArrayOfLayer(layerHere);
