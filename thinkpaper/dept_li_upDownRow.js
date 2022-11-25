@@ -1,8 +1,9 @@
 function rowEditStart() {
 
+    console.log("started!");
     const selectedLayer = selectedLi.layer;
-    eventListenerBox_row.before = getIdRowArray(selectedLayer);
-    
+    rowBox.before = getIdRowArray(selectedLayer);
+
 };
 
 function simulateUpDownLi(plusOrMinus) {
@@ -101,7 +102,7 @@ function simulateUpDownLi(plusOrMinus) {
 
         // idRowArray_before와  idRowArray_after 더하기
         const idRowArray_result = idRowArray_before.concat(idRowArray_after);
-        eventListenerBox_row.after = idRowArray_result;
+        rowBox.after = idRowArray_result;
 
         // objectById 업데이트하기
         everyIdArrayOfLayer.forEach(eachId2 => {
@@ -115,7 +116,8 @@ function simulateUpDownLi(plusOrMinus) {
         // updateList
         updateList(selectedLayer);
         setLiColorByLi(selectedLayer);
-}
+
+};
 
 function getIdRowArray(layerHere) {
     const everyIdArrayOfLayer = getEveryIdArrayOfLayer(layerHere);
@@ -125,22 +127,28 @@ function getIdRowArray(layerHere) {
         idRowArray.push(objectForArray);
     });
     return idRowArray;
-}
-
-function downRow() {
-
 };
 
-function packageEditedRow(layerHere) {	
+function rowEditUpdate() {	
 	
+    console.log("update!");
+
 	if (confirm("변경된 순서를 저장하시겠습니까?")) {
 
-		const packagedRowData = {};
-		const id = selectedLi.id;
-		const originalRow = selectedLi.row;
-		packagedRowData["row"] = originalRow + 1;
-		return packagedRowData;
+        const idRowArray_before = rowBox.before;
+        const idRowArray_after = rowBox.after;
+
+        console.log("idRowArray_before = ", idRowArray_before);
+        console.log("idRowArray_after = ", idRowArray_after);
+        console.log("idRowArray_edited = ", idRowArray_edited);
+        
+        // rowBox.edited = idRowArray_edited;
+
+        // console.log("before = ", rowBox.before.length);
+        // console.log("after = ", rowBox.after.length);
+        // console.log("rowBox = ", rowBox);
 
 	};
 
 };
+

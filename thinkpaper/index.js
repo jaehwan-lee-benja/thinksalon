@@ -5,7 +5,7 @@ let objectById = {};
 let selectedLi = {};
 let selectedLiByLayer = {0: "", 1:"", 2:""};
 let eventListenerBox_selected = "N";
-let eventListenerBox_row = {before:[], after:[]};
+let rowBox = {before:[], after:[]};
 
 (function() {
 	logIn();
