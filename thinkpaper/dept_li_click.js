@@ -136,9 +136,15 @@ function cancelLiEditModeBack() {
 		};
 	};
 };
-function setLiColorByLi(layerHere) {
-	setLiBgColor();
-	setLiBorderColor(layerHere);
+function setLiColorByLi(layerHere, rowEditHere) {
+	console.log("rowEditHere = ", rowEditHere);
+	if(rowEditHere == undefined) {
+		setLiBgColor();
+		setLiBorderColor(layerHere);
+	} else {
+		// 테스트 중
+	};
+	
 };
 
 function setLiBgColor() {

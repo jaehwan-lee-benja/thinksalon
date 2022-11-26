@@ -27,6 +27,12 @@ function setupBtnShowOrHideByClassName(state, idHere) {
 	hideUI("saveNewLi_btn");
 	hideUI("removeLi_btn");
 
+	hideUI("startRowEdit_btn");
+	hideUI("upRow_btn");
+	hideUI("downRow_btn");
+	hideUI("updateRowEdit_btn");
+	hideUI("cancelRowEdit_btn");
+
 	// 모드에 따라 설정하기
 	switch(state){
 		case undefined :
@@ -36,7 +42,6 @@ function setupBtnShowOrHideByClassName(state, idHere) {
 			break;
 		case "createFirstLi" :
 			showUI("saveNewLi_btn");
-			// setupTextareaModeByClassName(idHere, "editing");
 			break;
 		case "openNewLi" :
 			showUI("saveNewLi_btn");
@@ -46,13 +51,19 @@ function setupBtnShowOrHideByClassName(state, idHere) {
 		case "readLi" :
 			showUI("openEditLi_btn");
 			showUI("removeLi_btn");
-			// setupTextareaModeByClassName(idHere, "reading");
+			showUI("startRowEdit_btn");
 			break;
 		case "editLi" :
 			showUI("saveEditedLi_btn");
 			showUI("cancelEditLi_btn");
 			showUI("removeLi_btn");
 			setupTextareaModeByClassName(idHere, "editing");
+			break;
+		case "upDownRow" :
+			showUI("upRow_btn");
+			showUI("downRow_btn");
+			showUI("updateRowEdit_btn");
+			showUI("cancelRowEdit_btn");
 			break;
 		default:
 			const state = null;

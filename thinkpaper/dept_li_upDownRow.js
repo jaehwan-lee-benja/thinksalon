@@ -1,8 +1,12 @@
-function rowEditStart() {
+function startRowEdit() {
 
     console.log("started!");
+    const selectedId = selectedLi.id;
     const selectedLayer = selectedLi.layer;
     rowBox.before = getIdRowArray(selectedLayer);
+
+    setupRowEditModeByClassName(selectedId, "editing");
+    setupBtnShowOrHideByClassName("upDownRow", selectedId);
 
 };
 
@@ -115,7 +119,7 @@ function simulateUpDownLi(plusOrMinus) {
 
         // updateList
         updateList(selectedLayer);
-        setLiColorByLi(selectedLayer);
+        setLiColorByLi(selectedLayer, "rowEdit"); // 테스트 중
 
 };
 
@@ -129,7 +133,7 @@ function getIdRowArray(layerHere) {
     return idRowArray;
 };
 
-function rowEditUpdate() {	
+function updateRowEdit() {	
 	
     console.log("update!");
 
@@ -180,4 +184,40 @@ function packageEditedIdRowArray() {
         });
     });
     return idRowArray_edited;
+};
+
+function cancelRowEdit() {
+    const selectedLayer = Number(selectedLi.layer);
+    const everyIdArrayOfLayer = getEveryIdArrayOfLayer(selectedLayer);
+    const idRowArray_before = rowBox.before;
+
+    // objectById before로 재업데이트하기
+    everyIdArrayOfLayer.forEach(eachId => {
+        idRowArray_before.forEach(eachObject => {
+            if(eachId == eachObject.id) {
+                objectById[eachId].row = eachObject.row;
+            };
+        });
+    });
+
+	setupBtnShowOrHideByClassName();
+	updateList(selectedLayer);
+
+};
+
+function setupRowEditModeByClassName(idHere, modeHere) {
+    console.log("setupRowEditModeByClassName here!");
+	const liElement = document.getElementById(idHere);
+	const liArray = liElement.parentNode.childNodes;
+
+    liArray.forEach(eachLi => {
+        if (modeHere == "editing") {
+            eachLi.style.borderLeft = "20px solid" + COLOR_FOCUSED_YELLOW;
+        } else {
+            eachLi.style.borderLeft = "";
+        };
+    });
+
+    // 테스트 중
+
 };
