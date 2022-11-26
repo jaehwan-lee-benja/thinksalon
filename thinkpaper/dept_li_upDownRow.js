@@ -133,22 +133,51 @@ function rowEditUpdate() {
 	
     console.log("update!");
 
+    const packagedEditedIdRowArray = packageEditedIdRowArray();
+
 	if (confirm("변경된 순서를 저장하시겠습니까?")) {
-
-        const idRowArray_before = rowBox.before;
-        const idRowArray_after = rowBox.after;
-
-        console.log("idRowArray_before = ", idRowArray_before);
-        console.log("idRowArray_after = ", idRowArray_after);
-        console.log("idRowArray_edited = ", idRowArray_edited);
-        
-        // rowBox.edited = idRowArray_edited;
-
-        // console.log("before = ", rowBox.before.length);
-        // console.log("after = ", rowBox.after.length);
-        // console.log("rowBox = ", rowBox);
-
+        const idArray = Object.keys(objectById);
+        idArray.forEach(eachId => {
+            packagedEditedIdRowArray.forEach(eachObject => {
+                if(eachId == eachObject.id) {
+                    console.log("eachObject = ", eachObject);
+                    requestUpdateRow(eachObject);
+                };
+            })
+        });
 	};
 
 };
 
+function requestUpdateRow(packagedDataHere) {
+	const inputId = packagedDataHere.id;
+	const bpRef = db.ref("users")
+						.child(userData.uid)
+						.child("bigPicture");
+	bpRef.child(inputId)
+		.update(packagedDataHere, (e) => {
+		alert("수정되었습니다."); // 최종에만 뜨도록 하기
+		console.log("*keep* update completed = ", e);
+	});
+};
+
+function packageEditedIdRowArray() {
+    const idRowArray_before = rowBox.before;
+    const idRowArray_after = rowBox.after;
+
+    console.log("idRowArray_before = ", idRowArray_before);
+    console.log("idRowArray_after = ", idRowArray_after);
+    
+    const idRowArray_edited = [];
+    idRowArray_after.forEach((element) => {
+        idRowArray_before.forEach(eachObject => {
+            if(element.id == eachObject.id && element.row != eachObject.row){
+                console.log("element = ", element);
+                console.log("eachObject = ", eachObject);
+                const editedObject = {id: element.id, row: element.row};
+                idRowArray_edited.push(editedObject);
+            };
+        });
+    });
+    return idRowArray_edited;
+};
