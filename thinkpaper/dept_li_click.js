@@ -138,14 +138,17 @@ function cancelLiEditModeBack() {
 };
 function setLiColorByLi(layerHere, rowEditHere) {
 	console.log("rowEditHere = ", rowEditHere);
-	if(rowEditHere == undefined) {
-		setLiBgColor();
-		setLiBorderColor(layerHere);
-	} else {
-		// 테스트 중
-	};
-	
-};
+	const selectedId = selectedLi.id;
+		if(rowEditHere == undefined) {
+			if(eventListenerBox_selected != "N") {
+				setupColorRowEditMode(selectedId, "reading")
+			};
+		} else {
+			setupColorRowEditMode(selectedId, "editing")
+		};
+	setLiBgColor();
+	setLiBorderColor(layerHere);
+}; // 수정중
 
 function setLiBgColor() {
 	if(selectedLi != undefined) {

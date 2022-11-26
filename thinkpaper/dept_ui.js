@@ -64,6 +64,7 @@ function setupBtnShowOrHideByClassName(state, idHere) {
 			showUI("downRow_btn");
 			showUI("updateRowEdit_btn");
 			showUI("cancelRowEdit_btn");
+			setupColorRowEditMode(idHere, "editing");
 			break;
 		default:
 			const state = null;

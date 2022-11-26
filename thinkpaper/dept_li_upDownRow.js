@@ -5,8 +5,8 @@ function startRowEdit() {
     const selectedLayer = selectedLi.layer;
     rowBox.before = getIdRowArray(selectedLayer);
 
-    setupRowEditModeByClassName(selectedId, "editing");
     setupBtnShowOrHideByClassName("upDownRow", selectedId);
+    setLiColorByLi(selectedLayer);
 
 };
 
@@ -119,7 +119,7 @@ function simulateUpDownLi(plusOrMinus) {
 
         // updateList
         updateList(selectedLayer);
-        setLiColorByLi(selectedLayer, "rowEdit"); // 테스트 중
+        setLiColorByLi(selectedLayer, "rowEdit");
 
 };
 
@@ -205,19 +205,18 @@ function cancelRowEdit() {
 
 };
 
-function setupRowEditModeByClassName(idHere, modeHere) {
+function setupColorRowEditMode(idHere, modeHere) {
     console.log("setupRowEditModeByClassName here!");
+
 	const liElement = document.getElementById(idHere);
 	const liArray = liElement.parentNode.childNodes;
 
-    liArray.forEach(eachLi => {
+    for(let i = 0; i < liArray.length - 1; i++){
         if (modeHere == "editing") {
-            eachLi.style.borderLeft = "20px solid" + COLOR_FOCUSED_YELLOW;
+            liArray[i].style.border = "2px solid" + COLOR_FOCUSED_YELLOW;
         } else {
-            eachLi.style.borderLeft = "";
+            liArray[i].style.border = "";
         };
-    });
-
-    // 테스트 중
+    };
 
 };
