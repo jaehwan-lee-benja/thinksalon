@@ -139,15 +139,19 @@ function cancelLiEditModeBack() {
 function setLiColorByLi(layerHere, rowEditHere) {
 	console.log("rowEditHere = ", rowEditHere);
 	const selectedId = selectedLi.id;
-		if(rowEditHere == undefined) {
-			if(eventListenerBox_selected != "N") {
-				setupColorRowEditMode(selectedId, "reading")
-			};
-		} else {
-			setupColorRowEditMode(selectedId, "editing")
-		};
+
 	setLiBgColor();
-	setLiBorderColor(layerHere);
+
+	if(rowEditHere == undefined) {
+		if(eventListenerBox_selected != "N") {
+			setupColorRowEditMode(selectedId, "reading")
+		};
+	} else {
+		setupColorRowEditMode(selectedId, "editing")
+	};
+
+	setLiBorderColor(layerHere, rowEditHere);
+
 }; // 수정중
 
 function setLiBgColor() {
@@ -175,17 +179,24 @@ function setLiBgColor() {
 	};
 };
 
-function setLiBorderColor(layerHere) {
+function setLiBorderColor(layerHere, rowEditHere) {
 	const dataFromSelectedLi = selectedLi.id;
+	const selectedLayer = selectedLi.layer;
 	const dataFromSelectedLiByLayer = selectedLiByLayer[layerHere].id;
 	if(dataFromSelectedLi == dataFromSelectedLiByLayer) {
 		const li = document.getElementsByTagName("li");
 		for (let i = 0; i < li.length; i++) {
 			const selectedId = selectedLi.id;
 			const eachId = li[i].getAttribute("id");
+			const eachLayer = li[i].getAttribute("layer");
 			if(selectedId == eachId) {
 				li[i].style.borderRight = "10px solid" + COLOR_FOCUSED_YELLOW;
 				li[i].setAttribute("pointedNow", "Y");
+			} else if(rowEditHere !== undefined && selectedLayer == eachLayer) {
+				for (let j = 0; j < li.length - 1; j++) {
+					li[j].style.border = "3px solid" + COLOR_FOCUSED_YELLOW;
+					li[j].setAttribute("pointedNow", "N");
+				};
 			} else {
 				li[i].style.borderRight = "";
 				li[i].setAttribute("pointedNow", "N");

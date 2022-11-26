@@ -6,7 +6,7 @@ function startRowEdit() {
     rowBox.before = getIdRowArray(selectedLayer);
 
     setupBtnShowOrHideByClassName("upDownRow", selectedId);
-    setLiColorByLi(selectedLayer);
+    setLiColorByLi(selectedLayer, "rowEdit");
 
 };
 
@@ -213,7 +213,7 @@ function setupColorRowEditMode(idHere, modeHere) {
 
     for(let i = 0; i < liArray.length - 1; i++){
         if (modeHere == "editing") {
-            liArray[i].style.border = "2px solid" + COLOR_FOCUSED_YELLOW;
+            liArray[i].style.border = "3px solid" + COLOR_FOCUSED_YELLOW;
         } else {
             liArray[i].style.border = "";
         };
