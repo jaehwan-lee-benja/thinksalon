@@ -27,7 +27,6 @@ function clickLi(layerHere) {
 			if(isEditing != null) {
 
 				const doGo = cancelLiEditModeBack();
-				console.log("doGo? = ", doGo);
 				if(doGo == "go!") {
 					if(id != addLiId) {
 
@@ -124,7 +123,6 @@ function cancelLiEditModeBack() {
 		const eachValueOfReadOnly = eachTextarea.getAttribute("readOnly");
 		if(eachValueOfReadOnly == null){
 			if (confirm("[작성 취소]를 진행하시겠습니까?")) {
-				console.log("isHere?");
 				const idOfReadOnly = li[i].getAttribute("id");
 				eachTextarea.readOnly = true;
 				eachTextarea.setAttribute("style", "");

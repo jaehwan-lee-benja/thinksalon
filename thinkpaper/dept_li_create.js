@@ -3,13 +3,13 @@ function saveNewLi() {
 	const packagedData = packageNewLi(selectedLayer);
 	if (packagedData != null) {
 
-		const packagedEditedIdRowArray = packageEditedIdRowArray_new();
+		const packagedEditedIdRowArray = packageEditedIdRowArray_create();
 
 		const idArray = Object.keys(objectById);
 		idArray.forEach(eachId => {
 			packagedEditedIdRowArray.forEach(eachObject => {
 				if(eachId == eachObject.id) {
-					requestUpdateRow_new(eachObject);
+					requestUpdateRow_createAndDelete(eachObject);
 				};
 			});
 		});

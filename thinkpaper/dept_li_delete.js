@@ -3,6 +3,18 @@ function removeLi() {
 	const layer = Number(selectedLi.layer);
 	
 	if (confirm("정말 삭제하시겠습니까? 삭제가 완료되면, 해당 내용은 다시 복구될 수 없습니다.")) {
+
+		const packagedEditedIdRowArray = packageEditedIdRowArray_delete();
+
+		const idArray = Object.keys(objectById);
+		idArray.forEach(eachId => {
+			packagedEditedIdRowArray.forEach(eachObject => {
+				if(eachId == eachObject.id) {
+					requestUpdateRow_createAndDelete(eachObject);
+				};
+			});
+		});
+
 		requestRemoveLi(removeId);
 		const layerArray = [0, 1, 2];
 		layerArray.forEach(eachLayer => {
