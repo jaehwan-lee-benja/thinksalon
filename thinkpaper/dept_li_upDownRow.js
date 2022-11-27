@@ -136,17 +136,29 @@ function updateRowEdit() {
 
     const packagedEditedIdRowArray = packageEditedIdRowArray();
 
-	if (confirm("변경된 순서를 저장하시겠습니까?")) {
-        const idArray = Object.keys(objectById);
-        idArray.forEach(eachId => {
-            packagedEditedIdRowArray.forEach(eachObject => {
-                if(eachId == eachObject.id) {
-                    requestUpdateRow(eachObject);
-                };
-            })
-        });
-	};
+    console.log("packagedEditedIdRowArray = ", packagedEditedIdRowArray);
 
+    const isChanged = packagedEditedIdRowArray.length;
+    if(isChanged > 0 ) {
+        if (confirm("변경된 순서를 저장하시겠습니까?")) {
+            const idArray = Object.keys(objectById);
+            idArray.forEach(eachId => {
+                packagedEditedIdRowArray.forEach(eachObject => {
+                    if(eachId == eachObject.id) {
+                        requestUpdateRow(eachObject);
+                    };
+                });
+            });
+            const layer = selectedLi.layer;
+            updateList(layer);
+            keepSelectedData(layer, selectedLi.id);
+            setLiColorByLi(layer);
+            setupBtnShowOrHideByClassName("readLi");
+        };
+    } else {
+        if(confirm("변경된 순서가 없습니다.")) {
+        };
+    };
 };
 
 function requestUpdateRow(packagedDataHere) {
@@ -178,7 +190,7 @@ function packageEditedIdRowArray() {
 };
 
 function cancelRowEdit() {
-    if (confirm("편집을 취소하시겠습니까?")) {
+    if (confirm("순서 변경을 취소하시겠습니까?")) {
         const selectedLayer = Number(selectedLi.layer);
         const everyIdArrayOfLayer = getEveryIdArrayOfLayer(selectedLayer);
         const idRowArray_before = rowBox.before;

@@ -38,7 +38,7 @@ function setupBtnShowOrHideByClassName(state, idHere) {
 		case undefined :
 			showUI("guideMessage");
 			const guideMessage = document.getElementById("guideMessage");
-			guideMessage.innerHTML = "*화면 블럭을 클릭/더블클릭하여 내용을 추가/편집할 수 있습니다.";
+			guideMessage.innerHTML = "*화면 블럭을 클릭/더블클릭하여 내용을 작성할 수 있습니다.";
 			break;
 		case "createFirstLi" :
 			showUI("saveNewLi_btn");
@@ -64,9 +64,6 @@ function setupBtnShowOrHideByClassName(state, idHere) {
 			showUI("downRow_btn");
 			showUI("updateRowEdit_btn");
 			showUI("cancelRowEdit_btn");
-			// const element = document.getElementById(idHere);
-			// const layer = element.getAttribute("layer"); 
-			// console.log("layer @upDownRow = ", layer);
 			setupColorRowEditMode(idHere, "editing");
 			break;
 		default:

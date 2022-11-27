@@ -26,6 +26,8 @@ function clickLi(layerHere) {
 
 			if(isEditing != null) {
 
+				cancelLiEditModeBack();
+
 				if(id != addLiId) {
 
 					keepSelectedData(layerHere, id);
@@ -44,7 +46,6 @@ function clickLi(layerHere) {
 					setupBtnShowOrHideByClassName();
 
 				};
-				cancelLiEditModeBack();
 			};
 
 			resizeTextarea();
@@ -119,7 +120,7 @@ function cancelLiEditModeBack() {
 		const eachTextarea = li[i].children[0];
 		const eachValueOfReadOnly = eachTextarea.getAttribute("readOnly");
 		if(eachValueOfReadOnly == null){
-			if (confirm("편집을 취소하시겠습니까?")) {
+			if (confirm("작성을 취소하시겠습니까?")) {
 				const idOfReadOnly = li[i].getAttribute("id");
 				eachTextarea.readOnly = true;
 				eachTextarea.setAttribute("style", "");
@@ -151,7 +152,7 @@ function setLiColorByLi(layerHere, rowEditHere) {
 
 	setLiBorderColor(layerHere, rowEditHere);
 
-}; // 수정중
+};
 
 function setLiBgColor() {
 	if(selectedLi != undefined) {

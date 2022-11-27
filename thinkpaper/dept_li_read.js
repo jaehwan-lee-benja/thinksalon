@@ -121,7 +121,7 @@ function showChildernList(layerHere, parentsIdHere) {
 		// Array 만들기
 		const mappedArray = getMappedObjectByParentsId(parentsIdHere);
 
-		// list 순서 잡기(최근 편집 순서)
+		// list 순서 잡기
 		const sortedArray = sortingArray(mappedArray);
 
 		// li 생성하기
