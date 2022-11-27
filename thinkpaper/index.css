@@ -19,6 +19,7 @@ h1{
 
 h2{
     font-size: 1.2rem;
+    color: #C8C8C8;
     margin: 0;
 }
 
@@ -140,7 +141,7 @@ header{
 
 main{
     height: 100%;
-    padding-top: 100px;
+    padding-top: 70px;
 }
 
 #divImageMain{
@@ -156,6 +157,7 @@ main{
 
 #divMain{
     padding-left: 170px;
+    margin-bottom: 100px;
 }
 
 #divBox {
@@ -163,7 +165,7 @@ main{
     overflow-x: overlay;
     transform: rotateX(180deg);
     padding-bottom: 10px;
-    height: 80%;
+    padding-top: 300px;
 }
 
 /* #divColumn{
@@ -210,7 +212,7 @@ main{
 .gridMainTop{
     display: grid;
     grid-template-rows: auto auto;
-    grid-gap: 0.2rem;
+    grid-gap: 0.7rem;
     width: 100%;
     padding: 0 1rem;
     margin: 0 auto;

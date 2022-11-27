@@ -101,13 +101,23 @@ function showHideDiv(layerHere) {
 			showUI("list_layer0");
 			hideUI("list_layer1");
 			hideUI("list_layer2");
+
+			showUI("div_layer0");
+			hideUI("div_layer1");
+			hideUI("div_layer2");
+
 			break;
 		case 1 :
 			showUI("list_layer1");
 			hideUI("list_layer2");
+
+			showUI("div_layer1");
+			hideUI("div_layer2");
 			break;
 		case 2 :
 			showUI("list_layer2");
+
+			showUI("div_layer2");
 			break;
 		case 3 :
 			break;
