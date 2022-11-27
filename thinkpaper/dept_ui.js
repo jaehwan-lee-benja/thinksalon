@@ -38,7 +38,7 @@ function setupBtnShowOrHideByClassName(state, idHere) {
 		case undefined :
 			showUI("guideMessage");
 			const guideMessage = document.getElementById("guideMessage");
-			guideMessage.innerHTML = "*화면 블럭을 클릭/더블클릭하여 내용을 작성할 수 있습니다.";
+			guideMessage.innerHTML = "화면 블럭을 클릭/더블클릭하여 내용을 작성할 수 있습니다.";
 			break;
 		case "createFirstLi" :
 			showUI("saveNewLi_btn");

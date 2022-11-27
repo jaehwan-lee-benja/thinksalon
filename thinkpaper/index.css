@@ -61,11 +61,12 @@ textarea {
 
 textarea::-webkit-scrollbar {
     width: 0.5rem;
+    border-radius: 5px;
     background-color: #FBFCF4; 
 }
 
 textarea::-webkit-scrollbar-thumb {
-    border-radius: 0.5rem;
+    border-radius: 5px;
     background-color: #CFD4C9; 
 }
 
@@ -185,20 +186,23 @@ main{
 
 #divBox::-webkit-scrollbar {
     height: 5px;
+    border-radius: 5px;
     background-color: #e3e3e3; 
 }
 
 #divBox::-webkit-scrollbar-thumb {
     border-radius: 5px;
-    background-color: #a5a5a5; 
+    background-color: #CFD4C9; 
 }
 
 #divBox::-webkit-scrollbar-thumb:hover {
     height: 10px;
-    background-color: #2A2B2A; 
+    border-radius: 5px;
+    background-color: #a5a5a5; 
 }
 
 #divBox::-webkit-scrollbar:hover {
+    border-radius: 5px;
     height: 10px;
 }
 
