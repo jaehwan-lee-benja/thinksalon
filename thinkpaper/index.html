@@ -11,33 +11,30 @@
 
 <body>
     <header>
-        <h1>see the big picture</h1>
+        <h1>think.</h1>
     </header>
     <main>
         <div id="gridBody">
             <div id="divBtn">
-                <div id="divImageMain">
-                    <img id="imageMain" src="images/01_basic.png">
-                </div>
-                <div style="margin: 1rem 0">
-                    <p>[메뉴]</p>
-                    <p id="guideMessage" style = "display: none;"></p>
-                    <input id="openEditLi_btn" onClick="openEditLi()" type="button" value="수정하기" style = "display: none;">
-                    <input id="saveEditedLi_btn" onClick="saveEditedLi()" type="button" value="수정본 저장하기" style = "display: none;">
-                    <input id="saveNewLi_btn" onClick="saveNewLi()" type="button" value="새 카드로 저장하기" style = "display: none;">
-                    <input id="cancelEditLi_btn" onClick="cancelEditLi()" type="button" value="작성(수정) 취소하기" style = "display: none;">
-                    <input id="removeLi_btn" onClick="removeLi()" type="button" value="삭제하기" style = "display: none;">
-                    <div id="upDownRow_btn">
-                        <input id="startRowEdit_btn" onClick="startRowEdit()" type="button" value="순서 변경하기" style = "display: none;">
-                        <div>
-                            <input id="upRow_btn" onClick="simulateUpDownLi('plus')" type="button" value="up" style = "display: none;">
-                            <input id="downRow_btn" onClick="simulateUpDownLi('minus')" type="button" value="down" style = "display: none;">
-                        </div>
-                        <input id="updateRowEdit_btn" onClick="updateRowEdit()" type="button" value="순서 저장하기" style = "display: none;">
-                        <input id="cancelRowEdit_btn" onClick="cancelRowEdit()" type="button" value="취소하기" style = "display: none;">
+                <p>[메뉴]</p>
+                <p id="guideMessage" style = "display: none;"></p>
+                <input id="openEditLi_btn" onClick="openEditLi()" type="button" value="수정하기" style = "display: none;">
+                <input id="saveEditedLi_btn" onClick="saveEditedLi()" type="button" value="수정본 저장하기" style = "display: none;">
+                <input id="saveNewLi_btn" onClick="saveNewLi()" type="button" value="새 카드로 저장하기" style = "display: none;">
+                <input id="cancelEditLi_btn" onClick="cancelEditLi()" type="button" value="작성(수정) 취소하기" style = "display: none;">
+                <input id="removeLi_btn" onClick="removeLi()" type="button" value="삭제하기" style = "display: none;">
+                <div id="upDownRow_btn">
+                    <input id="startRowEdit_btn" onClick="startRowEdit()" type="button" value="순서 변경하기" style = "display: none;">
+                    <div>
+                        <input id="upRow_btn" onClick="simulateUpDownLi('plus')" type="button" value="up" style = "display: none;">
+                        <input id="downRow_btn" onClick="simulateUpDownLi('minus')" type="button" value="down" style = "display: none;">
                     </div>
+                    <input id="updateRowEdit_btn" onClick="updateRowEdit()" type="button" value="순서 저장하기" style = "display: none;">
+                    <input id="cancelRowEdit_btn" onClick="cancelRowEdit()" type="button" value="취소하기" style = "display: none;">
                 </div>
-                <span id="seletedLi_layer0" style = "color: rgb(190, 190, 190);"></span>
+                <div style = "margin-top: 1rem;">
+                    <span id="seletedLi_layer0" style = "color: rgb(190, 190, 190);"></span>
+                </div>
             </div>
             <div id="divMain">
                 <div id="divBox">

@@ -133,10 +133,9 @@ header{
     display: flex;
     align-content: center;
     padding: 1rem 4rem 0 4rem;
-    border-bottom: 0.2px solid #C8C8C8;
     align-content: center;
     padding: 1rem 4rem 0 4rem;
-    backdrop-filter: blur(7px);
+    /* backdrop-filter: blur(7px); */
 }
 
 main{
@@ -179,7 +178,6 @@ main{
     grid-template-columns: 1fr 1fr 1fr 1fr;
     grid-gap: 1.2rem;
     margin-top: 10rem;
-    margin-bottom: 2rem;
     transform: rotateX(180deg);
 }
 
