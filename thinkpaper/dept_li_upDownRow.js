@@ -213,7 +213,7 @@ function packageEditedIdRowArray_new() {
 };
 
 function cancelRowEdit() {
-    if (confirm("순서 변경을 취소하시겠습니까?")) {
+    if (confirm("[순서 변경 취소]를 진행하시겠습니까?")) {
         const selectedLayer = Number(selectedLi.layer);
         const everyIdArrayOfLayer = getEveryIdArrayOfLayer(selectedLayer);
         const idRowArray_before = rowBox.before;

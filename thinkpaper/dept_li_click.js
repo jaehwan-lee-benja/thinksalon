@@ -26,25 +26,27 @@ function clickLi(layerHere) {
 
 			if(isEditing != null) {
 
-				cancelLiEditModeBack();
+				const doGo = cancelLiEditModeBack();
+				console.log("doGo? = ", doGo);
+				if(doGo == "go!") {
+					if(id != addLiId) {
 
-				if(id != addLiId) {
-
-					keepSelectedData(layerHere, id);
-					showHideDiv(layerHere);
-					setLiColorByLi(layerHere);
-					showChildernList(layerHere, id);
-					setupBtnShowOrHideByClassName("readLi");
-
-				} else {
-
-					// 새 리스트 추가하기 버튼을 누른 경우
-					keepSelectedData(layerHere, "addLiBtn_"+layerHere);
-					const parentLayer = layerHere - 1;
-					showHideDiv(parentLayer);
-					setLiColorByLi(layerHere);
-					setupBtnShowOrHideByClassName();
-
+						keepSelectedData(layerHere, id);
+						showHideDiv(layerHere);
+						setLiColorByLi(layerHere);
+						showChildernList(layerHere, id);
+						setupBtnShowOrHideByClassName("readLi");
+	
+					} else {
+	
+						// 새 리스트 추가하기 버튼을 누른 경우
+						keepSelectedData(layerHere, "addLiBtn_"+layerHere);
+						const parentLayer = layerHere - 1;
+						showHideDiv(parentLayer);
+						setLiColorByLi(layerHere);
+						setupBtnShowOrHideByClassName();
+	
+					};
 				};
 			};
 
@@ -116,11 +118,13 @@ function makeEditModeByDbclick(eHere) {
 
 function cancelLiEditModeBack() {
 	const li = document.getElementsByTagName("li");
+	let result = "go!";
 	for (let i = 0; i < li.length; i++) {
 		const eachTextarea = li[i].children[0];
 		const eachValueOfReadOnly = eachTextarea.getAttribute("readOnly");
 		if(eachValueOfReadOnly == null){
-			if (confirm("작성을 취소하시겠습니까?")) {
+			if (confirm("[작성 취소]를 진행하시겠습니까?")) {
+				console.log("isHere?");
 				const idOfReadOnly = li[i].getAttribute("id");
 				eachTextarea.readOnly = true;
 				eachTextarea.setAttribute("style", "");
@@ -133,9 +137,12 @@ function cancelLiEditModeBack() {
 					eachTextarea.setAttribute("style", "color: "+COLOR_TXT_GRAY);
 				};
 				eachTextarea.value = liValue;
+			} else {
+				result = "no!";
 			};
 		};
 	};
+	return result;
 };
 function setLiColorByLi(layerHere, rowEditHere) {
 	const selectedId = selectedLi.id;

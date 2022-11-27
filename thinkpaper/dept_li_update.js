@@ -98,7 +98,7 @@ function openEditLi() {
 	setupBtnShowOrHideByClassName("editLi", idHere);
 };
 function cancelEditLi() {
-	if (confirm("작성을 취소하시겠습니까?")) {
+	if (confirm("[작성 취소]를 진행하시겠습니까?")) {
 		const selectedLayer = Number(selectedLi.layer);
 		setupBtnShowOrHideByClassName();
 		updateList(selectedLayer);
