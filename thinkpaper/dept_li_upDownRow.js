@@ -209,7 +209,6 @@ function packageEditedIdRowArray_new() {
         idRowArray_edited.push({id: eachId, row: row_before + 1});
     });
 
-    console.log("idRowArray_edited = ", idRowArray_edited);
     return idRowArray_edited;
 };
 
