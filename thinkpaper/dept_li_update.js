@@ -98,11 +98,11 @@ function openEditLi() {
 	setupBtnShowOrHideByClassName("editLi", idHere);
 };
 function cancelEditLi() {
-
-	const selectedLayer = Number(selectedLi.layer);
-	setupBtnShowOrHideByClassName();
-	updateList(selectedLayer);
-	showHideDiv(selectedLayer);
-
+	if (confirm("편집을 취소하시겠습니까?")) {
+		const selectedLayer = Number(selectedLi.layer);
+		setupBtnShowOrHideByClassName();
+		updateList(selectedLayer);
+		showHideDiv(selectedLayer);
+	};
 };
 

@@ -64,6 +64,9 @@ function setupBtnShowOrHideByClassName(state, idHere) {
 			showUI("downRow_btn");
 			showUI("updateRowEdit_btn");
 			showUI("cancelRowEdit_btn");
+			// const element = document.getElementById(idHere);
+			// const layer = element.getAttribute("layer"); 
+			// console.log("layer @upDownRow = ", layer);
 			setupColorRowEditMode(idHere, "editing");
 			break;
 		default:

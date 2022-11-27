@@ -1,6 +1,5 @@
 function startRowEdit() {
 
-    console.log("started!");
     const selectedId = selectedLi.id;
     const selectedLayer = selectedLi.layer;
     rowBox.before = getIdRowArray(selectedLayer);
@@ -134,8 +133,6 @@ function getIdRowArray(layerHere) {
 };
 
 function updateRowEdit() {	
-	
-    console.log("update!");
 
     const packagedEditedIdRowArray = packageEditedIdRowArray();
 
@@ -144,7 +141,6 @@ function updateRowEdit() {
         idArray.forEach(eachId => {
             packagedEditedIdRowArray.forEach(eachObject => {
                 if(eachId == eachObject.id) {
-                    console.log("eachObject = ", eachObject);
                     requestUpdateRow(eachObject);
                 };
             })
@@ -168,45 +164,41 @@ function requestUpdateRow(packagedDataHere) {
 function packageEditedIdRowArray() {
     const idRowArray_before = rowBox.before;
     const idRowArray_after = rowBox.after;
-
-    console.log("idRowArray_before = ", idRowArray_before);
-    console.log("idRowArray_after = ", idRowArray_after);
-    
     const idRowArray_edited = [];
     idRowArray_after.forEach((element) => {
         idRowArray_before.forEach(eachObject => {
             if(element.id == eachObject.id && element.row != eachObject.row){
-                console.log("element = ", element);
-                console.log("eachObject = ", eachObject);
                 const editedObject = {id: element.id, row: element.row};
                 idRowArray_edited.push(editedObject);
             };
         });
     });
+
     return idRowArray_edited;
 };
 
 function cancelRowEdit() {
-    const selectedLayer = Number(selectedLi.layer);
-    const everyIdArrayOfLayer = getEveryIdArrayOfLayer(selectedLayer);
-    const idRowArray_before = rowBox.before;
+    if (confirm("편집을 취소하시겠습니까?")) {
+        const selectedLayer = Number(selectedLi.layer);
+        const everyIdArrayOfLayer = getEveryIdArrayOfLayer(selectedLayer);
+        const idRowArray_before = rowBox.before;
 
-    // objectById before로 재업데이트하기
-    everyIdArrayOfLayer.forEach(eachId => {
-        idRowArray_before.forEach(eachObject => {
-            if(eachId == eachObject.id) {
-                objectById[eachId].row = eachObject.row;
-            };
+        // objectById before로 재업데이트하기
+        everyIdArrayOfLayer.forEach(eachId => {
+            idRowArray_before.forEach(eachObject => {
+                if(eachId == eachObject.id) {
+                    objectById[eachId].row = eachObject.row;
+                };
+            });
         });
-    });
 
-	setupBtnShowOrHideByClassName();
-	updateList(selectedLayer);
+        setupBtnShowOrHideByClassName();
+        updateList(selectedLayer);
+    };
 
 };
 
 function setupColorRowEditMode(idHere, modeHere) {
-    console.log("setupRowEditModeByClassName here!");
 
 	const liElement = document.getElementById(idHere);
 	const liArray = liElement.parentNode.childNodes;

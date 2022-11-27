@@ -119,7 +119,7 @@ function cancelLiEditModeBack() {
 		const eachTextarea = li[i].children[0];
 		const eachValueOfReadOnly = eachTextarea.getAttribute("readOnly");
 		if(eachValueOfReadOnly == null){
-			// if (confirm("편집을 취소하시겠습니까?")) {
+			if (confirm("편집을 취소하시겠습니까?")) {
 				const idOfReadOnly = li[i].getAttribute("id");
 				eachTextarea.readOnly = true;
 				eachTextarea.setAttribute("style", "");
@@ -132,12 +132,11 @@ function cancelLiEditModeBack() {
 					eachTextarea.setAttribute("style", "color: "+COLOR_TXT_GRAY);
 				};
 				eachTextarea.value = liValue;
-			// };
+			};
 		};
 	};
 };
 function setLiColorByLi(layerHere, rowEditHere) {
-	console.log("rowEditHere = ", rowEditHere);
 	const selectedId = selectedLi.id;
 
 	setLiBgColor();
@@ -194,7 +193,6 @@ function setLiBorderColor(layerHere, rowEditHere) {
 				li[i].setAttribute("pointedNow", "Y");
 			} else if(rowEditHere !== undefined && selectedLayer == eachLayer) {
 				for (let j = 0; j < li.length - 1; j++) {
-					li[j].style.border = "3px solid" + COLOR_FOCUSED_YELLOW;
 					li[j].setAttribute("pointedNow", "N");
 				};
 			} else {
