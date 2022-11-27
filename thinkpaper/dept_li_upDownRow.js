@@ -136,8 +136,6 @@ function updateRowEdit() {
 
     const packagedEditedIdRowArray = packageEditedIdRowArray();
 
-    console.log("packagedEditedIdRowArray = ", packagedEditedIdRowArray);
-
     const isChanged = packagedEditedIdRowArray.length;
     if(isChanged > 0 ) {
         if (confirm("변경된 순서를 저장하시겠습니까?")) {
@@ -173,6 +171,17 @@ function requestUpdateRow(packagedDataHere) {
 	});
 };
 
+function requestUpdateRow_new(packagedDataHere) {
+	const inputId = packagedDataHere.id;
+	const bpRef = db.ref("users")
+						.child(userData.uid)
+						.child("bigPicture");
+	bpRef.child(inputId)
+		.update(packagedDataHere, (e) => {
+		console.log("*keep* update completed = ", e);
+	});
+};
+
 function packageEditedIdRowArray() {
     const idRowArray_before = rowBox.before;
     const idRowArray_after = rowBox.after;
@@ -186,6 +195,21 @@ function packageEditedIdRowArray() {
         });
     });
 
+    return idRowArray_edited;
+};
+
+function packageEditedIdRowArray_new() {
+
+    const selectedLayer = Number(selectedLi.layer);
+    const everyIdArrayOfLayer = getEveryIdArrayOfLayer(selectedLayer);
+        
+    const idRowArray_edited = [];
+    everyIdArrayOfLayer.forEach(eachId => {
+        const row_before = objectById[eachId].row;
+        idRowArray_edited.push({id: eachId, row: row_before + 1});
+    });
+
+    console.log("idRowArray_edited = ", idRowArray_edited);
     return idRowArray_edited;
 };
 

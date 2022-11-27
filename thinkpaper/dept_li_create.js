@@ -2,6 +2,18 @@ function saveNewLi() {
 	const selectedLayer = Number(selectedLi.layer);
 	const packagedData = packageNewLi(selectedLayer);
 	if (packagedData != null) {
+
+		const packagedEditedIdRowArray = packageEditedIdRowArray_new();
+
+		const idArray = Object.keys(objectById);
+		idArray.forEach(eachId => {
+			packagedEditedIdRowArray.forEach(eachObject => {
+				if(eachId == eachObject.id) {
+					requestUpdateRow_new(eachObject);
+				};
+			});
+		});
+
 		requestSetLi(packagedData);
 		showHideDiv(selectedLayer-1);
 		updateList(selectedLayer);
@@ -20,7 +32,8 @@ function packageNewLi(layerHere) {
 		catchedData["editedDate"] = getTimeStamp();
 		catchedData["main"] = "";
 		catchedData["layer"] = layerHere;
-		catchedData["row"] = countRow(layerHere);
+		catchedData["row"] = 0;
+		// catchedData["row"] = countRow(layerHere);
 		return catchedData;
 	};
 };
