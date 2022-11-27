@@ -204,14 +204,14 @@ main{
 
 .girdColumnForLayer{
     display: grid;
-    grid-template-rows: 6rem 1fr auto;
-    grid-gap: 1.2rem;
+    grid-template-rows: 2rem 1fr auto;
+    grid-gap: 1rem;
     margin-bottom: 1rem;
 }
 
 .gridMainTop{
     display: grid;
-    grid-template-rows: 2rem 1fr;
+    grid-template-rows: auto auto;
     grid-gap: 0.2rem;
     width: 100%;
     padding: 0 1rem;
