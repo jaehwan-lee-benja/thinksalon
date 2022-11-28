@@ -25,7 +25,6 @@ function clickLi(layerHere) {
 			const isEditing = textareaElement.getAttribute("readOnly");
 
 			if(isEditing != null) {
-
 				const doGo = cancelLiEditModeBack();
 				if(doGo == "go!") {
 					if(id != addLiId) {
@@ -202,7 +201,7 @@ function setLiBorderColor(layerHere, rowEditHere) {
 					li[j].setAttribute("pointedNow", "N");
 				};
 			} else {
-				li[i].style.borderRight = "";
+				li[i].style.border = "";
 				li[i].setAttribute("pointedNow", "N");
 			};
 		};	
