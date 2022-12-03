@@ -149,6 +149,10 @@ main{
     text-align: center;
 }
 
+#check-btn { display: none; }
+#check-btn:checked ~ .menubars { display: block; } 
+.menubars { display: none; }
+
 #divBtn{
     position: fixed;
     width: 150px;
